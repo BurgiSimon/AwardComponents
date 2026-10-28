@@ -8,7 +8,7 @@
 import './demo.css';
 import { Observer } from 'gsap/Observer';
 import { gsap, useGsap } from '../../src/demo-kit/gsap.js';
-import { on, html, clamp, colour, photo, allPhotos, videos, whileVisible, content, formatPrice } from '../../src/demo-kit/index.js';
+import { on, html, clamp, colour, photo, allPhotos, videos, credit, whileVisible, content, formatPrice } from '../../src/demo-kit/index.js';
 
 gsap.registerPlugin(Observer);
 
@@ -36,7 +36,7 @@ function mediaFor() {
   const taken = new Set();
   return STAGES.map((s, i) => {
     const clip = videos.length ? (videos.find((v) => s.tags.some((t) => v.tags?.includes(t)) && !taken.has(v.src)) || videos[i % videos.length]) : null;
-    if (clip) { taken.add(clip.src); return { type: 'video', src: clip.src, poster: clip.poster }; }
+    if (clip) { taken.add(clip.src); credit(clip); return { type: 'video', src: clip.src, poster: clip.poster }; }
     for (const tags of [[...s.tags, 'landscape-orientation'], s.tags]) {
       const hit = pool.find((p) => tags.every((t) => p.tags?.includes(t)) && !taken.has(p.id));
       if (hit) { taken.add(hit.id); return { type: 'image', item: photo(hit.id) }; }

@@ -4,7 +4,7 @@
 // 85 % to top top grows it to scale 1; at that end the fixed box and the section box coincide and onLeave hands the
 // reel back to the flow. Transform only; the radius is counter-scaled. Phones and reduced motion: no dock.
 import './demo.css';
-import { on, html, raw, photo, photos, videos, imageHTML, whileVisible, content } from '../../src/demo-kit/index.js';
+import { on, html, raw, photo, photos, videos, credit, imageHTML, whileVisible, content } from '../../src/demo-kit/index.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
 import { useLenis } from '../../src/demo-kit/lenis.js';
 
@@ -19,6 +19,7 @@ export default function mount(root, options, ctx) {
   const named = photo('land-lake-reflection');
   const still = named.drawn ? photos({ tags: ['landscape'], count: 1, seed: 'dm-film' })[0] : named;
   const clip = videos.find((v) => v.tags?.some((t) => ['architecture', 'interior', 'water'].includes(t)));
+  credit(clip);
   let cfg = { ...options };
 
   root.className = 'dm';

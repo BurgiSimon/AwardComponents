@@ -5,14 +5,14 @@ export const features = {
     label: 'WebGL',
     note: 'Needs WebGL. Without it the demo shows its fallback.',
     test: () => {
-      try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')); } catch { return false; }
+      try { const c = document.createElement('canvas'); return release(c.getContext('webgl2') || c.getContext('webgl')); } catch { return false; }
     },
   },
   webgl2: {
     label: 'WebGL 2',
     note: 'Needs WebGL 2. Without it the demo shows its fallback.',
     test: () => {
-      try { return !!document.createElement('canvas').getContext('webgl2'); } catch { return false; }
+      try { return release(document.createElement('canvas').getContext('webgl2')); } catch { return false; }
     },
   },
   'view-transitions': {
@@ -47,8 +47,20 @@ export const features = {
   },
 };
 
+// A probe context is released at once: the shell would otherwise keep one per component page it opened.
+function release(gl) {
+  gl?.getExtension('WEBGL_lose_context')?.loseContext();
+  return !!gl;
+}
+
+// Each test runs once per page.
+const results = new Map();
 export function unsupported(requires = []) {
-  return requires.filter((key) => features[key] && !safe(features[key].test));
+  return requires.filter((key) => {
+    if (!features[key]) return false;
+    if (!results.has(key)) results.set(key, safe(features[key].test));
+    return !results.get(key);
+  });
 }
 
 function safe(fn) {

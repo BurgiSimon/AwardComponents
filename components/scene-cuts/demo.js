@@ -14,9 +14,9 @@ const LIFT = 0.06; // the diamonds sit a little above the middle, in viewport he
 const fit = (v, a, b, c, d) => clamp(mapRange(v, a, b, c, d), Math.min(c, d), Math.max(c, d));
 
 const DAYS = [
-  { day: 'Friday 12 August', stage: 'The Harbour', name: 'Dusk', acts: 'Marlow Ash, Kiri Tanaka and The Low Tides from seven, as the sun drops behind the cranes.', tokens: ['--plum', '--clay', '--sand'] },
-  { day: 'Saturday 13 August', stage: 'Hall 4', name: 'Tide', acts: 'Odessa Rae, Nils & the Weather and Juno Park in the old ship hall, doors at eight.', tokens: ['--night', '--sky', '--sand'] },
-  { day: 'Sunday 14 August', stage: 'The Greenhouse', name: 'Moss', acts: 'Vesper Choir and Aurelio Cano under glass, then Moss Theory to close the weekend.', tokens: ['--night', '--moss', '--sand'] },
+  { day: 'Thursday 12 August', stage: 'The Harbour', name: 'Dusk', acts: 'Marlow Ash, Kiri Tanaka and The Low Tides from seven, as the sun drops behind the cranes.', tokens: ['--plum', '--clay', '--sand'] },
+  { day: 'Friday 13 August', stage: 'Hall 4', name: 'Tide', acts: 'Odessa Rae, Nils & the Weather and Juno Park in the old ship hall, doors at eight.', tokens: ['--night', '--sky', '--sand'] },
+  { day: 'Saturday 14 August', stage: 'The Greenhouse', name: 'Moss', acts: 'Vesper Choir and Aurelio Cano under glass, then Moss Theory to close the festival.', tokens: ['--night', '--moss', '--sand'] },
 ];
 
 const VERT = /* glsl */ `varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }`;

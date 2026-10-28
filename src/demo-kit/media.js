@@ -39,6 +39,7 @@ export function art(seed = 'art', { width = 1200, height = 1500 } = {}) {
 const items = (manifest.items || []).map((m) => ({ ...m, src: url(m.src), srcSm: url(m.srcSm || m.src) }));
 const byId = new Map(items.map((m) => [m.id, m]));
 export const videos = (manifest.videos || []).map((v) => ({ ...v, src: url(v.src), poster: url(v.poster) }));
+const videoById = new Map(videos.map((v) => [v.id, v]));
 
 export const allPhotos = () => items.slice();
 
@@ -51,6 +52,22 @@ export function photo(id, { fallbackTags } = {}) {
   if (!hit && fallbackTags?.length) hit = items.find((m) => fallbackTags.every((t) => m.tags?.includes(t)));
   if (hit) used.add(hit.id);
   return hit || art(id);
+}
+
+// video('id'): a shared clip by id, recorded for the credits like a photo; null when the id is unknown.
+export function video(id) {
+  const hit = videoById.get(id) || null;
+  if (hit) used.add(hit.id);
+  return hit;
+}
+
+// credit(...items): record pictures or clips a demo shows without photo() / photos() / video(), such as a clip
+// picked from `videos` or a derivative the component ships of a shared clip. Takes ids or media objects.
+export function credit(...list) {
+  for (const m of list) {
+    const id = typeof m === 'string' ? m : m?.id;
+    if (id && (byId.has(id) || videoById.has(id))) used.add(id);
+  }
 }
 
 export function photos({ tags = [], not = [], count = 6, seed = 'x', orientation, exclude = [] } = {}) {

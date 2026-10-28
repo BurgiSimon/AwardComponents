@@ -29,6 +29,16 @@ export async function loadComponents({ fresh = false } = {}) {
 }
 
 // --only a,b,c from argv.
+// The text files a component is made of, as the Code tab lists them: demo.js, demo.css and meta.js first, then any
+// other module or stylesheet in the folder (a shader, a worker, an authoring script). Binary assets are left out.
+export const SOURCE_FILE = /^[a-z0-9][\w.-]*\.(?:js|mjs|css)$/i;
+const MAIN_FILES = ['demo.js', 'demo.css', 'meta.js'];
+export function sourceFiles(id) {
+  const dir = path.join(COMPONENTS_DIR, id);
+  const present = fs.existsSync(dir) ? fs.readdirSync(dir).filter((f) => SOURCE_FILE.test(f)) : [];
+  return [...MAIN_FILES.filter((f) => present.includes(f)), ...present.filter((f) => !MAIN_FILES.includes(f)).sort()];
+}
+
 export function onlyArg(argv = process.argv) {
   const i = argv.indexOf('--only');
   return i > -1 && argv[i + 1] ? argv[i + 1].split(',').map((s) => s.trim()).filter(Boolean) : null;
