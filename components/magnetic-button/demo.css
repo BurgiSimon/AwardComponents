@@ -1,0 +1,91 @@
+.mb {
+  --mb-accent: var(--accent);
+  min-height: 100svh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  overflow: clip;
+  background:
+    radial-gradient(60% 50% at 85% 40%, color-mix(in oklab, var(--mb-accent) 10%, transparent), transparent 70%),
+    var(--bg);
+}
+.mb a { text-decoration: none; }
+
+/* Every magnet: a body that moves and a label that moves less. */
+[data-magnet] { position: relative; display: inline-grid; place-items: center; isolation: isolate; will-change: transform; }
+.mb__body { position: absolute; inset: 0; border-radius: inherit; z-index: -1; transition: transform var(--dur-m) var(--ease-out), background-color var(--dur-s); }
+[data-magnet-label] { display: inline-flex; align-items: center; gap: 0.4em; pointer-events: none; }
+[data-magnet]:is(.is-near, :focus-visible) .mb__body { transform: scale(1.06); }
+
+/* The field overlay: a tuning aid, centred on each magnet. */
+[data-magnet]::after {
+  content: '';
+  position: absolute;
+  left: 50%; top: 50%;
+  width: var(--field, 0); height: var(--field, 0);
+  translate: -50% -50%;
+  border-radius: 50%;
+  border: 1px dashed color-mix(in oklab, var(--mb-accent) 60%, transparent);
+  background: radial-gradient(closest-side, color-mix(in oklab, var(--mb-accent) 9%, transparent), transparent);
+  pointer-events: none;
+  opacity: 0;
+  z-index: -2;
+  transition: opacity var(--dur-s);
+}
+.mb--field [data-magnet]::after { opacity: 1; }
+
+.mb__pill { height: 40px; padding: 0 18px; border-radius: 999px; font-size: var(--text-sm); font-weight: 600; color: var(--bg); }
+.mb__pill .mb__body { background: var(--ink); }
+
+.mb__hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(32px, 6vw, 96px);
+  padding-block: 48px;
+}
+.mb__copy { display: grid; gap: 18px; max-width: 34rem; }
+
+.mb__cta {
+  width: clamp(132px, 15vw, 188px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  color: var(--on-accent);
+  font-weight: 700;
+  font-size: clamp(15px, 1.4vw, 18px);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  text-align: center;
+}
+.mb__cta .mb__body { background: var(--mb-accent); box-shadow: 0 20px 50px -18px color-mix(in oklab, var(--mb-accent) 80%, transparent); }
+.mb__cta [data-magnet-label] { flex-direction: column; }
+.mb__cta svg { width: 22px; height: 22px; margin-top: 6px; }
+.mb__cta[data-style='pill'] { width: auto; aspect-ratio: auto; height: 64px; padding: 0 30px; border-radius: 999px; }
+.mb__cta[data-style='pill'] [data-magnet-label] { flex-direction: row; gap: 0.5em; }
+.mb__cta[data-style='pill'] br { display: none; }
+.mb__cta[data-style='pill'] svg { margin: 0; }
+.mb__cta[data-style='outline'] { color: var(--ink); }
+.mb__cta[data-style='outline'] .mb__body { background: transparent; border: 1.5px solid var(--mb-accent); box-shadow: none; }
+.mb__cta[data-style='outline']:is(.is-near, :focus-visible) .mb__body { background: var(--mb-accent); }
+.mb__cta[data-style='outline']:is(.is-near, :focus-visible) { color: var(--on-accent); }
+
+.mb__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding-block: 28px 36px;
+  border-top: 1px solid var(--line);
+  font-size: var(--text-sm);
+}
+.mb__icons { display: flex; gap: 10px; margin: 0; }
+.mb__icon { width: 46px; height: 46px; border-radius: 50%; color: var(--ink); }
+.mb__icon .mb__body { border: 1px solid var(--line-2); background: var(--surface); }
+.mb__icon svg { width: 18px; height: 18px; }
+.mb__icon:is(.is-near, :focus-visible) .mb__body { background: var(--ink); border-color: var(--ink); }
+.mb__icon:is(.is-near, :focus-visible) { color: var(--bg); }
+
+@media (max-width: 720px) {
+  .mb__bar nav { display: none; }
+  .mb__hero { grid-template-columns: 1fr; justify-items: start; }
+  .mb__foot { flex-direction: column; align-items: flex-start; }
+}

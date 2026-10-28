@@ -1,0 +1,32 @@
+# Free checks on every push to main and every pull request: component validation and the production build.
+# The browser smoke test needs Chromium and runs on demand (workflow_dispatch with smoke ticked).
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      smoke:
+        description: Run the headless smoke test over every component
+        type: boolean
+        default: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+      - run: npm run check
+      - run: npx vite build
+      - if: ${{ inputs.smoke }}
+        run: npx playwright install --with-deps chromium && npm run smoke

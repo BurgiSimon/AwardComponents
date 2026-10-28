@@ -1,0 +1,130 @@
+/* AwardComponents tokens — one theme for the shell and every demo.
+   The shell and each demo frame import this file; demos read these names and never bring their own palette.
+   Light is the default; [data-theme="dark"] on <html> switches. The play runtime and the shell set it. */
+
+:root {
+  color-scheme: light;
+
+  /* Grounds and inks */
+  --bg: #f4f4f1;
+  --bg-2: #ecece7;
+  --surface: #ffffff;
+  --surface-2: #f7f7f4;
+  --raised: #ffffff;
+  --ink: #121211;
+  --ink-2: #474742;
+  --muted: #74746c;
+  --faint: #a3a39b;
+  --line: rgb(18 18 17 / 0.1);
+  --line-2: rgb(18 18 17 / 0.16);
+  --scrim: rgb(12 12 11 / 0.42);
+
+  /* The one accent: vermilion, the colour of an award seal. Fills and marks use --accent;
+     text on a light ground uses --accent-ink, which keeps 4.5:1. */
+  --accent: #ff5420;
+  --accent-ink: #c6370b;
+  --accent-soft: rgb(255 84 32 / 0.12);
+  --on-accent: #ffffff;
+
+  /* Content materials: the five colours demo content may use for cards, pills, charts and stand-in art.
+     Muted on purpose so a page of demos still reads as one set. */
+  --clay: #c9744b;
+  --moss: #6e7b4c;
+  --sky: #8db1d6;
+  --sand: #e3d2b1;
+  --plum: #6b4968;
+  --night: #1b1d24;
+
+  /* State */
+  --ok: #2f8a4c;
+  --warn: #b7791f;
+  --danger: #c93c2c;
+  --focus: #2f5dff;
+
+  /* Type */
+  --font-sans: 'Mona Sans Variable', 'Mona Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  --font-serif: 'Bodoni Moda Variable', 'Bodoni Moda', 'Didot', 'Bodoni 72', Georgia, serif;
+  --wide: 118%;          /* display width */
+  --wider: 125%;
+  --narrow: 88%;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: clamp(1.6rem, 1.2rem + 1.4vw, 2.25rem);
+  --text-3xl: clamp(2.1rem, 1.4rem + 2.6vw, 3.5rem);
+  --text-display: clamp(2.8rem, 1.6rem + 5.2vw, 6.5rem);
+
+  /* Space, radius, depth */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --gutter: clamp(16px, 4vw, 48px);
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+
+  --shadow-1: 0 1px 2px rgb(18 18 17 / 0.06), 0 1px 1px rgb(18 18 17 / 0.04);
+  --shadow-2: 0 8px 24px -8px rgb(18 18 17 / 0.16), 0 2px 6px rgb(18 18 17 / 0.06);
+  --shadow-3: 0 24px 64px -16px rgb(18 18 17 / 0.28), 0 6px 18px rgb(18 18 17 / 0.08);
+
+  /* Motion: one curve family. Durations are movement lengths; reduced motion zeroes movement, keeps fades. */
+  --ease-out: cubic-bezier(0.2, 0.7, 0.1, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --dur-xs: 120ms;
+  --dur-s: 200ms;
+  --dur-m: 360ms;
+  --dur-l: 640ms;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg: #0c0c0d;
+  --bg-2: #121213;
+  --surface: #151516;
+  --surface-2: #1b1b1d;
+  --raised: #202022;
+  --ink: #f2f2ee;
+  --ink-2: #bdbdb5;
+  --muted: #8d8d85;
+  --faint: #5f5f59;
+  --line: rgb(242 242 238 / 0.09);
+  --line-2: rgb(242 242 238 / 0.15);
+  --scrim: rgb(0 0 0 / 0.6);
+
+  --accent: #ff6a3d;
+  --accent-ink: #ff8a63;
+  --accent-soft: rgb(255 106 61 / 0.16);
+  --on-accent: #140803;
+
+  --clay: #d4855d;
+  --moss: #8f9c69;
+  --sky: #8fb6e0;
+  --sand: #cdbb98;
+  --plum: #9a7096;
+  --night: #0e0f13;
+
+  --ok: #4fb36d;
+  --warn: #e0a447;
+  --danger: #ef6a58;
+  --focus: #7d9bff;
+
+  --shadow-1: 0 1px 2px rgb(0 0 0 / 0.5);
+  --shadow-2: 0 10px 30px -10px rgb(0 0 0 / 0.7), 0 2px 6px rgb(0 0 0 / 0.4);
+  --shadow-3: 0 30px 80px -20px rgb(0 0 0 / 0.85), 0 8px 20px rgb(0 0 0 / 0.5);
+}

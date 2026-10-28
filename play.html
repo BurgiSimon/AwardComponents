@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Preview — AwardComponents</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <script>
+    // Theme and forced motion tier before first paint, from the URL, else the shell's stored choice, else the system.
+    (function () {
+      var p = new URLSearchParams(location.search), d = document.documentElement, t = p.get('theme');
+      if (t !== 'dark' && t !== 'light') {
+        try { t = localStorage.getItem('ac:theme'); } catch (e) {}
+        if (t !== 'dark' && t !== 'light') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      d.dataset.theme = t;
+      var m = p.get('motion');
+      if (m === 'full' || m === 'reduced' || m === 'static') d.dataset.motionForced = m;
+      if (p.has('capture')) d.dataset.capture = '';
+      if (p.has('embed')) d.dataset.embed = '';
+    })();
+  </script>
+</head>
+<body>
+  <div id="ac-root"></div>
+  <script type="module" src="/src/play/runtime.js"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+.ho { overflow-x: clip; background: radial-gradient(70% 60% at 72% 42%, color-mix(in oklab, var(--accent) 7%, var(--bg-2)), var(--bg) 70%); }
+.ho__hero { min-height: 100svh; display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr); align-items: center; gap: clamp(20px, 4vw, 64px); padding-block: 40px; }
+.ho__copy { display: grid; gap: 20px; align-content: center; position: relative; z-index: 1; }
+.ho__copy .ac-display { font-size: clamp(3rem, 2rem + 4.6vw, 6.4rem); }
+.ho__swatches { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 4px 0 0; padding: 0; border: 0; }
+.ho__swatches legend { width: 100%; margin-bottom: 10px; padding: 0; }
+.ho__swatches legend span { color: var(--ink); }
+.ho__sw { position: relative; width: 34px; height: 34px; border-radius: 50%; background: var(--sw); box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.15); cursor: pointer; transition: transform var(--dur-s) var(--ease-spring); }
+.ho__sw:hover { transform: scale(1.08); }
+.ho__sw input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+.ho__sw:has(input:checked) { box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.15), 0 0 0 3px var(--bg), 0 0 0 5px var(--ink); }
+.ho__sw:has(input:focus-visible) { box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--focus); }
+.ho__buy { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 8px; }
+
+.ho__stage { position: relative; height: min(78svh, 720px); min-height: 320px; }
+.ho__stage canvas { position: absolute; inset: 0; }
+.ho__still { position: absolute; inset: 8% 14%; display: grid; place-items: center; }
+.ho__still svg { width: 100%; height: 100%; }
+
+.ho__specs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-block: 32px; border-top: 1px solid var(--line); margin: 0 auto; }
+.ho__specs div { display: grid; gap: 6px; }
+.ho__specs dd { margin: 0; font-size: var(--text-sm); color: var(--ink-2); }
+.ho__spacer { height: 60svh; }
+
+@media (max-width: 760px) {
+  .ho__hero { grid-template-columns: 1fr; grid-template-rows: auto auto; padding-top: 24px; }
+  .ho__stage { order: -1; height: 46svh; }
+  .ho__specs { grid-template-columns: 1fr 1fr; }
+}
