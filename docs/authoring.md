@@ -114,7 +114,7 @@ export default function mount(root, options, ctx) {
 - `signal` aborts on unmount: pass it to every `addEventListener` (`on(ctx, target, type, fn)` does).
 - `onCleanup(fn)` runs on unmount, in reverse order.
 - `onTheme(fn)` is called on a light/dark change. CSS custom properties update by themselves; canvas and WebGL code re-read tokens here (or set `preview.remountOnTheme`).
-- `capture` is true while `scripts/frames.mjs` takes the thumbnail: hide instructions that only make sense live, and hold a representative moment instead of relying on pointer timing (under headless SwiftShader a pointer move can take seconds, so a short-lived trail or wake may be gone before the shot). Set the state the frame should show when `ctx.capture` is true.
+- `capture` is true while `scripts/frames.mjs` takes the thumbnail: hide instructions that only make sense live, and hold a representative moment instead of relying on pointer timing (under headless SwiftShader a pointer move can take seconds, so a short-lived trail or wake may be gone before the shot). Set the state the frame should show when `ctx.capture` is true. Headless clocks also run slow (a few frames per second under load), so step simulations such as physics or particles ahead synchronously in capture mode, and give any wait on a WAAPI `finished` promise a timer fallback.
 
 **The returned instance** (all optional): `update(options, changedIds)` applies values live (return `false` to have the runtime re-mount, debounced); `action(id)` runs a `meta.actions` entry; `destroy()` for extra teardown.
 

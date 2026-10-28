@@ -1,5 +1,6 @@
 // The shared picture set (CC0 / public domain, credited in CREDITS.md and on each component page).
-// photo('id') → { src, srcSm, alt, width, height, focus, credit, tags } with URLs resolved against the site base.
+// photo('id', { fallbackTags }) → { src, srcSm, alt, width, height, focus, credit, tags } with URLs resolved against
+// the site base. Ask only for pictures the demo shows: every returned picture is credited on the component page.
 // photos({ tags: ['object'], count: 6, seed: 'shop', exclude: ['id', …] }) → a deterministic pick by tag; exclude keeps
 // separate calls from returning the same picture (pass the ids of an earlier pick).
 // image(item, { sizes, eager, className }) → an <img> with srcset, decoding async, lazy unless eager.
@@ -44,8 +45,10 @@ export const allPhotos = () => items.slice();
 // Pictures a demo actually used, read by the play runtime so the component page can credit them.
 const used = (window.__acMedia ||= new Set());
 
-export function photo(id) {
-  const hit = byId.get(id);
+// photo('id', { fallbackTags: ['ceramic'] }): a named picture, else the first match for the tags, else drawn art.
+export function photo(id, { fallbackTags } = {}) {
+  let hit = byId.get(id);
+  if (!hit && fallbackTags?.length) hit = items.find((m) => fallbackTags.every((t) => m.tags?.includes(t)));
   if (hit) used.add(hit.id);
   return hit || art(id);
 }
