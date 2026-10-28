@@ -30,20 +30,19 @@
 .ss__draw[hidden] { display: none; }
 .ss__draw svg { width: 100%; height: auto; overflow: visible; }
 .ss__ground { fill: var(--line-2); }
-.ss__globe { fill: url(#ss-glass); stroke: var(--ink); stroke-width: 1.25; }
-.ss__glass-hi { stop-color: var(--surface); }
-.ss__glass-lo { stop-color: color-mix(in oklab, var(--sand) 72%, var(--surface)); }
-:root[data-theme='dark'] .ss__glass-hi { stop-color: color-mix(in oklab, var(--sand) 25%, var(--ink)); }
-:root[data-theme='dark'] .ss__glass-lo { stop-color: var(--sand); }
-:root[data-theme='dark'] .ss__globe { stroke: none; filter: drop-shadow(0 0 10px color-mix(in oklab, var(--sand) 45%, transparent)); }
-.ss__stem, .ss__base { fill: color-mix(in oklab, var(--sand) 60%, var(--ink) 25%); }
+.ss__vase { fill: url(#ss-glaze); stroke: var(--ink); stroke-width: 1.25; stroke-linejoin: round; }
+.ss__glaze-hi { stop-color: color-mix(in oklab, var(--moss) 14%, var(--surface)); }
+.ss__glaze-lo { stop-color: color-mix(in oklab, var(--moss) 42%, var(--surface)); }
+:root[data-theme='dark'] .ss__glaze-hi { stop-color: color-mix(in oklab, var(--moss) 30%, var(--ink)); }
+:root[data-theme='dark'] .ss__glaze-lo { stop-color: color-mix(in oklab, var(--moss) 75%, var(--surface)); }
+:root[data-theme='dark'] .ss__vase { stroke: color-mix(in oklab, var(--ink) 40%, transparent); }
 .ss__dim { fill: var(--accent); }
 .ss__dim-label { font-family: var(--font-mono); font-size: 10.5px; fill: var(--accent-ink); letter-spacing: 0.02em; }
-.ss__draw :is(circle, rect, text) {
-  transition: r var(--dur-l) var(--ease-out), cx var(--dur-l) var(--ease-out), cy var(--dur-l) var(--ease-out), x var(--dur-l) var(--ease-out),
+.ss__draw :is(path, rect, text) {
+  transition: d var(--dur-l) var(--ease-out), x var(--dur-l) var(--ease-out),
     y var(--dur-l) var(--ease-out), width var(--dur-l) var(--ease-out), height var(--dur-l) var(--ease-out), transform var(--dur-l) var(--ease-out);
 }
-:root[data-motion='reduced'] .ss__draw :is(circle, rect, text) { transition: none; }
+:root[data-motion='reduced'] .ss__draw :is(path, rect, text) { transition: none; }
 
 .ss__facts { display: grid; gap: clamp(22px, 3vw, 34px); padding-top: clamp(4px, 1.4vw, 20px); }
 .ss__lead { display: grid; gap: 22px; }

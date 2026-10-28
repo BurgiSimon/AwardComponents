@@ -23,12 +23,12 @@ export default function mount(root, options, ctx) {
   root.innerHTML = html`
     <div class="ap__page" data-page>
       <section class="ap__hero" aria-labelledby="ap-title">
+        <header class="ac-bar ap__bar">
+          <a class="ac-brand" href="#top">${studio.name}</a>
+          <nav aria-label="Studio">${studio.nav.map((n) => html`<a href="#top">${n}</a>`)}</nav>
+        </header>
         <div class="ap__frame" data-frame>
           <div class="ap__media" data-media></div>
-          <header class="ac-bar ap__bar">
-            <a class="ac-brand" href="#top">${studio.name}</a>
-            <nav aria-label="Studio">${studio.nav.map((n) => html`<a href="#top">${n}</a>`)}</nav>
-          </header>
           <div class="ap__copy ac-wrap">
             <p class="ac-label ap__in">Selected work · 01 of ${String(studio.projects.length).padStart(2, '0')}</p>
             <h1 class="ac-display ap__in" id="ap-title" tabindex="-1">${project.title}</h1>

@@ -8,7 +8,7 @@ export default {
   tags: ['scroll', 'canvas', 'image-sequence', 'turntable', 'scrub', 'sticky', 'product', 'scrolltrigger'],
   added: '2026-10-28',
   order: 70,
-  preview: { height: 660, scroll: true, hint: 'Scroll to turn the speaker', capture: { scroll: 0.3, wait: 7000 } },
+  preview: { height: 660, scroll: true, hint: 'Scroll to turn the speaker', capture: { scroll: 0.3, wait: 9000 } },
   useCases: [
     'A product page turntable: the object shown from every side without a 3D engine at runtime',
     'An exploded view or an assembly sequence exported from Blender or Cinema 4D',

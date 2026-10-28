@@ -112,8 +112,8 @@ async function renderSequence({ count, size, hex, signal, onProgress, only }) {
   const indices = only != null ? [only] : [...Array(count).keys()];
   try {
     for (const i of indices) {
-      // One frame per animation frame: the page keeps painting (and the readout moving) while the sequence renders.
-      await new Promise((r) => requestAnimationFrame(r));
+      // Yield between frames: the page keeps painting (and the readout moving) while the sequence renders.
+      await new Promise((r) => setTimeout(r));
       if (signal.aborted) break;
       group.rotation.y = (i / count) * Math.PI * 2;
       renderer.render(scene, camera);
@@ -230,8 +230,8 @@ export default function mount(root, options, ctx) {
   canvas.width = canvas.height = size;
   const still = Math.round(count * 0.38); // the chosen frame under reduced motion: a three-quarter view
 
-  // mount() resolves once the frames are decoded, so the frame says ready only when the scrub is armed.
-  const sequence = renderSequence({
+  // The page is usable at once (poster, callouts, a progress readout); the scrub arms when every frame is decoded.
+  renderSequence({
     count,
     size,
     hex: finish.hex,
@@ -269,5 +269,5 @@ export default function mount(root, options, ctx) {
   });
 
   if (!full) root.classList.add('fs--still');
-  return sequence.then(() => instance);
+  return instance;
 }

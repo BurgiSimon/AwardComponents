@@ -287,8 +287,8 @@ export default function mount(root, options, ctx) {
     camera.aspect = width / height;
     const fitH = 4.6;
     const dist = (fitH / 2) / Math.tan((camera.fov * Math.PI) / 360) / Math.min(1, camera.aspect * 1.05);
-    camera.position.set(0, 2.3, dist);
-    camera.lookAt(0, 1.9, 0);
+    camera.position.set(0, 4.6, dist); // above the tallest lip, so the open top reads
+    camera.lookAt(0, 1.75, 0);
     camera.updateProjectionMatrix();
     wake();
   });

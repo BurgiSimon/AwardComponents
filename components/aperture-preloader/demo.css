@@ -5,8 +5,8 @@
 .ap a { text-decoration: none; }
 
 /* The hero: a full-viewport frame the aperture clips, the photograph inside it that scales, copy that follows.
-   The section's ground is what shows around the window while it opens. */
-.ap__hero { position: relative; height: 100svh; min-height: 520px; background: color-mix(in oklab, var(--ink) 92%, var(--bg)); }
+   The section's dark ground is what shows around the window while it opens; the bar sits above both. */
+.ap__hero { position: relative; height: 100svh; min-height: 520px; background: var(--night); color: var(--on-photo); }
 .ap__frame { position: absolute; inset: 0; overflow: clip; background: var(--night); color: var(--on-photo); }
 .ap__frame::before,
 .ap__frame::after { content: ''; position: absolute; inset-inline: 0; z-index: 1; pointer-events: none; }
@@ -15,7 +15,8 @@
 .ap__media { position: absolute; inset: 0; will-change: transform; }
 .ap__media img { width: 100%; height: 100%; object-fit: cover; }
 
-.ap__bar { position: relative; z-index: 2; }
+.ap__bar { position: absolute; inset: 0 0 auto; z-index: 3; }
+.ap__bar :focus-visible { outline-color: var(--on-photo); }
 .ap__bar nav a { color: color-mix(in oklab, var(--on-photo) 82%, transparent); }
 .ap__bar nav a:hover { color: var(--on-photo); }
 .ap__frame :focus-visible { outline-color: var(--on-photo); }

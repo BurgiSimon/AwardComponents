@@ -1,60 +1,75 @@
-// Specification sheet — Ostra's Luma Lamp product page. The facts are one <dl> of term/description pairs with the
-// units as real text; a size choice (Table / Floor) and a units switch (metric / imperial) are native radio groups
-// that rewrite the values in place. A value that changed rises ~0.4 em into place (30 ms stagger) through WAAPI;
-// a dimensioned line drawing follows both switches. Care and delivery are native <details>. No script library.
-// Reduced motion: values fade, the drawing changes without moving. Static: everything swaps at once.
+// Specification sheet — Ostra's Tide Vase product page. The facts are one <dl> of term/description pairs with the
+// units as real text; a size choice (S / M / L) and a units switch (metric / imperial) are native radio groups that
+// rewrite the values in place. A value that changed rises ~0.45 em into place (30 ms stagger) through WAAPI; a
+// dimensioned profile drawing, at one shared scale, follows both switches. Care and delivery are native <details>.
+// No script library. Reduced motion: values fade, the drawing changes without moving. Static: everything swaps.
 import './demo.css';
-import { on, html, raw, photos, imageHTML, content, formatPrice } from '../../src/demo-kit/index.js';
+import { on, html, raw, photo, photos, imageHTML, content, formatPrice } from '../../src/demo-kit/index.js';
 
-// The lamp in two sizes, in centimetres, metres and kilograms. Imperial is derived, never stored.
+// The vase in three sizes, in centimetres, litres and kilograms. Imperial is derived, never stored.
 const SIZES = {
-  table: { label: 'Table', price: 340, height: 46, shade: 30, base: 16, cable: 2.4, weight: 3.2 },
-  floor: { label: 'Floor', price: 520, height: 152, shade: 38, base: 28, cable: 3, weight: 6.4 },
+  s: { label: 'S', name: 'small', price: 118, height: 24, diameter: 11, opening: 3, capacity: 0.8, weight: 0.9 },
+  m: { label: 'M', name: 'medium', price: 148, height: 32, diameter: 14, opening: 3.5, capacity: 1.6, weight: 1.4 },
+  l: { label: 'L', name: 'large', price: 178, height: 40, diameter: 17, opening: 4, capacity: 2.9, weight: 2.3 },
 };
+const TALLEST = 40;
 const UNIT = {
-  cm: '<abbr title="centimetres">cm</abbr>', in: '<abbr title="inches">in</abbr>', m: '<abbr title="metres">m</abbr>',
-  ft: '<abbr title="feet">ft</abbr>', kg: '<abbr title="kilograms">kg</abbr>', lb: '<abbr title="pounds">lb</abbr>',
+  cm: '<abbr title="centimetres">cm</abbr>', in: '<abbr title="inches">in</abbr>', l: '<abbr title="litres">l</abbr>',
+  oz: '<abbr title="US fluid ounces">fl oz</abbr>', kg: '<abbr title="kilograms">kg</abbr>', lb: '<abbr title="pounds">lb</abbr>',
 };
-const num = (n, d = 1) => (Number.isInteger(n) && d === 0 ? String(n) : n.toFixed(d).replace(/\.0$/, ''));
+const num = (n, d = 1) => n.toFixed(d).replace(/\.0$/, '');
 
-const length = (cm, units) => (units === 'imperial' ? `${num(cm / 2.54)} ${UNIT.in}` : `${num(cm, 0)} ${UNIT.cm}`);
-const cable = (m, units) => {
-  if (units !== 'imperial') return `${num(m)} ${UNIT.m}`;
-  const inches = Math.round(m * 39.3701);
-  return `${Math.floor(inches / 12)} ${UNIT.ft} ${inches % 12} ${UNIT.in}`;
-};
+const length = (cm, units) => (units === 'imperial' ? `${num(cm / 2.54)} ${UNIT.in}` : `${num(cm)} ${UNIT.cm}`);
+const volume = (l, units) => (units === 'imperial' ? `${Math.round(l * 33.814)} ${UNIT.oz}` : `${num(l)} ${UNIT.l}`);
 const weight = (kg, units) => (units === 'imperial' ? `${num(kg * 2.20462)} ${UNIT.lb}` : `${num(kg)} ${UNIT.kg}`);
 
 // Each row: a term and a description built from the size and the units (raw markup: the units are <abbr>).
 const ROWS = [
   ['Height', (s, u) => length(s.height, u)],
-  ['Shade diameter', (s, u) => length(s.shade, u)],
-  ['Base diameter', (s, u) => length(s.base, u)],
-  ['Cable', (s, u) => `${cable(s.cable, u)}, braided linen`],
+  ['Diameter', (s, u) => length(s.diameter, u)],
+  ['Opening', (s, u) => length(s.opening, u)],
+  ['Capacity', (s, u) => volume(s.capacity, u)],
   ['Weight', (s, u) => weight(s.weight, u)],
-  ['Light', () => 'E27 LED, 8 W, 806 lm, 2700 K'],
-  ['Dimmer', () => 'In-line, ten steps'],
-  ['Materials', () => 'Mouth-blown opal glass, brushed brass'],
+  ['Body', () => 'Porcelain stoneware, reduction fired at 1,280 °C'],
+  ['Glaze', () => 'Celadon, glazed inside, watertight'],
+  ['Made in', () => 'Os, Norway, in runs of forty'],
 ];
 
 // Plain text of a value for the drawing's labels (no markup inside SVG text).
 const plain = (markup) => markup.replace(/<[^>]+>/g, '');
 
+// The vase's profile as one path with the same commands for every size, so a CSS transition on `d` can morph it.
+function profile(s, k, cx, ground) {
+  const H = s.height * k;
+  const R1 = (s.diameter / 2) * k; // the widest point of the body
+  const R0 = R1 * 0.62;            // the foot
+  const Rn = (s.opening / 2) * k * 1.1;
+  const Rl = Rn * 1.35;            // the lip
+  const y = (f) => (ground - H * f).toFixed(2);
+  const side = (dir) => {
+    const x = (r) => (cx + dir * r).toFixed(2);
+    return { x0: x(R0), x0c: x(R0 + (R1 - R0) * 0.9), x1: x(R1), xn: x(Rn), xl: x(Rl) };
+  };
+  const r = side(1);
+  const l = side(-1);
+  return `M${l.x0} ${y(0)} L${r.x0} ${y(0)} C${r.x0c} ${y(0.01)} ${r.x1} ${y(0.15)} ${r.x1} ${y(0.34)} C${r.x1} ${y(0.56)} ${r.xn} ${y(0.6)} ${r.xn} ${y(0.74)} L${r.xn} ${y(0.96)} L${r.xl} ${y(1)} L${l.xl} ${y(1)} L${l.xn} ${y(0.96)} L${l.xn} ${y(0.74)} C${l.xn} ${y(0.6)} ${l.x1} ${y(0.56)} ${l.x1} ${y(0.34)} C${l.x1} ${y(0.15)} ${l.x0c} ${y(0.01)} ${l.x0} ${y(0)} Z`;
+}
+
 export default function mount(root, options, ctx) {
   const { shop } = content;
-  const lamp = shop.products.find((p) => p.id === 'luma-lamp');
+  const vase = shop.products.find((p) => p.id === 'tide-vase');
   let cfg = { ...options };
-  const state = { size: 'table', units: cfg.units };
+  const state = { size: 'm', units: cfg.units };
 
-  // A lamp picture when the set has one, else the closest thing; the drawn stand-in last.
-  const pick = [['lamp'], ['glass'], ['interior', 'light'], ['object']].map((tags) => photos({ tags, count: 1, seed: 'ss-luma' })[0]);
+  // The celadon bottle vase from the shared set when it is there, else another ceramic; the drawn stand-in last.
+  const pick = [photo('obj-celadon-vase'), ...[['ceramic'], ['object', 'product']].map((tags) => photos({ tags, count: 1, seed: 'ss-vase' })[0])];
   const pic = pick.find((p) => !p.drawn) || pick[0];
 
   root.className = 'ss';
   root.innerHTML = html`
     <header class="ac-bar ss__bar">
       <a class="ac-brand" href="#top">${shop.name}</a>
-      <nav aria-label="Shop"><a href="#top">Ceramics</a><a href="#top" aria-current="page">Lighting</a><a href="#top">Textiles</a><a href="#top">Journal</a></nav>
+      <nav aria-label="Shop"><a href="#top" aria-current="page">Ceramics</a><a href="#top">Lighting</a><a href="#top">Textiles</a><a href="#top">Journal</a></nav>
       <a class="ss__bag" href="#top">Bag <span class="ss__count" data-bag>0</span></a>
     </header>
     <main class="ss__page ac-wrap">
@@ -63,15 +78,12 @@ export default function mount(root, options, ctx) {
           <div class="ac-media ss__photo">${raw(imageHTML(pic, { sizes: '(min-width: 760px) 50vw, 100vw', eager: true, alt: pic.drawn ? '' : pic.alt }))}</div>
           <figcaption class="ss__draw" data-draw>
             <svg viewBox="0 0 220 250" aria-hidden="true">
-              <defs><radialGradient id="ss-glass" cx="0.36" cy="0.32" r="0.75"><stop offset="0" class="ss__glass-hi"/><stop offset="1" class="ss__glass-lo"/></radialGradient></defs>
+              <defs><linearGradient id="ss-glaze" x1="0" x2="1"><stop offset="0" class="ss__glaze-lo"/><stop offset="0.38" class="ss__glaze-hi"/><stop offset="1" class="ss__glaze-lo"/></linearGradient></defs>
               <rect class="ss__ground" x="12" y="226" width="196" height="1"/>
-              <circle class="ss__globe" data-g="globe" cx="92"/>
-              <rect class="ss__stem" data-g="stem" width="4"/>
-              <rect class="ss__stem" data-g="collar" width="12" height="5" rx="1"/>
-              <rect class="ss__base" data-g="base" rx="2"/>
+              <path class="ss__vase" data-g="vase"/>
               <rect class="ss__dim" data-g="vline" x="188" width="1"/>
               <rect class="ss__dim" data-g="vtop" x="183" width="11" height="1"/>
-              <rect class="ss__dim" data-g="vbot" x="183" width="11" height="1"/>
+              <rect class="ss__dim" data-g="vbot" x="183" y="226" width="11" height="1"/>
               <rect class="ss__dim" data-g="hline" height="1"/>
               <rect class="ss__dim" data-g="hl" width="1" height="11"/>
               <rect class="ss__dim" data-g="hr" width="1" height="11"/>
@@ -85,9 +97,9 @@ export default function mount(root, options, ctx) {
         <div class="ss__facts">
           <div class="ss__lead">
             <div class="ss__intro">
-              <p class="ac-label">Lighting · Mouth-blown glass</p>
-              <h1 class="ac-h1" id="ss-title">${lamp.name}</h1>
-              <p class="ac-body">A globe of opal glass on a brushed brass stem. The light comes through the whole shade: warm, even, no bright spot.</p>
+              <p class="ac-label">Ceramics · Celadon glaze</p>
+              <h1 class="ac-h1" id="ss-title">${vase.name}</h1>
+              <p class="ac-body">A bottle vase thrown in one piece, with a narrow neck that holds a single stem upright. The celadon pools pale green where the glaze runs thick.</p>
             </div>
 
             <form class="ss__buy" data-buy>
@@ -116,11 +128,11 @@ export default function mount(root, options, ctx) {
             <div class="ss__more" data-more>
               <details>
                 <summary><span>Care</span><span class="ss__plus" aria-hidden="true"></span></summary>
-                <p class="ac-body">Dust the glass with a dry cloth. To wash it, let the lamp cool, lift the shade off its three brass clips and rinse it by hand in warm water. The brass darkens where it is touched; leave it, or bring it back with a soft cloth and a little wax.</p>
+                <p class="ac-body">Watertight and food-safe, so it can hold water for weeks. Wash it by hand with a bottle brush; the dishwasher will not hurt the glaze, but the felt under the foot will not survive it. Change the water every few days and the celadon stays clear.</p>
               </details>
               <details>
                 <summary><span>Delivery and returns</span><span class="ss__plus" aria-hidden="true"></span></summary>
-                <p class="ac-body">Made to order in Småland and assembled in Os, then sent in a moulded pulp crate within 8–12 working days. Delivery is free in the EU on orders over ${formatPrice(shop.freeShippingFrom)}. Return it unused within 30 days, in the crate it came in.</p>
+                <p class="ac-body">Thrown and fired in Os, then sent in a moulded pulp cradle within 3–5 working days. Delivery is free in the EU on orders over ${formatPrice(shop.freeShippingFrom)}. Return it unused within 30 days, in the cradle it came in.</p>
               </details>
             </div>
           </div>
@@ -151,37 +163,35 @@ export default function mount(root, options, ctx) {
     return true;
   };
 
-  // The drawing: geometry from the size, scaled so the lamp is 172 units tall; set as CSS geometry properties so a
-  // size change transitions (attributes too, for engines without SVG geometry in CSS).
+  // The drawing, at one scale for every size (the tallest is 172 units), so S, M and L read as the sizes they are.
+  // Geometry goes in as CSS (`d`, `x`, `y`, `width`) so a size change transitions, and as attributes as a fallback.
   const set = (el, props) => {
     for (const [k, v] of Object.entries(props)) {
       el.setAttribute(k, v);
-      if (k !== 'transform') el.style.setProperty(k, `${v}px`);
+      el.style.setProperty(k, `${v}px`);
     }
   };
   const draw = () => {
     const s = SIZES[state.size];
-    const k = 172 / s.height;
+    const k = 172 / TALLEST;
     const ground = 226;
-    const top = ground - 172;
-    const r = (s.shade / 2) * k;
     const cx = 92;
-    const baseH = Math.max(4, Math.min(9, 2 * k));
-    set(g.globe, { cy: top + r, r });
-    set(g.collar, { x: cx - 6, y: top + r * 2 - 2 });
-    set(g.stem, { x: cx - 2, y: top + r * 2 + 2, height: Math.max(0, ground - baseH - (top + r * 2 + 2)) });
-    set(g.base, { x: cx - (s.base / 2) * k, y: ground - baseH, width: s.base * k, height: baseH });
-    set(g.vline, { y: top, height: 172 });
+    const H = s.height * k;
+    const top = ground - H;
+    const r = (s.diameter / 2) * k;
+    const d = profile(s, k, cx, ground);
+    g.vase.setAttribute('d', d);
+    g.vase.style.setProperty('d', `path("${d}")`);
+    set(g.vline, { y: top, height: H });
     set(g.vtop, { y: top });
-    set(g.vbot, { y: ground });
     set(g.hline, { x: cx - r, y: top - 14, width: r * 2 });
     set(g.hl, { x: cx - r, y: top - 19 });
     set(g.hr, { x: cx + r, y: top - 19 });
-    g.vlabel.style.transform = `translate(204px, ${top + 86}px) rotate(-90deg)`;
-    g.hlabel.style.transform = `translate(${cx}px, ${top - 24}px)`;
+    g.vlabel.style.transform = `translate(204px, ${(top + H / 2).toFixed(1)}px) rotate(-90deg)`;
+    g.hlabel.style.transform = `translate(${cx}px, ${(top - 24).toFixed(1)}px)`;
     g.vlabel.textContent = plain(length(s.height, state.units));
-    g.hlabel.textContent = `Ø ${plain(length(s.shade, state.units))}`;
-    drawCaption.textContent = `${s.label} · ${state.units === 'imperial' ? 'inches' : 'centimetres'}`;
+    g.hlabel.textContent = `Ø ${plain(length(s.diameter, state.units))}`;
+    drawCaption.textContent = `Size ${s.label} · ${state.units === 'imperial' ? 'inches' : 'centimetres'}`;
   };
 
   const render = (animate) => {
@@ -200,7 +210,7 @@ export default function mount(root, options, ctx) {
     e.preventDefault();
     count++;
     bag.textContent = String(count);
-    status.textContent = `Added: ${lamp.name}, ${SIZES[state.size].label.toLowerCase()} size, ${formatPrice(SIZES[state.size].price)}.`;
+    status.textContent = `Added: ${vase.name}, ${SIZES[state.size].name}, ${formatPrice(SIZES[state.size].price)}.`;
   });
 
   const apply = () => {
