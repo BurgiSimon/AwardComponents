@@ -1,0 +1,132 @@
+/* The spread: one reading column held at a measure against one side, and a margin (the rail) beside it. The lead
+   figure and the pull quote hang into the rail as floats; the small figure floats inside the text. */
+.ef {
+  --measure: 58;
+  --ef-gap: clamp(28px, 5vw, 80px);
+  --ef-edge: max(var(--gutter), calc((100% - 1320px) / 2));
+  --ef-head: var(--font-serif);
+  --ef-head-w: 430;
+  --ef-head-s: normal;
+  --ef-head-t: -0.02em;
+  overflow-x: clip;
+}
+.ef:not(.ef--serif) { --ef-head: var(--font-sans); --ef-head-w: 720; --ef-head-s: var(--wide); --ef-head-t: -0.04em; }
+.ef :where(figure) { margin: 0; }
+
+/* ---------- Masthead ---------- */
+.ef-bar { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: clamp(20px, 4vw, 56px); padding: 14px var(--ef-edge); border-bottom: 1px solid var(--line); }
+.ef-bar__mark { display: inline-flex; align-items: center; min-height: 44px; font-family: var(--font-serif); font-style: italic; font-weight: 520; font-size: 1.625rem; letter-spacing: -0.02em; text-decoration: none; }
+.ef-bar nav { display: flex; gap: clamp(14px, 2.4vw, 28px); font-size: var(--text-sm); }
+.ef-bar nav a { display: inline-flex; align-items: center; min-height: 44px; color: var(--ink-2); text-decoration: none; }
+.ef-bar nav a[aria-current] { color: var(--ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.4em; }
+.ef-bar nav a:hover { color: var(--ink); }
+
+/* ---------- The spread ---------- */
+/* The article is a size container, so from inside the column the rail is 100cqw minus the column and the gap. Its
+   font size is the text's, so the measure's ch is the reading text's ch. */
+.ef-art {
+  container-type: inline-size;
+  padding-block: clamp(24px, 4vw, 56px) clamp(72px, 10vw, 140px);
+  font-size: 1.0625rem;
+}
+.ef-col {
+  --col: min(calc(var(--measure) * 1ch), 58cqw);
+  --rail: calc(100cqw - var(--col) - var(--ef-gap));
+  display: flow-root;
+  width: var(--col);
+  margin-left: auto;
+}
+.ef[data-side='right'] .ef-col { margin-left: 0; margin-right: auto; }
+
+/* Hung floats: width = the rail, negative margin = the rail plus the gap, so the text beside them never wraps.
+   Left: the picture (picture left), the title (picture across the top) and the quote. Right: their mirrors. */
+.ef-lead, .ef[data-side='above'] .ef-head, .ef[data-quote='hang'] .ef-pull { float: left; width: var(--rail); margin-left: calc(-1 * (var(--rail) + var(--ef-gap))); }
+.ef[data-side='right'] .ef-lead, .ef[data-side='right'][data-quote='hang'] .ef-pull { float: right; margin-left: 0; margin-right: calc(-1 * (var(--rail) + var(--ef-gap))); }
+.ef[data-side='above'] .ef-lead { float: none; width: 100cqw; margin: 0 0 clamp(32px, 5vw, 72px) calc(100% - 100cqw); }
+
+.ef-lead__media { position: relative; height: min(calc(100svh - 200px), 780px); min-height: 300px; overflow: hidden; background: var(--bg-2); }
+.ef[data-side='above'] .ef-lead__media { height: auto; min-height: 0; aspect-ratio: 3 / 1; }
+.ef-lead__media img, .ef-inset__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.ef-cap { margin-top: 12px; max-width: 46ch; color: var(--muted); font-size: 0.8125rem; line-height: 1.45; text-wrap: pretty; }
+.ef-cap__k { margin-right: 0.35em; font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink); }
+
+/* ---------- The head: kicker, title, dek, byline ---------- */
+.ef-head { display: grid; gap: clamp(14px, 1.8vw, 22px); padding-top: 16px; border-top: 1px solid var(--ink); }
+.ef-kicker { font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent-ink); }
+.ef-title {
+  font-family: var(--ef-head);
+  font-weight: var(--ef-head-w);
+  font-stretch: var(--ef-head-s);
+  letter-spacing: var(--ef-head-t);
+  font-size: clamp(2.9rem, 1.4rem + 4.4vw, 6.1rem);
+  line-height: 0.94;
+  text-wrap: balance;
+}
+.ef[data-side='above'] .ef-title { font-size: clamp(2.6rem, 1.2rem + 3.6vw, 5rem); }
+.ef-dek { max-width: 30ch; font-family: var(--font-serif); font-style: italic; font-size: clamp(1.25rem, 1rem + 0.8vw, 1.625rem); line-height: 1.3; color: var(--ink-2); text-wrap: pretty; }
+.ef-byline span { color: var(--ink); }
+
+/* ---------- The text ---------- */
+.ef-body { padding-top: clamp(24px, 3vw, 40px); }
+.ef[data-side='above'] .ef-body { padding-top: 17px; border-top: 1px solid var(--ink); }
+.ef-p { color: var(--ink-2); line-height: 1.7; text-wrap: pretty; hyphens: auto; hyphenate-limit-chars: 8 4 4; }
+.ef-p + .ef-p, .ef-pull + .ef-p, .ef-inset + .ef-p { margin-top: 1.1em; }
+.ef--dropcap .ef-p--first::first-letter {
+  float: left;
+  margin: 0.07em 0.12em 0 0;
+  font-family: var(--ef-head);
+  font-weight: var(--ef-head-w);
+  font-stretch: var(--ef-head-s);
+  font-size: 4.7em;
+  line-height: 0.78;
+  color: var(--ink);
+}
+.ef-p--last::after { content: ''; display: inline-block; width: 0.55em; height: 0.55em; margin-left: 0.4em; background: var(--accent); }
+
+/* The pull quote. Inline: in the column between rules. Hung: out in the rail, clearing the picture above it, so at
+   any measure it lands below the lead figure instead of over it. */
+.ef-pull { margin: 1.6em 0; padding-block: 18px; border-block: 1px solid var(--line-2); }
+.ef-pull p { font-family: var(--font-serif); font-style: italic; font-weight: 420; font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2.2rem); line-height: 1.16; letter-spacing: -0.01em; color: var(--ink); text-wrap: balance; }
+.ef-pull footer { margin-top: 14px; }
+.ef[data-quote='hang'] .ef-pull { clear: left; margin-top: clamp(24px, 3vw, 48px); margin-bottom: 1em; padding-block: 16px 0; border-bottom: 0; border-top: 2px solid var(--accent); text-align: right; }
+.ef[data-quote='hang'] .ef-pull p { margin-left: auto; max-width: 17ch; }
+.ef[data-side='right'][data-quote='hang'] .ef-pull { clear: right; text-align: left; }
+.ef[data-side='right'][data-quote='hang'] .ef-pull p { margin-left: 0; }
+
+.ef-inset { float: right; width: 44%; margin: 0.35em 0 1em 28px; }
+.ef[data-side='right'] .ef-inset { float: left; margin: 0.35em 28px 1em 0; }
+.ef-inset__media { position: relative; aspect-ratio: 4 / 5; overflow: hidden; background: var(--bg-2); }
+
+/* Clear only the small figure's side, never the hung floats in the rail. */
+.ef-filed { clear: right; padding-top: 28px; }
+.ef[data-side='right'] .ef-filed { clear: left; }
+.ef-next { display: grid; gap: 8px; margin-top: clamp(40px, 6vw, 72px); padding-top: 18px; border-top: 1px solid var(--ink); text-decoration: none; }
+.ef-next__title { font-family: var(--ef-head); font-weight: var(--ef-head-w); font-stretch: var(--ef-head-s); letter-spacing: var(--ef-head-t); font-size: clamp(1.75rem, 1.2rem + 1.6vw, 2.6rem); line-height: 1.02; transition: color var(--dur-s) var(--ease-out); }
+.ef-next__title span { display: inline-block; transition: transform var(--dur-s) var(--ease-out); }
+.ef-next:hover .ef-next__title, .ef-next:focus-visible .ef-next__title { color: var(--accent-ink); }
+.ef-next:hover .ef-next__title span, .ef-next:focus-visible .ef-next__title span { transform: translateX(4px); }
+.ef-next__dek { max-width: 46ch; color: var(--muted); font-size: var(--text-sm); }
+:root[data-motion='reduced'] .ef-next__title span { transition: none; }
+
+/* ---------- Tablet: the column takes 56 % whatever the measure ---------- */
+@media (max-width: 1000px) {
+  .ef-col { --col: 56cqw; }
+  .ef[data-side='above'] .ef-lead__media { aspect-ratio: 21 / 9; }
+  .ef-bar__issue { display: none; }
+  .ef-bar { grid-template-columns: auto minmax(0, 1fr); }
+}
+/* ---------- Phone: one column in document order; the quote and the small figure come back into the text ---------- */
+@media (max-width: 759px) {
+  .ef .ef-col { width: auto; margin: 0; }
+  .ef .ef-lead, .ef[data-side] .ef-head, .ef[data-quote] .ef-pull { float: none; width: auto; margin: 0; }
+  .ef .ef-lead { margin-bottom: 28px; }
+  .ef-lead__media, .ef[data-side='above'] .ef-lead__media { height: auto; min-height: 0; aspect-ratio: 4 / 5; }
+  .ef[data-side='above'] .ef-body { padding-top: clamp(24px, 3vw, 40px); border-top: 0; }
+  .ef-bar nav { display: none; }
+  .ef-bar { grid-template-columns: auto auto; justify-content: space-between; }
+  .ef-bar__issue { display: block; }
+  .ef[data-quote] .ef-pull { margin: 1.6em 0; padding-block: 16px; border-top: 2px solid var(--accent); border-bottom: 1px solid var(--line-2); text-align: left; }
+  .ef[data-quote] .ef-pull p { margin-left: 0; max-width: none; }
+  .ef .ef-inset { float: none; width: auto; margin: 1.6em 0; }
+  .ef-inset__media { aspect-ratio: 3 / 2; }
+}

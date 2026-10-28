@@ -71,7 +71,7 @@ export default function mount(root, options, ctx) {
           <p class="ac-label">Particulars</p>
           <h2 class="ep-heading" id="ep-spec-title">Fjordhus in figures.</h2>
           <dl class="ep-dl">
-            ${FIGURES.map(([k, v, unit, note]) => html`<div><dt>${k}</dt><dd><span class="ep-dl__v">${v}</span>${unit ? html`<abbr class="ep-dl__u">${unit}</abbr>` : ''}${note ? html`<span class="ep-dl__n">${note}</span>` : ''}</dd></div>`)}
+            ${FIGURES.map(([k, v, unit, note]) => html`<div><dt>${k}</dt><dd><span class="ep-dl__v">${v}</span>${unit ? html`<span class="ep-dl__u">${unit}</span>` : ''}${note ? html`<span class="ep-dl__n">${note}</span>` : ''}</dd></div>`)}
           </dl>
           <details class="ep-details">
             <summary>Materials and makers</summary>

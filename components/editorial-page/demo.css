@@ -193,6 +193,8 @@ main#ep-main { display: grid; gap: var(--ep-gap); padding-top: clamp(28px, 4.4vw
 
 /* ---------- Tablet: the particulars stack, the story keeps its two columns ---------- */
 @media (max-width: 1000px) {
+  .ep-story { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); }
+  .ep-media--detail { aspect-ratio: 4 / 5; }
   .ep-spec { grid-template-columns: minmax(0, 1fr); }
   .ep-spec__figure { position: static; }
   .ep-media--profile { aspect-ratio: 16 / 9; }
@@ -210,6 +212,7 @@ main#ep-main { display: grid; gap: var(--ep-gap); padding-top: clamp(28px, 4.4vw
   .ep-hero__media, .ep[data-hero='stacked'] .ep-hero__media { aspect-ratio: 4 / 5; }
   .ep[data-hero='stacked'] .ep-hero__copy { grid-template-columns: minmax(0, 1fr); }
   .ep-story, .ep-care { grid-template-columns: minmax(0, 1fr); row-gap: 28px; }
+  .ep-media--detail { aspect-ratio: 3 / 2; }
   .ep-weather__chip { height: 56px; }
   .ep-close__message { grid-template-columns: minmax(0, 1fr); }
   .ep-close__action { justify-self: start; }

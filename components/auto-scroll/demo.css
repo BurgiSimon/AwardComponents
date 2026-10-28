@@ -1,0 +1,110 @@
+.asc { --asc-lane: 17rem; overflow-x: clip; }
+.asc-skip { position: absolute; z-index: 30; top: 8px; left: var(--gutter); padding: 10px 14px; background: var(--ink); color: var(--bg); font-weight: 600; text-decoration: none; transform: translateY(-160%); }
+.asc-skip:focus-visible { transform: none; }
+.asc figure { margin: 0; }
+
+.asc-bar { display: flex; align-items: center; justify-content: space-between; gap: 24px; height: 64px; padding-inline: max(var(--gutter), calc((100% - 1320px) / 2)); border-bottom: 1px solid var(--line); }
+.asc-bar__year { font-family: var(--font-mono); font-weight: 500; font-stretch: normal; font-size: 0.6875rem; letter-spacing: 0.06em; color: var(--accent-ink); }
+.asc-bar nav { display: flex; gap: clamp(14px, 3vw, 32px); font-size: var(--text-sm); }
+.asc-bar nav a { display: inline-flex; align-items: center; min-height: 44px; color: var(--ink-2); text-decoration: none; }
+.asc-bar nav a:hover { color: var(--ink); }
+
+.asc-media { position: relative; overflow: hidden; background: var(--bg-2); aspect-ratio: 4 / 5; }
+.asc-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.asc-media--wide { aspect-ratio: 3 / 2; }
+.asc-cap { margin-top: 10px; color: var(--muted); font-size: 0.8125rem; }
+
+/* ---------- Cover ---------- */
+.asc-cover { min-height: calc(100svh - 64px); display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); align-items: center; gap: clamp(24px, 4vw, 64px); padding-block: clamp(32px, 5vw, 64px) clamp(40px, 6vw, 80px); }
+.asc-cover__copy { display: grid; gap: clamp(18px, 2.4vw, 28px); padding-bottom: 8px; }
+.asc-title { font-size: clamp(2.6rem, 1.2rem + 4.6vw, 6rem); max-width: 13ch; }
+
+/* ---------- The walk: one stretch per stop, long enough that a hands-free pace is worth having ---------- */
+.asc-walk { padding-bottom: 160px; } /* clears the fixed dock at the end of the page */
+.asc-stretch { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 24px var(--gutter); min-height: 62svh; align-content: start; padding-block: clamp(48px, 7vw, 96px); border-top: 1px solid var(--line); }
+.asc-stretch__head { display: grid; gap: 12px; align-content: start; }
+.asc-time { font-family: var(--font-mono); font-size: clamp(1.75rem, 1.2rem + 1.8vw, 2.75rem); font-weight: 500; letter-spacing: -0.03em; line-height: 1; color: var(--accent-ink); }
+.asc-stretch__head .ac-h2 { max-width: 12ch; }
+.asc-stretch__body { display: grid; gap: 22px; align-content: start; }
+.asc-text { max-width: 54ch; color: var(--ink-2); font-size: clamp(1.0625rem, 0.95rem + 0.4vw, 1.25rem); line-height: 1.6; text-wrap: pretty; }
+.asc-list { display: grid; gap: 8px; max-width: 54ch; margin: 0; padding-left: 1.2em; color: var(--ink-2); }
+.asc-sets { display: grid; max-width: 34rem; margin: 0; border-top: 1px solid var(--line); }
+.asc-sets dt { padding-block: 12px 6px; }
+.asc-sets dd { display: grid; grid-template-columns: 5rem minmax(0, 1fr); gap: 12px; margin: 0; padding-block: 10px; border-bottom: 1px solid var(--line); font-weight: 600; }
+.asc-sets dd .ac-num { font-family: var(--font-mono); font-weight: 500; color: var(--muted); }
+.asc-end { display: grid; gap: 28px; justify-items: start; padding-top: clamp(64px, 8vw, 112px); border-top: 1px solid var(--line); }
+.asc-end .ac-h1 { max-width: 16ch; }
+.asc-end__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 28px; }
+
+/* ---------- The dock: the toggle, what it does (or why it cannot), the polite status, and where the walk is ---------- */
+.asc-dock {
+  position: fixed;
+  z-index: 20;
+  inset-inline: var(--gutter);
+  bottom: max(14px, env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 16px 8px 8px;
+  border: 1px solid var(--line-2);
+  border-radius: 20px;
+  background: color-mix(in oklab, var(--surface) 94%, transparent);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-2);
+}
+.asc-toggle {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 18px 0 14px;
+  border: 1px solid var(--ink);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: background-color var(--dur-s), color var(--dur-s);
+}
+.asc-toggle[aria-pressed='true'] { background: var(--ink); color: var(--bg); }
+.asc-toggle[aria-disabled='true'] { border-style: dashed; color: var(--muted); cursor: not-allowed; }
+.asc-toggle__state { min-width: 4ch; color: inherit; opacity: 0.75; }
+.asc-toggle__state::before { content: '['; }
+.asc-toggle__state::after { content: ']'; }
+.asc-ring { width: 18px; height: 18px; rotate: -90deg; }
+.asc-ring circle { fill: none; stroke: currentColor; stroke-width: 2; opacity: 0.3; }
+.asc-ring .asc-ring__fill { opacity: 1; stroke: var(--accent); stroke-dasharray: 44; stroke-dashoffset: 44; transition: stroke-dashoffset 0s linear; }
+.asc-toggle:is(.is-arming, [aria-pressed='true']) .asc-ring__fill { stroke-dashoffset: 0; }
+.asc-dock__text { min-width: 0; flex: 1; }
+.asc-note, .asc-status { font-size: 0.8125rem; line-height: 1.35; }
+.asc-note { color: var(--ink-2); }
+.asc-status { margin-top: 2px; color: var(--ink); font-weight: 600; }
+.asc-status:empty { display: none; }
+.asc-now { display: none; }
+.asc-now__bar { position: relative; display: block; height: 2px; overflow: hidden; border-radius: 2px; background: var(--line-2); }
+.asc-now__bar span { position: absolute; inset: 0; background: var(--accent); transform-origin: left; transform: scaleX(0); }
+.asc-now__label { display: block; margin-top: 8px; font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+
+/* Wide screens, card dock: a narrow card in its own lane, so it never sits over the reading column. */
+@media (min-width: 1024px) {
+  .asc[data-dock='card'] :is(.asc-cover, .asc-walk) { padding-inline-end: calc(var(--asc-lane) + var(--gutter)); }
+  .asc[data-dock='card'] .asc-dock { inset-inline: auto var(--gutter); width: var(--asc-lane); flex-direction: column; align-items: stretch; gap: 12px; padding: 12px; }
+  .asc[data-dock='card'] .asc-dock__text { padding-inline: 4px; }
+  .asc[data-dock='card'] .asc-toggle { justify-content: flex-start; }
+  .asc[data-dock='card'] .asc-toggle__state { margin-left: auto; }
+  .asc[data-dock='card'] .asc-now { display: block; padding: 4px 4px 2px; }
+}
+
+@media (max-width: 899px) {
+  .asc-cover { grid-template-columns: minmax(0, 1fr); align-items: start; min-height: 0; }
+  .asc-cover__fig .asc-media { aspect-ratio: 16 / 10; }
+  .asc-stretch { grid-template-columns: minmax(0, 1fr); min-height: 0; }
+}
+@media (max-width: 599px) {
+  .asc-bar nav a:not(:last-child) { display: none; }
+  .asc-dock { gap: 10px; padding-right: 12px; }
+  .asc-note { font-size: 0.75rem; }
+}

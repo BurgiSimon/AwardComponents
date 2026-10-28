@@ -143,6 +143,7 @@ export default function mount(root, options, ctx) {
 - Respect every path the recipe has: keyboard, coarse pointer, reduced motion, no WebGL. A WebGL demo must render something without WebGL (a drawn still or a DOM version).
 - Don't burn frames off-screen or at rest: stop the ticker when nothing moves, gate canvas loops with `whileVisible`.
 - Storage access goes inside `try { } catch { }`.
+- Don't move focus from `action(id)`: actions are pressed in the shell's toolbar, and a `focus()` inside the frame pulls the visitor out of it. Move focus only from the demo's own controls (a menu button opening its menu).
 - Real elements: links are `<a href>`, actions are `<button>`, disclosures have `aria-expanded`, decorative canvases are `aria-hidden`.
 
 ## demo.css
