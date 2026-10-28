@@ -24,13 +24,13 @@ export default {
     { id: 'ringSize', label: 'Ring size', type: 'range', min: 24, max: 72, step: 2, default: 40, unit: 'px', group: 'Look', prompt: 'Ring diameter: {value} at rest, 1.35× over links and buttons (default {default})' },
     { id: 'badge', label: 'Badge style', type: 'select', options: [{ value: 'disc', label: 'Disc' }, { value: 'tag', label: 'Tag' }], default: 'disc', group: 'Look', help: 'Disc: the ring grows into a labelled disc. Tag: a small label rides beside the dot.', prompt: (v) => (v === 'tag' ? 'Badge: a small pill label offset 14 px from the dot while the ring grows to 1.35× (default: the ring grows into a labelled disc)' : 'Badge: the ring grows into a labelled disc') },
     { id: 'blend', label: 'Blend', type: 'select', options: [{ value: 'normal', label: 'Normal' }, { value: 'difference', label: 'Difference' }], default: 'normal', group: 'Look', prompt: (v) => (v === 'difference' ? 'Draw the ring and the dot light with mix-blend-mode: difference, so they invert whatever they pass over; the badge keeps a normal fill so its label stays legible (default: ink, normal blending)' : 'Draw the cursor in ink with normal blending') },
-    { id: 'badgeColour', label: 'Badge colour', type: 'color', default: 'accent', group: 'Look', prompt: 'Badge colour: {value} (default {default})' },
+    { id: 'badgeColour', label: 'Badge colour', type: 'color', default: 'accent', group: 'Look', prompt: 'Badge fill: {value}, its label in whichever of light or dark ink contrasts more (default {default})' },
   ],
   prompt: {
     skill: 'component',
     ask: 'Add a contextual cursor to {target}.',
     target: 'the work index',
-    brief: 'A dot follows a fine pointer almost at once (lerp 0.75 per 60 fps frame) and a ring trails it (lerp 0.22), both through framerate-independent damping, so the gap between them reads as mass. Over links and buttons the ring grows to 1.35× and the dot shrinks to 0.7×; over elements tagged data-cursor="view|play|drag" the ring grows into a badge that names the gesture. The loop sleeps once both parts have settled.',
+    brief: 'A dot follows a fine pointer almost at once (lerp 0.75 per 60 fps frame) and a ring trails it (lerp 0.22), both through framerate-independent damping, so the gap between them reads as mass. Over links and buttons the ring grows to 1.35× and the dot shrinks to 0.7×; over elements tagged data-cursor="view|play|drag" the ring grows into a 92 px filled disc that names the gesture with a word and an icon. The loop sleeps once both parts have settled.',
     keep: [
       'never created for coarse pointers or without hover; cursor: none comes from a class, so the system cursor returns when the module is off or the pointer leaves the window.',
       'an aria-hidden layer with pointer-events: none over real links and buttons; under reduced motion both parts snap to the pointer.',

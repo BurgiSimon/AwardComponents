@@ -24,7 +24,7 @@ export default {
     { id: 'dash', label: 'Line style', type: 'select', options: [{ value: 'solid', label: 'Solid' }, { value: 'dashed', label: 'Dashed' }, { value: 'dotted', label: 'Dotted' }], default: 'solid', group: 'Line', help: 'Dashed and dotted lines are revealed through a mask, since their own dash array draws the pattern.', prompt: (v) => `Draw the line ${v}${v === 'solid' ? '' : ': the dash pattern on the visible path, revealed by a solid masked copy whose dash offset is scrubbed'}` },
     { id: 'colour', label: 'Colour', type: 'color', default: 'accent', group: 'Line', prompt: 'Line colour: {value}' },
     { id: 'markers', label: 'Milestone markers', type: 'select', options: [{ value: 'dots', label: 'Dots' }, { value: 'years', label: 'Years' }, { value: 'none', label: 'None' }], default: 'dots', group: 'Milestones', prompt: (v) => ({ dots: 'A dot on the line at each milestone, filled as the line reaches it', years: 'A year chip on the line at each milestone, filled as the line reaches it', none: 'No markers on the line; milestones still light up' })[v] },
-    { id: 'scrub', label: 'Scrub catch-up', type: 'range', min: 0, max: 1, step: 0.1, default: 0.3, unit: 's', group: 'Line', prompt: 'Scrub catch-up: {value} (default {default})' },
+    { id: 'scrub', label: 'Scrub catch-up', type: 'range', min: 0, max: 1, step: 0.1, default: 0.3, unit: 's', group: 'Line', prompt: (v) => (v > 0 ? `Scrub catch-up: ${v} s (scrub: ${v}; default 0.3 s)` : 'scrub: true: the line locked to the scrollbar with no catch-up (default scrub: 0.3)') },
   ],
   prompt: {
     skill: 'component',

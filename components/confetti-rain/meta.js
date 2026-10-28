@@ -23,14 +23,14 @@ export default {
   controls: [
     { id: 'count', label: 'Sprites per burst', type: 'range', min: 30, max: 240, step: 10, default: 120, group: 'Shower', help: 'Capped by the device’s quality tier.', prompt: 'Sprites per burst: {value}, never more live than the device tier allows (default {default})' },
     { id: 'gravity', label: 'Gravity', type: 'range', min: 0.15, max: 0.9, step: 0.05, default: 0.45, unit: 'px/frame²', group: 'Shower', help: 'Per frame at 60 fps, scaled by dt × 60 so every refresh rate falls alike.', prompt: 'Gravity: {value} at 60 fps, scaled by dt × 60 (default {default})' },
-    { id: 'origin', label: 'Origin', type: 'select', options: [{ value: 'top', label: 'Rain from the top' }, { value: 'burst', label: 'Burst from the button' }], default: 'top', group: 'Shower', prompt: 'Origin: {value} (default {default})' },
-    { id: 'sprites', label: 'Sprite set', type: 'select', options: [{ value: 'shapes', label: 'Festival shapes' }, { value: 'paper', label: 'Paper confetti' }, { value: 'sparks', label: 'Sparks' }], default: 'shapes', group: 'Look', prompt: 'Sprites: {value}, in the page’s material colours (default {default})' },
+    { id: 'origin', label: 'Origin', type: 'select', options: [{ value: 'top', label: 'Rain from the top' }, { value: 'burst', label: 'Burst from the button' }], default: 'top', group: 'Shower', prompt: (v) => (v === 'burst' ? 'Burst from the Celebrate button: every sprite leaves it upward at 9–18 px/frame with 2.4 × the drift, all within 160 ms, and gravity brings them down' : 'Rain from the top: sprites start at rest just above the viewport, spread across its width, over 1.2 s') },
+    { id: 'sprites', label: 'Sprite set', type: 'select', options: [{ value: 'shapes', label: 'Festival shapes' }, { value: 'paper', label: 'Paper confetti' }, { value: 'sparks', label: 'Sparks' }], default: 'shapes', group: 'Look', prompt: (v) => ({ shapes: 'Sprites: circles, rings, triangles, squiggles, stars and half-discs in the page’s colour tokens', paper: 'Sprites: paper strips and squares in the page’s colour tokens that flip as they fall, capped at 5 px/frame and slowing sideways', sparks: 'Sprites: four-point sparks in the page’s colour tokens' })[v] },
   ],
   prompt: {
     skill: 'component',
     ask: 'Add a celebration shower to {target}.',
     target: 'the order confirmation',
-    brief: 'One full-viewport canvas 2D overlay: shapes are drawn once to offscreen bitmaps and stamped with drawImage and a rotation. Each sprite gets gravity 0.45 px/frame², a sideways drift and a spin, every step multiplied by dt × 60; the emitter spawns about 100 sprites over 1.2 s, the live count is capped by the quality tier, sprites are dropped as they leave the screen and the ticker is released when the last one goes.',
-    keep: ['canvas aria-hidden with pointer-events: none; a polite status line; nothing spawns under reduced motion; the DPR and pixel budget from the device tier.'],
+    brief: 'One full-viewport canvas 2D overlay: shapes are drawn once to offscreen bitmaps and stamped with drawImage and a rotation. Each sprite gets gravity 0.45 px/frame², a sideways drift and a spin, every step multiplied by dt × 60. It plays once 450 ms after the page arrives and again on each press of a Celebrate button: 120 sprites over 1.2 s from just above the viewport. The live count is capped by the quality tier, sprites are dropped as they leave the screen and the ticker is released when the last one goes.',
+    keep: ['canvas aria-hidden with pointer-events: none; a real button and a polite status line that answers every press, under reduced motion too; nothing spawns under reduced motion; the DPR and pixel budget from the device tier.'],
   },
 };

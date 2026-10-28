@@ -21,11 +21,11 @@ export default {
     'Under reduced motion nothing is split: each block fades in for 0.4 s. In the static tier the text is simply there.',
   ],
   controls: [
-    { id: 'unit', label: 'Split headlines by', type: 'select', options: [{ value: 'lines', label: 'Lines' }, { value: 'words', label: 'Words' }, { value: 'chars', label: 'Characters' }], default: 'lines', group: 'Split', help: 'Headlines and the pull quote. Body copy always reveals by lines.', prompt: 'Split headlines by {value}; body copy always by lines (default {default})' },
+    { id: 'unit', label: 'Split headlines by', type: 'select', options: [{ value: 'lines', label: 'Lines' }, { value: 'words', label: 'Words' }, { value: 'chars', label: 'Characters' }], default: 'lines', group: 'Split', help: 'Headlines and the pull quote. Body copy always reveals by lines.', prompt: (v) => `Split headlines and pull quotes by ${({ lines: 'lines', words: 'words', chars: 'characters' })[v]}; body copy always by lines (default lines)` },
     { id: 'stagger', label: 'Stagger', type: 'range', min: 0, max: 0.3, step: 0.01, default: 0.1, unit: 's', group: 'Split', help: 'Between lines. Words step at 30 % of it, characters at 12 %.', prompt: 'Stagger: {value} between lines, 30 % of that between words, 12 % between characters (default {default})' },
     { id: 'duration', label: 'Duration', type: 'range', min: 0.4, max: 2.4, step: 0.1, default: 1.4, unit: 's', group: 'Motion', prompt: 'Each unit takes {value} to rise (default {default})' },
-    { id: 'direction', label: 'Rise from', type: 'select', options: [{ value: 'below', label: 'Below' }, { value: 'above', label: 'Above' }], default: 'below', group: 'Motion', prompt: 'Lines enter from {value} the mask (yPercent ±120; default {default})' },
-    { id: 'ease', label: 'Curve', type: 'select', options: [{ value: 'expo.out', label: 'Expo out' }, { value: 'quart.out', label: 'Quart out' }, { value: 'back.out(1.4)', label: 'Back out' }], default: 'expo.out', group: 'Motion', prompt: 'Ease: {value} (default {default})' },
+    { id: 'direction', label: 'Rise from', type: 'select', options: [{ value: 'below', label: 'Below' }, { value: 'above', label: 'Above' }], default: 'below', group: 'Motion', prompt: (v) => (v === 'above' ? 'Lines drop in from above the mask (yPercent −120 to 0)' : 'Lines rise from below the mask (yPercent 120 to 0)') },
+    { id: 'ease', label: 'Curve', type: 'select', options: [{ value: 'expo.out', label: 'Expo out' }, { value: 'quart.out', label: 'Quart out' }, { value: 'back.out(1.4)', label: 'Back out' }], default: 'expo.out', group: 'Motion', prompt: (v) => `Ease: ${v} (default expo.out)` },
   ],
   actions: [{ id: 'replay', label: 'Replay', icon: 'refresh' }],
   prompt: {

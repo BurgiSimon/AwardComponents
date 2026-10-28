@@ -21,7 +21,7 @@ export default {
   ],
   controls: [
     { id: 'dock', label: 'Dock distance', type: 'range', min: 30, max: 100, step: 5, default: 60, unit: '%', group: 'Hand-off', help: 'Share of the hero’s height scrolled before the name reaches the header.', prompt: 'The name docks once {value} of the hero has scrolled, cubic in-out (default {default})' },
-    { id: 'stiffness', label: 'Underline stiffness', type: 'range', min: 4, max: 24, step: 1, default: 10, unit: '/s', group: 'Underline', help: 'Both edges close 1 − e^(−k·dt) of the gap each frame.', prompt: 'Underline: both edges ease toward the active link at 1 − e^(−{value}·dt) and snap the last 0.05 px (default 10 /s)' },
+    { id: 'stiffness', label: 'Underline stiffness', type: 'range', min: 4, max: 24, step: 1, default: 10, unit: '/s', group: 'Underline', help: 'Both edges close 1 − e^(−k·dt) of the gap each frame.', prompt: 'Underline: both edges close 1 − e^(−k·dt) of the gap to the active link each frame, k = {value}, and snap the last 0.05 px (default {default})' },
     { id: 'word', label: 'Wordmark', type: 'text', default: 'Ostra', maxLength: 14, group: 'Look', prompt: false },
     { id: 'face', label: 'Wordmark face', type: 'select', options: [{ value: 'wide', label: 'Wide sans' }, { value: 'serif', label: 'Serif italic' }], default: 'wide', group: 'Look', prompt: false },
   ],
@@ -29,7 +29,7 @@ export default {
     skill: 'component',
     ask: 'Hand {target} off into the header logo as the page scrolls.',
     target: 'the hero wordmark',
-    brief: 'The giant name in the hero and the small logo in the header are the same link: it is laid out in the header slot (position: fixed), and a 2D transform draws it over a reference box in the hero. Over the first 60 % of the hero the transform eases (cubic in-out) back to identity, so the name shrinks and travels into the bar. A nav underline eases both edges toward the link of the chapter in view.',
+    brief: 'The giant name in the hero and the small logo in the header are the same link: it is laid out in the header slot (position: fixed), and a 2D transform draws it over a reference box in the hero. Over the first 60 % of the hero the transform eases (cubic in-out) back to identity, so the name shrinks and travels into the bar. A nav underline eases both edges toward the link of the chapter in view (1 − e^(−10·dt) of the gap per frame, snapping the last 0.05 px) and stops ticking once it lands.',
     keep: [
       'one link, one accessible name, one focus ring; no will-change on the logo, so it is repainted sharp rather than stretched from a small raster.',
       'under reduced motion the logo stays in the bar, an aria-hidden copy fills the hero and fades (opacity only), and the underline jumps.',

@@ -31,7 +31,7 @@ export default {
     skill: 'component',
     ask: 'Put a drifting hairline field behind {target}.',
     target: 'the hero headline',
-    brief: 'Rows of hairline SVG lines as subpaths of one path. Each point takes its angle from one drifting Perlin sample (angle = noise × 12 rad, offset cos × 32 and sin × 16 px). Points within max(175, pointer speed) px of a fine pointer take an impulse along its travel weighted by (1 − d/R)², and a spring of 0.005 with damping 0.925 per 60 Hz frame (scaled to real frame time) brings them back. On load each line grows in from its end over 3 s, expo-out, outer lines first.',
+    brief: 'Rows of hairline SVG lines 18 px apart, all subpaths of one path. Each point takes its angle from one drifting Perlin sample (angle = noise × 12 rad, offset cos × 32 and sin × 16 px). Points within max(175, pointer speed) px (at most 400) of a fine pointer take an impulse of 0.08 × its travel, weighted by (1 − d/R)², and a spring of 0.005 with damping 0.925 per 60 Hz frame (scaled to real frame time) brings them back. On load each line grows in from its end over 3 s, expo-out, outer lines first.',
     keep: [
       'the SVG aria-hidden and pointer-transparent; small copy on page-coloured blocks.',
       'a sparser grid and no push on touch; a still, complete field under reduced motion; no ticker off-screen.',

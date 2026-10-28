@@ -26,7 +26,7 @@ export default {
     { id: 'snap', label: 'Snap into slots', type: 'toggle', default: true, group: 'Throw', prompt: { on: 'A landing inside the tray snaps the block to its slot', off: 'A block stays exactly where its throw ends, inside the tray or not' } },
     { id: 'tilt', label: 'Max tilt', type: 'range', min: 0, max: 60, step: 5, default: 40, unit: '°', group: 'Block', help: 'The cap on the lean into the direction of travel (0.018° per px/s).', prompt: 'Velocity tilt capped at ±{value} (default {default})' },
     { id: 'rest', label: 'Resting turn', type: 'range', min: 0, max: 45, step: 1, default: 24, unit: '°', group: 'Block', help: 'How far each block turns at rest to show its depth.', prompt: 'Resting pose: rotationX −18°, rotationY {value} (default {default})' },
-    { id: 'palette', label: 'Blocks', type: 'select', options: [{ value: 'materials', label: 'Materials' }, { value: 'ink', label: 'Ink' }, { value: 'accent', label: 'Accent' }], default: 'materials', group: 'Block', prompt: 'Block colours: {value} (default {default})' },
+    { id: 'palette', label: 'Blocks', type: 'select', options: [{ value: 'materials', label: 'Materials' }, { value: 'ink', label: 'Ink' }, { value: 'accent', label: 'Accent' }], default: 'materials', group: 'Block', prompt: (v) => ({ materials: 'Each block in its own material colour from the page tokens (clay, sky, moss, sand)', ink: 'Every block in the ink colour with ground-coloured letters', accent: 'Every block in the accent colour with on-accent letters' }[v]) },
   ],
   actions: [
     { id: 'throw', label: 'Throw one in' },
@@ -36,7 +36,7 @@ export default {
     skill: 'component',
     ask: 'Turn {target} into a throw toy.',
     target: 'the enquiry section',
-    brief: 'Extruded CSS-3D blocks you grab and throw with GSAP Draggable and InertiaPlugin (type x,y, bounded by the stage). Released mid-swing a block keeps the hand’s velocity and its inner body tilts into the travel, 0.018° per px/s capped at ±40°; the landing point, clamped to the bounds, decides once whether it snaps into its slot in a perspective tray. Whatever is in the tray drives the real form beside it.',
+    brief: 'Four extruded CSS-3D blocks, resting at rotationX −18° and rotationY 24°, that you grab and throw with GSAP Draggable and InertiaPlugin (type x,y, bounded by the stage). Released mid-swing a block keeps the hand’s velocity and its inner body tilts into the travel, 0.018° per px/s capped at ±40°; the landing point, clamped to the bounds, decides once whether it snaps into its slot in a perspective tray. What is in the tray fills in the enquiry beside it: the send link’s subject and count and a status line.',
     keep: [
       'a toggle button per block that throws it to the same slot or takes it back, and a polite live region with the tray count',
       'touch-action on the blocks only; no inertia or tilt under reduced motion, a drop lands where it is let go',

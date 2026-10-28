@@ -35,8 +35,8 @@ export default {
   prompt: {
     skill: 'webgl',
     ask: 'Cut between the scenes of {target} in the final pass.',
-    target: 'the hero',
-    brief: 'All scenes render into one half-float target and the cuts are uniforms in the last pass: a blur dip (full-res 4-tap over 0–0.33, half-res over 0.25–0.67, quarter-res over 0.67–1, a flat colour over 0.8–1, the scene swapping at the peak) and an iris that renders the outgoing scene once into a cache and opens the new one inside a diamond sized by the frame’s own corner distance, its edge drawn on a 2D canvas. Scrolling into the footer closes a diamond onto the footer ground while the frame zooms.',
+    target: 'the hero carousel',
+    brief: 'All scenes render into one half-float target and the cuts are uniforms in the last pass: a blur dip (full-res 4-tap over 0–0.33, half-res over 0.25–0.67, quarter-res over 0.67–1, a flat colour over 0.8–1, the scene swapping at the peak) and an iris that renders the outgoing scene once into a cache and opens the new one inside a diamond sized by the frame’s own corner distance, its edge drawn on a 2D canvas. The dip leads into the second scene and the iris into the third and back to the first; each cut runs 1.2 s and autoplay holds a scene for 5 s. Scrolling into the footer closes a diamond onto the footer ground while the frame zooms.',
     keep: [
       'carousel semantics: real buttons, a pause, autoplay held by hover and focus, inactive slides inert',
       'hard switches and no clock under reduced motion; a CSS gradient per scene without WebGL',

@@ -21,7 +21,7 @@ export default {
   ],
   controls: [
     { id: 'frames', label: 'Frames', type: 'range', min: 24, max: 72, step: 12, default: 48, group: 'Sequence', help: 'More frames turn more smoothly and cost more memory and load time.', prompt: 'Sequence length: {value} frames for one full turn (default {default})' },
-    { id: 'smooth', label: 'Smoothing', type: 'range', min: 0, max: 2, step: 0.1, default: 0.5, unit: 's', group: 'Sequence', help: 'Scrub catch-up: 0 locks the frame to the scrollbar.', prompt: 'Scrub smoothing: {value} (default {default})' },
+    { id: 'smooth', label: 'Smoothing', type: 'range', min: 0, max: 2, step: 0.1, default: 0.5, unit: 's', group: 'Sequence', help: 'Scrub catch-up: 0 locks the frame to the scrollbar.', prompt: (v) => (v > 0 ? `Scrub smoothing: ${v} s (scrub: ${v}; default 0.5 s)` : 'scrub: true: the frame locked to the scrollbar with no catch-up (default scrub: 0.5)') },
     { id: 'callouts', label: 'Callouts', type: 'toggle', default: true, group: 'Look', prompt: { on: 'Feature callouts beside the stage, each active over its quarter of the turn', off: 'No callouts: the turntable and its frame readout only' } },
     { id: 'finish', label: 'Finish', type: 'select', options: [{ value: 'clay', label: 'Clay' }, { value: 'graphite', label: 'Graphite' }, { value: 'chalk', label: 'Chalk' }], default: 'clay', group: 'Look', prompt: false },
   ],

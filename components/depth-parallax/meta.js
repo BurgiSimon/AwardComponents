@@ -23,7 +23,7 @@ export default {
   controls: [
     { id: 'strength', label: 'Strength', type: 'range', min: 0, max: 0.12, step: 0.005, default: 0.06, group: 'Relief', help: 'UV units at full offset. Above about 0.08 the stretch at depth edges starts to show.', prompt: 'Parallax strength: {value} UV at full offset (default {default})' },
     { id: 'focus', label: 'Focus depth', type: 'range', min: 0, max: 1, step: 0.05, default: 0.5, group: 'Relief', help: 'The depth that holds still: 0 pins the far sky, 1 pins the near ground.', prompt: 'Depth {value} holds still; nearer and farther layers move in opposite directions (default {default})' },
-    { id: 'input', label: 'Driven by', type: 'select', options: [{ value: 'both', label: 'Pointer + scroll' }, { value: 'pointer', label: 'Pointer' }, { value: 'scroll', label: 'Scroll' }], default: 'both', group: 'Input', prompt: 'Driven by {value} (default {default})' },
+    { id: 'input', label: 'Driven by', type: 'select', options: [{ value: 'both', label: 'Pointer + scroll' }, { value: 'pointer', label: 'Pointer' }, { value: 'scroll', label: 'Scroll' }], default: 'both', group: 'Input', prompt: (v) => ({ both: 'Drive the relief by the pointer and the scroll drift', pointer: 'Drive the relief by the pointer only, with no scroll drift', scroll: 'Drive the relief by the scroll drift only (0.3 per viewport), with no pointer follow' })[v] },
     { id: 'damping', label: 'Smoothing', type: 'range', min: 2, max: 14, step: 0.5, default: 6, group: 'Input', help: 'Exponential damping toward the target offset; low trails, high follows.', prompt: 'Damping k = {value} (default {default})' },
     { id: 'depth', label: 'Show the depth map', type: 'toggle', default: false, group: 'Input', help: 'A tuning aid: bright is near, dark is far.', prompt: false },
   ],
@@ -31,7 +31,7 @@ export default {
     skill: 'webgl',
     ask: 'Give {target} a 2.5D depth parallax.',
     target: 'the hero photograph',
-    brief: 'One full-screen shader quad samples the photograph and a greyscale depth map (bright near, dark far) and offsets each texel by (depth − 0.5) × the pointer offset × 0.06 UV, damped with k = 6, plus a gentle vertical drift of 0.3 per viewport scrolled. Without a rendered depth pass, build one in the page from the picture: a vertical gradient, a bump at the subject and a blurred luminance term.',
+    brief: 'One full-screen shader quad samples the photograph and a greyscale depth map (bright near, dark far) and offsets each texel by (depth − 0.5) × the pointer offset × 0.06 UV, damped with k = 6, plus a gentle vertical drift of 0.3 per viewport scrolled; the cover’s UV window is scaled to 1 − 0.9 × strength (a slight zoom in) so the edges never smear. Without a rendered depth pass, build one in the page from the picture: a vertical gradient, a bump at the subject and a blurred luminance term.',
     keep: [
       'the photograph stays in the DOM with alt text and is what reduced motion, static and no-WebGL visitors see; the canvas is aria-hidden.',
       'pointer relief for fine pointers only (scroll drift on touch); no frames once the offset has settled.',

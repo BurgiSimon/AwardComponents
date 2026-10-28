@@ -36,7 +36,7 @@ export default {
     target: 'the product grid and the product pages',
     brief: 'Use the View Transitions API: name only the clicked tile’s picture and title (view-transition-name) just before the swap, and give the product hero the same two names, so the picture and name morph (0.7 s, expo in-out, snapshots cropped with object-fit: cover) while the unnamed page body slides 6 % out and in along the reading direction, mirrored for back. For separate pages use @view-transition { navigation: auto; } inline in each head and set the names in pageswap and pagereveal.',
     keep: [
-      'plain links and real URLs; focus moves to the new heading; the header holds still',
+      'plain links and real URLs, so modified clicks still open a new tab; focus moves to the new heading; the header holds still',
       'no transition under reduced motion or without the API, just the swap',
     ],
   },

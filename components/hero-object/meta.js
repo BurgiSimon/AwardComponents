@@ -26,14 +26,17 @@ export default {
     { id: 'stiffness', label: 'Spring stiffness', type: 'range', min: 4, max: 40, step: 1, default: 16, group: 'Motion', help: 'How hard the spring pulls the object toward the pointer.', prompt: 'Spring stiffness: {value} (default {default})' },
     { id: 'damping', label: 'Spring damping', type: 'range', min: 2, max: 12, step: 0.5, default: 5.5, group: 'Motion', help: 'Low values overshoot and wobble; high values settle without bounce.', prompt: 'Spring damping: {value} (default {default})' },
     { id: 'turn', label: 'Scroll turn', type: 'range', min: 0, max: 360, step: 15, default: 120, unit: '°', group: 'Motion', prompt: 'Scroll turn: {value} of rotation across the hero (default {default})' },
-    { id: 'spin', label: 'Idle spin', type: 'toggle', default: false, group: 'Motion', prompt: { on: 'A slow idle spin while the pointer is away', off: 'No idle spin' } },
-    { id: 'finish', label: 'Finish', type: 'select', options: [{ value: 'chalk', label: 'Chalk' }, { value: 'graphite', label: 'Graphite' }, { value: 'clay', label: 'Clay' }], default: 'chalk', group: 'Look', prompt: 'Start in the {value} finish (default {default})' },
+    { id: 'spin', label: 'Idle spin', type: 'toggle', default: false, group: 'Motion', prompt: { on: 'A slow idle spin (0.35 rad/s) while the pointer is away', off: 'No idle spin' } },
+    { id: 'finish', label: 'Finish', type: 'select', options: [{ value: 'chalk', label: 'Chalk' }, { value: 'graphite', label: 'Graphite' }, { value: 'clay', label: 'Clay' }], default: 'chalk', group: 'Look', prompt: false },
   ],
   prompt: {
     skill: 'webgl',
-    ask: 'Give {target} a single 3D hero object.',
+    ask: 'Give {target} a single 3D object that leans toward the pointer.',
     target: 'the product hero',
-    brief: 'One object, lit by a generated studio environment, leans toward a fine pointer on a damped spring (stiffness and damping, not a lerp) and adds a rotation scrubbed by the scroll across the hero. Colour swatches in the DOM repaint its material live, and it renders only while something is moving.',
-    keep: ['a DOM still when WebGL is missing; a held three-quarter view under reduced motion; the copy stays HTML.'],
+    brief: 'One object, lit by a generated studio environment (RoomEnvironment through PMREM, no HDR file), leans up to 18° toward a fine pointer (60 % of that vertically) on a damped spring, a = k·(target − angle) − c·v with k = 16 and c = 5.5, so it overshoots and settles instead of easing in. Scrolling the hero out of view adds a 120° turn. Colour swatches in the DOM repaint its material live, and it renders only while the spring is settling or something has changed.',
+    keep: [
+      'the headline, price and finish choice stay HTML (the swatches a real radio group); the canvas is aria-hidden.',
+      'a drawn still in the canvas’s place without WebGL; a held three-quarter view under reduced motion (no pointer follow, no scroll turn); pointer tilt for fine pointers only.',
+    ],
   },
 };

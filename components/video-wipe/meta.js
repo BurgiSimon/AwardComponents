@@ -23,7 +23,7 @@ export default {
   ],
   controls: [
     { id: 'direction', label: 'Wipe direction', type: 'select', options: [{ value: 'across', label: 'Left to right' }, { value: 'rise', label: 'Bottom to top' }], default: 'across', group: 'Wipe', help: 'Going back runs the wipe the other way.', prompt: 'Wipe direction: {value}, reversed going back (default {default})' },
-    { id: 'duration', label: 'Wipe duration', type: 'range', min: 0.5, max: 2, step: 0.1, default: 1, unit: 's', group: 'Wipe', prompt: 'Wipe duration: {value} on expo.inOut, copy timings scaled with it (default {default})' },
+    { id: 'duration', label: 'Wipe duration', type: 'range', min: 0.5, max: 2, step: 0.1, default: 1, unit: 's', group: 'Wipe', prompt: 'Wipe duration: {value} on expo.inOut, with the incoming copy’s start scaled to it (default {default})' },
     { id: 'glow', label: 'Seam glow', type: 'range', min: 0, max: 2.5, step: 0.1, default: 1, unit: '×', group: 'Seam', help: '1× is a 32 px glow with a 7 px spread; 0 leaves a bare hairline.', prompt: 'Seam glow: {value} of a 32 px blur with a 7 px spread (default {default})' },
     { id: 'seamColour', label: 'Seam tint', type: 'color', options: ['sand', 'accent', 'sky', 'plum'], default: 'sand', group: 'Seam', prompt: 'Seam light tinted {value}, mixed mostly with white' },
   ],
@@ -31,7 +31,10 @@ export default {
     skill: 'component',
     ask: 'Turn {target} into a deck of full-bleed media panels changed by a wipe.',
     target: 'the stages section',
-    brief: 'Two double-buffered media layers: the hidden one preloads the next panel’s clip, then opens over the visible one from a directional clip-path inset (1 s expo.inOut, from 0.12 s) while a 1 px glowing seam rides the edge on the same plain-object tween. Outgoing copy leaves first (0.34 s power2.in), incoming copy rises over the last third. The document never scrolls: one wheel step (|deltaY| ≥ 18) per panel, locked for 1 s plus a 300 ms tail, or a 55 px swipe.',
-    keep: ['media aria-hidden, inactive panels inert, a polite live region per change; keys, buttons and swipe; a 0.2 s cross-fade with resting footage under reduced motion.'],
+    brief: 'Two double-buffered media layers: the hidden one preloads the next panel’s clip, then opens over the visible one from a directional clip-path inset (1 s expo.inOut, from 0.12 s) while a 1 px glowing seam rides the edge on the same plain-object tween. Outgoing copy leaves first (0.34 s power2.in); incoming copy rises from 0.66 s, just past half the wipe (0.72 s power3.out). The document never scrolls: one wheel step (|deltaY| ≥ 18) per panel, locked for 1 s plus a 300 ms tail, or a 55 px swipe.',
+    keep: [
+      'media aria-hidden, inactive panels inert, a polite live region per change; keys, buttons and swipe; a 0.2 s cross-fade with resting footage under reduced motion.',
+      'a missed preload waits at most 1.2 s for a paintable frame, then wipes anyway; footage plays only while the deck is on screen.',
+    ],
   },
 };

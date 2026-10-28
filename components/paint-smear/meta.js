@@ -33,7 +33,7 @@ export default {
     skill: 'webgl',
     ask: 'Let the pointer smear {target} with a screen-paint field.',
     target: 'the cover image in the hero',
-    brief: 'No fluid solver: the pointer paints a capsule from its last position to this one into a quarter-resolution RGBA8 ping-pong field (velocity around 0.5, slow and fast weights keeping .985 and .75), radius 0 → 100 px with the pointer’s speed. The field advects along a blurred sixteenth-resolution copy of itself (25 texels) plus gradient-noise curl (scale .06, strength 1.75); a post pass takes 9 jittered taps along the velocity, at most 8 px apart, and adds an oil-film fringe where the weight thins. All per second; it sleeps when the field is zero.',
+    brief: 'No fluid solver: the pointer paints a capsule from its last position to this one into a quarter-resolution RGBA8 ping-pong field (velocity around 0.5, slow and fast weights keeping .985 and .75), radius 0 → 100 px with the pointer’s speed. The field advects along a blurred sixteenth-resolution copy of itself (25 texels) plus gradient-noise curl (scale .06, strength 1.75); a post pass takes 9 jittered taps along the velocity, at most 8 px apart, and adds an oil-film fringe where the weight thins. Everything is scaled per second, so the smear lasts as long at 120 Hz as at 60 Hz, and the loop sleeps once the field reaches zero (about 4.5 s after the last stroke).',
     keep: ['the image keeps a text description and the copy stays HTML; touch paints only while a finger is down; no field under reduced motion; a still without WebGL.'],
   },
 };

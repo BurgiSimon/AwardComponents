@@ -22,15 +22,15 @@ export default {
   controls: [
     { id: 'hole', label: 'Start hole', type: 'range', min: 10, max: 50, step: 2, default: 20, unit: '%', group: 'Door', help: 'The hole’s width at the top of the section, as a share of the stage (its height is 1.2× that share).', prompt: 'Hole at progress 0: {value} of the stage width and 1.2× that share of its height, centred (default {default})' },
     { id: 'radius', label: 'Corner radius', type: 'range', min: 0, max: 48, step: 2, default: 14, unit: 'px', group: 'Door', help: 'Rounds the hole with a path() subpath; it eases to square as the hole reaches the edges.', prompt: 'Round the hole’s corners to {value} with a path(evenodd, …) subpath, easing to square at full bleed (default {default})' },
-    { id: 'labels', label: 'Door words', type: 'text', default: 'Tern Library', maxLength: 28, group: 'Door', help: 'Split in two: the first half parts left, the rest right (up and down on a phone).', prompt: 'The two words on the veil read “{value}”' },
-    { id: 'scrub', label: 'Scrub catch-up', type: 'range', min: 0, max: 1.5, step: 0.1, default: 0, unit: 's', group: 'Scroll', help: '0 is scrub: true — Lenis already smooths the scroll. Higher values trail behind.', prompt: 'Scrub catch-up: {value} (default scrub: true, Lenis does the smoothing)' },
+    { id: 'labels', label: 'Door words', type: 'text', default: 'Tern Library', maxLength: 28, group: 'Door', help: 'Split in two: the first half parts left, the rest right (up and down on a phone).', prompt: false },
+    { id: 'scrub', label: 'Scrub catch-up', type: 'range', min: 0, max: 1.5, step: 0.1, default: 0, unit: 's', group: 'Scroll', help: '0 is scrub: true — Lenis already smooths the scroll. Higher values trail behind.', prompt: (v) => (v > 0 ? `Scrub with ${v} s of catch-up (scrub: ${v}) instead of the default scrub: true, where Lenis does the smoothing` : 'scrub: true: Lenis does the smoothing') },
     { id: 'circle', label: 'Statement circle', type: 'toggle', default: true, group: 'Scroll', prompt: { on: 'Reveal the closing statement through a circle centred below its box (radius 0 → 150 % at 50 % 120 %)', off: 'No circle reveal on the statement' } },
   ],
   prompt: {
     skill: 'component',
     ask: 'Open {target} through a scroll-scrubbed clip-path door.',
     target: 'the first screen of a case-study page',
-    brief: 'A 200 svh section with a 100 svh sticky stage: the content underneath is covered by a veil in the page’s ground, cut by one even-odd clip-path (the frame, then the hole). A plain { p } proxy is scrubbed from top top to bottom bottom and onUpdate writes the path: the hole grows linearly from 20 % × 24 % of the stage, centred, to the full frame, while two words on the veil part ±50 vw. Further down, a statement rises through circle(p × 150 % at 50 % 120 %).',
-    keep: ['the veil is aria-hidden with no pointer events; the real heading lives underneath; no clip at all under reduced motion.'],
+    brief: 'A 200 svh section with a 100 svh sticky stage: the content underneath is covered by a veil in the page’s ground, cut by one path(evenodd, …) clip-path (the frame, then a hole whose 14 px corners ease to square as it opens). A plain { p } proxy is scrubbed linearly from top top to bottom bottom and onUpdate writes the path: the hole grows from 20 % × 24 % of the stage, centred, to the full frame, while two words on the veil part ±50 vw (±50 svh, up and down, on a portrait stage). Further down, a statement rises through circle(p × 150 % at 50 % 120 %).',
+    keep: ['the veil is aria-hidden with no pointer events; the real heading lives underneath; under reduced motion no clip at all, the door open and the section one screen tall.'],
   },
 };

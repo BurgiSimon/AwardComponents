@@ -25,7 +25,7 @@ export default {
   controls: [
     { id: 'frequency', label: 'Spring frequency', type: 'range', min: 4, max: 18, step: 0.5, default: 9.5, group: 'Spring', help: 'Higher pulls harder toward the next cover.', prompt: 'Spring frequency: ω = {value} (default {default})' },
     { id: 'damping', label: 'Damping', type: 'range', min: 4, max: 30, step: 1, default: 12, group: 'Spring', help: 'Low values overshoot; 2ω is critical.', prompt: 'Spring damping: c = {value} (default {default})' },
-    { id: 'spacing', label: 'Spacing', type: 'range', min: 1.6, max: 3.2, step: 0.1, default: 2.1, group: 'Row', help: 'Distance between covers, in plate widths ÷ 1.5.', prompt: 'Spacing: {value} world units between covers (default {default})' },
+    { id: 'spacing', label: 'Spacing', type: 'range', min: 1.6, max: 3.2, step: 0.1, default: 2.1, group: 'Row', help: 'Distance between cover centres in world units; a cover is 1.5 units wide.', prompt: 'Spacing: {value} world units between cover centres, on covers 1.5 units wide (default {default})' },
     { id: 'depth', label: 'Depth per step', type: 'range', min: 0, max: 2.5, step: 0.1, default: 1, group: 'Row', prompt: 'Depth: each step away sits {value} units deeper (default {default})' },
     { id: 'yaw', label: 'Turn per step', type: 'range', min: 0, max: 0.6, step: 0.02, default: 0.22, group: 'Row', help: 'Radians each neighbour turns toward the centre.', prompt: 'Turn: {value} rad per step, clamped at two steps (default {default})' },
   ],

@@ -30,7 +30,7 @@ export default {
     skill: 'component',
     ask: 'Stack {target} as sticky cards that settle.',
     target: 'the services section',
-    brief: 'Every card is position: sticky at top 12 svh (min-height 70 svh, 18 svh apart). As the next card travels from the bottom of the viewport to its sticky top, a scrubbed tween (scrub 0.4) scales the card beneath to 0.92 − 0.02 × its index from its top centre and dims it, so the pile reads as depth rather than a list.',
+    brief: 'Every card is position: sticky at top 12 svh (min-height 70 svh, 18 svh apart), each 14 px lower than the one before so the pile’s edges show. As the next card travels from the bottom of the viewport to its sticky top, a scrubbed tween (scrub 0.4) scales the card beneath to 0.92 − 0.02 × its index from its top centre and dims it by 0.4 through an overlay of the page ground, so cards stay opaque and the pile reads as depth rather than a list.',
     keep: ['no pin; real articles with headings; still sticky but no scale or dim under reduced motion.'],
   },
 };

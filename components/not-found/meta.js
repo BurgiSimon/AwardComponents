@@ -32,6 +32,6 @@ export default {
     ask: 'Design {target} in the site’s own voice.',
     target: 'the 404 page',
     brief: 'One plain sentence says what happened, and the way back comes first: the front page, three named routes with a line each and a search form. Beside them a small inline-SVG scene plays once in CSS: two drawn fours on a horizon with the zero between them as the sun, which sinks 140 units over 1.8 s on cubic-bezier(.65, 0, .35, 1) after 0.35 s, then five glints open across the water. Nothing waits for it.',
-    keep: ['links first in the DOM and never animated; the scene aria-hidden; reduced motion fades in place, static shows the last frame; served with a real 404 status, noindex and root-absolute URLs.'],
+    keep: ['a skip link to the way back, links first in the DOM and never animated, a labelled search landmark; the scene aria-hidden; reduced motion fades in place, static shows the last frame; served with a real 404 status, noindex and root-absolute URLs.'],
   },
 };

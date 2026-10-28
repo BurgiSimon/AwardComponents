@@ -28,7 +28,7 @@ export default {
   ],
   prompt: {
     skill: 'webgl',
-    ask: 'Scrub {target} with the scroll through their animation clips.',
+    ask: 'Let the scroll scrub the animation clips of {target}.',
     target: 'the 3D objects in the product chapter',
     brief: 'Each object carries an AnimationClip (keyframe tracks on named children, built in code or baked in a glb). One paused GSAP timeline of nine units gives each a slot of three: a hand-off sliding the rail (power2.inOut, straddling the boundary), a 0–1 growth proxy that becomes mixer.setTime(proxy × duration) (sine.inOut), and a tone, all settled by slot + 2.25. ScrollTrigger scrubs the timeline across a sticky track (scrub 0.8, 0.3 on touch); the action is unpaused before every setTime, and frames render only when the timeline updates.',
     keep: ['a nav of real links with aria-current="step" that jump to settled poses; reduced motion cuts to settled poses with no scrub; a still without WebGL; never play() the clips on a clock.'],

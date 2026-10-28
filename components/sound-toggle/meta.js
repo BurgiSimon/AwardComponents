@@ -23,7 +23,7 @@ export default {
   ],
   controls: [
     { id: 'bars', label: 'Bars', type: 'range', min: 3, max: 7, step: 1, default: 4, group: 'Icon', prompt: 'Equaliser icon with {value} bars (default {default})', when: { style: ['bars'] } },
-    { id: 'style', label: 'Icon style', type: 'select', options: [{ value: 'bars', label: 'Bars' }, { value: 'wave', label: 'Wave' }], default: 'bars', group: 'Icon', prompt: (v) => (v === 'wave' ? 'Draw the icon as a waveform line from the analyser’s time-domain data' : 'Draw the icon as equaliser bars from the analyser’s frequency data') },
+    { id: 'style', label: 'Icon style', type: 'select', options: [{ value: 'bars', label: 'Bars' }, { value: 'wave', label: 'Wave' }], default: 'bars', group: 'Icon', prompt: (v) => (v === 'wave' ? 'Draw the icon as a waveform line from the analyser’s time-domain data (default: equaliser bars from its frequency data)' : 'Draw the icon as equaliser bars from the analyser’s frequency data') },
     { id: 'volume', label: 'Room tone level', type: 'range', min: 0.1, max: 0.6, step: 0.025, default: 0.375, group: 'Sound', help: 'The ambient bed’s gain; interface cues stay at .35.', prompt: 'Ambient bed at a gain of {value} (default {default}); cues at .35' },
     { id: 'cues', label: 'Clicks on the menu', type: 'toggle', default: true, group: 'Sound', prompt: { on: 'Soft one-shot cues when the navigation is hovered or pressed, only while sound is on', off: 'No interface cues; the toggle only starts and stops the bed' } },
   ],
@@ -33,6 +33,6 @@ export default {
     ask: 'Add an opt-in sound toggle to {target}.',
     target: 'the site header',
     brief: 'Off by default, with three states (off, armed, on). Build the AudioContext inside the click: a bed of two detuned sines (110 and 165 Hz) through a 420 Hz lowpass swept by a 0.07 Hz LFO, under band-passed noise, at a gain of .375, and short triangle blips at .35 for cues. The icon is an AnalyserNode drawn to a canvas inside the button. Store the yes; on return the switch is armed and the first gesture starts the sound.',
-    keep: ['a real button named by its state with aria-pressed; no context before a gesture; suspend on hidden tabs; the icon still under reduced motion.'],
+    keep: ['a real button named by its state with aria-pressed; no context before a gesture; suspend on hidden tabs; the choice stored inside try/catch; the icon still under reduced motion.'],
   },
 };

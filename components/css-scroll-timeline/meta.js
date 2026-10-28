@@ -23,7 +23,7 @@ export default {
   controls: [
     { id: 'rise', label: 'Reveal distance', type: 'range', min: 0, max: 6, step: 0.5, default: 3, unit: 'rem', group: 'Timelines', help: 'How far each paragraph travels into place over entry 10 % → cover 35 %.', prompt: 'Reveal distance: paragraphs rise {value} into place (default {default})' },
     { id: 'frameFrom', label: 'Figure scale start', type: 'range', min: 0.3, max: 1, step: 0.05, default: 0.55, group: 'Timelines', help: 'The sticky figure grows from this scale to 1 over the first 45 % of its rail.', prompt: 'The sticky figure scales from {value} to 1 over contain 0 % → 45 % of its rail (default {default})' },
-    { id: 'bar', label: 'Progress bar', type: 'select', options: [{ value: 'top', label: 'Top' }, { value: 'side', label: 'Side' }], default: 'top', group: 'Timelines', prompt: 'Reading-progress bar along the {value} edge (default {default})' },
+    { id: 'bar', label: 'Progress bar', type: 'select', options: [{ value: 'top', label: 'Top' }, { value: 'side', label: 'Side' }], default: 'top', group: 'Timelines', prompt: (v) => (v === 'side' ? 'Run the reading-progress bar down the right edge, scaleY from the top (default: across the top, scaleX)' : 'Run the reading-progress bar across the top edge, scaleX from the start') },
     { id: 'engine', label: 'Engine', type: 'select', options: [{ value: 'auto', label: 'CSS timelines' }, { value: 'script', label: 'Script fallback' }], default: 'auto', group: 'Compare', help: 'Force the IntersectionObserver fallback to compare it with the native timelines.', prompt: false },
   ],
   prompt: {

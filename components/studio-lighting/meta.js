@@ -32,10 +32,10 @@ export default {
     skill: 'webgl',
     ask: 'Light {target} with a studio built in code.',
     target: 'the product render',
-    brief: 'No HDR file and no lights: a room of emissive panels is baked once with PMREMGenerator.fromScene (half-float, so a sparkle strip at 8 stays a hard glint after the rough mips blur), with a painted equirectangular canvas as the second variant at environmentIntensity 2.2. Metal at metalness 1 and a clearcoat glaze (coat roughness 0.04 over a rough base) take every highlight from it; dark walls and a floor flag give the metal its contrast.',
+    brief: 'No HDR file and no lights: a room of emissive panels is baked once with PMREMGenerator.fromScene (half-float, so a sparkle strip at 8 stays a hard glint after the rough mips blur), with a painted equirectangular canvas as the second variant at environmentIntensity 2.2. Metal at metalness 1 and a clearcoat glaze (coat roughness 0.04 over a rough base) take every highlight from it; dark walls and a floor flag give the metal its contrast. The light turns, not the product: scene.environmentRotation orbits at 0.22 rad/s at rest until a drag or a range input takes over.',
     keep: [
       'each variant baked on first use and kept, every PMREMGenerator disposed right after its bake',
-      'the light rotated with scene.environmentRotation, by drag or a range input; lit but held under reduced motion; a drawn still without WebGL',
+      'a native range input for the light angle and aria-pressed buttons for the lighting switch (radio buttons for any finish swatches); lit but held under reduced motion; a drawn still without WebGL',
     ],
   },
 };

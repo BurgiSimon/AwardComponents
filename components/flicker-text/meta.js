@@ -24,7 +24,7 @@ export default {
     { id: 'step', label: 'Ladder step', type: 'range', min: 20, max: 140, step: 5, default: 50, unit: 'ms', group: 'Ladder', help: 'Each glyph runs 0, 1, 0, 0, 1, 1 at this step.', prompt: 'Each glyph runs the opacity ladder [0, 1, 0, 0, 1, 1] in hard {value} steps (default {default})' },
     { id: 'stagger', label: 'Stagger', type: 'range', min: 10, max: 120, step: 5, default: 40, unit: 'ms', group: 'Ladder', prompt: 'Glyph stagger: {value} (default {default})' },
     { id: 'trigger', label: 'Trigger', type: 'select', options: [{ value: 'load', label: 'On load' }, { value: 'hover', label: 'Hover only' }, { value: 'loop', label: 'Faulty tube loop' }], default: 'load', group: 'Ladder', prompt: (v) => ({ load: 'The sign switches on once on load and replays on hover', hover: 'The sign is lit at rest and runs the ladder only on hover', loop: 'After switching on, one random glyph catches and flickers every 2–5 s while the sign is on screen' })[v] },
-    { id: 'glow', label: 'Glow', type: 'range', min: 0, max: 1, step: 0.05, default: 0.7, group: 'Look', prompt: 'Neon glow strength: {value} (default {default})' },
+    { id: 'glow', label: 'Glow', type: 'range', min: 0, max: 1, step: 0.05, default: 0.7, group: 'Look', prompt: 'Scale the neon glow (a three-layer text-shadow of 0.04, 0.16 and 0.5 em, and the bloom behind the line) by {value} (default {default})' },
     { id: 'colour', label: 'Tube colour', type: 'color', default: 'accent', group: 'Look', options: ['accent', 'clay', 'sky', 'plum', 'moss'], prompt: 'Tube colour: {value} (default {default})' },
   ],
   actions: [{ id: 'replay', label: 'Replay', icon: 'refresh' }],
@@ -32,7 +32,7 @@ export default {
     skill: 'component',
     ask: 'Make {target} flicker on like a neon sign.',
     target: 'the night programme headline',
-    brief: 'Split the line into glyph spans after document.fonts.ready and run every glyph through the opacity ladder [0, 1, 0, 0, 1, 1] as GSAP keyframes with ease none, 50 ms per step and a 40 ms stagger, so it switches on letter by letter rather than fading. Hover replays it with a 6 px expo-out shift (0.8 s); the links in the list do the same on hover and focus.',
+    brief: 'Split the line into glyph spans after document.fonts.ready and run every glyph through the opacity ladder [0, 1, 0, 0, 1, 1] as GSAP keyframes with ease none, 50 ms per step and a 40 ms stagger, so it switches on letter by letter rather than fading, with a glow behind it that follows how much of the line is lit. Hover replays it with a 6 px expo-out shift (0.8 s); links split the same way replay it on hover and keyboard focus.',
     keep: [
       'the original text in a visually hidden copy with the glyph spans aria-hidden; words never break inside',
       'all glyphs lit and no replays under reduced motion',

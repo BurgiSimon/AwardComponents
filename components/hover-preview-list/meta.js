@@ -30,10 +30,10 @@ export default {
     skill: 'component',
     ask: 'Turn {target} into a hover preview list.',
     target: 'the project archive',
-    brief: 'A ruled list where every row is a link (title, place, year, discipline). Hovering a row shows its picture in a preview that chases the pointer with a lerp of 0.25 per 60 fps frame through framerate-independent damping, cross-fading between rows instead of hiding; the row’s title shifts 0.15 em. The loop runs only while the preview is out.',
+    brief: 'A ruled list where every row is a link (title, place, year, discipline). Hovering a row shows its picture in a 22 vw, 4:5 preview that chases the pointer with a lerp of 0.25 per 60 fps frame through framerate-independent damping and leans up to 5° with the lag, cross-fading between rows instead of hiding; the row’s title shifts 0.15 em. The loop runs only while the preview is out.',
     keep: [
       'keyboard focus shows the same preview anchored beside the focused row; the preview is aria-hidden and pointer-events: none.',
-      'coarse pointers get a plain list; reduced motion keeps the preview without the trail.',
+      'coarse pointers get a plain list; reduced motion keeps the preview without the trail or the lean.',
     ],
   },
 };

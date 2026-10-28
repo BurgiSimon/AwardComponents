@@ -27,10 +27,10 @@ export default {
     { id: 'ease', label: 'Ease', type: 'select', options: [{ value: 'inOut', label: 'In-out, cubic-bezier(.76, 0, .24, 1)' }, { value: 'out', label: 'Out, expo.out' }, { value: 'spring', label: 'Soft overshoot, back.out(1.3)' }], default: 'inOut', group: 'Motion', prompt: 'Ease: {value} (default {default})' },
   ],
   prompt: {
-    skill: 'motion',
+    skill: 'component',
     ask: 'Animate the layout changes of {target} with GSAP Flip.',
     target: 'the shop index',
-    brief: 'Grid ↔ list, a category filter and a detail view, each as Flip.getState() → change a class, hidden or parent → Flip.from(), never rebuilding the DOM. Grid ↔ list flips items and their parts with nested: true, absolute: true and no scale, pinning the list height; the filter uses scale: true, absoluteOnLeave with onEnter / onLeave fades to 0.85; the detail reparents the picture into a dialog frame of the same ratio. 0.75 s on cubic-bezier(.76, 0, .24, 1), stagger 0.025 s by item.',
+    brief: 'Grid ↔ list, a category filter and a detail view, each as Flip.getState() → change a class, hidden or parent → Flip.from(), never rebuilding the DOM. Grid ↔ list flips items and their parts with nested: true, absolute: true and no scale, pinning the list height; the filter uses scale: true and absoluteOnLeave, entering and leaving items fading from / to opacity 0 at scale 0.85; the detail reparents the picture into a dialog frame of the same ratio. 0.75 s on cubic-bezier(.76, 0, .24, 1), stagger 0.025 s by item.',
     keep: ['aria-pressed controls with counts and a status line; focus stays put; a native dialog with Escape and focus return; no Flip under reduced motion.'],
   },
 };

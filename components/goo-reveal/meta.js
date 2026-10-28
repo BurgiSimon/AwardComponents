@@ -22,7 +22,7 @@ export default {
   ],
   controls: [
     { id: 'blur', label: 'Blur strength', type: 'range', min: 0.1, max: 0.6, step: 0.02, default: 0.32, unit: 'em', group: 'Pool', help: 'The starting blur as a share of the heading’s font size.', prompt: 'Start the blur at stdDeviation {value} of the heading’s font size (default {default})' },
-    { id: 'amp', label: 'Threshold', type: 'range', min: 4, max: 40, step: 1, default: 18, unit: '×', group: 'Pool', help: 'How hard the alpha cut is while pooling; higher is blobbier.', prompt: 'Alpha threshold: {value} × alpha with the cut held near 0.39, relaxed to identity at the end (default {default})' },
+    { id: 'amp', label: 'Threshold', type: 'range', min: 4, max: 40, step: 1, default: 18, unit: '×', group: 'Pool', help: 'How hard the alpha cut is while pooling; higher is blobbier.', prompt: 'Threshold sharpness {value}: alpha′ = amp × alpha − 0.39 × amp while pooling, relaxed to identity over the last 0.45 s (default {default})' },
     { id: 'duration', label: 'Duration', type: 'range', min: 0.5, max: 2.5, step: 0.1, default: 1.1, unit: 's', group: 'Timing', prompt: 'Each line condenses in {value} with power3.out; the threshold relaxes over its last 0.45 s (default {default})' },
     { id: 'stagger', label: 'Line stagger', type: 'range', min: 0, max: 0.4, step: 0.02, default: 0.12, unit: 's', group: 'Timing', prompt: 'Lines start {value} apart (default {default})' },
   ],
@@ -34,7 +34,7 @@ export default {
     brief: 'Split each heading into lines with SplitText and give every line its own SVG filter: feGaussianBlur from 0.32 em of the font size to 0 over 1.1 s (power3.out), then an feColorMatrix alpha row that starts at 18 × alpha − 7 and relaxes to identity over the last 0.45 s, so the letters condense out of a pool. Lines run 0.12 s apart, each heading plays once at top 85 %, every filter is removed as its line lands and the split is reverted when the heading has landed.',
     keep: [
       'the heading’s whole sentence as its name while split; plain, selectable, unfiltered text after landing',
-      'no split and no filter under reduced motion, only a 0.4 s fade; plain text with motion off',
+      'no split and no filter under reduced motion, only a 0.4 s fade; plain text with motion off, and after 2.5 s if the script never arms the headings',
     ],
   },
 };

@@ -22,7 +22,7 @@ export default {
   ],
   controls: [
     { id: 'mode', label: 'Mode', type: 'select', options: [{ value: 'reel', label: 'Reel roll' }, { value: 'typed', label: 'Typed' }, { value: 'wheel', label: 'Wheel-stepped' }], default: 'reel', group: 'Driver', prompt: (v) => ({ reel: 'Drive it as a timed reel roll', typed: 'Drive it by typing and erasing, one character at a time', wheel: 'Step it with the first wheel inputs at the top of the page, then let the page scroll' })[v] },
-    { id: 'words', label: 'Words', type: 'text', default: 'houses, libraries, pavilions, chairs', maxLength: 80, group: 'Driver', help: 'Comma-separated, up to six.', prompt: 'Words: {value} (default {default})' },
+    { id: 'words', label: 'Words', type: 'text', default: 'houses, libraries, pavilions, chairs', maxLength: 80, group: 'Driver', help: 'Comma-separated, up to six.', prompt: false },
     { id: 'rest', label: 'Rest', type: 'range', min: 0.3, max: 4, step: 0.1, default: 0.9, unit: 's', group: 'Reel', when: { mode: ['reel'] }, prompt: 'Rest between rolls: {value} (default {default})' },
     { id: 'ease', label: 'Roll', type: 'select', options: [{ value: 'overshoot', label: 'Overshoot' }, { value: 'stiff', label: 'Stiff' }], default: 'overshoot', group: 'Reel', when: { mode: ['reel'] }, prompt: (v) => (v === 'stiff' ? 'Roll stiffly: yPercent ±118 on power4.inOut over 0.75 s' : 'Roll with a small overshoot: yPercent ±130 on back.out(1.7) over 0.56 s') },
     { id: 'hold', label: 'Hold', type: 'range', min: 0.6, max: 5, step: 0.1, default: 2.2, unit: 's', group: 'Typing', when: { mode: ['typed'] }, prompt: 'Hold each typed word for {value} (default {default})' },
@@ -32,10 +32,10 @@ export default {
     skill: 'component',
     ask: 'Make one word in {target} rotate.',
     target: 'the hero headline',
-    brief: 'One word in a fixed headline turns through a short list while the rest of the line stays put: every word sits in the same inline-grid cell so the slot is as wide as the widest word, clipped on the vertical axis only. The reel rolls the next word in from yPercent 130 while the current one leaves to −130 on one back.out(1.7) tween (0.56 s) with a 0.9 s rest; typed mode erases and retypes per character (115 ms in, 58 ms out, 2.2 s hold); wheel mode steps on the first wheel inputs at scrollY 0 (|Δy| ≥ 18, one step per 760 ms) and releases the wheel after the last word.',
+    brief: 'One word in a fixed headline turns through a short list (up to six words) while the rest of the line stays put: every word sits in the same inline-grid cell so the slot is as wide as the widest word, clipped on the vertical axis only. The reel rolls the next word in from yPercent 130 while the current one leaves to −130 on one back.out(1.7) tween (0.56 s) with a 0.9 s rest; typed mode erases and retypes per character (115 ms in, 58 ms out, 2.2 s hold); wheel mode steps on the first wheel inputs at scrollY 0 (|Δy| ≥ 18, one step per 760 ms) and releases the wheel after the last word.',
     keep: [
       'the heading reads as one sentence through a visually hidden label (aria-live off); the slot adds no focus stops',
-      'the first word, still, under reduced motion; keyboard and touch scrolling never intercepted; paused off-screen',
+      'the first word, still, with the whole list shown beneath the headline under reduced motion; keyboard and touch scrolling never intercepted; paused off-screen',
     ],
   },
 };

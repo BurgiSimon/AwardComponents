@@ -31,9 +31,9 @@ export default {
     skill: 'webgl',
     ask: 'Mirror the images in {target} with WebGL planes.',
     target: 'the project grid',
-    brief: 'The DOM keeps the layout: each frame reads every visible image’s rect and writes a plane’s position and scale in pixels, through a camera at distance 1000 whose fov makes one unit one pixel; the absolute canvas is translated to scrollY each frame rather than fixed. The planes bulge with the scroll speed damped from Lenis (k = 8, strength 0.35) and are flat at rest; hover colours a plane in from grey.',
+    brief: 'The DOM keeps the layout: each frame reads every visible image’s rect and writes a plane’s position and scale in pixels, through a camera at distance 1000 whose fov makes one unit one pixel; the absolute canvas is translated to scrollY each frame rather than fixed. The planes bulge with the scroll speed damped from Lenis (k = 8, strength 0.35) and are flat at rest; hover colours a plane in from grey, spreading from the pointer in a soft circle while the picture pushes in 6 %.',
     keep: [
-      'every image an <img> with alt text, hidden only while its plane draws; the canvas aria-hidden; focus does what hover does',
+      'every image an <img> with alt text, hidden only while its plane draws; the canvas aria-hidden; focus does what hover does; on touch the plane nearest the middle of the screen is in colour',
       'plain images under reduced motion and without WebGL; the loop sleeping when nothing moves',
     ],
   },

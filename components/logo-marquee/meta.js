@@ -22,7 +22,7 @@ export default {
   ],
   controls: [
     { id: 'speed', label: 'Speed', type: 'range', min: 10, max: 220, step: 5, default: 70, unit: 'px/s', group: 'Motion', prompt: 'Base speed: {value} (default {default})' },
-    { id: 'direction', label: 'Direction', type: 'select', options: [{ value: 'left', label: '← Left' }, { value: 'right', label: 'Right →' }], default: 'left', group: 'Motion', prompt: 'First row moves {value}; the second row runs the other way (default {default})' },
+    { id: 'direction', label: 'Direction', type: 'select', options: [{ value: 'left', label: '← Left' }, { value: 'right', label: 'Right →' }], default: 'left', group: 'Motion', prompt: (v) => (v === 'right' ? 'The first row moves right; a second row runs left' : 'The first row moves left; a second row runs right') },
     { id: 'boost', label: 'Scroll boost', type: 'range', min: 0, max: 2, step: 0.1, default: 0.6, group: 'Motion', help: 'Share of the scroll velocity added to the speed. Scroll the preview to feel it.', prompt: 'Scroll boost: add {value} × the scroll velocity to the speed, damped back (default {default})' },
     { id: 'pause', label: 'Pause on hover and focus', type: 'toggle', default: true, group: 'Motion', prompt: { on: 'Pause on hover and keyboard focus', off: 'Keep moving on hover (focus still pauses, for keyboard users)' } },
     { id: 'fade', label: 'Edge fade', type: 'range', min: 0, max: 30, step: 1, default: 12, unit: '%', group: 'Look', prompt: 'Edge fade: a {value} mask at each end (default {default})' },
@@ -32,7 +32,7 @@ export default {
     skill: 'component',
     ask: 'Add a looping marquee to {target}.',
     target: 'the client logos under the hero',
-    brief: 'Items drift sideways in an endless loop driven by one requestAnimationFrame clock (not a CSS animation), copied just enough to cover twice the width, wrapping at one copy’s width. The speed adds a damped share of the scroll velocity, the ends fade through a mask, and the loop stops off-screen.',
+    brief: 'Items drift sideways in an endless loop at 70 px/s, moved by one requestAnimationFrame clock (not a CSS animation) and copied just enough to cover twice the row’s width, wrapping at one copy’s width. The speed adds 0.6 × the scroll velocity, damped at k = 5, so a flick of the wheel speeds the row up and it settles back; hover and focus ease it to a stop. The ends fade through a 12 % mask, and the loop stops off-screen.',
     keep: ['one readable list for assistive tech, copies aria-hidden; hover and focus pause; a still, wrapped grid under reduced motion.'],
   },
 };

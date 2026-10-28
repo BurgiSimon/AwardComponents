@@ -22,7 +22,7 @@ export default {
   ],
   controls: [
     { id: 'dock', label: 'Dock position', type: 'select', options: [{ value: 'center', label: 'Bottom centre' }, { value: 'left', label: 'Bottom left' }, { value: 'right', label: 'Bottom right' }], default: 'center', group: 'Switch', prompt: (v) => `Dock the switch at the bottom ${{ center: 'centre', left: 'left', right: 'right' }[v]} of the viewport (default centre)` },
-    { id: 'cols', label: 'Grid columns', type: 'select', options: [{ value: '8', label: '8' }, { value: '12', label: '12' }, { value: '16', label: '16' }], default: '12', group: 'Grid', help: 'The page’s real grid; the overlay draws the same columns. Phones use 4.', prompt: 'A {value}-column page grid, drawn by the overlay (4 on phones; default {default})' },
+    { id: 'cols', label: 'Grid columns', type: 'select', options: [{ value: '8', label: '8' }, { value: '12', label: '12' }, { value: '16', label: '16' }], default: '12', group: 'Grid', help: 'The page’s real grid; the overlay draws the same columns. Phones use 4.', prompt: 'Lay the page on {value} columns and draw the same ones in the overlay (4 on phones; default {default})' },
     { id: 'hints', label: 'Show hotkey hints', type: 'toggle', default: true, group: 'Switch', prompt: { on: 'Show the L, D and G hotkeys inside the controls', off: 'Keep the hotkeys but do not print them in the controls' } },
   ],
   actions: [{ id: 'grid', label: 'Toggle the grid' }, { id: 'dark', label: 'Switch light / dark' }],
@@ -31,6 +31,9 @@ export default {
     ask: 'Add a persistent display switch to {target}.',
     target: 'the portfolio',
     brief: 'A docked segmented Light / Dark switch (native radios under a sliding indicator, .4 s power3.out) and a Grid button that overlays the page’s real columns, with L, D and G hotkeys. Each choice is a root attribute, stored in localStorage, printed in the control as a bracket readout and restored by an inline head script before first paint. When 60 % of the closing section is in view the dock scales out (to 1.75 and fades) while a large centred copy arrives from .5.',
-    keep: ['hotkeys ignored in text fields, with modifiers, on repeat and during composition; only one copy of the switch reachable (the other inert); no tweens under reduced motion.'],
+    keep: [
+      'native radios in a fieldset (arrow keys move the choice) and an aria-pressed Grid button, each change announced politely.',
+      'hotkeys ignored in text fields, with modifiers, on repeat and during composition; only one copy of the switch reachable (the other inert), and focus on the leaving copy moves to the arriving one; no tweens under reduced motion.',
+    ],
   },
 };

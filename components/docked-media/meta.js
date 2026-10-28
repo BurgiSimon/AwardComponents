@@ -21,7 +21,7 @@ export default {
   ],
   controls: [
     { id: 'dock', label: 'Dock width', type: 'range', min: 160, max: 420, step: 10, default: 300, unit: 'px', group: 'Dock', help: 'Capped at 32 % of the full-size box, so it stays a card on small screens.', prompt: 'Docked card width: {value}, capped at 32 % of the final box (default {default})' },
-    { id: 'corner', label: 'Corner', type: 'select', options: [{ value: 'right', label: 'Bottom right' }, { value: 'left', label: 'Bottom left' }], default: 'right', group: 'Dock', prompt: 'Dock in the bottom-{value} corner, scaling around that corner (default {default})' },
+    { id: 'corner', label: 'Corner', type: 'select', options: [{ value: 'right', label: 'Bottom right' }, { value: 'left', label: 'Bottom left' }], default: 'right', group: 'Dock', prompt: (v) => (v === 'left' ? 'Dock in the bottom-left corner, scaling around that corner (transform-origin 0 100 %; default bottom right)' : 'Dock in the bottom-right corner, scaling around that corner (transform-origin 100 % 100 %)') },
     { id: 'radius', label: 'Corner radius', type: 'range', min: 0, max: 40, step: 2, default: 24, unit: 'px', group: 'Dock', prompt: 'Card corner radius: {value}, counter-scaled so the docked card shows the same radius (default {default})' },
     { id: 'start', label: 'Grow starts at', type: 'range', min: 50, max: 100, step: 5, default: 85, unit: '%', group: 'Scroll', help: 'Where the film section’s top must be in the viewport for the grow to begin. It always ends at the top.', prompt: 'Start the grow when the section’s top is at {value} of the viewport; it ends at top top (default {default})' },
   ],
@@ -29,7 +29,10 @@ export default {
     skill: 'component',
     ask: 'Dock {target} in the corner and grow it into its section on scroll.',
     target: 'the showreel',
-    brief: 'The reel is laid out at its final box (a 100 svh section with the gutter as padding); while docked the same box is position: fixed at inset: gutter and scaled down around its bottom-right corner (300 px wide, capped). A linear scrub from top 85 % to top top grows it to scale 1, and at that end onLeave hands it back to the flow, where the two boxes coincide. Transform only; scrub: true so the hand-off lands at exactly 1.',
-    keep: ['a real “Watch the film” link outside the scaled card, faded over the first 15 %; a visible pause control; no dock on phones or under reduced motion.'],
+    brief: 'The reel is laid out at its final box (a 100 svh section with the gutter as padding); while docked the same box is position: fixed at inset: gutter and scaled down around its bottom-right corner (300 px wide, capped at 32 % of the final box; docked only from 700 px wide). A linear scrub from top 85 % to top top grows it to scale 1, and at that end onLeave hands it back to the flow, where the two boxes coincide. Transform only, the corner radius counter-scaled; scrub: true so the hand-off lands at exactly 1.',
+    keep: [
+      'a real “Watch the film” link outside the scaled card, faded out of view and the tab order over the first 15 %; a visible pause button; the film plays only while on screen.',
+      'no dock below 700 px or under reduced motion: the film sits full-size in its section, paused under reduced motion.',
+    ],
   },
 };

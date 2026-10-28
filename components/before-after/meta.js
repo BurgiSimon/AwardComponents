@@ -21,16 +21,16 @@ export default {
     'Under reduced motion the divider moves straight to where it is put, without the short glide.',
   ],
   controls: [
-    { id: 'orientation', label: 'Orientation', type: 'select', options: [{ value: 'horizontal', label: 'Side by side' }, { value: 'vertical', label: 'Top and bottom' }], default: 'horizontal', group: 'Divider', prompt: 'Divider orientation: {value} (default {default}); the keys and the touch scroll axis follow it' },
+    { id: 'orientation', label: 'Orientation', type: 'select', options: [{ value: 'horizontal', label: 'Side by side' }, { value: 'vertical', label: 'Top and bottom' }], default: 'horizontal', group: 'Divider', prompt: (v) => (v === 'vertical' ? 'Top and bottom: a horizontal divider that moves up and down; the arrow keys follow it on screen and touch-action switches to pan-x' : 'Side by side: a vertical divider that moves left and right, with touch-action: pan-y on the frame') },
     { id: 'start', label: 'Start position', type: 'range', min: 10, max: 90, step: 5, default: 50, unit: '%', group: 'Divider', prompt: 'The divider starts at {value} (default {default})' },
-    { id: 'handle', label: 'Handle', type: 'select', options: [{ value: 'grip', label: 'Grip' }, { value: 'bar', label: 'Bar' }, { value: 'ring', label: 'Ring' }], default: 'grip', group: 'Divider', prompt: 'Handle style: {value} (default {default}), at least 44 px to grab' },
-    { id: 'before', label: 'Before', type: 'select', options: [{ value: 'raw', label: 'Raw scan' }, { value: 'contact', label: 'Contact print' }, { value: 'faded', label: 'Faded print' }], default: 'raw', group: 'Pictures', help: 'The before side is the same photograph through CSS filters.', prompt: 'The before side is a {value} version of the same picture (default {default})' },
+    { id: 'handle', label: 'Handle', type: 'select', options: [{ value: 'grip', label: 'Grip' }, { value: 'bar', label: 'Bar' }, { value: 'ring', label: 'Ring' }], default: 'grip', group: 'Divider', prompt: (v) => ({ grip: 'Handle: a 46 px solid disc with two arrows on the divider line, in a 44 px hit strip along the divider', bar: 'Handle: a 10 × 56 px pill on the divider line, no arrows, in a 44 px hit strip along the divider', ring: 'Handle: a 46 px ring (2 px outline over a 6 px backdrop blur) with two arrows, in a 44 px hit strip along the divider' })[v] },
+    { id: 'before', label: 'Before', type: 'select', options: [{ value: 'raw', label: 'Raw scan' }, { value: 'contact', label: 'Contact print' }, { value: 'faded', label: 'Faded print' }], default: 'raw', group: 'Pictures', help: 'The before side is the same photograph through CSS filters.', prompt: false },
   ],
   prompt: {
     skill: 'component',
     ask: 'Turn {target} into a before and after comparison.',
     target: 'the two versions of the picture',
-    brief: 'Two aligned images in one frame, the top one clipped with clip-path: inset() at the divider. Drag the handle (pointer capture, released on cancel and blur), hold anywhere on the picture to peek at the other side in full until release, or move the handle as a slider: 5 % steps, 20 % with Shift, Home and End, Space to peek. The divider glides for a short linear moment except while dragging.',
+    brief: 'Two aligned images in one frame, the top one clipped with clip-path: inset() at the divider, which starts at 50 %. Drag the handle (pointer capture, released on cancel and blur), hold anywhere on the picture to peek at the other side in full until release, or move the handle as a slider: 5 % steps, 20 % with Shift, Home and End, Space to peek. The divider glides 200 ms linear to each new position, never while dragging.',
     keep: ['role="slider" with a spoken value; touch-action on the cross axis so the page still scrolls; no glide under reduced motion.'],
   },
 };

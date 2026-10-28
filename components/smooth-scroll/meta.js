@@ -21,7 +21,7 @@ export default {
     'A skip link, landmarks and real headings; the readout and the progress bar are decorative and hidden from assistive tech.',
   ],
   controls: [
-    { id: 'mode', label: 'Smoothing', type: 'select', options: [{ value: 'lerp', label: 'Lerp (chase)' }, { value: 'duration', label: 'Duration + easing' }], default: 'lerp', group: 'Lenis', help: 'A lerp chases the target a share per frame; a duration plays a fixed curve to it.', prompt: (v) => (v === 'duration' ? 'Smooth with a fixed duration and an expo-out curve instead of a lerp' : 'Smooth with a lerp') },
+    { id: 'mode', label: 'Smoothing', type: 'select', options: [{ value: 'lerp', label: 'Lerp (chase)' }, { value: 'duration', label: 'Duration + easing' }], default: 'lerp', group: 'Lenis', help: 'A lerp chases the target a share per frame; a duration plays a fixed curve to it.', prompt: (v) => (v === 'duration' ? 'Smooth each wheel gesture over a fixed duration with an expo-out curve instead of a lerp, 1.2 s unless a duration is given below (default: lerp 0.1)' : 'Smooth with a lerp') },
     { id: 'lerp', label: 'Lerp', type: 'range', min: 0.03, max: 0.3, step: 0.01, default: 0.1, group: 'Lenis', when: { mode: ['lerp'] }, help: 'Share of the remaining distance covered each frame. Lower glides longer.', prompt: 'Lenis lerp: {value} (default {default})' },
     { id: 'duration', label: 'Duration', type: 'range', min: 0.4, max: 2.4, step: 0.1, default: 1.2, unit: 's', group: 'Lenis', when: { mode: ['duration'] }, prompt: 'Lenis duration: {value} per wheel gesture, expo-out (default {default})' },
     { id: 'wheel', label: 'Wheel multiplier', type: 'range', min: 0.4, max: 2, step: 0.1, default: 1, unit: '×', group: 'Lenis', help: 'How far one wheel tick travels.', prompt: 'Wheel multiplier: {value} (default {default})' },
@@ -34,6 +34,6 @@ export default {
     ask: 'Boot {target} on Lenis and GSAP’s ticker.',
     target: 'the site’s main layout',
     brief: 'One smooth-scroll instance (Lenis, lerp 0.1, autoRaf off) driven by gsap.ticker with lagSmoothing(0), feeding ScrollTrigger.update on every scroll. Text is measured or split only after document.fonts.ready; scrubbed values use ease none because the smoothing already lives in the lerp; sections reveal once at 80 % of the viewport.',
-    keep: ['native scrolling and a fade-only vocabulary under reduced motion; keyboard and scrollbar scrolling untouched; a skip link and landmarks.'],
+    keep: ['no Lenis under reduced motion, so scrolling is native and reveals use a fade-only vocabulary; keyboard and scrollbar scrolling untouched; a skip link and landmarks.'],
   },
 };

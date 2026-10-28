@@ -30,9 +30,9 @@ export default {
   ],
   prompt: {
     skill: 'webgl',
-    ask: 'Give {target} a body: an extruded, raymarched version of the mark.',
+    ask: 'Give {target} a polished-metal body, extruded from its 2D distance field and raymarched.',
     target: 'the brand mark in the hero',
-    brief: 'The mark is a 2D signed distance (analytic, or a distance-field texture baked from its SVG). Extrude it with w = (mark(p.xy) + bevel, |z| − (depth − bevel)), d = min(max(w.x, w.y), 0) + length(max(w, 0)) − bevel, so every edge gets a quarter-round. One fullscreen triangle in raw WebGL 2 clips the ray to the mark’s box, marches 80 steps, shades by reflection only (a studio ring environment, four-tap normals and occlusion, Schlick F0 0.93) with inline ACES and gamma. Half-depth 0.16, bevel 0.055; the depth grows in over 0.9 s while the yaw settles from −90° over 1.6 s, then sways ±0.32 rad.',
+    brief: 'The mark is a 2D signed distance (analytic, or a distance-field texture baked from its SVG). Extrude it with w = (mark(p.xy) + bevel, |z| − (depth − bevel)), d = min(max(w.x, w.y), 0) + length(max(w, 0)) − bevel, so every edge gets a quarter-round. One fullscreen triangle in raw WebGL 2 clips the ray to the mark’s box, marches 80 steps, shades by reflection only (a studio ring environment, four-tap normals and occlusion, Schlick F0 0.93) with inline ACES and gamma. Half-depth 0.16 and bevel 0.04 (outer arc radius 0.74, stroke half-width 0.07); the depth grows in over 0.9 s while the yaw settles from −90° over 1.6 s, then sways ±18° at 0.55 rad/s.',
     keep: ['role="img" with a label on the stage; an SVG stroke still under reduced motion, without WebGL 2 and on context loss; the canvas renders only while on screen.'],
   },
 };

@@ -21,7 +21,7 @@ export default {
     'Under reduced motion the count and a 300 ms hold remain, then the panel fades out and the headline is simply there. Repeat visits in a session skip it entirely.',
   ],
   controls: [
-    { id: 'style', label: 'Counter', type: 'select', options: [{ value: 'number', label: 'Big number' }, { value: 'bar', label: 'Bar' }, { value: 'both', label: 'Both' }], default: 'both', group: 'Look', prompt: 'Show the progress as {value} (default {default})' },
+    { id: 'style', label: 'Counter', type: 'select', options: [{ value: 'number', label: 'Big number' }, { value: 'bar', label: 'Bar' }, { value: 'both', label: 'Both' }], default: 'both', group: 'Look', prompt: (v) => ({ number: 'Show the progress as the big three-digit number only, with no bar (default: number and bar)', bar: 'Show the progress as a 6 px bar under the site name, with a percentage readout riding the end of the fill and no big number (default: number and bar)', both: 'Show the big number above a thin progress bar' })[v] },
     { id: 'accent', label: 'Colour', type: 'color', default: 'accent', group: 'Look', prompt: 'Progress colour: {value} (default {default})' },
     { id: 'tick', label: 'Tick', type: 'range', min: 40, max: 200, step: 10, default: 90, unit: 'ms', group: 'Timing', help: 'How often the number jumps toward the real progress, 3 to 14 at a time.', prompt: 'The number jumps 3–14 every {value} toward the real progress (default {default})' },
     { id: 'hold', label: 'Hold at 100', type: 'range', min: 0, max: 1500, step: 50, default: 450, unit: 'ms', group: 'Timing', prompt: 'Hold at 100 for {value} before the exit (default {default})' },
@@ -36,7 +36,7 @@ export default {
     brief: 'A full-screen panel counts what is actually loading: fonts, the hero pictures’ decodes and the page’s data. The number chases done ÷ total in uneven jumps of 3–14 every 90 ms but never overtakes it, holds at 100 for 450 ms, then lifts out of its mask (0.8 s, expo.in) while the panel exits upward (0.9 s, expo.inOut) and the hero headline rises line by line (1.4 s, stagger 0.09).',
     keep: [
       'a Skip button, a polite status at each real milestone, the page inert underneath, and the panel hidden afterwards',
-      'reduced motion keeps the count and a 300 ms hold, then fades to the hero with its lines in place',
+      'reduced motion keeps the count and a 300 ms hold, then fades to the hero with its lines in place; static motion shows no panel',
     ],
   },
 };

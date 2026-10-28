@@ -32,10 +32,10 @@ export default {
     skill: 'webgl',
     ask: 'Draw {target} in WebGL with a pointer ripple, mirrored by the real heading.',
     target: 'the hero headline',
-    brief: 'Build a signed-distance atlas in the page from the heading’s own font (rasterise the glyphs the string uses, a Felzenszwalb distance transform, median(r,g,b) in the shader, edge = d / max(fwidth(d), 1e-5)) and place each glyph quad on the rect the browser gave that character, so the GL line lands on the DOM line. Pointer movement emits expanding rings (about 460 px/s, 1.8 s life) that displace the atlas lookup by up to 12 px, never past each glyph cell’s padding; rendering stops when the last ring fades.',
+    brief: 'Build a signed-distance atlas in the page from the heading’s own font (rasterise the glyphs the string uses, a Felzenszwalb distance transform, median(r,g,b) in the shader, edge = d / max(fwidth(d), 1e-5)) and place each glyph quad on the rect the browser gave that character, so the GL line lands on the DOM line. A fine pointer emits a ring every 38 px it travels and any press or tap emits one; rings expand at about 460 px/s over a 1.8 s life and displace the atlas lookup by up to 12 px, never past each glyph cell’s padding; rendering stops when the last ring fades.',
     keep: [
       'the heading stays in the DOM at its real size (text transparent while GL draws it); the canvas is aria-hidden.',
-      'DOM text without WebGL or in the static tier; a settled headline and no ripples under reduced motion.',
+      'DOM text without WebGL or in the static tier; a settled headline and no ripples under reduced motion; on touch, one ring per tap and no wake.',
     ],
   },
 };

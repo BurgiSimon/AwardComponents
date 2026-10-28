@@ -25,9 +25,9 @@ export default {
   controls: [
     { id: 'stripes', label: 'Stripe count', type: 'range', min: 2, max: 12, step: 1, default: 5, group: 'Field', help: 'Stripes across the card’s short side.', prompt: 'Stripe count: {value} across the short side (default {default})' },
     { id: 'shift', label: 'Phase shift', type: 'range', min: 0, max: 0.15, step: 0.01, default: 0.06, group: 'Field', help: 'How far red and blue read ahead of and behind green. Past about 0.15 the fringes become separate stripes.', prompt: 'Dispersion: red reads {value} ahead and blue 0.83 × that behind, in phase units (default {default})' },
-    { id: 'speed', label: 'Drift', type: 'range', min: 0, max: 0.6, step: 0.02, default: 0.18, unit: '/s', group: 'Field', help: 'Stripe periods per second. 0 holds the field still.', prompt: 'Drift: {value} periods per second while on screen (default {default})' },
+    { id: 'speed', label: 'Drift', type: 'range', min: 0, max: 0.6, step: 0.02, default: 0.18, unit: '/s', group: 'Field', help: 'Stripe periods per second. 0 holds the field still.', prompt: (v) => (v ? `Drift: the phase moves ${v} stripe periods a second while the card is on screen (default 0.18)` : 'No drift: the stripe field stays still') },
     { id: 'blur', label: 'Edge softness', type: 'range', min: 1, max: 8, step: 0.5, default: 4, unit: '×', group: 'Field', help: 'Edge width as a multiple of fwidth: 1 is a hairline, 4 reads as liquid.', prompt: 'Edge softness: {value} fwidth (default {default})' },
-    { id: 'finish', label: 'Finish', type: 'select', options: [{ value: 'graphite', label: 'Graphite' }, { value: 'steel', label: 'Steel' }], default: 'graphite', group: 'Look', prompt: 'Finish: {value} (default {default})' },
+    { id: 'finish', label: 'Finish', type: 'select', options: [{ value: 'graphite', label: 'Graphite' }, { value: 'steel', label: 'Steel' }], default: 'graphite', group: 'Look', prompt: (v) => ({ graphite: 'Finish: graphite, near-black flats with dark blue-grey stripes and light type on the card', steel: 'Finish: brushed steel, near-white warm stripes over grey flats with dark type on the card' }[v]) },
   ],
   prompt: {
     skill: 'webgl',

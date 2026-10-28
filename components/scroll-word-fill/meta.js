@@ -22,12 +22,12 @@ export default {
   controls: [
     { id: 'floor', label: 'Resting ink', type: 'range', min: 0.1, max: 0.8, step: 0.05, default: 0.5, group: 'Fill', help: 'Opacity of an unread word. Below 0.5 most of the statement fails 3:1 until it is scrolled.', prompt: 'Unread words rest at opacity {value} (default {default})' },
     { id: 'edge', label: 'Front edge', type: 'range', min: 0.15, max: 1, step: 0.05, default: 0.5, group: 'Fill', help: 'Stagger between words, in word-fill lengths. Low fills in soft waves; 1 steps one word at a time.', prompt: 'Stagger: each word starts {value} of a fill length after the one before it (default {default})' },
-    { id: 'unit', label: 'Fill by', type: 'select', options: [{ value: 'words', label: 'Words' }, { value: 'chars', label: 'Characters' }], default: 'words', group: 'Fill', prompt: 'Fill by {value} (default {default})' },
+    { id: 'unit', label: 'Fill by', type: 'select', options: [{ value: 'words', label: 'Words' }, { value: 'chars', label: 'Characters' }], default: 'words', group: 'Fill', prompt: (v) => (v === 'chars' ? 'Fill character by character instead of word by word' : 'Fill word by word') },
     { id: 'length', label: 'Scroll length', type: 'range', min: 200, max: 500, step: 25, default: 300, unit: 'svh', group: 'Scroll', help: 'Height of the section; the stage is sticky for all of it.', prompt: 'Section height: {value} with a 100 svh sticky stage (default {default})' },
     { id: 'highlight', label: 'Key words', type: 'color', default: 'accent', group: 'Look', help: 'The phrases that carry the statement fill to this colour instead of ink.', prompt: 'Key phrases fill to {value} instead of ink (default {default})' },
   ],
   prompt: {
-    skill: 'motion',
+    skill: 'component',
     ask: 'Make {target} fill word by word as the page scrolls.',
     target: 'the studio statement',
     brief: 'A 300 svh section holds a 100 svh sticky stage (no pin spacer). After the fonts load, SplitText splits the statement into words (autoSplit, the timeline returned from onSplit); one timeline scrubbed from top top to bottom 130 % (scrub 0.5) takes each word from opacity 0.5 to 1 over one unit, staggered by half a unit, linear, so about two words are mid-fill and the sentence holds at full ink before the stage releases.',

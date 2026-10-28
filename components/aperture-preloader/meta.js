@@ -23,7 +23,7 @@ export default {
   controls: [
     { id: 'inset', label: 'Start inset', type: 'range', min: 10, max: 40, step: 1, default: 30, unit: '%', group: 'Aperture', help: 'How far in from each edge the window starts.', prompt: 'The hero frame starts at clip-path inset({value}) (default {default})' },
     { id: 'radius', label: 'Corner radius', type: 'range', min: 0, max: 48, step: 2, default: 12, unit: 'px', group: 'Aperture', prompt: 'The closed window’s corners: {value} round, opening to square (default {default})' },
-    { id: 'scale', label: 'Photo start scale', type: 'range', min: 0.4, max: 1, step: 0.05, default: 0.6, unit: '×', group: 'Aperture', help: 'Never smaller than the window, so the ground cannot show inside it.', prompt: 'The photograph scales from {value} to 1 with the frame (default {default})' },
+    { id: 'scale', label: 'Photo start scale', type: 'range', min: 0.4, max: 1, step: 0.05, default: 0.6, unit: '×', group: 'Aperture', help: 'Never smaller than the window, so the ground cannot show inside it.', prompt: 'The photograph scales from {value} to 1 with the frame, never smaller than the window (default {default})' },
     { id: 'duration', label: 'Opening time', type: 'range', min: 0.6, max: 2.4, step: 0.1, default: 1.4, unit: 's', group: 'Timing', prompt: 'Opening time: {value} with expo.inOut, starting 0.3 s into the curtain’s lift (default {default})' },
     { id: 'latency', label: 'Simulated load', type: 'range', min: 0, max: 3000, step: 100, default: 1200, unit: 'ms', group: 'Timing', help: 'Delays the photograph’s request as a slow connection would. The gate still waits for its real decode.', prompt: false },
     { id: 'repeat', label: 'Skip on repeat visits', type: 'toggle', default: true, group: 'Behaviour', help: 'Restart the preview to see the repeat-visit path.', prompt: { on: 'Skip the curtain on repeat visits in the same session (a sessionStorage flag read before first paint)', off: 'Show the curtain on every load' } },
@@ -35,8 +35,8 @@ export default {
     target: 'the home page hero',
     brief: 'A full-screen curtain waits on real signals only, the fonts and the hero media’s first decode, raced against a 4 s ceiling with no minimum hold. Then it lifts (0.9 s, expo.inOut) while the hero frame opens from clip-path inset(30% round 12px) to inset(0% round 0px) over 1.4 s and the media inside scales from 0.6 to 1 on the same timing; the copy fades up at 1.1 s.',
     keep: [
-      'start values set under the curtain so the closed window never flashes; a Skip intro button and a polite status listing the signals',
-      'scroll locked and the page inert for the gate and hand-off only; the curtain only fades under reduced motion and cuts under static',
+      'start values set under the curtain so the closed window never flashes; a Skip intro button and a polite status listing the signals; focus moves to the page if it was on the curtain',
+      'scroll locked and the page inert for the gate and hand-off only; the curtain only fades under reduced motion and cuts under static; without script nothing is gated',
     ],
   },
 };

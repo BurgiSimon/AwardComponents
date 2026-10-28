@@ -23,13 +23,13 @@ export default {
     { id: 'card', label: 'Card width', type: 'range', min: 20, max: 60, step: 2, default: 30, unit: 'vw', group: 'Track', help: 'Capped so a card and its caption always fit the stage’s height.', prompt: 'Card width: {value}, capped by the stage height (default {default})' },
     { id: 'gap', label: 'Gap', type: 'range', min: 8, max: 64, step: 4, default: 24, unit: 'px', group: 'Track', prompt: 'Gap between cards: {value} (default {default})' },
     { id: 'progress', label: 'Progress', type: 'select', options: [{ value: 'line', label: 'Line' }, { value: 'ticks', label: 'Ticks' }, { value: 'count', label: 'Count' }], default: 'line', group: 'Look', prompt: (v) => ({ line: 'A thin progress line under the track', ticks: 'Progress as one tick per project, filled as each is reached', count: 'Progress as a large counter only (03 / 08)' })[v] },
-    { id: 'scrub', label: 'Scrub catch-up', type: 'range', min: 0, max: 1.2, step: 0.1, default: 0.3, unit: 's', group: 'Track', prompt: 'Scrub catch-up: {value} (default {default})' },
+    { id: 'scrub', label: 'Scrub catch-up', type: 'range', min: 0, max: 1.2, step: 0.1, default: 0.3, unit: 's', group: 'Track', prompt: (v) => (v > 0 ? `Scrub catch-up: ${v} s (scrub: ${v}; default 0.3 s)` : 'scrub: true: the track locked to the scrollbar with no catch-up (default scrub: 0.3)') },
   ],
   prompt: {
     skill: 'component',
     ask: 'Turn {target} into a horizontal rail inside the vertical page.',
     target: 'the selected-work section',
-    brief: 'A sticky stage whose track moves sideways as the page scrolls. The rail’s height is the track’s overflow plus one viewport (innerHeight + distance), so vertical travel equals horizontal travel; one tween scrubs x to −distance from top top to bottom bottom (scrub 0.3). Arrow buttons and arrow keys on the focused rail scroll the page by one card plus gap; a progress line and a counter follow.',
-    keep: ['no pin spacer; a native overflow-x scroller with scroll-snap on touch and under reduced motion; tabbing to a card brings it into view.'],
+    brief: 'A sticky stage whose track of cards (30 vw wide, capped so a card and its caption fit the stage height, 24 px apart) moves sideways as the page scrolls. The rail’s height is the track’s overflow plus one viewport (innerHeight + distance), so vertical travel equals horizontal travel; one tween scrubs x to −distance from top top to bottom bottom (scrub 0.3). Arrow buttons and arrow keys on the focused rail scroll the page by one card plus gap; a progress line and a counter follow.',
+    keep: ['no pin spacer; the rail focusable with a visible ring, the arrow buttons aria-disabled at the ends; tabbing to a card brings it into view; a native overflow-x scroller with scroll-snap on touch and under reduced motion.'],
   },
 };

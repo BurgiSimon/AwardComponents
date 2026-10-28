@@ -23,16 +23,16 @@ export default {
   ],
   controls: [
     { id: 'glide', label: 'Fly time', type: 'range', min: 0.3, max: 2, step: 0.1, default: 0.8, unit: 's', group: 'Camera', help: 'How long a fly-to takes to cover 95 % of the way, framerate-independent.', prompt: 'Fly-to time: {value} to cover 95 % of the way, damped with 1 − k^dt (default {default})' },
-    { id: 'zoom', label: 'Zoom range', type: 'select', options: [{ value: 'tight', label: 'Tight' }, { value: 'normal', label: 'Normal' }, { value: 'wide', label: 'Wide' }], default: 'normal', group: 'Camera', help: 'How far in and out the camera may go, as a share of the distance that frames the whole site.', prompt: 'Zoom range: {value} (default {default}); the polar band stays 0.8–1.3 rad' },
-    { id: 'spin', label: 'Turn when idle', type: 'toggle', default: false, group: 'Camera', prompt: { on: 'Turn slowly after 3 s without input, only while on screen', off: 'Never turn on its own' } },
-    { id: 'hotspots', label: 'Hotspot style', type: 'select', options: [{ value: 'labels', label: 'Labels' }, { value: 'dots', label: 'Numbered dots' }], default: 'labels', group: 'Look', prompt: 'Hotspots as {value}; the name stays the button’s text either way (default {default})' },
-    { id: 'accent', label: 'Selected colour', type: 'color', default: 'accent', group: 'Look', prompt: 'The selected building renders in {value} (default {default})' },
+    { id: 'zoom', label: 'Zoom range', type: 'select', options: [{ value: 'tight', label: 'Tight' }, { value: 'normal', label: 'Normal' }, { value: 'wide', label: 'Wide' }], default: 'normal', group: 'Camera', help: 'How far in and out the camera may go, as a share of the distance that frames the whole site.', prompt: (v) => `Zoom range: ${({ tight: '0.8–1.1', normal: '0.6–1.25', wide: '0.42–1.5' })[v]} × the framing distance (default 0.6–1.25 ×); the polar band stays 0.8–1.3 rad` },
+    { id: 'spin', label: 'Turn when idle', type: 'toggle', default: false, group: 'Camera', prompt: { on: 'Turn slowly (0.12 rad/s) after 3 s without input, only while on screen and never under reduced motion', off: 'Never turn on its own' } },
+    { id: 'hotspots', label: 'Hotspot style', type: 'select', options: [{ value: 'labels', label: 'Labels' }, { value: 'dots', label: 'Numbered dots' }], default: 'labels', group: 'Look', prompt: (v) => (v === 'dots' ? 'Hotspots as numbered dots; each name shows on hover, focus and selection and stays the button’s text' : 'Hotspots as a numbered dot and a visible name label') },
+    { id: 'accent', label: 'Selected colour', type: 'color', default: 'accent', group: 'Look', prompt: 'The selected zone renders in {value} (default {default})' },
   ],
   prompt: {
     skill: 'webgl',
     ask: 'Make {target} an explorable 3D model with hotspots.',
     target: 'the project’s site model',
     brief: 'A clamped orbit camera written by hand: input only writes a goal, clamped as it is written (polar 0.8–1.3 rad, distance 0.6–1.25 × the framing distance), and the camera eases toward it with 1 − k^dt, k = 0.0004 while dragging and about 0.8 s for fly-tos. Each named zone is a DOM button pinned to its projected point that flies the camera there and paints the zone in the accent, with a polite detail panel beside the stage. Frames render only while the camera moves.',
-    keep: ['real buttons for every zone and a focusable stage with arrow keys; modifier + wheel to zoom inline; instant moves under reduced motion; a drawn plan with the same buttons without WebGL.'],
+    keep: ['real buttons for every zone and a focusable stage with arrow keys; modifier + wheel to zoom inline; touch drags turn sideways only (touch-action: pan-y) so the page still scrolls; instant moves under reduced motion; a drawn plan with the same buttons without WebGL.'],
   },
 };

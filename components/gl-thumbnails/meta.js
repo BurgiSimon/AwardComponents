@@ -25,7 +25,7 @@ export default {
   controls: [
     { id: 'budget', label: 'Pixel budget', type: 'range', min: 0.2, max: 4, step: 0.1, default: 2, unit: 'MP', group: 'Rendering', help: 'Device pixels shared by every card. Lower it to watch the whole set drop resolution together.', prompt: 'Pixel budget: {value} for all thumbnails together (default {default})' },
     { id: 'count', label: 'Cards', type: 'range', min: 3, max: 8, step: 1, default: 8, group: 'Rendering', prompt: false },
-    { id: 'turns', label: 'Turn per hover', type: 'range', min: 0.25, max: 2, step: 0.25, default: 1, unit: '×', group: 'Motion', help: 'Revolutions added to an object on each hover or focus.', prompt: 'Each hover or focus adds {value} a full revolution (default {default})' },
+    { id: 'turns', label: 'Turn per hover', type: 'range', min: 0.25, max: 2, step: 0.25, default: 1, unit: '×', group: 'Motion', help: 'Revolutions added to an object on each hover or focus.', prompt: (v) => `Each hover or focus adds ${v} revolutions to the object’s target angle (default 1)` },
     { id: 'settle', label: 'Turn damping', type: 'range', min: 2, max: 12, step: 0.5, default: 5, group: 'Motion', help: 'Exponential damping of the angle: low values coast, high values snap round.', prompt: 'Turn damping: k = {value} (default {default})' },
     { id: 'readout', label: 'Show the readout', type: 'toggle', default: true, group: 'Look', help: 'Contexts, pixel ratio, backing pixels and draws. A tuning aid, left out of the prompt.', prompt: false },
   ],
@@ -34,6 +34,9 @@ export default {
     ask: 'Give {target} a 3D thumbnail per card from one shared WebGL renderer.',
     target: 'the product grid',
     brief: 'One WebGLRenderer on a detached canvas renders each card in turn into the top-left slice of its drawing buffer and drawImage()s it into that card’s own 2D canvas in the same task. A card redraws only when dirty and within half a viewport of the screen (IntersectionObserver, 50% margin), and one pixel budget (2 MP) sets the pixel ratio for the whole set. Hover or focus turns one object a revolution on a damped angle (k = 5), redrawing only that card.',
-    keep: ['exactly one WebGL context, disposed and force-lost on teardown; the cards stay real links with text; reduced motion swaps a colour instead of turning; drawn silhouettes without WebGL.'],
+    keep: [
+      'exactly one WebGL context, disposed and force-lost on teardown; the cards stay real links with text over aria-hidden canvases',
+      'hover from mouse pointers only, keyboard focus turning like a hover and a tap turning once; reduced motion swaps a colour instead of turning; drawn silhouettes without WebGL',
+    ],
   },
 };

@@ -23,10 +23,10 @@ export default {
   ],
   controls: [
     { id: 'dissipation', label: 'Dissipation', type: 'range', min: 0.9, max: 0.99, step: 0.005, default: 0.96, group: 'Wake', help: 'How much of the velocity survives each 60 Hz frame. Higher values leave a longer wake.', prompt: 'Dissipation: {value} per frame at 60 Hz (default {default})' },
-    { id: 'radius', label: 'Wake width', type: 'range', min: 0.0005, max: 0.006, step: 0.0005, default: 0.002, group: 'Wake', help: 'The variance of each Gaussian splat in UV units.', prompt: 'Splat variance: {value} (default {default})' },
+    { id: 'radius', label: 'Wake width', type: 'range', min: 0.0005, max: 0.006, step: 0.0005, default: 0.002, group: 'Wake', help: 'The variance of each Gaussian splat in UV units.', prompt: 'Gaussian splat variance: {value} in UV units (default {default})' },
     { id: 'distortion', label: 'Distortion', type: 'range', min: 0, max: 0.25, step: 0.01, default: 0.09, group: 'Post', prompt: 'Distortion: {value} × the velocity (default {default})' },
     { id: 'chroma', label: 'Chroma', type: 'range', min: 0, max: 0.08, step: 0.005, default: 0.02, group: 'Post', help: 'How far red and blue are pulled apart along the flow.', prompt: 'Chromatic fringe: {value} × the velocity (default {default})' },
-    { id: 'ground', label: 'Poster', type: 'select', options: [{ value: 'theme', label: 'Page ground' }, { value: 'accent', label: 'Vermilion' }], default: 'theme', group: 'Look', prompt: (v) => (v === 'accent' ? 'A vermilion poster ground with night type' : 'The poster on the page ground') },
+    { id: 'ground', label: 'Poster', type: 'select', options: [{ value: 'theme', label: 'Page ground' }, { value: 'accent', label: 'Vermilion' }], default: 'theme', group: 'Look', prompt: (v) => (v === 'accent' ? 'The hero on an accent-colour ground with dark type, painted into the texture the same way' : 'The hero on the page ground') },
   ],
   actions: [{ id: 'stir', label: 'Stir the poster' }],
   prompt: {

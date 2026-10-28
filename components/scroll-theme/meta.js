@@ -21,14 +21,14 @@ export default {
     'The chapter links in the header are real anchors with aria-current; the canvas is aria-hidden and only paints when a colour changes.',
   ],
   controls: [
-    { id: 'palette', label: 'Palette set', type: 'select', options: [{ value: 'festival', label: 'Sand · clay · night' }, { value: 'harbour', label: 'Sky · plum · night' }, { value: 'mono', label: 'Paper · ink' }], default: 'festival', group: 'Colour', prompt: (v) => `Chapter palettes: ${{ festival: 'pale sand by day, clay at dusk, night blue at night', harbour: 'sky by day, plum at dusk, night blue at night', mono: 'paper, a darker paper, then inverted ink' }[v]}` },
+    { id: 'palette', label: 'Palette set', type: 'select', options: [{ value: 'festival', label: 'Sand · clay · night' }, { value: 'harbour', label: 'Sky · plum · night' }, { value: 'mono', label: 'Paper · ink' }], default: 'festival', group: 'Colour', prompt: (v) => `Chapter palettes, in scroll order: ${{ festival: 'pale sand with ink, clay with night-blue ink, then night blue with sand ink', harbour: 'pale sky with ink, a dark plum with sand ink and a clay accent, then night blue with sky ink and accent', mono: 'paper, paper with 10 % ink mixed in, then inverted (ink ground, paper text)' }[v]} (default: pale sand, clay, then night blue)` },
     { id: 'mode', label: 'Swap', type: 'select', options: [{ value: 'triggered', label: 'Tween at the midpoint' }, { value: 'scrub', label: 'Scrub with the scroll' }], default: 'triggered', group: 'Timing', help: 'Scrub blends the two palettes across the boundary instead of tweening once.', prompt: (v) => (v === 'scrub' ? 'Scrub the colour with the scroll across each chapter boundary (top 80 % → top 20 %) instead of a timed tween' : 'Tween once when a chapter crosses the viewport midpoint') },
     { id: 'duration', label: 'Tween length', type: 'range', min: 0.2, max: 2.4, step: 0.1, default: 1, unit: 's', group: 'Timing', when: { mode: ['triggered'] }, prompt: 'Swap tween: {value}, power2.inOut (default {default})' },
     { id: 'sky', label: 'Canvas sky', type: 'toggle', default: true, group: 'Colour', help: 'A canvas behind the page painted from the same live values.', prompt: { on: 'Paint the background canvas from the same live colour object in the tween’s onUpdate', off: 'No canvas; only the DOM tokens change' } },
   ],
   prompt: {
     skill: 'component',
-    ask: 'Swap the page’s colour tokens per chapter in {target}.',
+    ask: 'Give each chapter of {target} its own colour tokens, swapped on scroll.',
     target: 'the long landing page',
     brief: 'Each section names a theme (data-swap). Crossing its midpoint (top 50 % → bottom 50 %, on enter and enter back) tweens --bg, --ink and --accent on the root in one 1 s power2.inOut tween, killing the running one and retargeting from the current colour. Derived shades are color-mix() of those three, a canvas behind the page is repainted from the same live object in onUpdate, and meta theme-color is set when the tween completes.',
     keep: ['the swap instant (but kept) under reduced motion; contrast checked for every palette; no CSS transition on the same colours.'],

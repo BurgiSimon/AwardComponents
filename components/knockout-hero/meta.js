@@ -20,8 +20,8 @@ export default {
     'Under reduced motion and in the static tier the ground is one composed still frame; the word stays a window.',
   ],
   controls: [
-    { id: 'word', label: 'Word', type: 'text', default: 'Signal', maxLength: 14, group: 'Wordmark', help: 'Set in Mona Sans at full width and weight; the SVG box fits the word.', prompt: 'Cut out the word “{value}”' },
-    { id: 'palette', label: 'Palette', type: 'select', options: [{ value: 'stage', label: 'Stage' }, { value: 'harbour', label: 'Harbour' }, { value: 'ember', label: 'Ember' }], default: 'stage', group: 'Ground', prompt: 'Ground palette: {value} (default {default})' },
+    { id: 'word', label: 'Word', type: 'text', default: 'Signal', maxLength: 14, group: 'Wordmark', help: 'Set in Mona Sans at full width and weight; the SVG box fits the word.', prompt: false },
+    { id: 'palette', label: 'Palette', type: 'select', options: [{ value: 'stage', label: 'Stage' }, { value: 'harbour', label: 'Harbour' }, { value: 'ember', label: 'Ember' }], default: 'stage', group: 'Ground', prompt: (v) => ({ stage: 'Ground: a near-black base (plum in dark mode) under vivid accent, plum, sky and sand light', harbour: 'Ground: a near-black base (moss in dark mode) under vivid sky, moss and sand light', ember: 'Ground: a plum base under vivid accent, clay and sand light' })[v] },
     { id: 'speed', label: 'Drift speed', type: 'range', min: 0, max: 2.5, step: 0.1, default: 1, unit: '×', group: 'Ground', help: '0 holds the composed still frame.', prompt: 'Ground drift at {value} the base speed (blobs at 0.30–0.66 rad/s; default {default})' },
     { id: 'folds', label: 'Light folds', type: 'toggle', default: true, group: 'Ground', prompt: { on: 'Three light and shade folds slide across the ground', off: 'No light folds on the ground' } },
   ],
@@ -31,7 +31,7 @@ export default {
     target: 'the wordmark in the hero',
     brief: 'The hero has no background: one SVG rect filled with the page colour and masked by the letters (white rect, black glyphs) paints it, overflowing the word’s box by thousands of units while the hero clips it. Behind the page a fixed canvas at a sixth of the viewport draws four soft radial blobs on Lissajous paths plus light folds, so the colour shows only through the letters and stays put while they scroll past.',
     keep: [
-      'the name as visually hidden text in the h1; the SVG and canvas aria-hidden; copy only on the solid paint.',
+      'the name as visually hidden text in the h1; the SVG and canvas aria-hidden; copy only on the solid paint; a ground far enough from the page colour that the letters read at their edges.',
       'the loop runs only while the hero is visible; one still frame under reduced motion.',
     ],
   },

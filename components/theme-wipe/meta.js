@@ -24,7 +24,7 @@ export default {
   controls: [
     { id: 'duration', label: 'Cover time', type: 'range', min: 0.4, max: 2, step: 0.05, default: 0.9, unit: 's', group: 'Wipe', prompt: 'The cover grows past the farthest corner in {value} with power2.inOut, then fades in 0.3 s (default {default})' },
     { id: 'edge', label: 'Edge width', type: 'range', min: 0, max: 160, step: 4, default: 56, unit: 'px', group: 'Edge', help: 'The width of the ragged band, in CSS pixels.', prompt: 'Edge band: {value} wide, scaled by the device pixel ratio (default {default})' },
-    { id: 'noise', label: 'Edge noise', type: 'range', min: 0, max: 1, step: 0.05, default: 1, group: 'Edge', help: '0 gives a clean circle; 1 moves the rim by up to half the edge.', prompt: 'Noise strength: {value} of the half-edge (default {default})' },
+    { id: 'noise', label: 'Edge noise', type: 'range', min: 0, max: 1, step: 0.05, default: 1, group: 'Edge', help: '0 gives a clean circle; 1 moves the rim by up to half the edge.', prompt: 'The noise moves the rim by up to {value} × half the edge band; 0 is a clean circle (default {default})' },
     { id: 'css', label: 'Force the CSS cover', type: 'toggle', default: false, group: 'Demo', help: 'What browsers without WebGL get.', prompt: false },
   ],
   prompt: {
@@ -34,7 +34,7 @@ export default {
     brief: 'Pressing the switch shows a fixed, full-screen orthographic quad that grows the next theme’s ground from the press point (a key press starts at the button’s centre) over 0.9 s with power2.inOut. Its rim is roughened by two octaves of value noise across a 56 px edge band; the radius runs from −edge to the farthest corner + edge so both ends are exact. data-theme flips in the tween’s onComplete, under full cover, then the cover fades in 0.3 s and is hidden again.',
     keep: [
       'a button with aria-pressed that updates at once; the cover aria-hidden and click-through; a second press mid-cover reverses it',
-      'an instant swap with no WebGL context under reduced motion; a CSS clip-path circle without WebGL; the choice kept for the visit in sessionStorage',
+      'an instant swap with no WebGL context under reduced motion; a CSS clip-path circle without WebGL; the choice kept for the visit in sessionStorage and restored by an inline head script before first paint',
     ],
   },
 };

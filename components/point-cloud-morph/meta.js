@@ -29,10 +29,10 @@ export default {
     skill: 'component',
     ask: 'Give {target} a point cloud that morphs between icons as the page scrolls.',
     target: 'the features section',
-    brief: 'A tall section with a sticky stage. Points are sampled from SVG icons rasterised once (opaque pixels on a 2 px grid of a 512 px raster), projected in JavaScript (fov 45°, camera at 800, depth ±60 px, 16 depth buckets) and drawn as small squares on a 2D canvas. Scroll progress picks the pair of shapes; each holds for 18 % at both ends of its segment with a quadratic in-out between, a swirl weighted by sin²(πe) mid-morph, springs at stiffness 42 / damping 8, and a pointer repel within 100 px.',
+    brief: 'A tall section with a sticky stage: 5,000 points sampled from SVG icons, projected in JavaScript with a little depth and drawn as small squares on a 2D canvas (no WebGL). As the page scrolls the cloud morphs from one icon to the next: each shape holds for 18 % at both ends of its segment with a quadratic in-out between, the points spring to their targets (stiffness 42, damping 8), swirl only mid-morph (weighted by sin²(πe)) and kick outward on each change of shape, and the pointer parts the cloud within 100 px.',
     keep: [
-      'the features as real list items with aria-current on the active one; the canvas aria-hidden.',
-      'no travel under reduced motion (an opacity cross-fade on scroll); half the points on phones; no paint when settled.',
+      'the features as an ordered list of real buttons, aria-current on the active one, each scrolling to its shape; the canvas aria-hidden.',
+      'no travel under reduced motion (an opacity cross-fade on scroll); half the points on phones and coarse pointers; no paint when settled and no loop off-screen.',
     ],
   },
 };

@@ -23,16 +23,16 @@ export default {
   ],
   controls: [
     { id: 'width', label: 'Thumb width', type: 'range', min: 2, max: 8, step: 1, default: 4, unit: 'px', group: 'Thumb', help: 'At rest; it grows by 4 px under the pointer and while dragging (scaled, not resized).', prompt: 'Thumb line: {value} wide at rest, 4 px wider on hover and drag by scale (default {default})' },
-    { id: 'colour', label: 'Colour', type: 'color', default: 'accent', group: 'Thumb' },
-    { id: 'ease', label: 'Follow damping', type: 'range', min: 0, max: 30, step: 1, default: 14, group: 'Thumb', help: 'How the thumb catches up with jumps (keys, anchors). 0 sits exactly on the scroll; it always does while dragging.', prompt: (v) => (v === 0 ? 'No easing: the thumb sits exactly on the scroll position' : `The thumb eases towards keyboard and anchor jumps with framerate-independent damping ${v} (default 14); exact while dragging`) },
-    { id: 'ticks', label: 'Section ticks', type: 'toggle', default: true, group: 'Track', prompt: { on: 'Ticks on the track where each section starts, and a bubble naming the section under the pointer', off: 'No section ticks' } },
+    { id: 'colour', label: 'Colour', type: 'color', default: 'accent', group: 'Thumb', prompt: 'Thumb colour: {value} (default {default})' },
+    { id: 'ease', label: 'Follow damping', type: 'range', min: 0, max: 30, step: 1, default: 14, group: 'Thumb', help: 'How the thumb catches up with jumps (keys, anchors). 0 sits exactly on the scroll; it always does while dragging.', prompt: (v) => (v === 0 ? 'No easing: the thumb sits exactly on the scroll position (default: damping 14)' : `The thumb eases towards keyboard and anchor jumps with framerate-independent damping ${v} (default 14); exact while dragging`) },
+    { id: 'ticks', label: 'Section ticks', type: 'toggle', default: true, group: 'Track', prompt: { on: 'Ticks on the track where each section starts, and a bubble naming the section under the pointer', off: 'No section ticks; the bubble still names the section under the pointer' } },
     { id: 'autoHide', label: 'Auto-hide', type: 'toggle', default: false, group: 'Track', prompt: { on: 'The track fades out 1.2 s after scrolling stops and returns on scroll or with the pointer near the edge', off: 'The track stays visible' } },
   ],
   prompt: {
     skill: 'component',
     ask: 'Add a drawn scrollbar thumb to {target}.',
     target: 'the long documentation pages',
-    brief: 'A themed thumb on the right edge mirrors scrollY / (scrollHeight − innerHeight) once a frame, on the same clock as the smooth scroll, and moves by transform; its height is max(48 px, track × viewport / document). Dragging maps the thumb’s offset over its free travel to a scroll position; pressing the track centres the thumb on the pointer and keeps dragging. Ticks mark where each section starts.',
+    brief: 'A themed thumb on the right edge mirrors scrollY / (scrollHeight − innerHeight) once a frame, on the same clock as the smooth scroll, and moves by transform; its height is max(48 px, track × viewport / document), and it is a 4 px line scaled to 8 px on hover and drag. It eases towards jumps (keys, anchors) with framerate-independent damping 14 and sits exactly on the scroll while dragging. Dragging maps the thumb’s offset over its free travel to a scroll position; pressing the track centres the thumb on the pointer and keeps dragging. Ticks mark where each section starts, and a bubble names the section under the pointer.',
     keep: ['the native scrollbar and every key path stay; the drawn track is aria-hidden, pointer-only and hidden on coarse pointers; no easing under reduced motion.'],
   },
 };

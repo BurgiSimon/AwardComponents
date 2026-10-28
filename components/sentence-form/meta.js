@@ -22,16 +22,16 @@ export default {
     'On phones the sentence stacks into phrase-over-field rows with 48 px fields; under reduced motion the entrance and the messages fade, and under static nothing moves.',
   ],
   controls: [
-    { id: 'entrance', label: 'Entrance', type: 'select', options: [{ value: 'rise', label: 'Rise' }, { value: 'fade', label: 'Fade' }, { value: 'none', label: 'None' }], default: 'rise', group: 'Motion', help: 'How the sentence arrives, and how errors and the thank-you come in.', prompt: 'Entrance: the sentence’s phrases {value} in with a short stagger, and messages enter the same way (default {default})' },
+    { id: 'entrance', label: 'Entrance', type: 'select', options: [{ value: 'rise', label: 'Rise' }, { value: 'fade', label: 'Fade' }, { value: 'none', label: 'None' }], default: 'rise', group: 'Motion', help: 'How the sentence arrives, and how errors and the thank-you come in.', prompt: (v) => ({ rise: 'Entrance: each phrase and blank rises 0.45em as it fades in, in reading order; errors and the thank-you rise the same way', fade: 'Entrance: each phrase and blank fades in without moving, in reading order; errors and the thank-you fade the same way', none: 'No entrance: the sentence is there at once, and errors and the thank-you appear without motion' }[v]) },
     { id: 'stagger', label: 'Stagger', type: 'range', min: 0, max: 160, step: 10, default: 70, unit: 'ms', group: 'Motion', when: { entrance: ['rise', 'fade'] }, prompt: 'Stagger between phrases: {value} (default {default})' },
-    { id: 'field', label: 'Field style', type: 'select', options: [{ value: 'underline', label: 'Underline' }, { value: 'pill', label: 'Pill' }], default: 'underline', group: 'Look', prompt: 'Blanks drawn as {value} fields (default {default})' },
+    { id: 'field', label: 'Field style', type: 'select', options: [{ value: 'underline', label: 'Underline' }, { value: 'pill', label: 'Pill' }], default: 'underline', group: 'Look', prompt: (v) => ({ underline: 'Blanks drawn as a rule under the words, the choices underlined and slash-separated', pill: 'Blanks drawn as softly filled pills with a hairline inset border, the choices as outlined pills' }[v]) },
     { id: 'serif', label: 'Serif sentence', type: 'toggle', default: true, group: 'Look', prompt: { on: 'The sentence in the reading serif at display size', off: 'The sentence in the sans at display size' } },
   ],
   prompt: {
     skill: 'component',
     ask: 'Write {target} as a sentence to complete.',
     target: 'the contact form',
-    brief: 'One sentence at display size whose phrases are the labels of the blanks that follow them: name, company, a radiogroup of project types, a budget select and an email. Blanks grow with what is typed (field-sizing: content, 6ch minimum). Validation is the constraint API with the page’s own message per field and failure, shown under the sentence, tied by aria-describedby; focus goes to the first invalid blank and a focused thank-you replaces the send row.',
-    keep: ['every control named by its phrase; phrase-over-field rows on phones; messages fade under reduced motion; four or five blanks at most.'],
+    brief: 'One sentence at display size whose phrases are the labels of the blanks that follow them: name, company, a radiogroup of project types, a budget select and an email. Blanks grow with what is typed (field-sizing: content, 6ch minimum). Validation is the constraint API with the page’s own message per field and failure, shown under the sentence, tied by aria-describedby; focus goes to the first invalid blank and a focused thank-you replaces the send row. The sentence arrives piece by piece in reading order, each phrase and blank rising 0.45em as it fades in, 70 ms apart.',
+    keep: ['every control named by its phrase; phrase-over-field rows with 48 px fields on phones; the entrance and messages fade under reduced motion and stay still under static; four or five blanks at most.'],
   },
 };

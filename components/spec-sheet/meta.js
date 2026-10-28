@@ -20,9 +20,9 @@ export default {
     'Changed values rise into place; under reduced motion they only fade, and the drawing changes without moving.',
   ],
   controls: [
-    { id: 'layout', label: 'Layout', type: 'select', options: [{ value: 'split', label: 'Two columns' }, { value: 'stacked', label: 'Stacked' }], default: 'split', group: 'Layout', help: 'Stacked puts a wide picture band above the facts.', prompt: 'Layout on wide screens: {value} (default {default}); one column on phones, picture first' },
-    { id: 'units', label: 'Units', type: 'select', options: [{ value: 'metric', label: 'Metric (cm, l, kg)' }, { value: 'imperial', label: 'Imperial (in, fl oz, lb)' }], default: 'metric', group: 'Layout', prompt: 'Open in {value} units (default {default}); the switch stays on the page' },
-    { id: 'change', label: 'Value change', type: 'select', options: [{ value: 'rise', label: 'Rise' }, { value: 'fade', label: 'Fade' }, { value: 'none', label: 'Instant' }], default: 'rise', group: 'Motion', help: 'How a value that changed with the size or the units comes in.', prompt: 'Changed values: {value} (default {default}; fade only under reduced motion)' },
+    { id: 'layout', label: 'Layout', type: 'select', options: [{ value: 'split', label: 'Two columns' }, { value: 'stacked', label: 'Stacked' }], default: 'split', group: 'Layout', help: 'Stacked puts a wide picture band above the facts.', prompt: (v) => (v === 'stacked' ? 'On wide screens, a wide picture band above the facts instead of two columns; one column on phones, picture first' : 'On wide screens, the picture and the facts in two columns; one column on phones, picture first') },
+    { id: 'units', label: 'Units', type: 'select', options: [{ value: 'metric', label: 'Metric (cm, l, kg)' }, { value: 'imperial', label: 'Imperial (in, fl oz, lb)' }], default: 'metric', group: 'Layout', prompt: (v) => (v === 'imperial' ? 'Open in imperial units (in, fl oz, lb), derived from the stored metric values; the switch stays on the page' : 'Open in metric units (cm, l, kg); the switch stays on the page') },
+    { id: 'change', label: 'Value change', type: 'select', options: [{ value: 'rise', label: 'Rise' }, { value: 'fade', label: 'Fade' }, { value: 'none', label: 'Instant' }], default: 'rise', group: 'Motion', help: 'How a value that changed with the size or the units comes in.', prompt: (v) => ({ rise: 'Changed values rise 0.45 em into place over 420 ms, 30 ms apart; they only fade under reduced motion', fade: 'Changed values fade in over 280 ms, 30 ms apart, without rising', none: 'Changed values swap in place with no animation' })[v] },
     { id: 'drawing', label: 'Dimension drawing', type: 'toggle', default: true, group: 'Content', prompt: { on: 'A dimensioned line drawing beside the picture that follows the size and the units', off: 'No dimension drawing; the list carries the measurements alone' } },
     { id: 'care', label: 'Care and delivery', type: 'toggle', default: true, group: 'Content', prompt: { on: 'Care and delivery as native <details> disclosures under the facts', off: 'No disclosures under the facts' } },
   ],
@@ -30,7 +30,7 @@ export default {
     skill: 'component',
     ask: 'Build the specification block of {target}.',
     target: 'the product page',
-    brief: 'A product photo beside a ruled <dl> of term and description pairs with the units as real text. A size choice and a metric/imperial switch (native radios) rewrite the values in place, each changed value rising about 0.4 em into place with a 30 ms stagger, and a dimensioned profile drawing at one shared scale follows both. Care and delivery sit under the facts as native <details>. One column on phones, picture first.',
+    brief: 'A product photo beside a ruled <dl> of term and description pairs with the units as real text. A size choice and a metric/imperial switch (native radios) rewrite the values in place, each changed value rising 0.45 em into place over 420 ms, 30 ms apart, and a dimensioned profile drawing at one shared scale follows both. Care and delivery sit under the facts as native <details>. One column on phones, picture first.',
     keep: ['term/description pairs in reading order; native radios and <details>; values fade only under reduced motion.'],
   },
 };

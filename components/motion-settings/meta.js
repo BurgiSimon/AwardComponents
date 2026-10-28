@@ -22,7 +22,7 @@ export default {
   ],
   controls: [
     { id: 'start', label: 'First visit', type: 'select', options: [{ value: 'system', label: 'Follow system' }, { value: 'full', label: 'Full' }, { value: 'reduced', label: 'Reduced' }, { value: 'static', label: 'Static' }], default: 'system', group: 'Setting', help: 'The tier before the visitor chooses. Changing it here also applies it now.', prompt: 'Start a first visit on {value} (default {default})' },
-    { id: 'placement', label: 'Placement', type: 'select', options: [{ value: 'header', label: 'Header pill' }, { value: 'footer', label: 'Footer bar' }], default: 'header', group: 'Setting', prompt: (v) => (v === 'footer' ? 'Put the setting in a slim footer bar instead of the header' : 'Put the setting in the header as a pill') },
+    { id: 'placement', label: 'Placement', type: 'select', options: [{ value: 'header', label: 'Header pill' }, { value: 'footer', label: 'Footer bar' }], default: 'header', group: 'Setting', prompt: (v) => (v === 'footer' ? 'Put the setting in a slim bar fixed to the bottom of the viewport instead of the header (default: a pill in the header)' : 'Put the setting in the header as a pill') },
     { id: 'system', label: 'Offer “Follow system”', type: 'toggle', default: true, group: 'Setting', prompt: { on: 'Offer “Follow system” as the first choice', off: 'Offer only the three tiers, without “Follow system”' } },
     { id: 'remember', label: 'Remember the choice', type: 'toggle', default: true, group: 'Setting', prompt: { on: 'Save the choice on the device (localStorage, inside try/catch)', off: 'Keep the choice for this visit only' } },
   ],

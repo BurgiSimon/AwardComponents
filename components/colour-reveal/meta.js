@@ -31,9 +31,10 @@ export default {
     skill: 'webgl',
     ask: 'Reveal {target} from grey to colour with the scroll.',
     target: 'the product model',
-    brief: 'Patch the stock material with onBeforeCompile: a luma mix after <map_fragment> (grey at 0, saturation 1.35 at 1) and a grained circular discard after <clipping_planes_fragment> that splits two layers sharing one geometry, both testing the same per-pixel hash with opposite outcomes. The circle’s centre and starting radius come from a DOM element’s rect read every frame; ScrollTrigger scrubs the radius (ease none, curve r0 + (rMax − r0)·p²) to the farthest corner over a 300svh sticky scene.',
+    brief: 'Patch the stock material with onBeforeCompile: a luma mix after <map_fragment> (grey at 0, saturation 1.35 at 1), a grained circular discard after <clipping_planes_fragment> with a 20 px dithered edge that splits two layers sharing one geometry, both testing the same per-pixel hash with opposite outcomes, and a light two-sine normal wobble (0.02) at <normal_fragment_begin>. The circle’s centre and starting radius come from a DOM element’s rect read every frame; ScrollTrigger scrubs the radius (ease none, curve r0 + (rMax − r0)·p²) to the farthest corner over a 300svh sticky scene.',
     keep: [
       'each chunk replacement throwing if its include is missing, so an upgrade fails loudly',
+      'an aria-hidden canvas with the copy in the DOM, and the anchor element a labelled role="img" that states the progress',
       'an even grey-to-colour mix with no circle under reduced motion; settled colour when static; a CSS stage without WebGL',
     ],
   },

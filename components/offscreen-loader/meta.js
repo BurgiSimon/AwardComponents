@@ -32,6 +32,9 @@ export default {
     ask: 'Draw {target} in a Worker with an OffscreenCanvas.',
     target: 'the loading animation',
     brief: 'Start a Worker and send it a hello; only when it answers (within 1000 ms) transfer the canvas with transferControlToOffscreen() and post it with the colours and size, because a transferred canvas can never give a context on the main thread again. One draw function and one message handler run in the Worker on its own requestAnimationFrame, or on the main thread’s ticker as the fallback on timeout, error or no support. Pause it off-screen with an IntersectionObserver.',
-    keep: ['one settled frame and no loop under reduced motion; colours read from CSS tokens on the main thread and posted; the Worker terminated on unmount.'],
+    keep: [
+      'one settled frame and no loop under reduced motion and static; the canvas aria-hidden, with the drawing thread named in real text.',
+      'colours read from CSS tokens on the main thread and posted; a fresh canvas for the main-thread fallback if the Worker fails after the transfer; the Worker terminated on unmount.',
+    ],
   },
 };

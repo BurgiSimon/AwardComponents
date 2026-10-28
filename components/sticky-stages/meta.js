@@ -21,7 +21,7 @@ export default {
   ],
   controls: [
     { id: 'angle', label: 'Hinge angle', type: 'range', min: 0, max: 30, step: 1, default: 15, unit: '°', group: 'Hinge', help: 'The card’s sideways travel scales with it: −10 % at 15°.', prompt: 'Hinge angle: the hero card rotates to −{value} about its bottom-left corner, sliding −10 % per 15° (default {default})' },
-    { id: 'lag', label: 'Seal lag', type: 'range', min: 0, max: 0.4, step: 0.05, default: 0.1, group: 'Hinge', help: 'How much later the seal on the card starts turning. Its harder turn is what makes the card feel heavy.', prompt: 'Child lag: the seal on the card starts {value} of the rail later and turns about 1.5× the card’s angle (default {default})' },
+    { id: 'lag', label: 'Seal lag', type: 'range', min: 0, max: 0.4, step: 0.05, default: 0.1, group: 'Hinge', help: 'How much later the seal on the card starts turning. Its harder turn is what makes the card feel heavy.', prompt: 'Child lag: the element on the card (a badge or logo) starts turning {value} of the rail later and turns about 1.5× the card’s angle (default {default})' },
     { id: 'stages', label: 'Steps', type: 'range', min: 2, max: 4, step: 1, default: 3, group: 'Stages', prompt: 'Steps on the second stage: {value} (default {default})' },
     { id: 'hold', label: 'Scroll per step', type: 'range', min: 70, max: 200, step: 10, default: 130, unit: 'svh', group: 'Stages', help: 'The rail’s height is the hold: a taller rail gives each step longer on screen.', prompt: 'Scroll per step: {value} of rail (default {default}; the hero rail stays 220 svh, 160 on phones)' },
     { id: 'scrub', label: 'Scrub catch-up', type: 'range', min: 0, max: 1.5, step: 0.1, default: 0.5, unit: 's', group: 'Stages', help: '0 locks the motion to the scrollbar.', prompt: 'Scrub catch-up: {value} (ScrollTrigger scrub; default {default})' },
@@ -30,7 +30,7 @@ export default {
     skill: 'component',
     ask: 'Build {target} as sticky stages on invisible rails.',
     target: 'the product hero and the “how it is made” section',
-    brief: 'Two tall sections (rails) each hold a CSS-sticky stage; ScrollTrigger only reads their progress, never pin: true. Across the 220 svh hero rail the hero card hinges on its bottom-left corner (x 0 → −10 %, rotation 0 → −15°) while a seal on it turns harder (−22°) and starts a beat later. Across the second rail each step card rises (yPercent 40 → 0, opacity 0.2 → 1), holds, and settles to −8 %, one after another.',
+    brief: 'Two tall sections (rails) each hold a CSS-sticky stage; ScrollTrigger only reads their progress (scrub 0.5), never pin: true. Across the 220 svh hero rail the hero card hinges on its bottom-left corner (x 0 → −10 %, rotation 0 → −15°) while a badge or logo on it turns harder (−22°) and starts a beat later. Across the second rail, 130 svh of scroll per step, each step card rises (yPercent 40 → 0, opacity 0.2 → 1), holds, and settles to −8 %, one after another.',
     keep: ['real headings, figures and captions in reading order; a text step counter; under reduced motion no transforms and full opacity.'],
   },
 };

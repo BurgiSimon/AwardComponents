@@ -27,14 +27,14 @@ export default {
     { id: 'release', label: 'Release time', type: 'range', min: 0.1, max: 1.5, step: 0.05, default: 0.45, unit: 's', group: 'Timing', help: 'Exits read better faster than entrances.', prompt: 'Release: {value} out (default {default})' },
     { id: 'ease', label: 'Ease', type: 'select', options: [{ value: 'power2.out', label: 'power2' }, { value: 'expo.out', label: 'expo' }, { value: 'sine.out', label: 'sine' }], default: 'power2.out', group: 'Timing', prompt: (v) => `Ease: ${v} in, ${v.replace('.out', '.in')} out (default power2)` },
     { id: 'look', label: 'Resting look', type: 'select', options: [{ value: 'calm', label: 'Calm' }, { value: 'charged', label: 'Charged' }], default: 'calm', group: 'Look', help: 'The band rests in this look; focusing the field moves it to Charged.', prompt: 'Rest in the {value} look (vignette, grain and ring density tween together) (default {default})' },
-    { id: 'palette', label: 'Charge colour', type: 'color', options: ['accent', 'clay', 'sky', 'sand'], default: 'accent', group: 'Look', prompt: 'Charge colour: the {value} token (default {default})' },
+    { id: 'palette', label: 'Charge colour', type: 'color', options: ['accent', 'clay', 'sky', 'sand'], default: 'accent', group: 'Look', prompt: 'Charge colour: {value} (default {default})' },
   ],
   actions: [{ id: 'charge', label: 'Charge / release' }],
   prompt: {
     skill: 'webgl',
     ask: 'Give {target} a shader backdrop that charges on hover and focus.',
     target: 'the closing call to action',
-    brief: 'Shader uniforms are plain GSAP tween targets: a uniform’s { value } object goes straight into gsap.to, and every change goes through retarget() — gsap.killTweensOf(target), then gsap.to from the current value, never fromTo. Charge 0 → 1 over 0.9 s power2.out, release over 0.45 s power2.in; vignette, grain and ring density move together between a calm and a charged look (0.9 s power2.inOut). Frames render on gsap.ticker only when a tween marks them dirty.',
+    brief: 'Shader uniforms are plain GSAP tween targets: a uniform’s { value } object goes straight into gsap.to, and every change goes through retarget() — gsap.killTweensOf(target), then gsap.to from the current value, never fromTo. Charge 0 → 1 over 0.9 s power2.out, release over 0.45 s power2.in; vignette, grain and ring density move together between a calm look at rest and a charged one while the email field has focus (0.9 s power2.inOut). Frames render on gsap.ticker only when a tween marks them dirty.',
     keep: ['a real button whose focus charges and blur releases; mouse-only hover so taps do not stick; colour-only under reduced motion, instant under static; a CSS gradient without WebGL.'],
   },
 };

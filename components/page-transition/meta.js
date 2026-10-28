@@ -21,7 +21,7 @@ export default {
     'Under reduced motion the wipe only fades in and out with no movement; static motion swaps the pages at once.',
   ],
   controls: [
-    { id: 'direction', label: 'Wipe direction', type: 'select', options: [{ value: 'up', label: '↑ Up' }, { value: 'down', label: '↓ Down' }, { value: 'left', label: '← Left' }, { value: 'right', label: 'Right →' }], default: 'up', group: 'Wipe', prompt: 'The wipe travels {value}: in from one edge to cover, out through the opposite edge (default {default})' },
+    { id: 'direction', label: 'Wipe direction', type: 'select', options: [{ value: 'up', label: '↑ Up' }, { value: 'down', label: '↓ Down' }, { value: 'left', label: '← Left' }, { value: 'right', label: 'Right →' }], default: 'up', group: 'Wipe', prompt: (v) => `The wipe travels ${v}: in from the ${{ up: 'bottom', down: 'top', left: 'right', right: 'left' }[v]} edge to cover, out through the ${{ up: 'top', down: 'bottom', left: 'left', right: 'right' }[v]} edge (default up)` },
     { id: 'colour', label: 'Wipe colour', type: 'color', default: 'ink', group: 'Wipe', prompt: 'Wipe colour: {value} (default {default})' },
     { id: 'duration', label: 'Duration', type: 'range', min: 0.3, max: 1.4, step: 0.05, default: 0.7, unit: 's', group: 'Wipe', help: 'Each half: cover, then reveal.', prompt: 'Each half of the wipe takes {value} with expo.inOut (default {default})' },
     { id: 'label', label: 'Name the next page', type: 'toggle', default: true, group: 'Wipe', prompt: { on: 'The wipe carries the next page’s name, held still while the wipe slides over it', off: 'A plain wipe with no label' } },
@@ -31,10 +31,10 @@ export default {
     skill: 'component',
     ask: 'Add page transitions to {target}.',
     target: 'the site’s internal links',
-    brief: 'Route internal links through @unseenco/taxi: a wipe covers the old view (yPercent 100 → 0, 0.7 s, expo.inOut), the new view swaps in underneath, the scroll resets at once through Lenis, then the wipe leaves (0 → −100, 0.7 s, delay 0.1) while the new headline rises by lines (1.2 s, stagger 0.08). Each view’s motion is built in a gsap.context on enter and reverted on leave, and ScrollTrigger refreshes after each enter.',
+    brief: 'Route internal links through @unseenco/taxi: a wipe carrying the next page’s name (held still while the wipe slides over it) covers the old view (yPercent 100 → 0, 0.7 s, expo.inOut), the new view swaps in underneath, the scroll resets at once through Lenis, then the wipe leaves (0 → −100, 0.7 s, delay 0.1) while the new headline rises by lines (1.2 s, stagger 0.08). Each view’s motion is built in a gsap.context on enter and reverted on leave, and ScrollTrigger refreshes after each enter.',
     keep: [
       'real links, a URL per page, a working back button; the title updates and focus moves to the new heading',
-      'reduced motion fades the wipe without moving it; nothing from a view survives its leave',
+      'reduced motion fades the wipe without moving it; static motion swaps at once; nothing from a view survives its leave',
     ],
   },
 };

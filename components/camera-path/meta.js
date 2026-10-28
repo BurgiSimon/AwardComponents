@@ -33,6 +33,9 @@ export default {
     ask: 'Turn {target} into a camera walk driven by a virtual scroll.',
     target: 'the exhibition section',
     brief: 'The section owns the wheel: wheel and touch add velocity (0.00035 per pixel) to one float that coasts with friction 0.97 per 60 Hz frame; a double lerp (.075 then .15) smooths it; the float sets the camera on a Catmull-Rom spline through one viewpoint per work, looking from frame to frame with an eased hand-over, and DOM labels are projected onto the frames. After 900 ms idle the float snaps to the nearest work over 1.4 s in-out cubic. Render only while moving.',
-    keep: ['keys and buttons step by work; the works as a real list under the room with a skip link; the wheel goes to the page at either end; one step per input under reduced motion; a DOM photograph without WebGL.'],
+    keep: [
+      'keys and buttons step by work; the works as a real list under the room with a skip link; the wheel goes to the page at either end.',
+      'the canvas and projected labels aria-hidden, the wall text a polite live region; one step per input under reduced motion; a DOM photograph without WebGL.',
+    ],
   },
 };
