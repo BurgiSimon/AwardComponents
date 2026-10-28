@@ -1,0 +1,36 @@
+export default {
+  id: 'scrubbed-clips',
+  title: 'Scrubbed clips',
+  category: 'webgl',
+  summary: 'Three ceramic forms whose animation clips are scrubbed by the scroll through mixer.setTime: petals open, plates stack, coils rise, and scrolling back ungrows them exactly.',
+  description: 'Nothing plays on a clock. Each form carries one AnimationClip built in code from position, rotation and scale keyframe tracks, the same binding path a baked glb uses. One paused timeline of nine units gives each form a slot of three: a hand-off that slides the rail, a growth that sets the clip time and a glaze that warms. ScrollTrigger scrubs the timeline across a sticky track, so the scroll position is the clip time.\n\nA clamped LoopOnce action pauses itself at the end and then ignores the next setTime, so the action is unpaused before every set. Frames render only when the timeline or a resize changed something.',
+  recipe: 'gl-scrubbed-clip-timeline',
+  deps: ['three', 'gsap', 'lenis'],
+  tags: ['webgl', 'three', 'scroll', 'scrub', 'animation', 'gsap', 'scrolltrigger', 'product'],
+  requires: ['webgl'],
+  added: '2026-10-28',
+  order: 49,
+  preview: { height: 680, scroll: true, hint: 'Scroll to grow each form', capture: { scroll: 0.8, wait: 3200 } },
+  useCases: [
+    'A collection or product page where each piece assembles as the reader scrolls',
+    'Scroll-scrubbed playback of clips baked in a 3D tool (glb), retimed into slots',
+    'Explainers where a mechanism should run forwards and backwards at the reader’s pace',
+  ],
+  notes: [
+    'The three forms are a nav of real links; the active one carries aria-current="step", and Enter scrolls to that form’s settled pose. Without script they are anchors to markers there.',
+    'Under reduced motion and static nothing scrubs: each slot is cut to its settled pose, and only crossing a slot boundary draws a frame.',
+    'The canvas is aria-hidden and the clip readout is decoration. Without WebGL a CSS still of the first form stands in and the beats still run.',
+  ],
+  controls: [
+    { id: 'smoothing', label: 'Scrub smoothing', type: 'range', min: 0, max: 2, step: 0.1, default: 0.8, unit: 's', group: 'Scroll', help: 'How long the playhead takes to catch the scroll; at most 0.3 s under a finger. 0 locks it to the scrollbar.', prompt: 'Scrub smoothing: {value}, at most 0.3 s on touch (default {default})' },
+    { id: 'track', label: 'Scroll length', type: 'range', min: 360, max: 1000, step: 20, default: 640, unit: 'svh', group: 'Scroll', help: 'The track’s height: nine timeline units across it (87.5% of it on phones).', prompt: 'Track: {value} for nine timeline units (default {default})' },
+    { id: 'order', label: 'Form order', type: 'select', options: [{ value: 'bloom-stack-coil', label: 'Bloom, Stack, Coil' }, { value: 'stack-coil-bloom', label: 'Stack, Coil, Bloom' }, { value: 'coil-bloom-stack', label: 'Coil, Bloom, Stack' }], default: 'bloom-stack-coil', group: 'Content', prompt: false },
+  ],
+  prompt: {
+    skill: 'webgl',
+    ask: 'Let the scroll scrub the animation clips of {target}.',
+    target: 'the 3D objects in the product chapter',
+    brief: 'Each object carries an AnimationClip (keyframe tracks on named children, built in code or baked in a glb). One paused GSAP timeline of nine units gives each a slot of three: a hand-off sliding the rail (power2.inOut, straddling the boundary), a 0–1 growth proxy that becomes mixer.setTime(proxy × duration) (sine.inOut), and a tone, all settled by slot + 2.25. ScrollTrigger scrubs the timeline across a sticky track (scrub 0.8, 0.3 on touch); the action is unpaused before every setTime, and frames render only when the timeline updates.',
+    keep: ['a nav of real links with aria-current="step" that jump to settled poses; reduced motion cuts to settled poses with no scrub; a still without WebGL; never play() the clips on a clock.'],
+  },
+};

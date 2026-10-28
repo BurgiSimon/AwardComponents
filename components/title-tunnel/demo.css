@@ -1,0 +1,54 @@
+.tt { --pad-x: max(var(--gutter), calc((100% - 1320px) / 2)); overflow-x: clip; }
+.tt a { text-decoration: none; }
+.tt__bar nav a[aria-current] { color: var(--ink); }
+
+/* The lead: the page's heading. In the tunnel it sits above the doorway, which grows over it. */
+.tt__lead { display: grid; gap: clamp(10px, 1.8svh, 16px); }
+.tt__h1 { max-width: 18ch; font-size: clamp(1.9rem, 1rem + 2.4vw, 3.2rem); font-weight: 720; font-stretch: var(--wide); line-height: 1; letter-spacing: -0.03em; text-wrap: balance; }
+.tt__cue { display: inline-flex; align-items: center; gap: 10px; margin-top: 6px; }
+.tt__cue::before { content: ''; width: 1px; height: 32px; background: linear-gradient(var(--ink), transparent); }
+
+/* Cards, in both modes. */
+.tt__link { display: grid; gap: 8px; }
+.tt__media { --ratio: 4 / 3; border-radius: var(--radius-md); }
+.tt__name { font-size: var(--text-lg); font-weight: 650; letter-spacing: -0.01em; line-height: 1.2; }
+.tt__meta { color: var(--muted); }
+
+/* Flat: reduced motion and static (and before script). The heading and a plain grid of links. */
+.tt__tunnel[data-mode='flat'] { padding: clamp(40px, 8svh, 88px) var(--pad-x) clamp(56px, 10svh, 104px); }
+[data-mode='flat'] .tt__lead { margin-bottom: clamp(48px, 9svh, 96px); }
+[data-mode='flat'] .tt__cue { display: none; }
+[data-mode='flat'] .tt__title { margin-bottom: clamp(28px, 5svh, 48px); font-size: clamp(3rem, 1rem + 8vw, 9rem); font-weight: 760; font-stretch: var(--wide); line-height: 0.9; letter-spacing: -0.045em; }
+[data-mode='flat'] .tt__scene { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap: 32px var(--gutter); margin: 0; }
+
+/* Deep: the section's height is the scroll the tunnel consumes; the stage is sticky, nothing is pinned. */
+.tt__tunnel[data-mode='deep'] { height: 500svh; }
+[data-mode='deep'] .tt__stage { position: sticky; top: 0; height: 100svh; display: grid; place-items: center; overflow: clip; container-type: size; }
+[data-mode='deep'] .tt__lead { position: absolute; top: clamp(16px, 4svh, 40px); left: var(--pad-x); right: var(--pad-x); }
+/* The doorway: overflow: clip (not hidden), so focusing a link cannot scroll the mask's content. */
+[data-mode='deep'] .tt__mask { position: relative; display: grid; place-items: center; width: min(56cqw, 52rem); height: clamp(6rem, 20cqh, 12rem); border-radius: 999px; overflow: clip; background: var(--ink); color: var(--bg); }
+[data-mode='deep'] .tt__title { position: relative; z-index: 1; font-size: clamp(3rem, 14cqh, 9.5rem); font-weight: 760; font-stretch: var(--wide); line-height: 1; letter-spacing: -0.045em; pointer-events: none; }
+/* Viewport-sized, centred on the doorway; demo.js counter-scales it so the scene stays at 1:1 while the mask grows. */
+[data-mode='deep'] .tt__inner { position: absolute; left: 50%; top: 50%; width: 100cqw; height: 100cqh; translate: -50% -50%; perspective: 900px; }
+[data-mode='deep'] .tt__scene { position: absolute; inset: 0; display: block; margin: 0; transform-style: preserve-3d; }
+[data-mode='deep'] .tt__scene li {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: clamp(9rem, 22cqw, 21rem);
+  transform: translate(-50%, -50%) translate3d(calc(var(--x) * 24cqw), calc(var(--y) * 30cqh), calc(var(--i) * var(--gap, 700px) * -1));
+}
+[data-mode='deep'] .tt__name { color: var(--bg); }
+[data-mode='deep'] .tt__meta { color: color-mix(in oklab, var(--bg) 62%, var(--ink)); }
+[data-mode='deep'] .tt__link:focus-visible { outline-color: var(--bg); }
+
+.tt__outro { display: grid; justify-items: start; gap: 26px; padding-block: clamp(72px, 14svh, 140px); border-top: 1px solid var(--line); }
+.tt__outro .ac-h2 { max-width: 26ch; }
+
+@media (max-width: 640px) {
+  .tt__bar nav { display: none; }
+  [data-mode='deep'] .tt__mask { width: 80cqw; height: 14cqh; }
+  [data-mode='deep'] .tt__title { font-size: clamp(2.5rem, 9cqh, 5rem); }
+  [data-mode='deep'] .tt__scene li { width: 46cqw; transform: translate(-50%, -50%) translate3d(calc(var(--x) * 20cqw), calc(var(--y) * 30cqh), calc(var(--i) * var(--gap, 700px) * -1)); }
+  .tt__name { font-size: var(--text-md); }
+}

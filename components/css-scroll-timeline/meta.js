@@ -1,0 +1,36 @@
+export default {
+  id: 'css-scroll-timeline',
+  title: 'CSS scroll-driven',
+  category: 'scroll',
+  summary: 'A magazine long read whose progress bar, rising paragraphs, leaving hero and growing sticky figure are all CSS scroll timelines: no script runs while you scroll.',
+  recipe: 'css-scroll-driven-timeline',
+  deps: [],
+  tags: ['scroll', 'css', 'scroll-timeline', 'view-timeline', 'reveal', 'progress', 'sticky', 'editorial'],
+  requires: ['scroll-timeline'],
+  added: '2026-10-28',
+  order: 40,
+  preview: { height: 680, scroll: true, hint: 'Scroll the article', capture: { scroll: 0.555, wait: 900 } },
+  useCases: [
+    'A long-read article: reading progress, paragraphs that settle in, a figure that opens',
+    'A marketing page that wants scroll motion without shipping a scroll library',
+    'Static sites (Astro, Eleventy) where the motion should cost no JavaScript at all',
+  ],
+  notes: [
+    'Native scroll throughout: keys, the scrollbar and find-in-page are untouched, and every paragraph is in the DOM in reading order.',
+    'Only transform and opacity animate, so the compositor runs them; where timelines are missing a small IntersectionObserver fallback sets the same end states, and nothing above the viewport is ever left hidden.',
+    'Under reduced motion every block sits at its end state and the progress bar moves in ten steps, a readout rather than travel; the static tier drops the bar.',
+  ],
+  controls: [
+    { id: 'rise', label: 'Reveal distance', type: 'range', min: 0, max: 6, step: 0.5, default: 3, unit: 'rem', group: 'Timelines', help: 'How far each paragraph travels into place over entry 10 % → cover 35 %.', prompt: 'Reveal distance: paragraphs rise {value} into place (default {default})' },
+    { id: 'frameFrom', label: 'Figure scale start', type: 'range', min: 0.3, max: 1, step: 0.05, default: 0.55, group: 'Timelines', help: 'The sticky figure grows from this scale to 1 over the first 45 % of its rail.', prompt: 'The sticky figure scales from {value} to 1 over contain 0 % → 45 % of its rail (default {default})' },
+    { id: 'bar', label: 'Progress bar', type: 'select', options: [{ value: 'top', label: 'Top' }, { value: 'side', label: 'Side' }], default: 'top', group: 'Timelines', prompt: (v) => (v === 'side' ? 'Run the reading-progress bar down the right edge, scaleY from the top (default: across the top, scaleX)' : 'Run the reading-progress bar across the top edge, scaleX from the start') },
+    { id: 'engine', label: 'Engine', type: 'select', options: [{ value: 'auto', label: 'CSS timelines' }, { value: 'script', label: 'Script fallback' }], default: 'auto', group: 'Compare', help: 'Force the IntersectionObserver fallback to compare it with the native timelines.', prompt: false },
+  ],
+  prompt: {
+    skill: 'component',
+    ask: 'Drive the scroll motion of {target} with CSS scroll-driven animations.',
+    target: 'the article page',
+    brief: 'All motion in CSS, inside @supports (animation-timeline: view()): a progress bar on scroll(root block) scaling 0 → 1; paragraphs on view() rising 3rem with opacity over entry 10 % → cover 35 %; the hero copy leaving on its section’s named view timeline (exit range, opacity 1 → 0.15, up 8 svh); and a sticky figure on a 280 svh rail that declares view-timeline --rail, scaling 0.55 → 1 over contain 0 % → 45 % while a cover slides off its chart and the caption rises. Linear keyframes: the scroll is the clock.',
+    keep: ['transform and opacity only; a fallback that marks only blocks below the fold and clears them with an IntersectionObserver (top margin unbounded); reduced motion: end states, bar in steps(10).'],
+  },
+};

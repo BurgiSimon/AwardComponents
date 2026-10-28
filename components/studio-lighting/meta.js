@@ -1,0 +1,41 @@
+export default {
+  id: 'studio-lighting',
+  title: 'Studio lighting',
+  category: 'webgl',
+  summary: 'A product viewer whose brass candle holder and glazed cup are lit only by a studio built in code: a room of glowing panels or a painted window, no HDR file.',
+  description: 'A reflective object needs something to reflect. Instead of downloading an HDR file, the studio is built in code and baked once into a PMREM environment: either a room of emissive panels (a softbox overhead, a warm key strip, a cool rim and two thin hot strips that make the glints) or a window gradient painted on a canvas. The scene has no lights at all.\n\nLathed objects look the same from every side, so the light turns instead of the product: it orbits slowly at rest, and a drag across the stage or the Light slider moves it.',
+  recipe: 'gl-built-studio-environment',
+  deps: ['three'],
+  tags: ['webgl', 'three', 'pmrem', 'environment', 'lighting', 'materials', 'product', 'clearcoat'],
+  requires: ['webgl'],
+  added: '2026-10-28',
+  order: 40,
+  preview: { height: 620, hint: 'Drag across the stage to move the light', capture: { wait: 2600 } },
+  useCases: [
+    'A product page for anything metal, glazed or lacquered, where the highlights sell the material',
+    'A configurator that swaps finishes and needs them to read correctly under the same light',
+    'A hero object on a site that cannot afford a 2 MB HDR download',
+  ],
+  notes: [
+    'The finish swatches are radio buttons, the lighting switch is two aria-pressed buttons and the light angle is a native range input; the canvas is aria-hidden.',
+    'Lighting is not motion: under reduced motion the scene still renders lit, just held without the slow orbit.',
+    'Without WebGL a drawn still of the two objects takes the stage, and the product copy and buttons stand alone.',
+  ],
+  controls: [
+    { id: 'environment', label: 'Environment', type: 'select', options: [{ value: 'panels', label: 'Panel room' }, { value: 'painted', label: 'Painted window' }], default: 'panels', group: 'Light', prompt: (v) => (v === 'panels' ? 'Start in the panel room (PMREM fromScene)' : 'Start in the painted window gradient (PMREM fromEquirectangular, environmentIntensity 2.2)') },
+    { id: 'intensity', label: 'Intensity', type: 'range', min: 0.4, max: 2, step: 0.1, default: 1, unit: '×', group: 'Light', prompt: 'Environment intensity: {value} the bake’s own (default {default})' },
+    { id: 'orbit', label: 'Orbit the light', type: 'toggle', default: true, group: 'Light', prompt: { on: 'The light orbits slowly (environmentRotation) until the visitor takes it', off: 'The light holds still until moved' } },
+    { id: 'finish', label: 'Holder finish', type: 'select', options: [{ value: 'brass', label: 'Brass' }, { value: 'iron', label: 'Iron' }, { value: 'nickel', label: 'Nickel' }], default: 'brass', group: 'Materials', prompt: 'Metal finish: {value} (default {default})' },
+    { id: 'glaze', label: 'Cup glaze', type: 'color', default: 'clay', options: ['clay', 'sand', 'moss', 'sky', 'plum'], group: 'Materials', prompt: 'Clearcoat glaze colour: {value} (default {default})' },
+  ],
+  prompt: {
+    skill: 'webgl',
+    ask: 'Light {target} with a studio built in code.',
+    target: 'the product render',
+    brief: 'No HDR file and no lights: a room of emissive panels is baked once with PMREMGenerator.fromScene (half-float, so a sparkle strip at 8 stays a hard glint after the rough mips blur), with a painted equirectangular canvas as the second variant at environmentIntensity 2.2. Metal at metalness 1 and a clearcoat glaze (coat roughness 0.04 over a rough base) take every highlight from it; dark walls and a floor flag give the metal its contrast. The light turns, not the product: scene.environmentRotation orbits at 0.22 rad/s at rest until a drag or a range input takes over.',
+    keep: [
+      'each variant baked on first use and kept, every PMREMGenerator disposed right after its bake',
+      'a native range input for the light angle and aria-pressed buttons for the lighting switch (radio buttons for any finish swatches); lit but held under reduced motion; a drawn still without WebGL',
+    ],
+  },
+};

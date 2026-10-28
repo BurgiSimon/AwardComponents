@@ -1,0 +1,112 @@
+.sf {
+  --sf-stagger: 70ms;
+  --sf-size: clamp(1.5rem, 0.8rem + 2vw, 2.55rem);
+  min-height: 100svh;
+  overflow-x: clip;
+}
+.sf a { text-decoration: none; }
+.sf__bar { border-bottom: 1px solid var(--line); }
+.sf__bar nav a[aria-current='page'] { color: var(--ink); }
+
+.sf__page { display: grid; grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr); align-items: center; gap: clamp(32px, 5vw, 88px); min-height: calc(100svh - 64px); padding-block: clamp(28px, 4vw, 56px); }
+.sf__title { margin-bottom: clamp(16px, 2vw, 26px); color: var(--accent-ink); }
+
+/* The sentence: display size, the blanks on the baseline, growing with what is typed. */
+.sf__text { max-width: 30em; font-family: var(--font-serif); font-size: var(--sf-size); font-weight: 400; line-height: 1.62; letter-spacing: -0.01em; overflow-wrap: anywhere; text-wrap: pretty; }
+.sf--sans .sf__text { font-family: var(--font-sans); font-weight: 520; font-stretch: 108%; letter-spacing: -0.025em; line-height: 1.58; }
+.sf__piece { display: inline-block; }
+.sf__frag { cursor: default; }
+label.sf__frag { cursor: text; }
+
+.sf__blank {
+  field-sizing: content; /* native auto-width; other engines keep the min and max below */
+  min-inline-size: 6ch;
+  max-inline-size: 100%;
+  margin: 0 0.12em;
+  padding: 0 0.1em;
+  border: 0;
+  border-bottom: 1.5px solid var(--ink);
+  border-radius: 0;
+  background: transparent;
+  color: var(--accent-ink);
+  font: inherit;
+  line-height: 1.2;
+  transition: border-color var(--dur-s) var(--ease-out), background-color var(--dur-s) var(--ease-out), box-shadow var(--dur-s) var(--ease-out);
+}
+.sf__blank::placeholder { color: var(--faint); font-style: italic; }
+.sf__blank:focus-visible { outline: none; border-bottom-color: var(--accent); background: var(--accent-soft); }
+.sf__blank[aria-invalid='true'] { border-bottom: 2px solid var(--danger); }
+
+.sf__select { position: relative; }
+.sf__select select { appearance: none; -webkit-appearance: none; padding-right: 0.9em; cursor: pointer; }
+.sf__select select:has(option[value='']:checked) { color: var(--faint); font-style: italic; }
+.sf__select::after { content: ''; position: absolute; right: 0.42em; top: 50%; width: 0.22em; height: 0.22em; border-right: 1.5px solid var(--ink-2); border-bottom: 1.5px solid var(--ink-2); transform: translateY(-75%) rotate(45deg); pointer-events: none; }
+.sf__select option { font-family: var(--font-sans); font-style: normal; color: var(--ink); }
+
+.sf__choices { display: inline; }
+.sf__choice { position: relative; margin: 0 0.06em; padding: 0 0.22em; border-bottom: 1.5px solid var(--line-2); font-style: italic; color: var(--muted); cursor: pointer; transition: color var(--dur-s) var(--ease-out), background-color var(--dur-s) var(--ease-out); }
+.sf__choice + .sf__choice { margin-left: 0.5em; }
+.sf__choice + .sf__choice::before { content: '/' / ''; position: absolute; left: -0.42em; color: var(--faint); font-style: normal; }
+.sf__choice input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+.sf__choice:hover { color: var(--ink); }
+.sf__choice:has(input:checked) { background: var(--ink); border-bottom-color: var(--ink); color: var(--bg); font-style: normal; }
+.sf__choice:has(input:focus-visible) { outline: 2px solid var(--focus); outline-offset: 3px; }
+[aria-invalid='true'] .sf__choice { border-bottom: 2px solid var(--danger); }
+
+/* Pill blanks: a soft filled field instead of a rule. */
+.sf[data-field='pill'] .sf__blank { border: 0; border-radius: var(--radius-pill); background: color-mix(in oklab, var(--accent) 7%, var(--surface)); padding: 0 0.42em; box-shadow: inset 0 0 0 1px var(--line); }
+.sf[data-field='pill'] .sf__blank:focus-visible { box-shadow: inset 0 0 0 2px var(--accent); }
+.sf[data-field='pill'] .sf__blank[aria-invalid='true'] { box-shadow: inset 0 0 0 2px var(--danger); }
+.sf[data-field='pill'] .sf__select select { padding-right: 1.1em; }
+.sf[data-field='pill'] .sf__select::after { right: 0.62em; }
+.sf[data-field='pill'] .sf__choice { border: 1px solid var(--line-2); border-radius: var(--radius-pill); padding: 0 0.42em; }
+.sf[data-field='pill'] .sf__choice + .sf__choice { margin-left: 0.18em; }
+.sf[data-field='pill'] .sf__choice + .sf__choice::before { content: none; }
+.sf[data-field='pill'] [aria-invalid='true'] .sf__choice { border: 2px solid var(--danger); }
+
+.sf__errors { display: grid; gap: 4px; margin: 22px 0 0; }
+.sf__error { color: var(--danger); font-size: var(--text-sm); font-weight: 600; }
+.sf__error::before { content: '— ' / ''; }
+.sf__error[hidden] { display: none; }
+.sf__send { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; margin-top: clamp(22px, 3vw, 36px); }
+.sf__send .ac-small { max-width: 32ch; }
+.is-sent .sf__send, .is-sent .sf__errors { display: none; }
+.sf__sent { max-width: 34ch; margin-top: clamp(22px, 3vw, 36px); font-family: var(--font-serif); font-size: clamp(1.3rem, 0.95rem + 1vw, 1.85rem); line-height: 1.35; }
+.sf--sans .sf__sent { font-family: var(--font-sans); font-weight: 560; letter-spacing: -0.015em; }
+.sf__sent:focus { outline: none; }
+.sf__sent::before { content: ''; display: block; width: 36px; height: 2px; margin-bottom: 14px; background: var(--accent); }
+
+.sf__aside { display: grid; gap: 22px; align-content: center; }
+.sf__fig { display: grid; gap: 8px; margin: 0; }
+.sf__pic { --ratio: 4 / 3.2; border-radius: var(--radius-md); }
+.sf__next { display: grid; gap: 8px; padding-top: 18px; border-top: 1px solid var(--line); }
+
+/* Entrances. Rise: each piece lifts 0.45em as it fades in, staggered in reading order. Fade: opacity only. */
+@keyframes sf-rise { from { opacity: 0; transform: translateY(0.45em); } }
+@keyframes sf-fade { from { opacity: 0; } }
+.sf.is-entering[data-entrance='rise'] .sf__piece { animation: sf-rise 760ms var(--ease-out) both; animation-delay: calc(var(--i) * var(--sf-stagger)); }
+.sf.is-entering[data-entrance='fade'] .sf__piece { animation: sf-fade 600ms linear both; animation-delay: calc(var(--i) * var(--sf-stagger)); }
+.sf[data-entrance='rise'] :is(.sf__error:not([hidden]), .sf__sent:not([hidden])) { animation: sf-rise 500ms var(--ease-out) both; }
+.sf[data-entrance='fade'] :is(.sf__error:not([hidden]), .sf__sent:not([hidden])) { animation: sf-fade 400ms linear both; }
+
+/* Phone: the sentence stacks into phrase-over-field rows; the choices wrap as pills. */
+@media (max-width: 860px) {
+  .sf__page { grid-template-columns: minmax(0, 1fr); align-items: start; min-height: 0; }
+  .sf__aside { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); align-items: start; }
+}
+@media (max-width: 767px) {
+  .sf__bar nav { display: none; }
+  .sf__text { font-size: 1.5rem; line-height: 1.35; }
+  .sf__frag { display: block; margin-top: 20px; }
+  .sf__frag:first-child { margin-top: 0; }
+  .sf__punct { display: none; }
+  .sf__blank, .sf__select { display: block; width: 100%; margin: 8px 0 0; }
+  .sf__blank { min-height: 48px; }
+  .sf__select select { width: 100%; margin: 0; }
+  .sf__choices { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .sf__choice, .sf[data-field='pill'] .sf__choice { display: inline-flex; align-items: center; min-height: 44px; margin: 0; padding: 0 0.55em; border: 1px solid var(--line-2); border-radius: var(--radius-pill); font-size: 1.15rem; }
+  .sf__choice + .sf__choice { margin-left: 0; }
+  .sf__choice + .sf__choice::before { content: none; }
+  [aria-invalid='true'] .sf__choice { border: 2px solid var(--danger); }
+  .sf__aside { grid-template-columns: minmax(0, 1fr); }
+}

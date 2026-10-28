@@ -1,0 +1,36 @@
+export default {
+  id: 'before-after',
+  title: 'Before / after',
+  category: 'commerce',
+  summary: 'A magazine’s photo desk shows a cover’s raw scan against its final grade: drag the divider, hold the picture to see the other side whole, or use the arrow keys.',
+  recipe: 'compare-hold-drag',
+  deps: [],
+  tags: ['compare', 'before-after', 'slider', 'drag', 'hold', 'clip-path', 'pointer', 'keyboard'],
+  added: '2026-10-28',
+  order: 40,
+  preview: { height: 700, hint: 'Drag the divider, or hold the picture', capture: { wait: 900 } },
+  actions: [{ id: 'peek', label: 'Peek at the other side' }],
+  useCases: [
+    'A retoucher’s or colourist’s portfolio: the scan against the grade',
+    'A renovation or restoration case study: the same room before and after',
+    'A product that changes a picture (a filter, an upscaler, a denoiser) shown on one image',
+  ],
+  notes: [
+    'The divider is a real slider (role="slider", aria-valuenow and a spoken value): arrows step 5 %, Shift+arrows 20 %, Home and End go to the ends, and holding Space peeks.',
+    'The drag captures the pointer and always lets go on cancel, blur or loss of capture; touch-action keeps the page scrolling the other way on touch.',
+    'Under reduced motion the divider moves straight to where it is put, without the short glide.',
+  ],
+  controls: [
+    { id: 'orientation', label: 'Orientation', type: 'select', options: [{ value: 'horizontal', label: 'Side by side' }, { value: 'vertical', label: 'Top and bottom' }], default: 'horizontal', group: 'Divider', prompt: (v) => (v === 'vertical' ? 'Top and bottom: a horizontal divider that moves up and down; the arrow keys follow it on screen and touch-action switches to pan-x' : 'Side by side: a vertical divider that moves left and right, with touch-action: pan-y on the frame') },
+    { id: 'start', label: 'Start position', type: 'range', min: 10, max: 90, step: 5, default: 50, unit: '%', group: 'Divider', prompt: 'The divider starts at {value} (default {default})' },
+    { id: 'handle', label: 'Handle', type: 'select', options: [{ value: 'grip', label: 'Grip' }, { value: 'bar', label: 'Bar' }, { value: 'ring', label: 'Ring' }], default: 'grip', group: 'Divider', prompt: (v) => ({ grip: 'Handle: a 46 px solid disc with two arrows on the divider line, in a 44 px hit strip along the divider', bar: 'Handle: a 10 × 56 px pill on the divider line, no arrows, in a 44 px hit strip along the divider', ring: 'Handle: a 46 px ring (2 px outline over a 6 px backdrop blur) with two arrows, in a 44 px hit strip along the divider' })[v] },
+    { id: 'before', label: 'Before', type: 'select', options: [{ value: 'raw', label: 'Raw scan' }, { value: 'contact', label: 'Contact print' }, { value: 'faded', label: 'Faded print' }], default: 'raw', group: 'Pictures', help: 'The before side is the same photograph through CSS filters.', prompt: false },
+  ],
+  prompt: {
+    skill: 'component',
+    ask: 'Turn {target} into a before and after comparison.',
+    target: 'the two versions of the picture',
+    brief: 'Two aligned images in one frame, the top one clipped with clip-path: inset() at the divider, which starts at 50 %. Drag the handle (pointer capture, released on cancel and blur), hold anywhere on the picture to peek at the other side in full until release, or move the handle as a slider: 5 % steps, 20 % with Shift, Home and End, Space to peek. The divider glides 200 ms linear to each new position, never while dragging.',
+    keep: ['role="slider" with a spoken value; touch-action on the cross axis so the page still scrolls; no glide under reduced motion.'],
+  },
+};

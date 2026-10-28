@@ -1,0 +1,68 @@
+.ar { overflow-x: clip; }
+.ar a { text-decoration: none; }
+.ar__bar nav a[aria-current] { color: var(--ink); }
+.ar__intro { min-height: 64svh; display: grid; align-content: center; gap: 20px; padding-block: 40px 64px; }
+.ar__intro .ac-display { max-width: 12ch; }
+.ar__cue { display: inline-flex; align-items: center; gap: 10px; margin-top: 12px; }
+.ar__cue::before { content: ''; width: 1px; height: 36px; background: linear-gradient(var(--ink), transparent); }
+
+/* The chapter is tall; the stage sticks for all of it and its scroll is the reveal's clock. */
+.ar__chapter { position: relative; height: 320svh; }
+.ar__stage { position: sticky; top: 0; height: 100svh; display: grid; grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr); align-items: center; gap: clamp(24px, 4vw, 64px); }
+.ar__copy { display: grid; gap: 20px; }
+.ar__list { margin: 0; }
+.ar__route { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 14px; padding-block: 14px; border-top: 1px solid var(--line); opacity: 0.42; transition: opacity var(--dur-m) var(--ease-out); }
+.ar__route.is-on { opacity: 1; }
+.ar__swatch { display: block; height: 6px; margin-top: 9px; border-radius: 3px; background: color-mix(in oklab, var(--tint) 22%, transparent); overflow: hidden; }
+.ar__swatch i { display: block; height: 100%; background: var(--tint); transform-origin: left; transform: scaleX(var(--p, 0)); }
+.ar__name { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; font-weight: 650; }
+.ar__time { color: var(--ink-2); }
+.ar__from { margin-top: 3px; max-width: 40ch; }
+
+.ar__map {
+  position: relative;
+  justify-self: center;
+  width: min(100%, calc(80svh * 4 / 3));
+  aspect-ratio: 4 / 3;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background-color: var(--surface);
+  background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 8.333% 11.111%;
+}
+.ar__ground, .ar__fallback, .ar__gl, .ar__gl canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ar__water { fill: color-mix(in oklab, var(--sky) 26%, var(--surface)); }
+.ar__isle { fill: var(--surface); stroke: var(--line-2); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.ar__fallback[hidden] { display: none; }
+.ar__fallback path { fill: none; stroke-width: 9px; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.ar__stop, .ar__dest { position: absolute; display: flex; align-items: center; gap: 8px; transform: translate(-6px, -50%); pointer-events: none; }
+.ar__stop i { width: 12px; height: 12px; flex: none; border-radius: 50%; border: 2.5px solid var(--tint); background: var(--surface); }
+.ar__stop b, .ar__dest b { font-family: var(--font-mono); font-size: 0.625rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); white-space: nowrap; transition: color var(--dur-m); }
+.ar__stop b { padding: 3px 7px; border-radius: var(--radius-pill); background: var(--surface); }
+.ar__stop.is-on b { color: var(--ink); }
+.ar__dest { flex-direction: column-reverse; gap: 6px; transform: translate(-50%, calc(-100% + 9px)); }
+.ar__dest i { width: 18px; height: 18px; flex: none; border-radius: 50%; background: var(--surface); border: 3px solid var(--ink); transition: background-color var(--dur-m), border-color var(--dur-m); }
+.ar__dest b { padding: 5px 9px; border-radius: var(--radius-pill); background: var(--surface); border: 1px solid var(--line-2); color: var(--ink); }
+.ar__dest.is-on i { background: var(--accent); border-color: var(--accent); }
+
+.ar__outro { min-height: 60svh; display: grid; place-items: center; align-content: center; gap: 24px; text-align: center; }
+.ar__outro .ac-h2 { max-width: 22ch; }
+
+/* Reduced motion, static and no WebGL2: no sticky chapter; the routes stand complete beside their list. */
+.ar--still .ar__chapter { height: auto; }
+.ar--still .ar__stage { position: static; height: auto; padding-block: 48px 64px; }
+.ar--still .ar__cue::before { display: none; }
+
+@media (max-width: 640px) {
+  .ar__bar nav { display: none; }
+}
+@media (max-width: 820px) {
+  .ar__stage { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto; align-content: center; gap: 18px; }
+  .ar__map { order: -1; width: min(100%, 50svh); aspect-ratio: 1; background-size: 8.333% 8.333%; }
+  .ar__copy { gap: 10px; }
+  .ar__copy .ac-h2 { font-size: var(--text-xl); }
+  .ar__route { padding-block: 9px; }
+  .ar__from { display: none; }
+}

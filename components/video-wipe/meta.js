@@ -1,0 +1,40 @@
+export default {
+  id: 'video-wipe',
+  title: 'Media panel wipe',
+  category: 'scroll',
+  summary: 'A festival’s four stages as full-bleed media panels: each change wipes the next picture in over the last behind a thin glowing seam, stepped by wheel, swipe, keys or the stage list.',
+  description: 'Two media buffers are double-buffered. The hidden one already holds the next panel’s footage, so a change never waits on the network; it opens over the visible one from a directional clip-path inset while a 1 px light rides the edge on the same tween. After each change the buffers swap roles and the newly hidden one loads the likely next panel.\n\nThe demo uses clips from the shared media set when it has them; until then each photo plays a slow push-in standing in for footage. The document never scrolls while the deck owns the viewport: one wheel flick is one panel.',
+  recipe: 'video-clip-wipe-panels',
+  deps: ['gsap'],
+  tags: ['video', 'clip-path', 'transition', 'sections', 'wheel', 'swipe', 'gsap', 'observer'],
+  added: '2026-10-28',
+  order: 40,
+  preview: { height: 620, hint: 'Scroll, swipe or press the arrow keys', capture: { action: 'next', wait: 700 } },
+  actions: [{ id: 'next', label: 'Next stage', icon: 'arrowRight' }],
+  useCases: [
+    'A festival or venue site’s stages, rooms or nights, one full-bleed clip each',
+    'A studio reel split into chapters, each with its own credit line',
+    'A product film’s scenes as a short deck before the page proper begins',
+  ],
+  notes: [
+    'The media is aria-hidden atmosphere; each panel’s copy carries the content, and inactive panels are inert.',
+    'Wheel, swipe, arrow and Page keys, Home / End, Space on the page, prev / next (aria-disabled at the ends) and the stage list all step; a polite live region names each new panel.',
+    'Under reduced motion panels cross-fade in 0.2 s with no seam and footage rests on its first frame; static swaps at once.',
+  ],
+  controls: [
+    { id: 'direction', label: 'Wipe direction', type: 'select', options: [{ value: 'across', label: 'Left to right' }, { value: 'rise', label: 'Bottom to top' }], default: 'across', group: 'Wipe', help: 'Going back runs the wipe the other way.', prompt: 'Wipe direction: {value}, reversed going back (default {default})' },
+    { id: 'duration', label: 'Wipe duration', type: 'range', min: 0.5, max: 2, step: 0.1, default: 1, unit: 's', group: 'Wipe', prompt: 'Wipe duration: {value} on expo.inOut, with the incoming copy’s start scaled to it (default {default})' },
+    { id: 'glow', label: 'Seam glow', type: 'range', min: 0, max: 2.5, step: 0.1, default: 1, unit: '×', group: 'Seam', help: '1× is a 32 px glow with a 7 px spread; 0 leaves a bare hairline.', prompt: 'Seam glow: {value} of a 32 px blur with a 7 px spread (default {default})' },
+    { id: 'seamColour', label: 'Seam tint', type: 'color', options: ['sand', 'accent', 'sky', 'plum'], default: 'sand', group: 'Seam', prompt: 'Seam light tinted {value}, mixed mostly with white' },
+  ],
+  prompt: {
+    skill: 'component',
+    ask: 'Turn {target} into a deck of full-bleed media panels changed by a wipe.',
+    target: 'the stages section',
+    brief: 'Two double-buffered media layers: the hidden one preloads the next panel’s clip, then opens over the visible one from a directional clip-path inset (1 s expo.inOut, from 0.12 s) while a 1 px glowing seam rides the edge on the same plain-object tween. Outgoing copy leaves first (0.34 s power2.in); incoming copy rises from 0.66 s, just past half the wipe (0.72 s power3.out). The document never scrolls: one wheel step (|deltaY| ≥ 18) per panel, locked for 1 s plus a 300 ms tail, or a 55 px swipe.',
+    keep: [
+      'media aria-hidden, inactive panels inert, a polite live region per change; keys, buttons and swipe; a 0.2 s cross-fade with resting footage under reduced motion.',
+      'a missed preload waits at most 1.2 s for a paintable frame, then wipes anyway; footage plays only while the deck is on screen.',
+    ],
+  },
+};

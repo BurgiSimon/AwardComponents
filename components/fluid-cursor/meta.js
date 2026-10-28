@@ -1,0 +1,42 @@
+export default {
+  id: 'fluid-cursor',
+  title: 'Fluid wake',
+  category: 'webgl',
+  summary: 'A festival poster drawn into WebGL and stirred by a fluid wake behind the pointer: one global pass that bends the type and the disc and fringes their colour.',
+  description: 'The whole poster (its ground, a vermilion disc, the signal rings and every line of type) is painted into one texture from the real page, and one full-frame pass distorts it by a velocity field with a red and blue fringe along the flow. The field is advected and fades each frame, and the pointer splats into it as it moves.\n\nNo pressure solve: a wake, not water, cheap enough for a 128² field on a phone. The DOM type stays where it is as the mirror, so it can still be read, selected and found; the nav and the ticket button sit above the canvas, undistorted.',
+  recipe: 'gl-fluid-wake-post',
+  deps: ['three'],
+  tags: ['webgl', 'three', 'shader', 'fluid', 'post-processing', 'pointer', 'distortion', 'hero'],
+  requires: ['webgl'],
+  added: '2026-10-28',
+  order: 30,
+  preview: { height: 640, hint: 'Move the pointer through the poster', capture: { action: 'stir', wait: 650 } },
+  useCases: [
+    'A poster-like hero for an event, a record or a campaign, where the pointer should feel like it is in the material',
+    'One unifying layer over a WebGL scene instead of several separate hover effects',
+    'A 404 or a campaign page that rewards moving the mouse around',
+  ],
+  notes: [
+    'The canvas is aria-hidden. The headline, dates and line-up stay in the DOM as transparent text over the painted poster, so they are read, selected and searched as usual.',
+    'Nothing needs a gesture: the nav and the ticket link sit above the canvas, never distorted. On touch a drag stirs the poster; the Stir action draws a stroke for anyone.',
+    'Reduced motion, the static tier and browsers without WebGL get the same poster in the DOM over a drawn still, with no simulation.',
+  ],
+  controls: [
+    { id: 'dissipation', label: 'Dissipation', type: 'range', min: 0.9, max: 0.99, step: 0.005, default: 0.96, group: 'Wake', help: 'How much of the velocity survives each 60 Hz frame. Higher values leave a longer wake.', prompt: 'Dissipation: {value} per frame at 60 Hz (default {default})' },
+    { id: 'radius', label: 'Wake width', type: 'range', min: 0.0005, max: 0.006, step: 0.0005, default: 0.002, group: 'Wake', help: 'The variance of each Gaussian splat in UV units.', prompt: 'Gaussian splat variance: {value} in UV units (default {default})' },
+    { id: 'distortion', label: 'Distortion', type: 'range', min: 0, max: 0.25, step: 0.01, default: 0.09, group: 'Post', prompt: 'Distortion: {value} × the velocity (default {default})' },
+    { id: 'chroma', label: 'Chroma', type: 'range', min: 0, max: 0.08, step: 0.005, default: 0.02, group: 'Post', help: 'How far red and blue are pulled apart along the flow.', prompt: 'Chromatic fringe: {value} × the velocity (default {default})' },
+    { id: 'ground', label: 'Poster', type: 'select', options: [{ value: 'theme', label: 'Page ground' }, { value: 'accent', label: 'Vermilion' }], default: 'theme', group: 'Look', prompt: (v) => (v === 'accent' ? 'The hero on an accent-colour ground with dark type, painted into the texture the same way' : 'The hero on the page ground') },
+  ],
+  actions: [{ id: 'stir', label: 'Stir the poster' }],
+  prompt: {
+    skill: 'webgl',
+    ask: 'Add a fluid wake to {target}.',
+    target: 'the hero',
+    brief: 'One global post-process: a 128² velocity field is advected (look upstream by 0.02 × velocity) and dissipated (0.96 a frame, scaled by frame time) every frame, with Gaussian splats where the pointer moves (force = pointer delta in UV × 10, clamped ±1). A single full-frame pass samples the hero texture at uv − velocity × 0.09 and pulls red and blue apart along the flow by 0.02. The loop stops when the wake has died away.',
+    keep: [
+      'half-float targets where EXT_color_buffer_float exists, bytes with a dead zone otherwise',
+      'the DOM text kept in place as the mirror; nav and calls to action above the canvas; no simulation under reduced motion or without WebGL',
+    ],
+  },
+};

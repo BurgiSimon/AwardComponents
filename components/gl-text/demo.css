@@ -1,0 +1,56 @@
+.gt {
+  overflow-x: clip;
+  background:
+    radial-gradient(80% 60% at 70% 100%, color-mix(in oklab, var(--sky) 16%, transparent), transparent 70%),
+    var(--bg);
+}
+.gt a { text-decoration: none; }
+.gt__brand { gap: 10px; font-size: 1.15rem; }
+.gt__mark { width: 18px; height: 18px; border-radius: 50%; border: 4px solid var(--accent); }
+.gt__bar nav { margin-left: auto; margin-right: 8px; }
+
+.gt__hero { position: relative; isolation: isolate; }
+.gt__inner {
+  position: relative;
+  z-index: 1;
+  min-height: calc(100svh - 64px);
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
+  gap: clamp(20px, 3vh, 32px);
+  padding-block: clamp(20px, 4vh, 40px) clamp(24px, 4vh, 40px);
+}
+.gt__meta { display: flex; flex-wrap: wrap; gap: 6px 22px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.gt__meta span:first-child { color: var(--ink); }
+
+/* The heading decides the layout; the canvas lies behind the whole hero and shows through its transparent ink. */
+.gt__title {
+  align-self: center;
+  font-size: clamp(3rem, 0.4rem + 10.2vw, 10rem);
+  font-weight: 800;
+  font-stretch: 125%;
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+  max-width: 12ch;
+  text-wrap: balance;
+}
+.gt__title[data-gl-on] { color: transparent; }
+.gt__title[data-gl-on]::selection { color: var(--on-accent); }
+.gt__gl { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.gt__gl canvas { position: absolute; inset: 0; }
+
+.gt__foot { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 20px 40px; }
+.gt__foot .ac-lede { max-width: 40ch; }
+.gt__cta { display: flex; flex-wrap: wrap; gap: 10px; }
+.gt__lineup { display: flex; flex-wrap: wrap; gap: 6px 0; margin: 0; padding-top: 14px; border-top: 1px solid var(--line); color: var(--ink-2); }
+.gt__lineup li + li::before { content: '·'; margin-inline: 12px; color: var(--faint); }
+
+@media (max-width: 760px) {
+  .gt__bar nav { display: none; }
+  .gt__bar .ac-btn { margin-left: auto; }
+  .gt__foot { grid-template-columns: 1fr; }
+  .gt__lineup li:nth-child(n + 6) { display: none; }
+}
+@media (max-width: 480px) {
+  .gt__title { font-size: 15.5vw; max-width: none; }
+  .gt__cta .ac-btn { flex: 1 1 auto; }
+}

@@ -1,0 +1,52 @@
+.fr { --fr-h: 120px; --fr-grow: 1.2; --fr-gap: 12px; overflow-x: clip; }
+.fr a { text-decoration: none; }
+.fr__bar nav a[aria-current] { color: var(--ink); }
+.fr__intro { display: flex; align-items: baseline; justify-content: space-between; gap: 12px 32px; flex-wrap: wrap; padding-block: clamp(24px, 6vh, 64px) clamp(20px, 3vh, 32px); }
+
+.fr__rows { margin: 0; border-top: 1px solid var(--line); }
+.fr__row {
+  display: grid;
+  grid-template-columns: minmax(230px, 28%) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(20px, 3vw, 48px);
+  padding: 24px 0 24px var(--gutter);
+  border-bottom: 1px solid var(--line);
+}
+.fr__cap a { display: grid; gap: 6px; justify-items: start; color: var(--ink); border-radius: var(--radius-xs); }
+.fr__name { font-size: var(--text-xl); font-weight: 680; font-stretch: var(--wide); letter-spacing: -0.02em; line-height: 1.1; }
+.fr__line { font-size: var(--text-sm); color: var(--ink-2); max-width: 34ch; text-wrap: pretty; }
+.fr__view { color: var(--accent-ink); white-space: nowrap; opacity: 0; transition: opacity var(--dur-s); }
+.fr__view::after { content: ' →'; }
+.fr__row.is-hover .fr__view, .fr__cap a:focus-visible .fr__view { opacity: 1; }
+.fr__cap a:focus-visible { outline-offset: 8px; }
+
+/* Clip sideways only, so the grow spills into the row's padding with no layout shift; the left edge fades. */
+/* The padding (taken back by the margin) is room for the grow inside the mask, which clips to the reel's box. */
+.fr__reel { padding-block: calc(var(--fr-h) * 0.2); margin-block: calc(var(--fr-h) * -0.2); overflow-x: clip; -webkit-mask-image: linear-gradient(90deg, transparent, #000 28px); mask-image: linear-gradient(90deg, transparent, #000 28px); }
+.fr__grow { position: relative; transform-origin: 0 50%; transition: transform 0.4s cubic-bezier(1, 0, 0.47, 1.25); }
+.fr__track { display: flex; width: max-content; animation: fr-film var(--dur, 60s) linear infinite; }
+.fr--alternate .fr__row:nth-child(even) .fr__track { animation-direction: reverse; }
+.fr__row[data-paused] .fr__track { animation-play-state: paused; }
+@keyframes fr-film { to { transform: translate3d(-50%, 0, 0); } }
+
+/* margin, not gap: two copies are then exactly twice one copy, so −50 % wraps seamlessly. */
+.fr__still { position: relative; flex: none; height: var(--fr-h); aspect-ratio: var(--r); margin-inline-end: var(--fr-gap); border-radius: var(--radius-xs); overflow: hidden; background: var(--bg-2); }
+.fr__still img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.fr__clip { position: absolute; left: 0; top: 0; height: var(--fr-h); aspect-ratio: 16 / 9; object-fit: cover; border-radius: var(--radius-xs); opacity: 0; transition: opacity var(--dur-s); pointer-events: none; }
+
+.fr__row:is(.is-hover, :focus-within) .fr__grow { transform: scale(var(--fr-grow)); }
+.fr__row.is-hover .fr__clip { opacity: 1; }
+
+.fr__foot { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; padding-block: 32px 48px; font-size: var(--text-sm); }
+
+/* Reduced motion and static: every reel at rest, nothing grows. */
+.fr--still .fr__track, .fr--still .fr__grow { animation: none !important; transform: none !important; }
+
+@media (max-width: 760px) {
+  .fr__bar nav { display: none; }
+  .fr__row { grid-template-columns: minmax(0, 1fr); gap: 18px; padding-block: 22px 26px; }
+  .fr__reel { order: -1; }
+  .fr__still { height: min(var(--fr-h), 104px); }
+  .fr__cap { padding-right: var(--gutter); }
+  .fr__view { display: none; }
+}

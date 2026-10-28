@@ -1,0 +1,41 @@
+export default {
+  id: 'flicker-text',
+  title: 'Flicker text',
+  category: 'text',
+  summary: 'A festival’s night-programme sign whose letters switch on like a neon tube, each running a hard opacity ladder in turn; hovering replays it, and the act names flicker too.',
+  description: 'Steps, not a fade. Every glyph runs the same opacity ladder, 0, 1, 0, 0, 1, 1, in hard 50 ms steps with a 40 ms stagger, so the line stutters on letter by letter the way a tube light does. The glow behind the sign follows how much of it is lit. Hovering the sign replays the ladder with a small expo-out shift, and each act in the list below does the same on hover or focus.\n\nIn the loop mode the sign stays on but now and then one tube catches, flickers and recovers, and only while the sign is on screen. The text itself stays whole for assistive technology: the glyph spans are decoration over a visually hidden copy.',
+  recipe: 'flicker-text',
+  deps: ['gsap'],
+  tags: ['text', 'flicker', 'neon', 'hover', 'stagger', 'gsap', 'festival'],
+  added: '2026-10-28',
+  order: 10,
+  preview: { height: 620, hint: 'Hover the sign or an act' },
+  useCases: [
+    'A night programme, a bar or a club page where the headline should feel switched on',
+    'Navigation links that replay a short flicker on hover and focus',
+    'A loading or “live now” label that catches the eye without moving across the page',
+  ],
+  notes: [
+    'Each line keeps its text in a visually hidden copy and the glyph spans are aria-hidden, so screen readers hear words, not letters.',
+    'Act names flicker on keyboard focus as well as hover; the links themselves never move out from under the pointer.',
+    'Under reduced motion every glyph is simply lit and nothing replays; the loop never runs off-screen.',
+  ],
+  controls: [
+    { id: 'step', label: 'Ladder step', type: 'range', min: 20, max: 140, step: 5, default: 50, unit: 'ms', group: 'Ladder', help: 'Each glyph runs 0, 1, 0, 0, 1, 1 at this step.', prompt: 'Each glyph runs the opacity ladder [0, 1, 0, 0, 1, 1] in hard {value} steps (default {default})' },
+    { id: 'stagger', label: 'Stagger', type: 'range', min: 10, max: 120, step: 5, default: 40, unit: 'ms', group: 'Ladder', prompt: 'Glyph stagger: {value} (default {default})' },
+    { id: 'trigger', label: 'Trigger', type: 'select', options: [{ value: 'load', label: 'On load' }, { value: 'hover', label: 'Hover only' }, { value: 'loop', label: 'Faulty tube loop' }], default: 'load', group: 'Ladder', prompt: (v) => ({ load: 'The sign switches on once on load and replays on hover', hover: 'The sign is lit at rest and runs the ladder only on hover', loop: 'After switching on, one random glyph catches and flickers every 2–5 s while the sign is on screen' })[v] },
+    { id: 'glow', label: 'Glow', type: 'range', min: 0, max: 1, step: 0.05, default: 0.7, group: 'Look', prompt: 'Scale the neon glow (a three-layer text-shadow of 0.04, 0.16 and 0.5 em, and the bloom behind the line) by {value} (default {default})' },
+    { id: 'colour', label: 'Tube colour', type: 'color', default: 'accent', group: 'Look', options: ['accent', 'clay', 'sky', 'plum', 'moss'], prompt: 'Tube colour: {value} (default {default})' },
+  ],
+  actions: [{ id: 'replay', label: 'Replay', icon: 'refresh' }],
+  prompt: {
+    skill: 'component',
+    ask: 'Make {target} flicker on like a neon sign.',
+    target: 'the night programme headline',
+    brief: 'Split the line into glyph spans after document.fonts.ready and run every glyph through the opacity ladder [0, 1, 0, 0, 1, 1] as GSAP keyframes with ease none, 50 ms per step and a 40 ms stagger, so it switches on letter by letter rather than fading, with a glow behind it that follows how much of the line is lit. Hover replays it with a 6 px expo-out shift (0.8 s); links split the same way replay it on hover and keyboard focus.',
+    keep: [
+      'the original text in a visually hidden copy with the glyph spans aria-hidden; words never break inside',
+      'all glyphs lit and no replays under reduced motion',
+    ],
+  },
+};

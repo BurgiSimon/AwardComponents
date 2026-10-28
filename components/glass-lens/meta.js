@@ -1,0 +1,42 @@
+export default {
+  id: 'glass-lens',
+  title: 'Glass lens',
+  category: 'webgl',
+  summary: 'A faceted piece of glass that refracts the page’s own type and hairlines, split into colour at its rims, and travels between section anchors on a stiff spring.',
+  description: 'There is no environment map and no photograph: the glass bends the page itself. The words and hairlines around it are painted again into a small square canvas, and the glass refracts that canvas in through its front faces and out through its back ones at twelve wavelengths, so the type it covers shows inside it, bent and fringed with colour.\n\nEach section names a place for the glass. The section nearest the middle of the screen weighs most, and the glass follows the weighted target on a stiff spring that arrives without drifting past.',
+  recipe: 'gl-dom-refraction-lens',
+  deps: ['three'],
+  tags: ['webgl', 'three', 'shader', 'refraction', 'glass', 'dispersion', 'scroll', 'spring'],
+  requires: ['webgl'],
+  added: '2026-10-28',
+  order: 50,
+  preview: { height: 680, scroll: true, hint: 'Scroll: the glass moves to each section', capture: { wait: 2400, pointer: [0.6, 0.45] } },
+  useCases: [
+    'A signature object for a magazine, a studio or a brand site that should feel made of something',
+    'A scroll companion that marks each chapter by settling beside its heading',
+    'A hero where the type itself is the material the effect shows off',
+  ],
+  notes: [
+    'The canvas is aria-hidden and ignores the pointer, so every link under the glass still works; the words it covers stay in the DOM, unchanged.',
+    'Anchors keep the glass on headings and empty columns, never on body copy or form fields that must be read at rest.',
+    'Under reduced motion the glass is placed at the current anchor with no travel and no spin, and still refracts. The static tier and browsers without WebGL show the page without it.',
+  ],
+  controls: [
+    { id: 'ior', label: 'Index of refraction', type: 'range', min: 1.05, max: 1.7, step: 0.01, default: 1.31, group: 'Glass', help: 'How strongly the glass bends what is behind it.', prompt: 'IOR: {value} (default {default})' },
+    { id: 'dispersion', label: 'Dispersion', type: 'range', min: 0, max: 0.2, step: 0.01, default: 0.06, group: 'Glass', help: 'The spread of the index across the wavelengths: wider splits the rims into colour.', prompt: 'Dispersion: an IOR spread of {value} across the wavelength taps, ± half of it around the IOR (default {default})' },
+    { id: 'size', label: 'Size', type: 'range', min: 0.6, max: 1.6, step: 0.05, default: 1, unit: '×', group: 'Glass', prompt: 'Glass size: {value} each anchor’s radius (default {default})' },
+    { id: 'shape', label: 'Shape', type: 'select', options: [{ value: 'crystal', label: 'Crystal' }, { value: 'prism', label: 'Prism' }, { value: 'drop', label: 'Drop' }], default: 'crystal', group: 'Glass', prompt: (v) => ({ crystal: 'A carved crystal: the convex hull of 18 seeded points and two tips, flat facets', prism: 'A triangular prism with flat faces', drop: 'A smooth drop of glass' }[v]) },
+    { id: 'spin', label: 'Idle spin', type: 'toggle', default: true, group: 'Motion', prompt: { on: 'A slow idle spin (0.25 rad/s) plus the scroll velocity', off: 'No idle spin: it turns only with the scroll' } },
+  ],
+  prompt: {
+    skill: 'webgl',
+    ask: 'Add a refracting glass object to {target}.',
+    target: 'the page',
+    brief: 'One faceted glass object over the page refracts the page itself: the words (measured with Range rects) and hairlines around it are painted into a square 2D canvas, a back-face pass writes exit normals into a target at 0.6 DPR, and the front face refracts through both normals at twelve wavelengths (IOR 1.31 ± 0.03) weighted into RGB. Sections declare data-anchor="x,y,size"; the glass follows their weighted mean on a spring of stiffness 46, damped just under critical.',
+    keep: [
+      'only the square around the glass repainted, snapped to 48 px and at most every 30 ms',
+      'on touch six wavelength taps, a 512² back texture and no pointer tilt',
+      'an aria-hidden canvas that ignores the pointer; placed without travel under reduced motion; no glass without WebGL',
+    ],
+  },
+};

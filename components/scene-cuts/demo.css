@@ -1,0 +1,106 @@
+.sc {
+  --sc-ink: color-mix(in oklab, var(--sand) 14%, white);
+  --sc-progress: 0;
+  position: relative;
+  overflow-x: clip;
+  background: var(--night);
+  color: var(--sc-ink);
+}
+.sc a { text-decoration: none; }
+
+/* One fixed canvas behind everything, plus the 2D canvas that draws the iris edge crisp. */
+.sc__gl { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+.sc__gl canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.sc__outline { z-index: 1; }
+
+.sc__hero {
+  position: relative;
+  z-index: 1;
+  min-height: 100svh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  isolation: isolate;
+}
+/* A scrim where the copy sits, so the sun of the dusk scene never washes out the type. */
+.sc__hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(90% 70% at 0% 100%, color-mix(in oklab, var(--night) 62%, transparent), transparent 70%),
+    linear-gradient(to top, color-mix(in oklab, var(--night) 45%, transparent), transparent 40%);
+  pointer-events: none;
+}
+.sc__bar nav a { color: var(--sc-ink); opacity: 0.8; }
+.sc__bar nav a:hover { opacity: 1; }
+.sc__buy { --btn-bg: var(--sand); --btn-fg: var(--night); }
+.sc__buy:hover { --btn-bg: color-mix(in oklab, var(--sand) 85%, white); }
+
+.sc__slides { display: grid; align-items: end; padding-bottom: clamp(20px, 4vh, 40px); }
+.sc__slide {
+  grid-area: 1 / 1;
+  display: grid;
+  gap: clamp(10px, 1.6vh, 16px);
+  align-content: end;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity var(--dur-l) var(--ease-out), transform var(--dur-l) var(--ease-out);
+}
+.sc__slide.is-active { opacity: 1; transform: none; }
+.sc__slide .ac-label { color: inherit; opacity: 0.85; }
+.sc__name {
+  font-size: clamp(4rem, 15vw, 15rem);
+  font-weight: 780;
+  font-stretch: 125%;
+  line-height: 0.84;
+  letter-spacing: -0.055em;
+  margin-left: -0.05em;
+}
+.sc__acts { max-width: 40ch; font-size: var(--text-lg); line-height: 1.5; opacity: 0.92; text-wrap: pretty; }
+:root[data-motion='reduced'] .sc__slide { transform: none; }
+:root[data-capture] .sc__slide, :root[data-capture] .sc__step { transition: none; }
+
+/* Controls: a timed step per day, then previous, pause and next. */
+.sc__controls { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-block: 18px 28px; border-top: 1px solid color-mix(in oklab, var(--sc-ink) 22%, transparent); }
+.sc__steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; flex: 1; max-width: 520px; }
+.sc__step { position: relative; display: grid; gap: 8px; min-height: 44px; padding: 10px 0 0; border: 0; background: none; color: inherit; text-align: left; opacity: 0.65; transition: opacity var(--dur-s) var(--ease-out); }
+.sc__step::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 2px; border-radius: 2px; background: color-mix(in oklab, var(--sc-ink) 25%, transparent); }
+.sc__fill { position: absolute; left: 0; top: 0; height: 2px; width: 0; border-radius: 2px; background: var(--sc-ink); }
+.sc__step.is-done .sc__fill { width: 100%; }
+.sc__step.is-active { opacity: 1; }
+.sc__step.is-active .sc__fill { width: calc(var(--sc-progress) * 100%); }
+.sc__step:hover { opacity: 1; }
+.sc__step-label { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.06em; text-transform: uppercase; }
+.sc__buttons { display: flex; gap: 8px; }
+.sc__btn { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid color-mix(in oklab, var(--sc-ink) 30%, transparent); border-radius: 50%; background: color-mix(in oklab, var(--night) 30%, transparent); color: inherit; transition: background-color var(--dur-s) var(--ease-out); }
+.sc__btn:hover { background: color-mix(in oklab, var(--sc-ink) 14%, transparent); }
+.sc__btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.sc__i-play { display: none; }
+.sc--paused .sc__i-pause { display: none; }
+.sc--paused .sc__i-play { display: block; }
+.sc__btn:focus-visible, .sc__step:focus-visible { outline-color: var(--sc-ink); }
+
+/* The footer: transparent over the canvas while the diamond closes onto its ground. */
+.sc__foot { position: relative; z-index: 1; min-height: 100svh; display: grid; place-items: center; text-align: center; }
+.sc__foot-inner { display: grid; justify-items: center; gap: 22px; padding-block: 96px; }
+.sc__foot .ac-label { color: inherit; opacity: 0.8; }
+.sc__close { max-width: 14ch; font-size: clamp(2.2rem, 1.2rem + 4vw, 5.2rem); font-weight: 740; font-stretch: 118%; line-height: 0.98; letter-spacing: -0.04em; text-wrap: balance; }
+.sc__tickets { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.sc__ticket { display: inline-flex; align-items: center; gap: 12px; min-height: 48px; padding: 0 20px; border: 1px solid color-mix(in oklab, var(--sc-ink) 30%, transparent); border-radius: var(--radius-pill); font-size: var(--text-sm); transition: background-color var(--dur-s) var(--ease-out), color var(--dur-s) var(--ease-out); }
+.sc__ticket:hover, .sc__ticket:focus-visible { background: var(--sand); color: var(--night); }
+
+/* No WebGL or the static tier: each day carries its scene as a gradient; the footer sits on its ground. */
+.sc--dom .sc__gl { display: none; }
+.sc--dom .sc__hero { transition: background var(--dur-l) var(--ease-out); }
+.sc--dom[data-active='0'] .sc__hero { background: radial-gradient(40% 40% at 68% 64%, var(--sand), transparent 70%), linear-gradient(var(--plum), var(--clay)); }
+.sc--dom[data-active='1'] .sc__hero { background: repeating-linear-gradient(100deg, var(--night) 0 6%, color-mix(in oklab, var(--sky) 70%, var(--night)) 6% 12%); }
+.sc--dom[data-active='2'] .sc__hero { background: repeating-linear-gradient(0deg, var(--night) 0 5%, color-mix(in oklab, var(--moss) 80%, var(--night)) 5% 10%); }
+
+@media (max-width: 760px) {
+  .sc__bar nav { display: none; }
+  .sc__name { font-size: 22vw; }
+  .sc__acts { font-size: var(--text-md); }
+  .sc__controls { flex-wrap: wrap; }
+  .sc__steps { max-width: none; flex-basis: 100%; }
+}

@@ -1,0 +1,38 @@
+export default {
+  id: 'fps-governor',
+  title: 'Frame-rate governor',
+  category: 'foundations',
+  summary: 'An architecture studio’s WebGL contour-map hero that steps its pixel ratio from measured frame rate and stops drawing 1.5 s after the last input, with a live graph of both.',
+  description: 'Two guards for a GL layer that runs all page long. The governor averages the frame rate every half second and steps the pixel ratio down by .25 under 45 fps and up over 57, inside the range the one-time device probe allowed; between the two thresholds it holds. The idle gate takes the loop off the ticker 1.5 s after the last pointer, wheel, scroll, touch or key input, unless something is still moving.\n\nPress “Simulate a slow device” to feed the governor 25 fps frame times and watch the ratio step down, then back up.',
+  recipe: 'gl-fps-governor-idle-gate',
+  deps: ['three'],
+  tags: ['webgl', 'three', 'shader', 'performance', 'dpr', 'idle', 'hero', 'graph'],
+  requires: ['webgl2'],
+  added: '2026-10-28',
+  order: 60,
+  preview: { height: 640, hint: 'Move the pointer, then rest', capture: { pointer: [0.6, 0.45], wait: 2600 } },
+  useCases: [
+    'A full-page WebGL background or hero that must not drain a laptop battery while someone reads',
+    'Any shader stage on a long page, where a device that was fast at load can slow down later',
+    'A canvas effect that should cost nothing once the visitor stops interacting',
+  ],
+  notes: [
+    'The canvas is aria-hidden; the map is decoration behind real headings and links. The readout is a plain list, not a live region, so it never announces twice a second.',
+    'Under reduced motion the field holds still and the survey pulse becomes a tint; the governor and the idle gate work the same. Static draws one frame and never starts the loop.',
+    'Without WebGL 2 a drawn contour still takes the canvas’s place, and the controls say so.',
+  ],
+  controls: [
+    { id: 'band', label: 'Target band', type: 'select', options: [{ value: '45-57', label: '45 – 57 fps' }, { value: '30-50', label: '30 – 50 fps (battery)' }, { value: '52-59', label: '52 – 59 fps (strict)' }], default: '45-57', group: 'Governor', help: 'Under the low number one step down, over the high one a step up; between them it holds.', prompt: (v) => { const [lo, hi] = v.split('-'); return `Step the pixel ratio down under ${lo} fps and up over ${hi} fps (default 45 and 57)`; } },
+    { id: 'step', label: 'Step', type: 'range', min: 0.1, max: 0.5, step: 0.05, default: 0.25, group: 'Governor', prompt: 'Pixel-ratio step: {value} per half-second window (default {default})' },
+    { id: 'idle', label: 'Idle timeout', type: 'range', min: 0.5, max: 5, step: 0.5, default: 1.5, unit: 's', group: 'Idle gate', help: 'How long after the last input (or the last busy frame) the loop sleeps.', prompt: 'Idle gate: stop drawing {value} after the last input or busy frame (default {default})' },
+    { id: 'graph', label: 'Show the graph', type: 'toggle', default: true, group: 'Demo', prompt: false },
+  ],
+  actions: [{ id: 'slow', label: 'Simulate a slow device' }, { id: 'pulse', label: 'Survey pulse' }],
+  prompt: {
+    skill: 'webgl',
+    ask: 'Put a frame-rate governor and an idle gate on {target}.',
+    target: 'the WebGL background',
+    brief: 'Average the frame rate over 500 ms windows and step renderer.setPixelRatio by .25: down under 45 fps, up over 57, holding in between, clamped to a ceiling from the device probe (min of its DPR cap and √(pixel budget ÷ canvas area)) and a floor of max(.5, ceiling ÷ 2). Take the loop off the ticker 1.5 s after the last pointer, wheel, scroll, touch or key input unless busy work (a transition, an easing lens) is still running; skip the first frame after a wake as a measurement.',
+    keep: ['a still when WebGL 2 is missing; a still field under reduced motion with the same governor; one frame and no loop under static.'],
+  },
+};

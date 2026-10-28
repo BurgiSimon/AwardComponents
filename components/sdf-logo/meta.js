@@ -1,0 +1,38 @@
+export default {
+  id: 'sdf-logo',
+  title: 'Extruded logo',
+  category: 'webgl',
+  summary: 'A flat brand mark given a polished-metal body: a 2D distance field extruded with a rounded bevel and raymarched in one shader, swaying under a studio ring light.',
+  description: 'No model file: the mark is a two-dimensional signed distance (a dot and three arcs), pushed into depth and rounded at every edge by shrinking it by the bevel first and subtracting the bevel after. That rounding is what catches the light.\n\nOne fullscreen triangle of raw WebGL 2 clips each ray to the mark’s box before marching, so most pixels cost nothing. The metal is reflection only: dark straight ahead, a bright ring at grazing angles, one soft key. The same mark as SVG strokes is the still for every path without a running context.',
+  recipe: 'gl-sdf-extruded-symbol',
+  deps: [],
+  tags: ['webgl', 'shader', 'raymarching', 'sdf', 'logo', 'brand', 'metal', 'raw-webgl'],
+  requires: ['webgl2'],
+  added: '2026-10-28',
+  order: 47,
+  preview: { height: 620, capture: { wait: 3200 } },
+  actions: [{ id: 'replay', label: 'Replay intro' }],
+  useCases: [
+    'A brand or identity page that shows the mark as an object',
+    'A launch hero where the logo itself is the product shot',
+    'Badges, medals and seals rendered from a vector mark without a 3D model',
+  ],
+  notes: [
+    'The stage is role="img" with a label that describes the mark; the canvas and the SVG still are aria-hidden.',
+    'The sway is slow and never flashes. Under reduced motion and static no WebGL context is created: the SVG stroke still stays.',
+    'Without WebGL 2, on a shader failure or a lost context the SVG still shows, so the stage is never empty.',
+  ],
+  controls: [
+    { id: 'depth', label: 'Depth', type: 'range', min: 0.06, max: 0.3, step: 0.01, default: 0.16, group: 'Body', help: 'Half-thickness of the slab, in units where the outer arc’s radius is 0.74.', prompt: 'Half-depth: {value} of a 0.74 outer radius (default {default})' },
+    { id: 'bevel', label: 'Bevel', type: 'range', min: 0, max: 0.065, step: 0.005, default: 0.04, group: 'Body', help: 'Edge rounding. Kept below the stroke half-width (0.07) and the depth, or the mark turns into tubes.', prompt: 'Bevel radius: {value} (default {default})' },
+    { id: 'finish', label: 'Finish', type: 'select', options: [{ value: 'chrome', label: 'Chrome' }, { value: 'brass', label: 'Brass' }, { value: 'vermilion', label: 'Vermilion' }], default: 'chrome', group: 'Body', prompt: 'Finish: {value}, a Schlick F0 tint (default {default})' },
+    { id: 'sway', label: 'Sway', type: 'range', min: 0, max: 35, step: 1, default: 18, unit: '°', group: 'Motion', help: 'Yaw swing after the intro, at 0.55 rad/s.', prompt: 'Sway: ±{value} after a 1.6 s intro (default {default})' },
+  ],
+  prompt: {
+    skill: 'webgl',
+    ask: 'Give {target} a polished-metal body, extruded from its 2D distance field and raymarched.',
+    target: 'the brand mark in the hero',
+    brief: 'The mark is a 2D signed distance (analytic, or a distance-field texture baked from its SVG). Extrude it with w = (mark(p.xy) + bevel, |z| − (depth − bevel)), d = min(max(w.x, w.y), 0) + length(max(w, 0)) − bevel, so every edge gets a quarter-round. One fullscreen triangle in raw WebGL 2 clips the ray to the mark’s box, marches 80 steps, shades by reflection only (a studio ring environment, four-tap normals and occlusion, Schlick F0 0.93) with inline ACES and gamma. Half-depth 0.16 and bevel 0.04 (outer arc radius 0.74, stroke half-width 0.07); the depth grows in over 0.9 s while the yaw settles from −90° over 1.6 s, then sways ±18° at 0.55 rad/s.',
+    keep: ['role="img" with a label on the stage; an SVG stroke still under reduced motion, without WebGL 2 and on context loss; the canvas renders only while on screen.'],
+  },
+};

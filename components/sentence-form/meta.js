@@ -1,0 +1,37 @@
+export default {
+  id: 'sentence-form',
+  title: 'Sentence form',
+  category: 'closers',
+  summary: 'An architecture studio’s enquiry written as one sentence to complete, each phrase the label of its blank, with the browser’s validation and the studio’s own messages.',
+  recipe: 'sentence-form-enquiry',
+  deps: [],
+  tags: ['form', 'enquiry', 'validation', 'contact', 'field-sizing', 'accessibility', 'type'],
+  requires: ['field-sizing'],
+  added: '2026-10-28',
+  order: 20,
+  preview: { height: 700, hint: 'Fill in the blanks, or send it empty', capture: { wait: 900 } },
+  actions: [{ id: 'replay', label: 'Replay the entrance' }, { id: 'errors', label: 'Send it empty' }],
+  useCases: [
+    'The first-contact form of a studio, gallery or agency',
+    'A booking or visit request that needs four answers, not fourteen',
+    'A newsletter or waitlist sign-up that should sound like the brand',
+  ],
+  notes: [
+    'Every phrase is the label of the blank after it, so each field is named by the words around it; the choices are a radiogroup labelled by its phrase, each option with its own label.',
+    'Validation is the browser’s constraint API with the studio’s messages: errors are tied to their fields by aria-describedby, aria-invalid marks the field, and focus goes to the first blank that needs work.',
+    'On phones the sentence stacks into phrase-over-field rows with 48 px fields; under reduced motion the entrance and the messages fade, and under static nothing moves.',
+  ],
+  controls: [
+    { id: 'entrance', label: 'Entrance', type: 'select', options: [{ value: 'rise', label: 'Rise' }, { value: 'fade', label: 'Fade' }, { value: 'none', label: 'None' }], default: 'rise', group: 'Motion', help: 'How the sentence arrives, and how errors and the thank-you come in.', prompt: (v) => ({ rise: 'Entrance: each phrase and blank rises 0.45em as it fades in, in reading order; errors and the thank-you rise the same way', fade: 'Entrance: each phrase and blank fades in without moving, in reading order; errors and the thank-you fade the same way', none: 'No entrance: the sentence is there at once, and errors and the thank-you appear without motion' }[v]) },
+    { id: 'stagger', label: 'Stagger', type: 'range', min: 0, max: 160, step: 10, default: 70, unit: 'ms', group: 'Motion', when: { entrance: ['rise', 'fade'] }, prompt: 'Stagger between phrases: {value} (default {default})' },
+    { id: 'field', label: 'Field style', type: 'select', options: [{ value: 'underline', label: 'Underline' }, { value: 'pill', label: 'Pill' }], default: 'underline', group: 'Look', prompt: (v) => ({ underline: 'Blanks drawn as a rule under the words, the choices underlined and slash-separated', pill: 'Blanks drawn as softly filled pills with a hairline inset border, the choices as outlined pills' }[v]) },
+    { id: 'serif', label: 'Serif sentence', type: 'toggle', default: true, group: 'Look', prompt: { on: 'The sentence in the reading serif at display size', off: 'The sentence in the sans at display size' } },
+  ],
+  prompt: {
+    skill: 'component',
+    ask: 'Write {target} as a sentence to complete.',
+    target: 'the contact form',
+    brief: 'One sentence at display size whose phrases are the labels of the blanks that follow them: name, company, a radiogroup of project types, a budget select and an email. Blanks grow with what is typed (field-sizing: content, 6ch minimum). Validation is the constraint API with the page’s own message per field and failure, shown under the sentence, tied by aria-describedby; focus goes to the first invalid blank and a focused thank-you replaces the send row. The sentence arrives piece by piece in reading order, each phrase and blank rising 0.45em as it fades in, 70 ms apart.',
+    keep: ['every control named by its phrase; phrase-over-field rows with 48 px fields on phones; the entrance and messages fade under reduced motion and stay still under static; four or five blanks at most.'],
+  },
+};

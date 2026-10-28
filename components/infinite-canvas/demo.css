@@ -1,0 +1,50 @@
+.ic { --ic-gap: 28px; --ic-tile: 190px; position: relative; background: var(--bg); }
+.ic a { text-decoration: none; }
+.ic__where { margin-right: auto; padding-left: 4px; }
+.ic__bar nav a[aria-current] { color: var(--ink); }
+.ic__skip:focus { position: fixed !important; left: 12px; top: 12px; z-index: 9; width: auto; height: auto; clip: auto; margin: 0; padding: 8px 12px; border-radius: var(--radius-sm); background: var(--ink); color: var(--bg); }
+
+.ic__link { display: grid; gap: 7px; color: var(--ink); -webkit-user-drag: none; border-radius: var(--radius-sm); }
+.ic__plate { --ratio: 4 / 5; display: block; border-radius: var(--radius-sm); }
+.ic__plate img { pointer-events: none; transition: transform var(--dur-l) var(--ease-out); }
+.ic__name { font-size: var(--text-sm); font-weight: 640; line-height: 1.2; margin-top: 3px; }
+.ic__meta { font-size: 0.625rem; }
+.ic__link:hover .ic__plate img { transform: scale(1.04); }
+.ic__link:hover .ic__name { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.18em; }
+.ic__link:focus-visible { outline: 2px solid var(--focus); outline-offset: 6px; }
+
+.ic__legend { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px 32px; padding: 18px var(--gutter) 20px; }
+.ic__legend:focus { outline: none; }
+.ic__readout { font-size: var(--text-sm); font-weight: 560; white-space: nowrap; }
+.ic__readout .ac-label { margin-right: 10px; }
+.ic__help { max-width: 40ch; text-align: right; }
+
+/* The plane: the stage fills the frame; header and legend float over it on fades of the ground. The stage is an
+   overflow: hidden scroller that wheel and touch never scroll: parked one pitch in on each axis, it takes the browser's
+   own reveals (Tab, find-in-page) so the page never moves. touch-action: none here and nowhere else. */
+.ic--live { height: 100svh; overflow: clip; }
+.ic--live .ic__bar { position: absolute; inset: 0 0 auto; z-index: 3; height: 92px; padding-bottom: 28px; background: linear-gradient(var(--bg) 38%, color-mix(in oklab, var(--bg) 70%, transparent) 64%, transparent); pointer-events: none; }
+.ic--live .ic__bar > * { pointer-events: auto; }
+.ic--live .ic__plane { position: absolute; inset: 0; }
+.ic--live .ic__stage { position: absolute; inset: 0; overflow: hidden; overflow-anchor: none; direction: ltr; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; }
+.ic--live.is-dragging .ic__stage { cursor: grabbing; }
+.ic--live .ic__tiles { position: relative; margin: 0; }
+.ic--live .ic__tile { position: absolute; left: 0; top: 0; width: min(var(--ic-tile), 42vw); will-change: transform; }
+/* Until the pool is placed the tiles stay hidden: nothing drawn stacked at the origin, nothing shifts. */
+.ic--live:not(.is-ready) .ic__tile { visibility: hidden; }
+.ic--live .ic__legend { position: absolute; inset: auto 0 0; z-index: 3; padding-top: 72px; background: linear-gradient(transparent, color-mix(in oklab, var(--bg) 70%, transparent) 40%, var(--bg) 72%); pointer-events: none; }
+.ic--live .ic__legend > * { pointer-events: auto; }
+
+/* Static: no plane. The same links as a plain grid that scrolls with the page. */
+.ic--static .ic__tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 10rem), 1fr)); gap: 32px var(--ic-gap); margin: 0; padding: 16px var(--gutter) 24px; }
+.ic--static .ic__legend { border-top: 1px solid var(--line); }
+
+@media (max-width: 760px) {
+  .ic__bar nav { display: none; }
+  .ic__where { margin-right: 0; }
+  .ic__legend { flex-direction: column; align-items: flex-start; }
+  .ic__help { text-align: left; }
+}
+@media (pointer: coarse) {
+  .ic__keys { display: none; }
+}

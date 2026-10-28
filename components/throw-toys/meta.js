@@ -1,0 +1,45 @@
+export default {
+  id: 'throw-toys',
+  title: 'Throw toys',
+  category: 'closers',
+  summary: 'A studio’s enquiry close as a toy: grab an extruded block for each discipline and throw it into the brief’s tray, or press its name; the brief follows what lands.',
+  description: 'Four CSS-3D blocks sit on a shelf above a tray tipped back in perspective. A block let go mid-swing keeps the speed of the hand, tilts into its travel and, if it lands in the tray, settles into its slot. The enquiry link and a live line under it follow what is in the tray, so the toy is also the form.\n\nThe landing is decided once, when the hand lets go: the natural end point is clamped to the stage and tested against the tray. Every block has a toggle button that does the same from the keyboard.',
+  recipe: 'throw-objects-css3d',
+  deps: ['gsap'],
+  tags: ['pointer', 'drag', 'inertia', 'draggable', 'css-3d', 'toy', 'keyboard', 'gsap'],
+  added: '2026-10-28',
+  order: 40,
+  preview: { height: 660, hint: 'Grab a block and throw it into the tray', capture: { action: 'throw', wait: 1600 } },
+  useCases: [
+    'An enquiry or “start a project” close where choosing is part of the fun',
+    'A playful about or 404 block that rewards poking around',
+    'A small configurator: pieces thrown into a box, the order line following',
+  ],
+  notes: [
+    'Each block is a named image; the toggle buttons beside it are the operable path, pressed while the block is in the tray.',
+    'A polite live region reads what the brief holds after every throw, button press or reset.',
+    'Only the blocks take touch-action: a finger on the empty stage still scrolls the page.',
+    'Under reduced motion there is no inertia or tilt: a block lands where it is let go and the buttons place blocks at once.',
+  ],
+  controls: [
+    { id: 'power', label: 'Throw power', type: 'range', min: 0.4, max: 2.5, step: 0.1, default: 1, unit: '×', group: 'Throw', help: 'How far the hand’s speed carries a block after release.', prompt: 'Throw power: {value} (InertiaPlugin throwResistance 1000 ÷ power; default {default})' },
+    { id: 'snap', label: 'Snap into slots', type: 'toggle', default: true, group: 'Throw', prompt: { on: 'A landing inside the tray snaps the block to its slot', off: 'A block stays exactly where its throw ends, inside the tray or not' } },
+    { id: 'tilt', label: 'Max tilt', type: 'range', min: 0, max: 60, step: 5, default: 40, unit: '°', group: 'Block', help: 'The cap on the lean into the direction of travel (0.018° per px/s).', prompt: 'Velocity tilt capped at ±{value} (default {default})' },
+    { id: 'rest', label: 'Resting turn', type: 'range', min: 0, max: 45, step: 1, default: 24, unit: '°', group: 'Block', help: 'How far each block turns at rest to show its depth.', prompt: 'Resting pose: rotationX −18°, rotationY {value} (default {default})' },
+    { id: 'palette', label: 'Blocks', type: 'select', options: [{ value: 'materials', label: 'Materials' }, { value: 'ink', label: 'Ink' }, { value: 'accent', label: 'Accent' }], default: 'materials', group: 'Block', prompt: (v) => ({ materials: 'Each block in its own material colour from the page tokens (clay, sky, moss, sand)', ink: 'Every block in the ink colour with ground-coloured letters', accent: 'Every block in the accent colour with on-accent letters' }[v]) },
+  ],
+  actions: [
+    { id: 'throw', label: 'Throw one in' },
+    { id: 'reset', label: 'Back on the shelf' },
+  ],
+  prompt: {
+    skill: 'component',
+    ask: 'Turn {target} into a throw toy.',
+    target: 'the enquiry section',
+    brief: 'Four extruded CSS-3D blocks, resting at rotationX −18° and rotationY 24°, that you grab and throw with GSAP Draggable and InertiaPlugin (type x,y, bounded by the stage). Released mid-swing a block keeps the hand’s velocity and its inner body tilts into the travel, 0.018° per px/s capped at ±40°; the landing point, clamped to the bounds, decides once whether it snaps into its slot in a perspective tray. What is in the tray fills in the enquiry beside it: the send link’s subject and count and a status line.',
+    keep: [
+      'a toggle button per block that throws it to the same slot or takes it back, and a polite live region with the tray count',
+      'touch-action on the blocks only; no inertia or tilt under reduced motion, a drop lands where it is let go',
+    ],
+  },
+};

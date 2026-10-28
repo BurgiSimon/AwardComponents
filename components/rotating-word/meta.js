@@ -1,0 +1,41 @@
+export default {
+  id: 'rotating-word',
+  title: 'Rotating word',
+  category: 'text',
+  summary: 'An architecture studio’s hero where one word turns through houses, libraries, pavilions and chairs: rolled like a reel, typed and erased, or stepped by the wheel.',
+  description: 'One slot, many words, and the rest of the sentence never moves. Every word sits in the same grid cell, so the slot is as wide as its widest word from the first paint, and the headline cannot reflow when the word changes or the font swaps in.\n\nThree drivers, one per mode: the reel rolls the next word up from below while the current one leaves through the top on the same tween; typed erases and retypes the word one character at a time; wheel-stepped spends the first wheel inputs at the top of the page on the word, then lets the page scroll. The cycle pauses while the hero is off-screen.',
+  recipe: 'word-cycle-hero',
+  deps: ['gsap'],
+  tags: ['text', 'hero', 'headline', 'rotate', 'typewriter', 'wheel', 'gsap'],
+  added: '2026-10-28',
+  order: 30,
+  preview: { height: 620, hint: 'Switch modes in the panel' },
+  useCases: [
+    'A studio or agency hero that names what it makes without a list',
+    'A product headline that cycles through who it is for: studios, shops, clinics',
+    'A campaign line where one word changes per audience or per city',
+  ],
+  notes: [
+    'The heading reads as one sentence: the visible slot is aria-hidden and a visually hidden label holds the current word, never announced.',
+    'Wheel-stepped mode acts only at the very top and only on the wheel; keyboard and touch scrolling are never intercepted.',
+    'Under reduced motion the first word holds still and the list of words shows beneath the headline.',
+  ],
+  controls: [
+    { id: 'mode', label: 'Mode', type: 'select', options: [{ value: 'reel', label: 'Reel roll' }, { value: 'typed', label: 'Typed' }, { value: 'wheel', label: 'Wheel-stepped' }], default: 'reel', group: 'Driver', prompt: (v) => ({ reel: 'Drive it as a timed reel roll', typed: 'Drive it by typing and erasing, one character at a time', wheel: 'Step it with the first wheel inputs at the top of the page, then let the page scroll' })[v] },
+    { id: 'words', label: 'Words', type: 'text', default: 'houses, libraries, pavilions, chairs', maxLength: 80, group: 'Driver', help: 'Comma-separated, up to six.', prompt: false },
+    { id: 'rest', label: 'Rest', type: 'range', min: 0.3, max: 4, step: 0.1, default: 0.9, unit: 's', group: 'Reel', when: { mode: ['reel'] }, prompt: 'Rest between rolls: {value} (default {default})' },
+    { id: 'ease', label: 'Roll', type: 'select', options: [{ value: 'overshoot', label: 'Overshoot' }, { value: 'stiff', label: 'Stiff' }], default: 'overshoot', group: 'Reel', when: { mode: ['reel'] }, prompt: (v) => (v === 'stiff' ? 'Roll stiffly: yPercent ±118 on power4.inOut over 0.75 s' : 'Roll with a small overshoot: yPercent ±130 on back.out(1.7) over 0.56 s') },
+    { id: 'hold', label: 'Hold', type: 'range', min: 0.6, max: 5, step: 0.1, default: 2.2, unit: 's', group: 'Typing', when: { mode: ['typed'] }, prompt: 'Hold each typed word for {value} (default {default})' },
+    { id: 'speed', label: 'Typing speed', type: 'range', min: 40, max: 240, step: 5, default: 115, unit: 'ms', group: 'Typing', when: { mode: ['typed'] }, help: 'Per character in; erasing runs twice as fast.', prompt: 'Type {value} per character, erase at half that (default {default})' },
+  ],
+  prompt: {
+    skill: 'component',
+    ask: 'Make one word in {target} rotate.',
+    target: 'the hero headline',
+    brief: 'One word in a fixed headline turns through a short list (up to six words) while the rest of the line stays put: every word sits in the same inline-grid cell so the slot is as wide as the widest word, clipped on the vertical axis only. The reel rolls the next word in from yPercent 130 while the current one leaves to −130 on one back.out(1.7) tween (0.56 s) with a 0.9 s rest; typed mode erases and retypes per character (115 ms in, 58 ms out, 2.2 s hold); wheel mode steps on the first wheel inputs at scrollY 0 (|Δy| ≥ 18, one step per 760 ms) and releases the wheel after the last word.',
+    keep: [
+      'the heading reads as one sentence through a visually hidden label (aria-live off); the slot adds no focus stops',
+      'the first word, still, with the whole list shown beneath the headline under reduced motion; keyboard and touch scrolling never intercepted; paused off-screen',
+    ],
+  },
+};

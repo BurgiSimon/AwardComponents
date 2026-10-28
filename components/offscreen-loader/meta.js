@@ -1,0 +1,40 @@
+export default {
+  id: 'offscreen-loader',
+  title: 'Off-thread loader',
+  category: 'foundations',
+  summary: 'A banking app’s “preparing your export” panel whose loader is drawn in a Worker on an OffscreenCanvas, so it keeps moving while the main thread is blocked.',
+  description: 'The loader’s canvas is handed to a Worker with transferControlToOffscreen(), after a hello handshake proves the Worker is alive. The very same draw function runs in the Worker on its own frame clock, or on the main thread when the Worker is missing, slow to answer or fails.\n\nPress “Block the main thread”: the receipt counter and the spinner beside it freeze, the loader does not. Switch the mode to the main thread and try again.',
+  recipe: 'offscreen-canvas-worker',
+  deps: [],
+  tags: ['canvas', 'worker', 'offscreencanvas', 'performance', 'loader', 'preloader', 'fallback'],
+  requires: ['offscreen-canvas'],
+  added: '2026-10-28',
+  order: 70,
+  preview: { height: 640, hint: 'Block the main thread', capture: { wait: 1600 } },
+  useCases: [
+    'A loader that must keep moving while shaders compile, a bundle parses or a page hydrates',
+    'Export, upload and “preparing” states in apps, where the main thread is busy doing the work',
+    'Any generative canvas that should not stutter when the rest of the page is under load',
+  ],
+  notes: [
+    'The canvas is decorative and aria-hidden; the drawing thread and each step’s progress are real text, and the thread is announced politely.',
+    'Under reduced motion and static the loader draws one settled frame and starts no loop, in whichever thread draws.',
+    'Without OffscreenCanvas or Workers, or if the Worker does not answer within a second, the same draw code runs on the main thread.',
+  ],
+  controls: [
+    { id: 'mode', label: 'Draw on', type: 'select', options: [{ value: 'worker', label: 'Worker (main as fallback)' }, { value: 'main', label: 'Main thread' }], default: 'worker', group: 'Thread', help: 'Force the fallback to compare what a block does to each.', prompt: false },
+    { id: 'block', label: 'Block length', type: 'range', min: 0.5, max: 4, step: 0.5, default: 2, unit: 's', group: 'Demo', prompt: false },
+    { id: 'hello', label: 'Hello timeout', type: 'range', min: 250, max: 3000, step: 250, default: 1000, unit: 'ms', group: 'Thread', help: 'How long the Worker gets to answer before the main thread takes over.', prompt: 'Hello handshake timeout: {value} before falling back to the main thread (default {default})' },
+  ],
+  actions: [{ id: 'block', label: 'Block the main thread' }, { id: 'restart', label: 'Restart the export' }],
+  prompt: {
+    skill: 'component',
+    ask: 'Draw {target} in a Worker with an OffscreenCanvas.',
+    target: 'the loading animation',
+    brief: 'Start a Worker and send it a hello; only when it answers (within 1000 ms) transfer the canvas with transferControlToOffscreen() and post it with the colours and size, because a transferred canvas can never give a context on the main thread again. One draw function and one message handler run in the Worker on its own requestAnimationFrame, or on the main thread’s ticker as the fallback on timeout, error or no support. Pause it off-screen with an IntersectionObserver.',
+    keep: [
+      'one settled frame and no loop under reduced motion and static; the canvas aria-hidden, with the drawing thread named in real text.',
+      'colours read from CSS tokens on the main thread and posted; a fresh canvas for the main-thread fallback if the Worker fails after the transfer; the Worker terminated on unmount.',
+    ],
+  },
+};

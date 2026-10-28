@@ -1,0 +1,41 @@
+export default {
+  id: 'gl-text',
+  title: 'WebGL headline',
+  category: 'text',
+  summary: 'A festival headline drawn in WebGL from a distance-field atlas built in the page, rippling like water where the pointer passes, over the real heading it mirrors.',
+  recipe: 'gl-msdf-text',
+  deps: ['three'],
+  tags: ['webgl', 'three', 'msdf', 'sdf', 'text', 'shader', 'pointer', 'ripple', 'hero'],
+  requires: ['webgl'],
+  added: '2026-10-28',
+  order: 40,
+  preview: { height: 640, hint: 'Move over the headline, or tap it', capture: { wait: 1200 } },
+  useCases: [
+    'A launch or festival hero where the headline itself is the image',
+    'A section title that answers the pointer while staying selectable text',
+    'Type set inside a WebGL scene (on a wall, behind glass) without shipping a font atlas',
+  ],
+  notes: [
+    'The heading is real text in the DOM at its real size and decides the layout; the canvas over it is aria-hidden and lays each glyph on the position the browser gave that character.',
+    'No WebGL or the static tier: the DOM text shows on the first frame and no renderer is built. Reduced motion: the headline is drawn settled and the pointer sends no ripples.',
+    'Fine pointers leave a wake of rings as they move; touch and click send one ring from the tap. Nothing renders once the last ring has faded.',
+  ],
+  controls: [
+    { id: 'distortion', label: 'Distortion', type: 'range', min: 0, max: 36, step: 1, default: 12, unit: 'px', group: 'Ripple', prompt: 'Ripple displacement: up to {value} (default {default})' },
+    { id: 'speed', label: 'Wave speed', type: 'range', min: 120, max: 1200, step: 20, default: 460, unit: 'px/s', group: 'Ripple', prompt: 'Rings expand at {value} (default {default})' },
+    { id: 'life', label: 'Ring life', type: 'range', min: 0.6, max: 3.5, step: 0.1, default: 1.8, unit: 's', group: 'Ripple', help: 'How long each ring travels before it has faded.', prompt: 'Each ring fades over {value} (default {default})' },
+    { id: 'shimmer', label: 'Tint the wave', type: 'toggle', default: false, group: 'Look', prompt: { on: 'Where the ripple pushes hardest, the glyphs tint toward the accent', off: 'No tint: displacement only' } },
+    { id: 'tone', label: 'Colour', type: 'color', default: 'ink', options: ['ink', 'accent', 'plum', 'moss'], group: 'Look', prompt: 'Headline colour: {value} (default {default})' },
+    { id: 'gl', label: 'Draw with WebGL', type: 'toggle', default: true, group: 'Look', help: 'Off shows the DOM heading the canvas mirrors: same words, same place.', prompt: false },
+  ],
+  prompt: {
+    skill: 'webgl',
+    ask: 'Draw {target} in WebGL with a pointer ripple, mirrored by the real heading.',
+    target: 'the hero headline',
+    brief: 'Build a signed-distance atlas in the page from the heading’s own font (rasterise the glyphs the string uses, a Felzenszwalb distance transform, median(r,g,b) in the shader, edge = d / max(fwidth(d), 1e-5)) and place each glyph quad on the rect the browser gave that character, so the GL line lands on the DOM line. A fine pointer emits a ring every 38 px it travels and any press or tap emits one; rings expand at about 460 px/s over a 1.8 s life and displace the atlas lookup by up to 12 px, never past each glyph cell’s padding; rendering stops when the last ring fades.',
+    keep: [
+      'the heading stays in the DOM at its real size (text transparent while GL draws it); the canvas is aria-hidden.',
+      'DOM text without WebGL or in the static tier; a settled headline and no ripples under reduced motion; on touch, one ring per tap and no wake.',
+    ],
+  },
+};

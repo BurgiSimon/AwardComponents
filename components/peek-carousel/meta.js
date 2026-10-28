@@ -1,0 +1,38 @@
+export default {
+  id: 'peek-carousel',
+  title: 'Peek carousel',
+  category: 'galleries',
+  summary: 'A magazine’s stories in a centred carousel: the middle card sharp, its neighbours dimmed and blurred at the edges; the release speed picks the snap and the ends stretch like rubber.',
+  description: 'Every card is the same size; focus comes from subtraction. The gap is computed from the peek, not the other way round, so the same slice of each neighbour shows whatever the card width.\n\nA drag that moves 8 px becomes a drag; anything shorter stays a click on the link. The release speed over the last 100 ms picks the target, the duration and the curve: a fast flick lands in 320 ms on a crisp curve, a slow drag is placed in 450–600 ms on a softer one. Past either end the track resists and a critically damped spring brings it back.',
+  recipe: 'blur-peek-snap-carousel',
+  deps: [],
+  tags: ['carousel', 'drag', 'snap', 'blur', 'spring', 'pointer', 'keyboard'],
+  added: '2026-10-28',
+  order: 30,
+  preview: { height: 620, hint: 'Drag the cards, or flick them' },
+  actions: [{ id: 'next', label: 'Next story', icon: 'arrowRight' }],
+  useCases: [
+    'An issue’s or a season’s stories on a magazine home page',
+    'A shop’s new arrivals, one object in focus at a time',
+    'Case studies on a studio site where each card deserves the full width',
+  ],
+  notes: [
+    'Cards are real links in a list inside a region with aria-roledescription="carousel"; only the centred link is in the Tab order, arrows step, Home and End jump, and a polite count says “2 of 6”.',
+    'A press is a click until it moves 8 px; a click on a peeking neighbour brings it to the centre instead of following it.',
+    'Reduced motion keeps the focus state but every snap and return is instant; phones and touch screens dim the neighbours instead of blurring them.',
+  ],
+  controls: [
+    { id: 'peek', label: 'Peek', type: 'range', min: 4, max: 20, step: 1, default: 10, unit: '%', group: 'Layout', help: 'Slice of each neighbour that shows, as a share of the width (×1.4 at 920 px and below).', prompt: 'Peek: {value} of the carousel width shows of each neighbour, ×1.4 at 920 px and below (default {default})' },
+    { id: 'blur', label: 'Neighbour blur', type: 'range', min: 0, max: 14, step: 1, default: 6, unit: 'px', group: 'Focus', prompt: 'Neighbour blur: {value} (default {default})' },
+    { id: 'dim', label: 'Neighbour opacity', type: 'range', min: 0.1, max: 0.7, step: 0.05, default: 0.2, group: 'Focus', prompt: 'Neighbour opacity: {value} (default {default})' },
+    { id: 'feel', label: 'Snap feel', type: 'select', options: [{ value: 'graded', label: 'By release speed' }, { value: 'crisp', label: 'Always crisp' }, { value: 'soft', label: 'Always soft' }], default: 'graded', group: 'Snap', help: 'By release speed: flicks get 320 ms on a crisp curve, slow drags 450–600 ms on a soft one.', prompt: (v) => ({ crisp: 'Snap feel: every advance lands in 320 ms on the crisp cubic-bezier(.25,.46,.45,.94), whatever the release speed; snap-backs stay soft', soft: 'Snap feel: every advance takes 450–600 ms by the distance left on the soft cubic-bezier(.32,.72,.37,1), whatever the release speed', graded: 'Snap feel graded by release speed: above 1.2 px/ms 320 ms on the crisp curve, slower drags 450–600 ms on the soft one' })[v] },
+    { id: 'band', label: 'Rubber band', type: 'range', min: 0.15, max: 1, step: 0.05, default: 0.55, group: 'Snap', help: 'Higher stretches further past the ends before the spring takes it back.', prompt: 'Rubber band past the ends: k = {value} in d·(1 − 1/(x·k/d + 1)) (default {default})' },
+  ],
+  prompt: {
+    skill: 'component',
+    ask: 'Turn {target} into a centred peek carousel.',
+    target: 'the stories row',
+    brief: 'Same-size cards; the centred one sharp, neighbours at opacity 0.2 with a 6 px blur, both over 0.5 s. The gap is computed from the peek, so a slice of each neighbour, 10 % of the carousel width, shows (14 % at 920 px and below). The release speed over the last 100 ms picks the snap: above 1.2 px/ms 320 ms on cubic-bezier(.25,.46,.45,.94), slower drags 450–600 ms on cubic-bezier(.32,.72,.37,1). Past the ends a rubber band, then a critically damped spring (stiffness 170) stepped with its exact solution.',
+    keep: ['real links in a list, roving tabindex, arrows / Home / End and a polite count; a press stays a click until 8 px; touch-action: pan-y so a finger still scrolls the page; instant snaps under reduced motion; dimmed, unblurred neighbours on phones and coarse pointers.'],
+  },
+};

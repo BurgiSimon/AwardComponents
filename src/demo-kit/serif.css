@@ -1,0 +1,4 @@
+/* Opt-in serif for editorial demos: import '../../src/demo-kit/serif.css' from demo.js, then use var(--font-serif)
+   or the .ac-serif class. Bodoni Moda (OFL), variable weight 400–900 with an optical-size axis. */
+@import '@fontsource-variable/bodoni-moda/opsz.css';
+@import '@fontsource-variable/bodoni-moda/opsz-italic.css';

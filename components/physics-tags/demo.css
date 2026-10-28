@@ -1,0 +1,104 @@
+.pt { min-height: 100svh; display: grid; grid-template-rows: 1fr auto; overflow-x: clip; }
+.pt a { text-decoration: none; }
+
+.pt__section { display: grid; align-content: start; gap: clamp(18px, 2.4vw, 28px); padding-block: clamp(32px, 4.4vw, 56px) clamp(24px, 3vw, 36px); }
+.pt__head { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); align-items: end; gap: 20px clamp(32px, 5vw, 80px); }
+.pt__head > div:first-child { display: grid; gap: 12px; }
+.pt__head .ac-h1 { font-size: clamp(1.9rem, 1.1rem + 2.2vw, 3.1rem); max-width: 18ch; }
+.pt__side { display: grid; gap: 16px; justify-items: start; }
+.pt__side .ac-body { max-width: 40ch; }
+
+/* The box. --pad is the wall inset demo.js reads, so a body (and its focus ring) never touches the clip edge. */
+.pt__box {
+  --pad: 10px;
+  --h: clamp(320px, calc(100svh - 390px), 480px);
+  position: relative;
+  min-height: var(--h);
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(to top, color-mix(in oklab, var(--ink) 5%, transparent), transparent 40%),
+    var(--surface);
+  overflow: clip;
+}
+/* At rest without a simulation: the words wrap upwards from the floor, the way a pile settles; source order kept. */
+.pt__list {
+  margin: 0;
+  padding: var(--pad) var(--pad) calc(var(--pad) + 10px);
+  min-height: var(--h);
+  display: flex;
+  flex-wrap: wrap-reverse;
+  align-content: flex-start;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 4px 6px;
+}
+.pt__box[data-sim] .pt__list { cursor: pointer; }
+
+/* A piece: shape, tone and size from data attributes; demo.js builds the matching body from the measured box. */
+.pt__list > li {
+  --tilt: 0deg;
+  --pp: 0.36em 0.95em 0.4em;
+  --pt-bg: var(--ink);
+  --pt-fg: var(--bg);
+  padding: var(--pp);
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-pill);
+  background: var(--pt-bg);
+  color: var(--pt-fg);
+  font-size: clamp(1rem, 0.6rem + 1.25vw, 1.7rem);
+  font-weight: 650;
+  font-stretch: 112%;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  white-space: nowrap;
+  max-width: 100%;
+  transform: rotate(var(--tilt));
+}
+.pt__list > li:nth-child(4n + 1) { --tilt: -3deg; }
+.pt__list > li:nth-child(4n + 2) { --tilt: 2deg; }
+.pt__list > li:nth-child(4n + 3) { --tilt: -1deg; }
+.pt__list > li[data-size='l'] { font-size: clamp(1.3rem, 0.7rem + 2.1vw, 2.6rem); font-stretch: var(--wide); font-weight: 720; letter-spacing: -0.03em; }
+.pt__list > li[data-shape='block'] { border-radius: var(--radius-sm); }
+.pt__list > li[data-shape='circle'] { display: grid; place-items: center; aspect-ratio: 1; --pp: 0.7em; border-radius: 50%; }
+
+/* Tones, from the page tokens; the light materials take dark text, the deep ones light text (dark text in dark). */
+.pt__list > li[data-tone='paper'] { --pt-bg: var(--surface); --pt-fg: var(--ink); border-color: var(--ink); }
+.pt__list > li[data-tone='accent'] { --pt-bg: var(--accent); --pt-fg: var(--on-accent); }
+.pt__list > li[data-tone='clay'] { --pt-bg: var(--clay); --pt-fg: var(--night); }
+.pt__list > li[data-tone='sand'] { --pt-bg: var(--sand); --pt-fg: var(--night); }
+.pt__list > li[data-tone='sky'] { --pt-bg: var(--sky); --pt-fg: var(--night); }
+.pt__list > li[data-tone='moss'] { --pt-bg: var(--moss); --pt-fg: var(--surface); }
+.pt__list > li[data-tone='plum'] { --pt-bg: var(--plum); --pt-fg: var(--surface); }
+:root[data-theme='dark'] .pt__list > li:is([data-tone='moss'], [data-tone='plum']) { --pt-fg: var(--night); }
+:root[data-theme='dark'] .pt__list > li[data-tone='paper'] { --pt-bg: var(--raised); }
+
+.pt__list > li:has(> button) { padding: 0; }
+/* Simulation on: every piece sits at the box origin, moved by the transform demo.js writes. */
+.pt__box[data-sim] { height: var(--h); }
+.pt__box[data-sim] .pt__list { position: absolute; inset: 0; min-height: 0; padding: 0; display: block; }
+.pt__box[data-sim] .pt__list > li { position: absolute; left: 0; top: 0; padding: 0; max-width: calc(100% - 2 * var(--pad) - 4px); transform: translate(0, -200%); }
+.pt__box[data-sim] .pt__list > li[data-shape='circle'] { display: block; }
+.pt__list button { display: block; width: 100%; margin: 0; padding: var(--pp); border: 0; border-radius: inherit; background: none; color: inherit; font: inherit; letter-spacing: inherit; text-align: center; cursor: pointer; touch-action: manipulation; }
+.pt__list > li[data-shape='circle'] button { display: grid; place-items: center; height: 100%; }
+/* Pieces touch, so the ring is drawn inside each piece, on its own fill. */
+.pt__list button:focus-visible { outline: 2px solid var(--pt-fg); outline-offset: -6px; }
+.pt__list > li:has(> button:focus-visible) { z-index: 2; }
+@media (pointer: fine) {
+  .pt__box[data-drag] .pt__list button { cursor: grab; }
+  .pt__box[data-holding] .pt__list button { cursor: grabbing; user-select: none; }
+}
+
+.pt__under { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.pt__hint { max-width: 70ch; }
+.pt__acts { display: flex; gap: 8px; flex: none; }
+.pt__acts [hidden] { display: none; }
+
+.pt__foot { display: flex; justify-content: space-between; gap: 16px; padding-block: 18px 22px; border-top: 1px solid var(--line); font-size: var(--text-xs); color: var(--muted); }
+
+@media (max-width: 760px) {
+  .pt__head { grid-template-columns: minmax(0, 1fr); }
+  .pt__box { --h: clamp(360px, 50svh, 440px); }
+  .pt__under { flex-direction: column; align-items: flex-start; }
+  .pt__foot { flex-direction: column; gap: 4px; }
+}

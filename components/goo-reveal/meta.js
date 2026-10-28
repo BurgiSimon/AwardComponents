@@ -1,0 +1,40 @@
+export default {
+  id: 'goo-reveal',
+  title: 'Goo line reveal',
+  category: 'text',
+  summary: 'A magazine feature whose headings condense out of a pool of ink line by line as they scroll in, through an SVG blur and alpha threshold, and end as plain text.',
+  description: 'Each line of a heading gets its own SVG filter: a Gaussian blur pulled down to nothing, followed by an alpha threshold that starts hard and relaxes back to identity in the blur’s tail. The blurred letters sit below the threshold and are invisible; as the blur tightens their cores cross it first, neighbouring letters fuse into blobs, and then the edges soften back into antialiased type.\n\nSeparate filters let the lines run a beat apart, so the second can still be pooling while the first has set. Each filter comes off the moment its line lands and the split is reverted when the heading has landed, so nothing is left on the text: no filter pass, no line wrappers, one accessible name.',
+  recipe: 'svg-goo-line-reveal',
+  deps: ['gsap'],
+  tags: ['text', 'svg', 'filter', 'goo', 'splittext', 'scroll', 'gsap', 'editorial'],
+  added: '2026-10-28',
+  order: 40,
+  preview: { height: 640, scroll: true, capture: { wait: 600 } },
+  useCases: [
+    'The headings of a long read or a feature, each condensing as it scrolls in',
+    'A title page or a chapter opener where the type should feel poured rather than slid',
+    'Pull quotes in an editorial layout that land once and then behave as plain text',
+  ],
+  notes: [
+    'While a heading is split it keeps its whole sentence as its name and the line wrappers are hidden; afterwards it is its authored markup again, selectable and unfiltered.',
+    'Filters only ever sit on headings, never on body copy, links or controls, and each one is removed as its line lands.',
+    'Under reduced motion headings are never split or filtered and only fade in once; with motion off they are simply there.',
+  ],
+  controls: [
+    { id: 'blur', label: 'Blur strength', type: 'range', min: 0.1, max: 0.6, step: 0.02, default: 0.32, unit: 'em', group: 'Pool', help: 'The starting blur as a share of the heading’s font size.', prompt: 'Start the blur at stdDeviation {value} of the heading’s font size (default {default})' },
+    { id: 'amp', label: 'Threshold', type: 'range', min: 4, max: 40, step: 1, default: 18, unit: '×', group: 'Pool', help: 'How hard the alpha cut is while pooling; higher is blobbier.', prompt: 'Threshold sharpness {value}: alpha′ = amp × alpha − 0.39 × amp while pooling, relaxed to identity over the last 0.45 s (default {default})' },
+    { id: 'duration', label: 'Duration', type: 'range', min: 0.5, max: 2.5, step: 0.1, default: 1.1, unit: 's', group: 'Timing', prompt: 'Each line condenses in {value} with power3.out; the threshold relaxes over its last 0.45 s (default {default})' },
+    { id: 'stagger', label: 'Line stagger', type: 'range', min: 0, max: 0.4, step: 0.02, default: 0.12, unit: 's', group: 'Timing', prompt: 'Lines start {value} apart (default {default})' },
+  ],
+  actions: [{ id: 'replay', label: 'Replay', icon: 'refresh' }],
+  prompt: {
+    skill: 'component',
+    ask: 'Give {target} a goo line reveal.',
+    target: 'the article headings',
+    brief: 'Split each heading into lines with SplitText and give every line its own SVG filter: feGaussianBlur from 0.32 em of the font size to 0 over 1.1 s (power3.out), then an feColorMatrix alpha row that starts at 18 × alpha − 7 and relaxes to identity over the last 0.45 s, so the letters condense out of a pool. Lines run 0.12 s apart, each heading plays once at top 85 %, every filter is removed as its line lands and the split is reverted when the heading has landed.',
+    keep: [
+      'the heading’s whole sentence as its name while split; plain, selectable, unfiltered text after landing',
+      'no split and no filter under reduced motion, only a 0.4 s fade; plain text with motion off, and after 2.5 s if the script never arms the headings',
+    ],
+  },
+};

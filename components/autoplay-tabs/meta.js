@@ -1,0 +1,36 @@
+export default {
+  id: 'autoplay-tabs',
+  title: 'Autoplay tabs',
+  category: 'commerce',
+  summary: 'A banking app’s feature tabs that advance on their own: the bar under the open tab is the timer, and hover, keyboard focus, the scroll or a pause button hold it.',
+  recipe: 'autoplay-tabs-progress',
+  deps: ['gsap'],
+  tags: ['tabs', 'autoplay', 'progress', 'timer', 'features', 'product', 'gsap'],
+  added: '2026-10-28',
+  order: 20,
+  preview: { height: 700, hint: 'Point at the tabs to hold them', capture: { wait: 2600 } },
+  actions: [{ id: 'toggle', label: 'Pause / play' }, { id: 'next', label: 'Next tab' }],
+  useCases: [
+    'A product’s three to five features, each with its own screen',
+    'The steps of an onboarding or a service, shown in turn',
+    'A case-study band where each tab is one result with its picture',
+  ],
+  notes: [
+    'Real tabs: buttons with role="tab", aria-selected and aria-controls, a roving tabindex, arrow keys, Home and End.',
+    'Hover, keyboard focus inside the set, the set leaving the screen and the pause button (aria-pressed) each hold the clock; a mouse click does not.',
+    'Under reduced motion nothing advances on its own and the bars and pause button are gone; panels fade without moving.',
+  ],
+  controls: [
+    { id: 'duration', label: 'Time per tab', type: 'range', min: 3, max: 10, step: 0.5, default: 5, unit: 's', group: 'Clock', help: 'The bar fills linearly over this time, then the next tab opens.', prompt: 'Time per tab: {value}, a linear bar (default {default})' },
+    { id: 'hover', label: 'Hold on hover', type: 'toggle', default: true, group: 'Clock', prompt: { on: 'Hold the clock while the pointer is over the set', off: 'Keep the clock running under the pointer (keyboard focus, the scroll and the pause button still hold it)' } },
+    { id: 'orientation', label: 'Orientation', type: 'select', options: [{ value: 'vertical', label: 'Vertical' }, { value: 'horizontal', label: 'Horizontal' }], default: 'vertical', group: 'Layout', prompt: (v) => (v === 'horizontal' ? 'Lay the tabs out in a row above the panel, the timer bar above each label, with aria-orientation="horizontal"; both arrow axes still work' : 'Stack the tabs in a column beside the panel, the timer bar under each label, with aria-orientation="vertical"; both arrow axes still work') },
+    { id: 'bar', label: 'Bar colour', type: 'color', default: 'accent', group: 'Layout', prompt: 'Timer bar colour: {value} (default {default})' },
+  ],
+  prompt: {
+    skill: 'component',
+    ask: 'Make {target} autoplay, with a visible timer on the open tab.',
+    target: 'the feature tabs',
+    brief: 'The bar under the open tab is the timer: one linear tween scales it from 0 to 1 over 5 s and its completion opens the next tab, so the bar and the advance never drift. The clock starts once the set is a quarter into view, holds for hover, keyboard focus (not a mouse click’s focus), off-screen and a pause button, and restarts from 0 whenever someone picks a tab. Panels rise 16 px and fade in over 0.6 s.',
+    keep: ['real tabs with aria-selected, roving tabindex and arrow keys; an aria-pressed pause button (WCAG 2.2.2); no autoplay, bar or pause control under reduced motion.'],
+  },
+};

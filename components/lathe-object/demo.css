@@ -1,0 +1,52 @@
+.lo { --lo-glaze: var(--sand); min-height: 100svh; display: grid; align-items: center; overflow-x: clip; background: var(--bg); }
+
+.lo__wrap { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: clamp(24px, 5vw, 80px); align-items: center; padding-block: 28px; }
+
+/* The stage: a plinth of light under the vase; the canvas fills it. */
+.lo__stage {
+  position: relative;
+  margin: 0;
+  height: min(84svh, 720px);
+  min-height: 360px;
+  border-radius: var(--radius-xl);
+  background:
+    radial-gradient(55% 16% at 50% 86%, color-mix(in oklab, var(--bg-2) 70%, var(--line-2)), transparent 70%),
+    radial-gradient(120% 90% at 50% 10%, var(--surface), var(--bg-2) 75%);
+  box-shadow: inset 0 0 0 1px var(--line);
+  overflow: hidden;
+}
+.lo__stage canvas { position: absolute; inset: 0; }
+.lo__still { position: absolute; inset: 6% 10% 8%; display: grid; place-items: center; color: var(--ink); }
+.lo__still[hidden] { display: none; }
+.lo__still svg { width: 100%; height: 100%; }
+.lo__dims { position: absolute; left: 20px; bottom: 16px; margin: 0; }
+
+.lo__panel { display: grid; gap: 18px; align-content: center; }
+.lo__panel .ac-h1 { font-size: clamp(2rem, 1.2rem + 2.2vw, 3.4rem); }
+.lo__note { max-width: 40ch; }
+
+.lo__sliders { display: grid; gap: 4px; border-top: 1px solid var(--line); }
+.lo__row { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2px 12px; padding: 10px 0; border-bottom: 1px solid var(--line); cursor: pointer; }
+.lo__name { font-size: var(--text-sm); font-weight: 560; }
+.lo__row output { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--muted); }
+.lo__row input { grid-column: 1 / -1; width: 100%; height: 24px; margin: 0; accent-color: var(--ink); cursor: pointer; }
+
+.lo__glaze { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 2px 0 0; padding: 0; border: 0; }
+.lo__glaze legend { width: 100%; margin-bottom: 10px; padding: 0; }
+.lo__glaze legend span { color: var(--ink); }
+.lo__sw { position: relative; width: 34px; height: 34px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, color-mix(in oklab, var(--sw) 60%, white), var(--sw) 55%); box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.15); cursor: pointer; transition: transform var(--dur-s) var(--ease-spring); }
+.lo__sw:hover { transform: scale(1.08); }
+.lo__sw input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+.lo__sw:has(input:checked) { box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.15), 0 0 0 3px var(--bg), 0 0 0 5px var(--ink); }
+.lo__sw:has(input:focus-visible) { box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--focus); }
+.lo__buy { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 4px; }
+
+@media (max-width: 700px) {
+  .lo__wrap { grid-template-columns: 1fr; padding-top: 16px; }
+  .lo__stage { height: 52svh; min-height: 300px; }
+}
+@media (min-width: 701px) and (max-height: 700px) {
+  .lo__panel { gap: 12px; }
+  .lo__row { padding: 6px 0; }
+  .lo__note { display: none; }
+}

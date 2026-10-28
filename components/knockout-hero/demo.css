@@ -1,0 +1,85 @@
+.kh { overflow-x: clip; }
+.kh a { text-decoration: none; }
+
+/* The ground: fixed behind the page. It shows only where the page leaves a hole. */
+.kh__ground {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(60% 70% at 22% 30%, var(--accent), transparent),
+    radial-gradient(55% 60% at 78% 72%, var(--sky), transparent),
+    var(--night);
+}
+
+/* The hero has no background: the masked rect paints it, holes and all. overflow: clip bounds the rect. */
+.kh__hero {
+  position: relative;
+  z-index: 1;
+  min-height: 100svh;
+  overflow: clip;
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
+  row-gap: clamp(16px, 3vh, 32px);
+  padding-bottom: clamp(20px, 4vh, 36px);
+}
+.kh__bar, .kh__lede, .kh__foot { position: relative; z-index: 1; }
+.kh__bar nav { margin-left: calc(var(--space-5) * -0); }
+.kh__lede {
+  align-self: center;
+  width: min(100% - 2 * var(--gutter), 1320px);
+  margin-inline: auto;
+  max-width: 1320px;
+  font-size: clamp(1.4rem, 0.9rem + 1.7vw, 2.6rem);
+  font-weight: 560;
+  font-stretch: 108%;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.kh__lede { padding-right: 40%; }
+
+.kh__mark { position: relative; z-index: 0; padding-inline: var(--gutter); }
+.kh__svg { display: block; width: 100%; height: auto; overflow: visible; }
+.kh__solid { fill: var(--bg); }
+.kh__glyphs { font-family: var(--font-sans); font-size: 200px; font-weight: 900; font-stretch: 125%; letter-spacing: -0.05em; }
+
+.kh__foot {
+  width: min(100% - 2 * var(--gutter), 1320px);
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: end;
+  gap: 16px 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line-2);
+}
+.kh__when { display: grid; gap: 2px; font-size: var(--text-sm); }
+.kh__when strong { font-size: var(--text-md); font-weight: 650; }
+.kh__when span { color: var(--muted); }
+.kh__buy { justify-self: end; display: flex; align-items: center; gap: 16px; font-size: var(--text-sm); color: var(--ink-2); }
+.kh__buy strong { color: var(--ink); }
+
+/* Everything after the hero paints solid, so the fixed ground cannot leak through. */
+.kh__after { position: relative; z-index: 1; display: grid; gap: clamp(24px, 4vw, 40px); padding-block: clamp(64px, 12vh, 120px); }
+.kh__after::before { content: ''; position: absolute; inset: 0 calc(50% - 50vw); z-index: -1; background: var(--bg); }
+.kh__lineup { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 32px; margin: 0; }
+.kh__lineup li { display: grid; gap: 4px; padding-block: 16px; border-top: 1px solid var(--line); font-size: var(--text-xl); font-weight: 620; font-stretch: 110%; letter-spacing: -0.015em; }
+
+@media (max-width: 760px) {
+  .kh__bar nav a:nth-child(n + 3) { display: none; }
+  .kh__lede { padding-right: 0; }
+  .kh__foot { grid-template-columns: 1fr auto; }
+  .kh__ed { display: none; }
+  .kh__lineup { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 480px) {
+  .kh__hero { grid-template-rows: auto auto 1fr auto; }
+  .kh__lede { align-self: start; margin-top: 24px; font-size: 1.5rem; }
+  .kh__mark { align-self: center; }
+  .kh__foot { grid-template-columns: 1fr; }
+  .kh__buy { justify-self: stretch; justify-content: space-between; }
+  .kh__lineup { grid-template-columns: 1fr; }
+}

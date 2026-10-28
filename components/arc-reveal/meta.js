@@ -1,0 +1,38 @@
+export default {
+  id: 'arc-reveal',
+  title: 'Arc-length reveal',
+  category: 'scroll',
+  summary: 'A festival’s “getting there” map whose four routes are drawn by one WebGL pass as you scroll, each up to its own rounded head and staggered, while the route list lights in step.',
+  description: 'At mount the routes are rasterised into a small mask: which route each pixel belongs to, how far along that route it sits (16 bits, so long strokes never step) and how far it is from the centreline. One array of per-route progress then reveals every route in a single fullscreen pass, however many there are.\n\nThe scroll through a sticky chapter drives one progress value, split into staggered windows; the head is the arc length plus a feather bowed by the distance from the centre, so it rounds like a cap without any geometry.',
+  recipe: 'gl-arc-length-mask-reveal',
+  deps: [],
+  tags: ['webgl', 'webgl2', 'shader', 'scroll', 'map', 'path', 'mask', 'sticky'],
+  requires: ['webgl2'],
+  added: '2026-10-28',
+  order: 70,
+  preview: { height: 680, scroll: true, hint: 'Scroll to draw the routes', capture: { scroll: 0.58, wait: 1400 } },
+  useCases: [
+    'A venue or festival “getting there” map with routes from the city',
+    'A growth, root or river system drawn as a story section scrolls',
+    'A logistics or network diagram whose lines arrive in order',
+  ],
+  notes: [
+    'The canvas and the map are aria-hidden; the routes are a real ordered list with every detail in text, and the map only shows what the list says.',
+    'Nothing runs on its own: the reveal follows the scroll and the loop leaves the ticker once it arrives.',
+    'Under reduced motion and static every route is drawn complete and the chapter is not sticky; without WebGL2 the same routes are SVG strokes.',
+  ],
+  controls: [
+    { id: 'stagger', label: 'Stagger', type: 'range', min: 0, max: 0.3, step: 0.01, default: 0.2, group: 'Reveal', help: 'Route i draws over [stagger × i, stagger × i + 1 − 3 × stagger] of the chapter.', prompt: 'Stagger: route i starts at {value} × i of the chapter (default {default})' },
+    { id: 'round', label: 'Head roundness', type: 'range', min: 0, max: 2.5, step: 0.1, default: 1, unit: '×', group: 'Reveal', help: 'How far the sides of the head trail its centre: 0 is a square cut.', prompt: 'Head roundness: {value} (front = arc + feather × roundness × edge²; 0 is a square cut; default {default})' },
+    { id: 'feather', label: 'Head softness', type: 'range', min: 0.02, max: 0.3, step: 0.01, default: 0.08, group: 'Reveal', prompt: 'Head feather: {value} of the route’s length (default {default})' },
+    { id: 'width', label: 'Line width', type: 'range', min: 10, max: 44, step: 2, default: 20, group: 'Look', help: 'Half-width in thousandths of the map’s short side.', prompt: 'Line half-width: {value}/1000 of the map’s short side (default {default}/1000)' },
+    { id: 'palette', label: 'Colours', type: 'select', options: [{ value: 'transit', label: 'One material per route' }, { value: 'accent', label: 'Accent, shaded toward ink' }], default: 'transit', group: 'Look', prompt: 'Route colours: {value} (default {default})' },
+  ],
+  prompt: {
+    skill: 'webgl',
+    ask: 'Draw {target} with an arc-length mask reveal driven by the scroll.',
+    target: 'the routes on the travel map',
+    brief: 'Rasterise the routes (cubic Béziers sampled into 96-step polylines) once into an RGBA8 mask: R the route id, G/B a 16-bit arc length, A the distance from the centreline. One fullscreen WebGL2 pass reads it with texelFetch from a NEAREST texture and draws each route up to its own progress from a uniform array, with front = arc + feather × edge² for a rounded head (feather 0.08 of the length). A sticky 320svh chapter’s scroll sets one progress, split into windows staggered by 0.2 and damped at k = 9 on a ticker that leaves at rest; each route’s list item and origin label light as it starts drawing.',
+    keep: ['the canvas aria-hidden with a real list carrying the content; complete routes under reduced motion; SVG strokes without WebGL2; rebuild the mask on resize.'],
+  },
+};

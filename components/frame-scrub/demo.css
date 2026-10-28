@@ -1,0 +1,79 @@
+.fs { --pad-x: max(var(--gutter), calc((100% - 1320px) / 2)); position: relative; overflow-x: clip; }
+.fs a { text-decoration: none; }
+.fs__bar { position: absolute; inset: 0 0 auto; z-index: 3; }
+.fs__bar nav a[aria-current] { color: var(--ink); }
+
+/* The section is the scroll length; its sticky stage holds the turntable. */
+.fs__seq { position: relative; height: 300svh; }
+.fs__stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  align-items: center;
+  gap: clamp(24px, 4vw, 64px);
+  padding: 72px var(--pad-x) 28px;
+}
+.fs__copy { display: grid; gap: clamp(14px, 2.4svh, 22px); }
+.fs__copy .ac-h1 { max-width: 12ch; }
+.fs__callouts { display: grid; margin: 4px 0 0; }
+/* The active callout opens its line of detail (0fr → 1fr); the others keep only their titles, so four fit any height. */
+.fs__callout {
+  display: grid;
+  grid-template-rows: auto auto 0fr;
+  gap: 4px;
+  padding-block: clamp(10px, 1.6svh, 16px);
+  border-top: 1px solid var(--line);
+  opacity: 0.38;
+  transition: opacity var(--dur-m) var(--ease-out), grid-template-rows var(--dur-m) var(--ease-out);
+}
+.fs__callout strong { font-size: var(--text-lg); font-weight: 650; letter-spacing: -0.01em; }
+.fs__callout p { min-height: 0; overflow: hidden; max-width: 40ch; font-size: var(--text-sm); color: var(--ink-2); text-wrap: pretty; }
+.fs__callout.is-active { opacity: 1; grid-template-rows: auto auto 1fr; }
+.fs__callout.is-active .fs__k { color: var(--accent-ink); }
+.fs--no-callouts .fs__callouts { display: none; }
+
+.fs__fig { display: grid; justify-items: center; gap: 12px; min-width: 0; margin: 0; }
+.fs__turntable { position: relative; width: min(100%, calc(100svh - 170px)); aspect-ratio: 1; }
+.fs__turntable::before { content: ''; position: absolute; inset: 8%; border-radius: 50%; background: radial-gradient(closest-side, color-mix(in oklab, var(--accent) 7%, var(--bg-2)), transparent); }
+.fs__poster, .fs__canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.fs__canvas { opacity: 0; transition: opacity var(--dur-m) var(--ease-out); }
+.fs--ready .fs__canvas { opacity: 1; }
+.fs--ready .fs__poster { visibility: hidden; transition: visibility 0s linear var(--dur-m); }
+.fs__loading { position: absolute; left: 50%; bottom: 4%; translate: -50% 0; display: grid; justify-items: center; gap: 8px; white-space: nowrap; transition: opacity var(--dur-m); }
+.fs--ready .fs__loading, .fs--poster .fs__loading { opacity: 0; }
+.fs__loading-bar { position: relative; width: 140px; height: 2px; border-radius: 2px; background: var(--line-2); overflow: hidden; }
+.fs__loading-bar span { position: absolute; inset: 0; background: var(--accent); transform: scaleX(0); transform-origin: left; }
+
+.fs__readout { display: flex; align-items: center; gap: 14px; }
+.fs__readout b { font-weight: 500; color: var(--ink); }
+.fs__dial { position: relative; width: 22px; height: 22px; border: 1px solid var(--line-2); border-radius: 50%; }
+.fs__dial span { position: absolute; left: calc(50% - 0.5px); top: 3px; width: 1px; height: 8px; background: var(--ink); transform-origin: 50% 100%; }
+.fs--poster .fs__readout, .fs--still .fs__readout { visibility: hidden; }
+
+.fs__close { display: grid; gap: clamp(32px, 6svh, 56px); padding-block: clamp(72px, 14svh, 140px); border-top: 1px solid var(--line); }
+.fs__specs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; margin: 0; }
+.fs__specs div { display: grid; gap: 6px; }
+.fs__specs dd { margin: 0; font-size: var(--text-sm); color: var(--ink-2); }
+.fs__buy { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; }
+
+/* Reduced motion and no WebGL: one screen, one chosen frame (or the poster), every callout listed. */
+.fs--still .fs__seq { height: auto; }
+.fs--still .fs__stage { position: relative; height: auto; min-height: 100svh; }
+.fs--still .fs__callout { opacity: 1; grid-template-rows: auto auto 1fr; }
+
+@media (max-width: 760px) {
+  .fs__bar nav { display: none; }
+  .fs__specs { grid-template-columns: 1fr 1fr; }
+  .fs__stage { grid-template-columns: 1fr; grid-template-rows: auto auto; align-content: center; gap: 18px; padding-top: 64px; }
+  .fs__fig { order: -1; }
+  .fs__turntable { width: min(84vw, 46svh); }
+  .fs__copy .ac-h1 { font-size: var(--text-2xl); }
+  /* One callout at a time on the phone: they share a cell and cross-fade. */
+  .fs__callouts { grid-template-areas: 'c'; }
+  .fs__callout { grid-area: c; opacity: 0; border-top: 0; padding-top: 4px; }
+  .fs__callout.is-active { opacity: 1; }
+  .fs--still .fs__callouts { grid-template-areas: none; }
+  .fs--still .fs__callout { grid-area: auto; opacity: 1; border-top: 1px solid var(--line); }
+}

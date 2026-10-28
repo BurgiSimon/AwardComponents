@@ -1,0 +1,43 @@
+.sw { --track-base: 900svh; --track: var(--track-base); overflow-x: clip; }
+.sw a { text-decoration: none; }
+
+/* The track's height is the film's scroll budget; the stage is sticky inside it (no pin spacer). */
+.sw__film { position: relative; height: var(--track); }
+.sw__stage { position: sticky; top: 0; height: 100svh; overflow: hidden; display: grid; grid-template-rows: auto 1fr auto; background: var(--bg); }
+.sw__gl { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
+.sw__bar { position: relative; z-index: 2; }
+.sw__bar nav a[aria-current] { color: var(--ink); }
+
+/* No WebGL: a large beat numeral stands in for the scene. */
+.sw__still { position: absolute; inset: 0; display: grid; place-items: center end; padding-right: 8vw; z-index: 0; }
+.sw__still[hidden] { display: none; }
+.sw__still span { font-size: clamp(10rem, 30vw, 28rem); font-weight: 800; font-stretch: var(--wider); letter-spacing: -0.06em; color: transparent; -webkit-text-stroke: 1.5px var(--line-2); line-height: 0.8; }
+
+.sw__hud { position: relative; z-index: 1; align-self: center; pointer-events: none; }
+.sw__panel { display: grid; gap: 14px; max-width: 26rem; pointer-events: auto; }
+.sw__title { font-size: clamp(1.9rem, 1.2rem + 2.2vw, 3.2rem); min-height: 2.05em; }
+.sw__body { color: var(--ink-2); max-width: 36ch; min-height: 4.5em; text-wrap: pretty; }
+.sw__skip { justify-self: start; }
+
+/* The rail shows the progress line itself: band blocks drawn from the same table the map reads. */
+.sw__rail { position: relative; z-index: 1; padding-bottom: clamp(20px, 4vh, 36px); }
+.sw__rail-label { display: flex; justify-content: space-between; margin: 0 0 10px; }
+.sw__track { position: relative; height: 2px; background: var(--line-2); }
+.sw__fill { position: absolute; inset: 0; background: var(--ink); transform-origin: 0 50%; transform: scaleX(0); }
+.sw__band { position: absolute; top: -4px; height: 10px; border-inline: 1px solid var(--accent); background: color-mix(in oklab, var(--accent) 22%, transparent); }
+.sw__tick { position: absolute; top: -6px; width: 1px; height: 14px; background: var(--muted); }
+.sw--no-rail .sw__rail { visibility: hidden; }
+
+.sw__beats { display: grid; gap: 32px; padding-block: clamp(64px, 12vh, 128px); max-width: 900px; }
+.sw__list { display: grid; gap: 40px; margin: 0; }
+.sw__list li { display: grid; gap: 10px; padding-top: 20px; border-top: 1px solid var(--line); }
+
+@media (max-width: 760px) {
+  .sw { --track: calc(var(--track-base) * 0.78); }
+  .sw__bar nav a:not([aria-current]) { display: none; }
+  .sw__hud { align-self: end; }
+  .sw__panel { gap: 10px; padding: 18px; margin-bottom: 14px; border-radius: var(--radius-lg); background: color-mix(in oklab, var(--surface) 88%, transparent); backdrop-filter: blur(10px); border: 1px solid var(--line); max-width: none; }
+  .sw__title { font-size: var(--text-2xl); min-height: 0; }
+  .sw__body { min-height: 0; font-size: var(--text-sm); }
+  .sw__still { place-items: start center; padding: 18vh 0 0; }
+}

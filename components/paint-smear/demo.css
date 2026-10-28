@@ -1,0 +1,31 @@
+.pz { min-height: 100svh; display: grid; grid-template-rows: auto 1fr; overflow-x: clip; }
+.pz a { text-decoration: none; }
+.pz__brand { font-family: var(--font-serif); font-stretch: normal; font-weight: 600; font-size: 1.35rem; letter-spacing: -0.01em; }
+.pz__bar nav a[aria-current] { color: var(--ink); }
+
+.pz__main { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: clamp(28px, 5vw, 88px); padding-block: clamp(16px, 3vh, 40px) clamp(28px, 5vh, 56px); }
+.pz__copy { display: grid; gap: 20px; max-width: 34rem; }
+.pz__title { font-family: var(--font-serif); font-weight: 500; font-size: clamp(2.6rem, 1.6rem + 3.6vw, 5.2rem); line-height: 0.96; letter-spacing: -0.02em; text-wrap: balance; }
+.pz__buy { display: flex; align-items: center; flex-wrap: wrap; gap: 14px 22px; }
+.pz__single { font-size: var(--text-sm); font-weight: 600; }
+
+.pz__contents { display: grid; margin: 8px 0 0; border-top: 1px solid var(--line); }
+.pz__contents li { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr) auto; align-items: baseline; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line); }
+.pz__contents a { font-family: var(--font-serif); font-size: 1.2rem; font-weight: 500; }
+.pz__contents a:hover { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.18em; }
+.pz__by { font-size: var(--text-sm); color: var(--muted); }
+
+/* The cover is an object on the page: a portrait panel with a slight lift. */
+.pz__cover { margin: 0; height: min(calc(100svh - 150px), 720px); min-height: 380px; aspect-ratio: 4 / 5; }
+.pz__stage { position: relative; width: 100%; height: 100%; border-radius: 6px; overflow: hidden; background: var(--sky); box-shadow: var(--shadow-3); user-select: none; -webkit-user-select: none; }
+.pz__stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+@media (max-width: 980px) {
+  .pz__contents { display: none; }
+}
+@media (max-width: 720px) {
+  .pz__bar nav a:not([aria-current]) { display: none; }
+  .pz__main { grid-template-columns: 1fr; gap: 28px; padding-top: 4px; }
+  .pz__cover { order: -1; width: 100%; height: auto; min-height: 0; }
+  .pz__contents { display: grid; }
+}

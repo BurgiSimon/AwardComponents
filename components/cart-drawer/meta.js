@@ -1,0 +1,38 @@
+export default {
+  id: 'cart-drawer',
+  title: 'Cart drawer',
+  category: 'commerce',
+  summary: 'A ceramics shop’s product row with a size choice and quick add that answers in words and a Bag (n) count, and a bag on a native dialog with steppers and a free-delivery bar.',
+  recipe: 'cart-drawer-quick-add',
+  deps: [],
+  tags: ['cart', 'bag', 'dialog', 'drawer', 'quick-add', 'commerce', 'live-region', 'accessibility'],
+  added: '2026-10-28',
+  featured: true,
+  order: 30,
+  preview: { height: 720, hint: 'Add a piece, then open the bag', capture: { action: 'sample', wait: 1000 } },
+  actions: [{ id: 'open', label: 'Open bag' }, { id: 'sample', label: 'Fill and open the bag' }],
+  useCases: [
+    'Product cards on a shop’s home page or collection page',
+    'A small studio shop that sells a few pieces in editions',
+    'Any “add to bag” that should answer without leaving the page',
+  ],
+  notes: [
+    'Each card is one link (picture, name, price); the size radios and the add button sit beside it, never inside it.',
+    'An add answers in words in a polite status region and in the Bag (n) count. The bag is a native <dialog> opened with showModal(): the page is inert, Escape, Close and the scrim all close it, and focus returns to the bag button.',
+    'Steppers use aria-disabled at their limits so focus never drops; under reduced motion the drawer fades instead of sliding, and under static it simply appears.',
+  ],
+  controls: [
+    { id: 'side', label: 'Drawer side', type: 'select', options: [{ value: 'end', label: 'Right' }, { value: 'start', label: 'Left' }], default: 'end', group: 'Bag', help: 'On phones the bag is a bottom sheet either way.', prompt: (v) => (v === 'start' ? 'The drawer slides in from the inline-start (left) edge; a bottom sheet on phones' : 'The drawer slides in from the inline-end (right) edge; a bottom sheet on phones') },
+    { id: 'shipping', label: 'Free-delivery bar', type: 'toggle', default: true, group: 'Bag', prompt: { on: 'A free-delivery bar at the top of the bag: how much is left, as text and a meter', off: 'No free-delivery bar' } },
+    { id: 'currency', label: 'Currency', type: 'select', options: [{ value: 'EUR', label: 'EUR €' }, { value: 'GBP', label: 'GBP £' }, { value: 'NOK', label: 'NOK kr' }, { value: 'USD', label: 'USD $' }], default: 'EUR', group: 'Bag', help: 'Prices come from a price list per currency, formatted with Intl.NumberFormat.', prompt: 'Prices in {value} from a price list per currency, formatted with Intl.NumberFormat (default {default})' },
+    { id: 'openOnAdd', label: 'Open the bag on add', type: 'toggle', default: false, group: 'Quick add', prompt: { on: 'Open the bag after each quick add', off: 'Stay on the page after a quick add; the message and the count answer' } },
+    { id: 'slide', label: 'Slide in', type: 'range', min: 160, max: 600, step: 20, default: 280, unit: 'ms', group: 'Quick add', help: 'The drawer’s entrance; the exit runs at about 70 % of it.', prompt: 'Drawer slide: {value} in with a strong ease-out, about 70 % of that out with an ease-in (default {default})' },
+  ],
+  prompt: {
+    skill: 'component',
+    ask: 'Add quick add and a cart drawer to {target}.',
+    target: 'the product cards',
+    brief: 'Each card is one link with its size radios and an add button beside it. An add answers in words (a polite status message naming the piece and the new count), in a Bag (n) header button and in the button’s own 1.4 s “Added” state. The bag is a native <dialog> opened with showModal() that slides in from the inline-end edge in 280 ms and out in 200 ms, with keyed line items, quantity steppers, remove, a subtotal in minor units and a free-delivery meter.',
+    keep: ['inert page and focus back on the bag button on every close; aria-disabled steppers at their limits; a sold-out size stays a focusable radio and an add of it is refused in words; a fade under reduced motion; a bottom sheet with the checkout in view on phones.'],
+  },
+};

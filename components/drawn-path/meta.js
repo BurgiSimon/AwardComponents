@@ -1,0 +1,36 @@
+export default {
+  id: 'drawn-path',
+  title: 'Drawn path',
+  category: 'scroll',
+  summary: 'A studio’s fifty-year timeline linked by one line that draws exactly as far as you have read; each building lights up as the line reaches it.',
+  recipe: 'scroll-drawn-svg-path',
+  deps: ['gsap', 'lenis'],
+  tags: ['scroll', 'svg', 'path', 'stroke-dashoffset', 'timeline', 'scrub', 'scrolltrigger', 'gsap', 'lenis'],
+  added: '2026-10-28',
+  order: 80,
+  preview: { height: 680, scroll: true, hint: 'Scroll to draw the line', capture: { scroll: 0.3, wait: 1200 } },
+  useCases: [
+    'A company history or a project timeline where the milestones are the content',
+    'A route: a hike, a delivery journey, a ferry line, a supply chain',
+    'A process (brief, sketch, build, hand-over) that should read as one continuous thread',
+  ],
+  notes: [
+    'The line is decoration (aria-hidden); every milestone is a real heading, paragraph and picture in reading order, and lighting up is a visual cue only.',
+    'The path is generated from the milestones’ positions on load and resize, so it always passes through each marker at any width.',
+    'Under reduced motion the whole line is drawn and every milestone is lit from the start.',
+  ],
+  controls: [
+    { id: 'stroke', label: 'Stroke width', type: 'range', min: 1, max: 8, step: 0.5, default: 3, unit: 'px', group: 'Line', prompt: 'Stroke width: {value} (default {default})' },
+    { id: 'dash', label: 'Line style', type: 'select', options: [{ value: 'solid', label: 'Solid' }, { value: 'dashed', label: 'Dashed' }, { value: 'dotted', label: 'Dotted' }], default: 'solid', group: 'Line', help: 'Dashed and dotted lines are revealed through a mask, since their own dash array draws the pattern.', prompt: (v) => `Draw the line ${v}${v === 'solid' ? '' : ': the dash pattern on the visible path, revealed by a solid masked copy whose dash offset is scrubbed'}` },
+    { id: 'colour', label: 'Colour', type: 'color', default: 'accent', group: 'Line', prompt: 'Line colour: {value}' },
+    { id: 'markers', label: 'Milestone markers', type: 'select', options: [{ value: 'dots', label: 'Dots' }, { value: 'years', label: 'Years' }, { value: 'none', label: 'None' }], default: 'dots', group: 'Milestones', prompt: (v) => ({ dots: 'A dot on the line at each milestone, filled as the line reaches it', years: 'A year chip on the line at each milestone, filled as the line reaches it', none: 'No markers on the line; milestones still light up' })[v] },
+    { id: 'scrub', label: 'Scrub catch-up', type: 'range', min: 0, max: 1, step: 0.1, default: 0.3, unit: 's', group: 'Line', prompt: (v) => (v > 0 ? `Scrub catch-up: ${v} s (scrub: ${v}; default 0.3 s)` : 'scrub: true: the line locked to the scrollbar with no catch-up (default scrub: 0.3)') },
+  ],
+  prompt: {
+    skill: 'component',
+    ask: 'Link {target} with a line drawn by the scroll.',
+    target: 'the milestones of the company timeline',
+    brief: 'One SVG path through every milestone, generated from their positions: stroke-dasharray equals the path length and the dash offset is scrubbed from that length to 0, linear, from the section’s top at 70 % of the viewport to its bottom at the bottom (scrub 0.3), so the line completes once the whole route is on screen. Each milestone lights up when the drawn length passes its point on the path.',
+    keep: ['the SVG aria-hidden and the milestones as real text; regenerate the path on resize; the full line and every milestone lit under reduced motion.'],
+  },
+};

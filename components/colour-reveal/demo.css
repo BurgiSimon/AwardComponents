@@ -1,0 +1,80 @@
+.cr { --cr-p: 0; overflow-x: clip; background: var(--bg); }
+
+/* 300svh of scroll under a sticky stage: ScrollTrigger reads the progress, nothing is pinned. */
+.cr__scene { position: relative; height: 300svh; }
+.cr__stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: clip;
+  background: linear-gradient(160deg, color-mix(in oklab, var(--bg-2) 60%, var(--muted)), color-mix(in oklab, var(--night) 70%, var(--muted)));
+}
+.cr__gl { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* The product card sits on its own surface, so the copy reads over any part of the cloth. */
+.cr__card {
+  position: absolute;
+  left: var(--gutter);
+  top: var(--gutter);
+  z-index: 1;
+  display: grid;
+  gap: 10px;
+  max-width: min(440px, calc(100% - 2 * var(--gutter)));
+  padding: 22px 24px 20px;
+  border-radius: var(--radius-lg);
+  background: color-mix(in oklab, var(--surface) 86%, transparent);
+  backdrop-filter: blur(14px);
+  box-shadow: var(--shadow-2);
+}
+.cr__card .ac-h1 { font-size: clamp(1.8rem, 1.1rem + 2vw, 3rem); }
+.cr__way { font-size: var(--text-md); color: var(--ink-2); }
+.cr__way strong { color: var(--ink); font-weight: 640; }
+.cr__hint { display: inline-flex; align-items: center; gap: 8px; }
+.cr__hint::before { content: ''; width: 18px; height: 1px; background: currentColor; }
+:root[data-capture] .cr__hint { visibility: hidden; }
+
+/* The DOM anchor: the circle's centre and starting radius are read from this element's rect every frame. */
+.cr__dial {
+  position: absolute;
+  left: var(--gutter);
+  bottom: var(--gutter);
+  z-index: 1;
+  width: 92px;
+  aspect-ratio: 1;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  border-radius: 50%;
+  border: 1px solid color-mix(in oklab, var(--sand) 70%, transparent);
+  background: color-mix(in oklab, var(--night) 55%, transparent);
+  backdrop-filter: blur(6px);
+  color: var(--sand);
+}
+.cr__dial span { font-family: var(--font-mono); font-size: 1.5rem; font-weight: 500; line-height: 1; }
+.cr__dial small { font-family: var(--font-mono); font-size: 0.625rem; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.8; }
+
+.cr__after { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 28px 64px; align-items: end; padding-block: 96px 120px; }
+.cr__after .ac-h2 { margin-top: 12px; max-width: 24ch; }
+.cr__facts { display: grid; gap: 14px; margin: 0; }
+.cr__facts div { display: grid; gap: 4px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.cr__facts dd { margin: 0; color: var(--ink-2); font-size: var(--text-sm); }
+.cr__after .ac-btn { justify-self: start; }
+
+/* No WebGL: the weave as CSS stripes, turning from grey to colour with the same scroll progress. */
+.cr--dom .cr__stage {
+  --a: var(--sky); --b: var(--night); --c: var(--sand);
+  background:
+    repeating-linear-gradient(90deg, color-mix(in oklab, var(--c) 40%, transparent) 0 2px, transparent 2px 48px),
+    linear-gradient(var(--b) 0 22%, var(--c) 22% 26%, var(--a) 26% 50%, var(--b) 50% 56%, var(--c) 56% 60%, var(--a) 60% 86%, var(--b) 86%);
+  background-size: auto, 100% 50%;
+  filter: grayscale(calc(1 - var(--cr-p)));
+}
+.cr--dom[data-colourway='madder'] .cr__stage { --a: var(--clay); --b: var(--plum); }
+.cr--dom[data-colourway='moss'] .cr__stage { --a: var(--moss); --b: var(--night); }
+.cr--dom .cr__card, .cr--dom .cr__dial { filter: none; }
+
+@media (max-width: 760px) {
+  .cr__card { padding: 18px; }
+  .cr__dial { width: 80px; }
+  .cr__after { grid-template-columns: 1fr; padding-block: 64px 96px; }
+}

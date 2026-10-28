@@ -1,0 +1,124 @@
+.cst {
+  --rise: 3rem;          /* how far a paragraph travels into place */
+  --frame-from: 0.55;    /* the sticky figure's starting scale */
+  --hero-lift: -8svh;    /* how far the hero copy drifts on its way out */
+  --cst-on: color-mix(in oklab, var(--sand) 14%, white);
+  overflow-x: clip;
+}
+.cst a { text-decoration: none; }
+
+/* Reading position: decorative (the native scrollbar says the same), drawn by scroll(root) where supported. */
+.cst__progress { position: fixed; inset: 0 0 auto; z-index: 10; height: 3px; pointer-events: none; }
+.cst__progress span { display: block; height: 100%; background: var(--accent); transform-origin: 0 50%; transform: scaleX(0); }
+.cst[data-bar='side'] .cst__progress { inset: 0 0 0 auto; width: 3px; height: auto; }
+.cst[data-bar='side'] .cst__progress span { transform-origin: 50% 0; transform: scaleY(0); }
+:root[data-motion='static'] .cst__progress { display: none; }
+
+.cst__bar { position: relative; z-index: 2; border-bottom: 1px solid var(--line); }
+.cst__brand { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 600; font-stretch: normal; letter-spacing: -0.01em; }
+.cst__issue { position: absolute; left: 50%; translate: -50% 0; }
+
+/* Hero: the copy leaves over the hero's exit range; the picture stays put. */
+.cst__hero {
+  min-height: calc(100svh - 64px);
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  align-items: end;
+  gap: clamp(24px, 5vw, 80px);
+  padding-block: clamp(24px, 5svh, 48px) clamp(40px, 9svh, 88px);
+}
+.cst__hero-copy { display: grid; gap: clamp(14px, 2.4svh, 24px); padding-bottom: 8px; }
+.cst__title { font-family: var(--font-serif); font-size: clamp(3.2rem, 1rem + 7.4vw, 9rem); font-weight: 500; line-height: 0.88; letter-spacing: -0.025em; text-wrap: balance; }
+.cst__dek { max-width: 26ch; font-size: clamp(1.2rem, 1rem + 0.9vw, 1.75rem); line-height: 1.3; color: var(--ink-2); text-wrap: balance; }
+.cst__byline { font-size: var(--text-sm); color: var(--muted); }
+.cst__byline strong { font-weight: 600; color: var(--ink); }
+.cst__hero-fig { display: grid; gap: 10px; margin: 0; }
+.cst__hero-fig .ac-media { --ratio: 4 / 5; max-height: min(66svh, 640px); border-radius: var(--radius-md); }
+.cst__hero-fig figcaption { max-width: 44ch; }
+
+/* Chapters: heading left, reading column right; each block is its own view() subject. */
+.cst__chapter { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); gap: 16px clamp(24px, 5vw, 80px); align-items: start; padding-block: clamp(64px, 14svh, 140px); border-top: 1px solid var(--line); }
+.cst__h2 { font-family: var(--font-serif); font-size: clamp(2rem, 1rem + 3vw, 3.75rem); font-weight: 500; line-height: 0.98; letter-spacing: -0.02em; }
+.cst__text { display: grid; gap: 1.1em; }
+.cst__text p { max-width: 38ch; font-size: clamp(1.1rem, 0.95rem + 0.55vw, 1.4rem); line-height: 1.55; color: var(--ink-2); text-wrap: pretty; }
+.cst__first::first-letter { float: left; margin: 0.08em 0.1em 0 0; font-family: var(--font-serif); font-size: 3.5em; font-weight: 500; line-height: 0.78; color: var(--ink); }
+
+/* The rail: 280 svh, its sticky stage holds the figure while the rail scrolls past. */
+.cst__rail { position: relative; height: 280svh; border-top: 1px solid var(--line); }
+.cst__stage { position: sticky; top: 0; height: 100svh; display: grid; align-content: center; gap: clamp(16px, 3svh, 28px); overflow: hidden; }
+.cst__fig { display: grid; gap: 16px; margin: 0; }
+.cst__frame {
+  position: relative;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  height: min(60svh, 620px);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--night);
+  color: var(--cst-on);
+  outline: 1px solid var(--line);
+  outline-offset: -1px;
+  transform-origin: 50% 50%;
+}
+.cst__photo { --ratio: auto; min-height: 0; }
+.cst__chart { display: grid; gap: 10px; padding: clamp(14px, 2vw, 22px) clamp(16px, 2.4vw, 28px) clamp(12px, 1.6vw, 18px); }
+.cst__chart > .ac-label { color: color-mix(in oklab, var(--cst-on) 70%, transparent); }
+.cst__plot { position: relative; display: grid; gap: 8px; overflow: hidden; }
+.cst__plot svg { width: 100%; height: clamp(56px, 11svh, 110px); }
+.cst__mid { fill: none; stroke: currentColor; stroke-width: 1; opacity: 0.22; stroke-dasharray: 4 5; }
+.cst__line { fill: none; stroke: var(--sand); stroke-width: 2; stroke-linejoin: round; }
+.cst__years { display: flex; justify-content: space-between; color: color-mix(in oklab, var(--cst-on) 60%, transparent); }
+.cst__cover { position: absolute; inset: 0; background: var(--night); transform: translateX(101%); }
+.cst__caption { max-width: 60ch; font-size: var(--text-sm); color: var(--muted); }
+
+.cst__foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 12px 24px; padding-block: 64px; border-top: 1px solid var(--line); }
+.cst__engine strong { font-weight: 600; color: var(--ink); }
+
+/* ---- Scroll timelines --------------------------------------------------------------------------
+   Transform and opacity only, so the compositor runs them and the main thread does nothing while the page
+   scrolls. Skipped where view() is unknown, under reduced motion and static, and when the fallback is forced.
+   Every rule: the shorthand first, then animation-timeline, then animation-range (the shorthand resets both). */
+@supports (animation-timeline: view()) {
+  :root[data-motion='full'] .cst:not([data-engine='script']) .cst__progress span { animation: cst-grow-x auto linear both; animation-timeline: scroll(root block); }
+  :root[data-motion='full'] .cst[data-bar='side']:not([data-engine='script']) .cst__progress span { animation-name: cst-grow-y; }
+
+  :root[data-motion='full'] .cst:not([data-engine='script']) .reveal { animation: cst-rise auto linear both; animation-timeline: view(); animation-range: entry 10% cover 35%; }
+  :root[data-motion='full'] .cst:not([data-engine='script']) .cst__text .reveal:first-child { animation-range: entry 25% cover 42%; }
+
+  :root[data-motion='full'] .cst:not([data-engine='script']) .cst__hero { view-timeline: --cst-hero block; }
+  :root[data-motion='full'] .cst:not([data-engine='script']) .cst__hero-copy { animation: cst-leave auto linear both; animation-timeline: --cst-hero; animation-range: exit 0% exit 100%; }
+
+  /* A sticky stage never moves relative to the viewport, so the rail names the timeline its children read. */
+  :root[data-motion='full'] .cst:not([data-engine='script']) .cst__rail { view-timeline: --cst-rail block; }
+  :root[data-motion='full'] .cst:not([data-engine='script']) .cst__frame { animation: cst-open auto linear both; animation-timeline: --cst-rail; animation-range: contain 0% contain 45%; }
+  :root[data-motion='full'] .cst:not([data-engine='script']) .cst__cover { animation: cst-draw auto linear both; animation-timeline: --cst-rail; animation-range: contain 15% contain 70%; }
+  :root[data-motion='full'] .cst:not([data-engine='script']) .cst__caption { animation: cst-rise auto linear both; animation-timeline: --cst-rail; animation-range: contain 50% contain 68%; }
+
+  /* Reduced motion keeps one readout: the bar in ten cuts, a position rather than travel. */
+  :root[data-motion='reduced'] .cst:not([data-engine='script']) .cst__progress span { animation: cst-grow-x auto steps(10) both; animation-timeline: scroll(root block); }
+  :root[data-motion='reduced'] .cst[data-bar='side']:not([data-engine='script']) .cst__progress span { animation-name: cst-grow-y; }
+}
+
+@keyframes cst-grow-x { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes cst-grow-y { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@keyframes cst-rise { from { opacity: 0; transform: translateY(var(--rise)); } to { opacity: 1; transform: none; } }
+@keyframes cst-leave { from { opacity: 1; transform: none; } to { opacity: 0.15; transform: translateY(var(--hero-lift)); } }
+@keyframes cst-open { from { transform: scale(var(--frame-from)); } to { transform: scale(1); } }
+@keyframes cst-draw { from { transform: translateX(0); } to { transform: translateX(101%); } }
+
+/* ---- Fallback: demo.js marks what has not been seen yet; an IntersectionObserver clears the mark ---- */
+.cst[data-engine='script'] .reveal { transition: opacity 0.6s var(--ease-out), transform 0.9s var(--ease-out); }
+.cst[data-engine='script'] .reveal.is-pending { opacity: 0; transform: translateY(var(--rise)); }
+.cst[data-engine='script'] :is(.cst__frame, .cst__cover) { transition: transform 1.2s var(--ease-out); }
+.cst[data-engine='script'] .cst__caption { transition: opacity 0.6s var(--ease-out) 0.5s; }
+.cst[data-engine='script'] .cst__rail.is-pending .cst__frame { transform: scale(var(--frame-from)); }
+.cst[data-engine='script'] .cst__rail.is-pending .cst__cover { transform: translateX(0); }
+.cst[data-engine='script'] .cst__rail.is-pending .cst__caption { opacity: 0; }
+
+@media (max-width: 760px) {
+  .cst__issue { display: none; }
+  .cst__hero { grid-template-columns: 1fr; align-content: center; gap: 28px; }
+  .cst__hero-fig .ac-media { --ratio: 4 / 3; }
+  .cst__chapter { grid-template-columns: 1fr; padding-block: 72px; }
+  .cst__frame { height: min(58svh, 520px); }
+}

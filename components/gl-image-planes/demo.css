@@ -1,0 +1,58 @@
+.gp { position: relative; overflow-x: clip; }
+.gp a { text-decoration: none; }
+.gp__bar nav a[aria-current='page'] { color: var(--ink); }
+
+/* The canvas host sits at the top of the document and is moved to the scroll position every frame. */
+.gp__gl { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; pointer-events: none; z-index: 2; }
+
+.gp__page {
+  display: grid;
+  grid-template-columns: minmax(0, 0.86fr) minmax(0, 2fr);
+  gap: clamp(28px, 5vw, 80px);
+  padding-block: 12px 140px;
+}
+.gp__intro { position: sticky; top: 28px; align-self: start; display: grid; gap: 18px; }
+.gp__intro .ac-h1 { font-size: clamp(1.75rem, 1rem + 1.7vw, 3rem); }
+.gp__intro .ac-lede { font-size: var(--text-md); }
+.gp__counts { display: grid; margin: 6px 0 0; border-top: 1px solid var(--line); }
+.gp__counts li { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: var(--text-sm); color: var(--ink-2); }
+.gp__counts .ac-num { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--muted); }
+.gp__hint { display: inline-flex; align-items: center; gap: 10px; }
+.gp__hint::before { content: ''; width: 1px; height: 28px; background: linear-gradient(var(--ink), transparent); }
+:root[data-capture] .gp__hint { visibility: hidden; }
+.gp--dom .gp__hint { display: none; }
+
+/* A staggered two-column index: every second project drops, so the rows never line up. */
+.gp__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: clamp(20px, 3vw, 44px); row-gap: clamp(36px, 5vw, 64px); align-items: start; margin: 0; }
+.gp__fig:nth-child(even) { margin-top: clamp(60px, 12vw, 180px); }
+@media (min-width: 1100px) {
+  .gp__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .gp__fig:nth-child(n) { margin-top: 0; }
+  .gp__fig:nth-child(3n + 2) { margin-top: 140px; }
+  .gp__fig:nth-child(3n) { margin-top: 56px; }
+}
+.gp__link { display: grid; gap: 12px; border-radius: var(--radius-sm); }
+.gp__link:focus-visible { outline-offset: 6px; }
+.gp__media { position: relative; display: block; aspect-ratio: 4 / 5; border-radius: var(--radius-sm); overflow: hidden; background: var(--bg-2); }
+.gp__fig:nth-child(4n + 2) .gp__media, .gp__fig:nth-child(4n + 3) .gp__media { aspect-ratio: 5 / 6; }
+.gp__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius-sm); transition: filter var(--dur-l) var(--ease-out); }
+.gp__img.is-gl { visibility: hidden; }
+.gp__cap { display: grid; gap: 4px; }
+.gp__title { font-size: var(--text-lg); font-weight: 640; font-stretch: 108%; letter-spacing: -0.015em; }
+.gp__sum { max-width: 40ch; }
+
+/* The DOM path (no WebGL, reduced motion): grey at rest, colour on hover and focus through a filter. */
+.gp--grey .gp__img { filter: grayscale(1); }
+.gp--grey .gp__link:is(:hover, :focus-visible) .gp__img { filter: none; }
+@media (hover: none) { .gp--grey .gp__img { filter: none; } }
+
+@media (max-width: 760px) {
+  .gp__bar nav { display: none; }
+  .gp__page { grid-template-columns: minmax(0, 1fr); padding-top: 4px; }
+  .gp__intro { position: static; }
+  .gp__counts { display: none; }
+  .gp__grid { grid-template-columns: minmax(0, 1fr); }
+  .gp__fig:nth-child(even) { margin-top: 0; }
+  .gp__fig:nth-child(n) .gp__media { aspect-ratio: 4 / 3; }
+  .gp__cap { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+}

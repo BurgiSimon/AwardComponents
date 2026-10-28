@@ -1,0 +1,76 @@
+.ps { --length: 100vh; --ps-gap: clamp(32px, 6vw, 96px); overflow-x: clip; }
+.ps__intro { min-height: 82svh; display: grid; align-content: center; gap: 22px; padding-block: 64px; }
+.ps__cue { display: inline-flex; align-items: center; gap: 10px; margin-top: 18px; }
+.ps__cue::before { content: ''; width: 1px; height: 36px; background: linear-gradient(var(--ink), transparent); }
+
+/* The chapter is as tall as its steps ask; the stage sticks for all of it. */
+.ps__chapter { position: relative; height: calc(var(--length) * 4 + 100svh); }
+.ps__stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr);
+  grid-template-areas: 'steps fig';
+  align-items: center;
+  gap: var(--ps-gap);
+}
+.ps[data-side='left'] .ps__stage { grid-template-areas: 'fig steps'; grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr); }
+
+.ps__steps { grid-area: steps; position: relative; display: grid; margin: 0; }
+.ps__step {
+  grid-area: 1 / 1;
+  display: grid;
+  gap: 14px;
+  align-content: center;
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity var(--dur-m) var(--ease-out), transform var(--dur-m) var(--ease-out);
+  pointer-events: none;
+}
+.ps__step.is-active { opacity: 1; transform: none; pointer-events: auto; }
+.ps__k { color: var(--accent-ink); }
+
+.ps__fig { grid-area: fig; display: grid; gap: 18px; margin: 0; }
+.ps__room { width: 100%; max-height: 58svh; aspect-ratio: 1; }
+.ps__walls { fill: var(--surface); stroke: var(--line-2); stroke-width: 2; }
+.ps__sofa { fill: var(--bg-2); stroke: var(--line-2); }
+.ps__window { fill: var(--sky); opacity: 0.6; }
+.ps__waves circle { fill: none; stroke: var(--accent); stroke-width: 1.5; opacity: 0; transform-origin: 74px 74px; transform-box: view-box; }
+.ps__links line { stroke: var(--ink); stroke-width: 1; stroke-dasharray: 400; stroke-dashoffset: 400; opacity: 0.4; }
+.ps__mic { fill: var(--faint); transition: fill var(--dur-s); }
+.ps__mic-halo { fill: var(--accent-soft); opacity: 0; transform: scale(0.4); transform-box: fill-box; transform-origin: center; transition: opacity var(--dur-m), transform var(--dur-m) var(--ease-spring); }
+[data-mic].is-on .ps__mic { fill: var(--accent); }
+[data-mic].is-on .ps__mic-halo { opacity: 1; transform: none; }
+.ps__speaker rect { fill: var(--ink); }
+.ps__speaker circle { fill: var(--bg); }
+
+.ps__eq { padding: 14px 16px 12px; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); }
+.ps__eq svg { width: 100%; height: 70px; overflow: visible; }
+.ps__eq-target { fill: none; stroke: var(--line-2); stroke-dasharray: 3 4; }
+.ps__eq-line { fill: none; stroke: var(--accent); stroke-width: 2; vector-effect: non-scaling-stroke; }
+.ps__eq-meta { display: flex; justify-content: space-between; margin-top: 8px; }
+.ps__eq-meta [data-readout] { color: var(--ink); }
+
+.ps__rail { position: absolute; right: calc(var(--gutter) * -0.5); top: 22%; bottom: 22%; width: 2px; border-radius: 2px; background: var(--line); }
+.ps__rail-fill { position: absolute; inset: 0; background: var(--ink); transform-origin: top; transform: scaleY(0); border-radius: inherit; }
+.ps__tick { position: absolute; left: 50%; top: calc(var(--at) * 100%); width: 10px; height: 10px; translate: -50% -50%; border-radius: 50%; background: var(--bg); border: 2px solid var(--line-2); transition: border-color var(--dur-s), background-color var(--dur-s); }
+.ps__tick.is-done { border-color: var(--ink); background: var(--ink); }
+.ps--no-rail .ps__rail { display: none; }
+
+.ps__outro { min-height: 70svh; display: grid; place-items: center; text-align: center; }
+.ps__outro p { max-width: 20ch; }
+
+/* Reduced motion: no stage; every step in order with its settled diagram once. */
+.ps--still .ps__chapter { height: auto; }
+.ps--still .ps__stage { position: static; height: auto; grid-template-areas: 'steps fig'; padding-block: 64px; align-items: start; }
+.ps--still .ps__steps { gap: 40px; }
+.ps--still .ps__step { grid-area: auto; opacity: 1; transform: none; }
+.ps--still .ps__rail { display: none; }
+
+@media (max-width: 800px) {
+  .ps__stage, .ps[data-side='left'] .ps__stage { grid-template-columns: 1fr; grid-template-areas: 'fig' 'steps'; align-content: center; gap: 24px; }
+  .ps__room { max-height: 38svh; }
+  .ps__eq { display: none; }
+  .ps__rail { right: 6px; }
+}

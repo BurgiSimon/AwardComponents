@@ -1,0 +1,37 @@
+export default {
+  id: 'pinned-scrub',
+  title: 'Pinned scrub chapter',
+  category: 'scroll',
+  summary: 'A “how it works” chapter that holds still while the scroll plays it: four quantised beats, a drawn diagram that changes with each, and a progress rail.',
+  recipe: 'scroll-pin-scrub',
+  deps: ['gsap', 'lenis'],
+  tags: ['scroll', 'scrub', 'sticky', 'pin', 'scrolltrigger', 'svg', 'lenis'],
+  added: '2026-10-28',
+  featured: true,
+  order: 10,
+  preview: { height: 680, scroll: true, capture: { scroll: 0.42, wait: 1200 } },
+  useCases: [
+    'A product’s “how it works” in three to five steps',
+    'A process chapter on a studio site: survey, sketch, build, hand over',
+    'Any explanation that reads better as one diagram changing than as four images',
+  ],
+  notes: [
+    'The chapter is a tall section with a CSS-sticky stage: no pin spacer is injected, so the scrollbar stays honest.',
+    'Every step is real text in reading order; the diagram is decorative and hidden from assistive tech.',
+    'Under reduced motion the steps stack as a plain list beside one diagram drawn at its settled end state.',
+  ],
+  controls: [
+    { id: 'length', label: 'Scroll per step', type: 'range', min: 50, max: 200, step: 10, default: 100, unit: 'vh', group: 'Scroll', prompt: 'Give each step {value} of scroll; the section is steps × that plus one viewport (default {default})' },
+    { id: 'smooth', label: 'Scrub catch-up', type: 'range', min: 0, max: 2, step: 0.1, default: 0.6, unit: 's', group: 'Scroll', help: '0 locks the diagram to the scrollbar; higher values let it trail behind.', prompt: (v) => (v > 0 ? `Scrub catch-up: ${v} s (scrub: ${v}; default 0.6 s)` : 'scrub: true: the diagram locked to the scrollbar with no catch-up (default scrub: 0.6)') },
+    { id: 'snap', label: 'Snap to steps', type: 'toggle', default: false, group: 'Scroll', prompt: { on: 'Snap the scroll to the nearest step when it rests (ScrollTrigger snap to 1 / (steps − 1), 0.2–0.6 s, power2.inOut)', off: 'No snapping between steps' } },
+    { id: 'side', label: 'Diagram side', type: 'select', options: [{ value: 'right', label: 'Right' }, { value: 'left', label: 'Left' }], default: 'right', group: 'Layout', prompt: (v) => (v === 'left' ? 'Put the diagram on the left of the steps (default: on the right)' : 'Put the diagram on the right of the steps') },
+    { id: 'rail', label: 'Progress rail', type: 'toggle', default: true, group: 'Layout', prompt: { on: 'Show a progress rail with one tick per step', off: 'No progress rail' } },
+  ],
+  prompt: {
+    skill: 'component',
+    ask: 'Turn {target} into a pinned scroll chapter.',
+    target: 'the “how it works” section',
+    brief: 'A section of 100 vh of scroll per step plus one viewport holds a CSS-sticky stage (no pin spacer). One linear tween scrubbed from top top to bottom bottom (scrub 0.6) drives a single progress p; the active step is quantised to round(p × (steps − 1)), so the steps switch at clean beats, while the diagram beside them changes continuously with p and a rail fills with one tick per step.',
+    keep: ['every step as real text in reading order, the diagram aria-hidden; under reduced motion no sticky stage, the steps stacked as a list beside the diagram at its end state.'],
+  },
+};

@@ -1,0 +1,40 @@
+export default {
+  id: 'gl-image-planes',
+  title: 'WebGL image planes',
+  category: 'webgl',
+  summary: 'An architecture studio’s work index where each photo is mirrored by a WebGL plane that bends with the scroll speed and colours in from grey under the pointer.',
+  description: 'HTML lays out, WebGL renders. Every picture stays an <img> with alt text inside a real link; one canvas, moved to the scroll each frame, draws a plane exactly over each image’s rectangle through a camera that makes one unit one pixel. Layout, responsive rules and the captions stay in CSS.\n\nScroll fast and the planes bulge with the damped scroll velocity, then lie flat again at rest. Hovering or focusing a project colours its plane in; on touch the plane nearest the middle of the screen does.',
+  recipe: 'gl-dom-tethered-planes',
+  deps: ['three', 'gsap', 'lenis'],
+  tags: ['webgl', 'three', 'images', 'gallery', 'scroll', 'velocity', 'hover', 'lenis'],
+  requires: ['webgl'],
+  added: '2026-10-28',
+  order: 20,
+  preview: { height: 680, scroll: true, hint: 'Scroll fast, then hover a project', capture: { pointer: [0.63, 0.45], wait: 3000 } },
+  useCases: [
+    'A portfolio or work index where the pictures should feel physical without losing their alt text',
+    'A product grid in a shop that brightens the item under the pointer',
+    'Any image-led page that wants one GL layer for all its pictures instead of a canvas per image',
+  ],
+  notes: [
+    'Every image stays an <img> with alt text inside its link; it is hidden only while its plane draws, and the canvas is aria-hidden.',
+    'Keyboard focus colours a plane in from its centre, the same as a hover; on touch the plane nearest the middle of the screen is in colour.',
+    'Reduced motion, the static tier and browsers without WebGL get the plain images, coloured in on hover by a CSS filter.',
+  ],
+  controls: [
+    { id: 'strength', label: 'Bulge strength', type: 'range', min: 0, max: 1, step: 0.05, default: 0.35, group: 'Scroll', help: 'Pixels of depth per unit of scroll speed at the middle of a plane.', prompt: 'Bulge strength: {value} (z −= (sin πv + sin πu) · |speed| · strength; default {default})' },
+    { id: 'damping', label: 'Velocity damping', type: 'range', min: 3, max: 16, step: 1, default: 8, group: 'Scroll', help: 'How fast the bend follows the scroll speed and settles flat again.', prompt: 'Speed damped from the Lenis velocity with k = {value} (default {default})' },
+    { id: 'hover', label: 'Hover effect', type: 'select', options: [{ value: 'reveal', label: 'Reveal' }, { value: 'fade', label: 'Fade' }, { value: 'lift', label: 'Push in' }], default: 'reveal', group: 'Hover', prompt: (v) => ({ reveal: 'On hover, colour spreads from the pointer in a soft circle while the picture pushes in 6 %', fade: 'On hover, the whole plane fades to colour while the picture pushes in 6 %', lift: 'On hover, the picture only pushes in 6 %' }[v]) },
+    { id: 'grey', label: 'Grey at rest', type: 'toggle', default: true, group: 'Hover', prompt: { on: 'Planes rest in greyscale and colour in on hover or focus', off: 'Planes stay in full colour' } },
+  ],
+  prompt: {
+    skill: 'webgl',
+    ask: 'Mirror the images in {target} with WebGL planes.',
+    target: 'the project grid',
+    brief: 'The DOM keeps the layout: each frame reads every visible image’s rect and writes a plane’s position and scale in pixels, through a camera at distance 1000 whose fov makes one unit one pixel; the absolute canvas is translated to scrollY each frame rather than fixed. The planes bulge with the scroll speed damped from Lenis (k = 8, strength 0.35) and are flat at rest; hover colours a plane in from grey, spreading from the pointer in a soft circle while the picture pushes in 6 %.',
+    keep: [
+      'every image an <img> with alt text, hidden only while its plane draws; the canvas aria-hidden; focus does what hover does; on touch the plane nearest the middle of the screen is in colour',
+      'plain images under reduced motion and without WebGL; the loop sleeping when nothing moves',
+    ],
+  },
+};

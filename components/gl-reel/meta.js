@@ -1,0 +1,37 @@
+export default {
+  id: 'gl-reel',
+  title: 'Endless reel',
+  category: 'galleries',
+  summary: 'A festival’s past editions on a WebGL reel that never ends: the wheel sends the sheets round a loop, they twist and fold while they travel and lie exactly flat at rest.',
+  description: 'The document does not scroll. Wheel, touch and keys move a virtual offset counted in items, and one canvas draws every edition as a segmented sheet on a modulo-wrapped belt, so the first edition follows the last and nothing ever rewinds.\n\nA discrete wheel flick is doubled and released over a few frames, a trackpad stream moves the reel directly, and a moment after the last input the reel snaps to an edition. One uniform, the velocity times sin(π·p) across the viewport, bends every sheet; at rest it is exactly zero.',
+  recipe: 'gl-endless-reel-sheets',
+  deps: ['three'],
+  tags: ['webgl', 'three', 'shader', 'reel', 'loop', 'wheel', 'velocity', 'snap'],
+  requires: ['webgl'],
+  added: '2026-10-28',
+  order: 65,
+  preview: { height: 620, hint: 'Flick the wheel, swipe or press the arrows', capture: { action: 'next', wait: 600 } },
+  actions: [{ id: 'next', label: 'Next edition', icon: 'arrowRight' }],
+  useCases: [
+    'A festival, label or venue archive where every year gets one sheet',
+    'A studio’s selected work as a loop on its home page',
+    'A product range reel that keeps going in either direction',
+  ],
+  notes: [
+    'The canvas is aria-hidden; the editions are a list of buttons in a labelled nav with aria-current on the centred one, and focusing or clicking a button brings it round the shortest way.',
+    'Arrows, Page Up / Down and Space step one edition, Home and End jump; a polite counter changes only when the reel comes to rest.',
+    'Reduced motion keeps the sheets flat and makes each wheel gesture, swipe or key one snapped step; static or no WebGL shows the editions as an ordinary page.',
+  ],
+  controls: [
+    { id: 'bend', label: 'Bend strength', type: 'range', min: 0, max: 2, step: 0.05, default: 1, unit: '×', group: 'Sheets', help: '1× twists up to 0.55 rad at the ends and folds 0.16 of half a sheet at full speed.', prompt: 'Bend strength: {value} of a 0.55 rad twist and a 0.16 fold at full speed (default {default})' },
+    { id: 'snap', label: 'Snap delay', type: 'range', min: 80, max: 900, step: 20, default: 200, unit: 'ms', group: 'Motion', help: 'Quiet time after the last input before the reel rounds to an edition.', prompt: 'Snap to the nearest item {value} after the last input (default {default})' },
+    { id: 'orientation', label: 'Orientation', type: 'select', options: [{ value: 'auto', label: 'Auto (by screen shape)' }, { value: 'horizontal', label: 'Horizontal' }, { value: 'vertical', label: 'Vertical' }], default: 'auto', group: 'Layout', prompt: 'Orientation: {value} (default {default})' },
+  ],
+  prompt: {
+    skill: 'webgl',
+    ask: 'Turn {target} into an endless WebGL reel of bending sheets.',
+    target: 'the work archive',
+    brief: 'The document never scrolls: wheel, touch and keys write a virtual offset in items, and every sheet sits at mod(i − offset + N/2, N) − N/2 pitches, so the loop wraps. A wheel burst (≥ 40 px after a 30 ms gap, 500 ms cooldown) is doubled and released at 1 − 0.78^frames; streams move the target directly. 200 ms after the last input the target rounds, the drawn offset follows by damp(k = 6), and uBend = clamp(v / 4) · sin(π·p) twists and folds each sheet in the vertex shader; at rest it is exactly 0.',
+    keep: ['a list of buttons as the index and keyboard path with aria-current; a polite counter at rest; flat sheets and one step per input under reduced motion; a plain page without WebGL.'],
+  },
+};

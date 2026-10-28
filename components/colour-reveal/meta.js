@@ -1,0 +1,41 @@
+export default {
+  id: 'colour-reveal',
+  title: 'Colour reveal',
+  category: 'webgl',
+  summary: 'A wool throw’s new colourway dyed by the scroll: the grey cloth turns to colour through a grained circle that opens from a dial in the corner.',
+  description: 'One generated cloth wears one stock three.js material, patched twice through onBeforeCompile: a luma mix turns its woven map grey or into saturation-boosted colour, and a grained circular discard splits the cloth between a grey layer and a colour layer that share one geometry. The two layers test the same per-pixel noise with opposite outcomes, so the dithered edge needs no transparency and no pixel is drawn twice.\n\nThe circle grows from a real element, the dial in the corner, read every frame, and its radius is scrubbed by the scroll from the dial to the farthest corner. Patching keeps the stock lighting, tone mapping and colour management.',
+  recipe: 'gl-material-patch-reveal',
+  deps: ['three', 'gsap', 'lenis'],
+  tags: ['webgl', 'three', 'shader', 'onbeforecompile', 'scroll', 'scrolltrigger', 'reveal', 'product'],
+  requires: ['webgl'],
+  added: '2026-10-28',
+  order: 80,
+  preview: { height: 660, scroll: true, hint: 'Scroll to dye the cloth', capture: { scroll: 0.5, wait: 2400 } },
+  useCases: [
+    'A product colourway launch: the plain version turning into the new one',
+    'A before and after told by the scroll, anchored to a counter or a button on the page',
+    'A section hand-off where the outgoing object gives way to the incoming one through the same mask',
+  ],
+  notes: [
+    'The canvas is aria-hidden. The product copy is DOM on its own surface, and the dial is role="img" with a label that states the progress.',
+    'Under reduced motion there is no circle and no sway: the whole cloth mixes evenly from grey to colour with the scroll. The static tier shows it settled in colour.',
+    'Without WebGL the weave is drawn in CSS stripes and still turns from grey to colour with the same scroll progress.',
+  ],
+  controls: [
+    { id: 'saturation', label: 'Saturation', type: 'range', min: 0.8, max: 2, step: 0.05, default: 1.35, group: 'Colour', help: 'The boost applied to the colour layer after the luma mix.', prompt: 'Colour layer saturation: {value} (default {default})' },
+    { id: 'colourway', label: 'Colourway', type: 'select', options: [{ value: 'indigo', label: 'Indigo' }, { value: 'madder', label: 'Madder' }, { value: 'moss', label: 'Moss' }], default: 'indigo', group: 'Colour', prompt: false },
+    { id: 'grain', label: 'Grain width', type: 'range', min: 2, max: 64, step: 2, default: 20, unit: 'px', group: 'Edge', help: 'The width of the dithered band at the circle’s edge.', prompt: 'Grained edge: {value} wide (default {default})' },
+    { id: 'wobble', label: 'Wobble', type: 'range', min: 0, max: 0.08, step: 0.005, default: 0.02, group: 'Edge', help: 'A two-sine normal wobble so light ripples across the cloth.', prompt: 'Normal wobble at <normal_fragment_begin>: {value} (default {default})' },
+  ],
+  prompt: {
+    skill: 'webgl',
+    ask: 'Reveal {target} from grey to colour with the scroll.',
+    target: 'the product model',
+    brief: 'Patch the stock material with onBeforeCompile: a luma mix after <map_fragment> (grey at 0, saturation 1.35 at 1), a grained circular discard after <clipping_planes_fragment> with a 20 px dithered edge that splits two layers sharing one geometry, both testing the same per-pixel hash with opposite outcomes, and a light two-sine normal wobble (0.02) at <normal_fragment_begin>. The circle’s centre and starting radius come from a DOM element’s rect read every frame; ScrollTrigger scrubs the radius (ease none, curve r0 + (rMax − r0)·p²) to the farthest corner over a 300svh sticky scene.',
+    keep: [
+      'each chunk replacement throwing if its include is missing, so an upgrade fails loudly',
+      'an aria-hidden canvas with the copy in the DOM, and the anchor element a labelled role="img" that states the progress',
+      'an even grey-to-colour mix with no circle under reduced motion; settled colour when static; a CSS stage without WebGL',
+    ],
+  },
+};

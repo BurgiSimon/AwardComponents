@@ -1,0 +1,134 @@
+.cp { --cp-accent: var(--accent); min-height: 100svh; overflow-x: clip; }
+.cp a { text-decoration: none; }
+.cp__brand svg { width: 22px; height: 22px; color: var(--cp-accent); }
+
+/* The festival page under the panel. */
+.cp__page { min-height: 100svh; display: grid; grid-template-rows: auto 1fr; }
+.cp__hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr);
+  align-items: end;
+  gap: clamp(24px, 5vw, 80px);
+  padding-block: clamp(20px, 5vh, 56px) 36px;
+}
+.cp__copy { display: grid; gap: 22px; align-content: end; }
+.cp__title { font-size: clamp(2.75rem, 1rem + 6.4vw, 7.2rem); }
+.cp__mask { display: block; overflow: hidden; padding-bottom: 0.08em; margin-bottom: -0.08em; }
+.cp__line { display: block; will-change: transform; }
+.cp__cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
+.cp__fig { display: grid; gap: 10px; }
+.cp__pic { --ratio: 4 / 5; max-height: 62svh; border-radius: var(--radius-lg); }
+
+.cp__days { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; padding-block: 24px 56px; border-top: 1px solid var(--line); }
+.cp__day { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.cp__day > div { display: grid; gap: 4px; min-width: 0; }
+.cp__thumb { --ratio: 1; flex: none; width: 56px; border-radius: var(--radius-sm); }
+.cp__acts { font-size: var(--text-sm); font-weight: 600; }
+
+/* The panel: the page's inverse. Six strips paint its ground so the curtain exit can lift them one by one. */
+.cp__pre { --p: 0; position: fixed; inset: 0; z-index: 20; color: var(--bg); }
+.cp__pre[hidden] { display: none; }
+.cp__strips { position: absolute; inset: 0; display: flex; }
+.cp__strips span { flex: 1 0 0; margin-right: -1px; background: var(--ink); }
+.cp__pre-in {
+  position: relative;
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding: 0 var(--gutter) clamp(20px, 5vh, 48px);
+}
+.cp__pre-top { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 64px; }
+.cp__pre-meta { color: color-mix(in oklab, var(--bg) 62%, var(--ink)); }
+.cp__skip {
+  justify-self: end;
+  height: 36px;
+  padding: 0 16px;
+  border: 1px solid color-mix(in oklab, var(--bg) 32%, transparent);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--bg);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  transition: background-color var(--dur-s), border-color var(--dur-s);
+}
+.cp__skip:hover { background: color-mix(in oklab, var(--bg) 12%, transparent); border-color: var(--bg); }
+.cp__skip:focus-visible { outline-color: var(--bg); }
+
+.cp__pre-main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 300px); grid-template-rows: 1fr auto; align-items: end; column-gap: 32px; }
+.cp__pre-label { grid-column: 1 / -1; align-self: end; margin-bottom: clamp(12px, 3vh, 28px); color: color-mix(in oklab, var(--bg) 62%, var(--ink)); }
+.cp__count {
+  font-size: clamp(7rem, 1rem + 21vw, 20rem);
+  font-weight: 760;
+  font-stretch: var(--wide);
+  line-height: 0.82;
+  letter-spacing: -0.055em;
+  font-variant-numeric: tabular-nums;
+  margin-left: -0.04em;
+}
+.cp__count .cp__mask { padding-bottom: 0.04em; }
+.cp__count, .cp__word { grid-area: 2 / 1; }
+.cp__word { display: none; font-size: clamp(4.5rem, 1rem + 12vw, 12.5rem); font-weight: 760; font-stretch: var(--wide); line-height: 0.86; letter-spacing: -0.05em; margin-left: -0.04em; }
+.cp__signals { margin: 0 0 0.5rem; }
+.cp__signals li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-block: 10px;
+  border-top: 1px solid color-mix(in oklab, var(--bg) 16%, transparent);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--bg) 55%, var(--ink));
+  transition: color var(--dur-s);
+}
+.cp__signals li::before { content: ''; width: 7px; height: 7px; border-radius: 50%; border: 1px solid currentColor; transition: background-color var(--dur-s), border-color var(--dur-s); }
+.cp__signals li [data-state] { margin-left: auto; }
+.cp__signals li.is-done { color: var(--bg); }
+.cp__signals li.is-done::before { background: var(--cp-accent); border-color: var(--cp-accent); }
+
+.cp__track { position: relative; height: 3px; margin-top: clamp(20px, 4vh, 36px); background: color-mix(in oklab, var(--bg) 16%, transparent); }
+.cp__fill { position: absolute; inset: 0; background: var(--cp-accent); transform-origin: left; transform: scaleX(var(--p)); transition: transform 90ms linear; }
+.cp__readout { position: absolute; top: 14px; left: max(4ch, calc(var(--p) * 100%)); translate: -100% 0; font-family: var(--font-mono); font-size: var(--text-xl); font-weight: 500; letter-spacing: -0.02em; transition: left 90ms linear; }
+
+.cp[data-style='number'] .cp__track { display: none; }
+.cp[data-style='both'] .cp__readout { display: none; }
+.cp[data-style='bar'] .cp__count { display: none; }
+.cp[data-style='bar'] .cp__word { display: block; }
+.cp[data-style='bar'] .cp__track { height: 6px; }
+.cp[data-style='bar'] .cp__pre-in { padding-bottom: clamp(60px, 10vh, 88px); }
+
+.cp__toast {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  translate: -50% 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: max-content;
+  max-width: calc(100% - 32px);
+  padding: 8px 8px 8px 18px;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+  color: var(--ink-2);
+  box-shadow: var(--shadow-2);
+}
+.cp__toast[hidden] { display: none; }
+:root[data-capture] .cp__toast { display: none; }
+
+@media (max-width: 860px) {
+  .cp__bar nav { display: none; }
+  .cp__hero { grid-template-columns: 1fr; align-items: start; }
+  .cp__pic { --ratio: 16 / 10; }
+  .cp__days { grid-template-columns: 1fr; gap: 14px; }
+}
+@media (max-width: 600px) {
+  .cp__pre-top { grid-template-columns: 1fr auto; }
+  .cp__pre-meta { display: none; }
+  .cp__pre-main { grid-template-columns: 1fr; grid-template-rows: 1fr auto auto; row-gap: 20px; }
+  .cp__pre-label { margin-bottom: 0; }
+  .cp__readout { font-size: var(--text-lg); }
+  .cp__toast { border-radius: var(--radius-lg); flex-wrap: wrap; padding: 12px 14px; }
+}

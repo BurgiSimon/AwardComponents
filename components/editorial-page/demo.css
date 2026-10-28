@@ -1,0 +1,222 @@
+/* One page, five jobs. The page owns pacing (the gap between sections, the density switch) and the type voice;
+   each section owns its own layout family, so no two neighbours share a shape. */
+.ep {
+  --ep-gap: clamp(5.5rem, 3rem + 9vw, 12rem);
+  --ep-edge: max(var(--gutter), calc((100% - 1320px) / 2));
+  --ep-head: var(--font-serif);
+  --ep-head-w: 440;
+  --ep-head-s: normal;
+  --ep-head-t: -0.025em;
+  --ep-head-lh: 0.98;
+  --ep-mark: var(--accent-ink);
+  --ep-close-bg: var(--ink);
+  --ep-close-fg: var(--bg);
+  overflow-x: clip;
+}
+.ep[data-density='compact'] { --ep-gap: clamp(3.5rem, 2rem + 4.5vw, 6.5rem); }
+.ep:not(.ep--serif) { --ep-head: var(--font-sans); --ep-head-w: 720; --ep-head-s: var(--wide); --ep-head-t: -0.04em; --ep-head-lh: 0.94; }
+.ep[data-accent='quiet'] { --ep-mark: var(--ink); }
+.ep[data-accent='field'] { --ep-close-bg: var(--accent); --ep-close-fg: var(--night); }
+
+.ep__skip { position: absolute; z-index: 5; top: 8px; left: var(--gutter); padding: 10px 14px; background: var(--ink); color: var(--bg); font-weight: 600; text-decoration: none; transform: translateY(-160%); }
+.ep__skip:focus-visible { transform: none; }
+
+/* ---------- Type voice ---------- */
+.ep-display, .ep-heading {
+  font-family: var(--ep-head);
+  font-weight: var(--ep-head-w);
+  font-stretch: var(--ep-head-s);
+  letter-spacing: var(--ep-head-t);
+  line-height: var(--ep-head-lh);
+  text-wrap: balance;
+}
+.ep-display { font-size: clamp(2.9rem, 1.3rem + 4.4vw, 5.9rem); }
+.ep-heading { font-size: clamp(2rem, 1.25rem + 2.3vw, 3.4rem); line-height: 1.02; }
+.ep-body { color: var(--ink-2); font-size: 1.0625rem; line-height: 1.65; max-width: 58ch; text-wrap: pretty; }
+.ep-sub { font-size: var(--text-lg); font-weight: 650; letter-spacing: -0.01em; }
+.ep-link, .ep-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55em;
+  min-height: 44px;
+  color: var(--ep-mark);
+  font-weight: 620;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.32em;
+}
+.ep-link span, .ep-action span { display: inline-block; transition: transform var(--dur-s) var(--ease-out); }
+.ep-link:hover span, .ep-link:focus-visible span, .ep-action:hover span, .ep-action:focus-visible span { transform: translateY(2px); }
+.ep-action { font-size: 1.0625rem; }
+
+.ep-cap { display: flex; justify-content: space-between; align-items: baseline; gap: 24px; margin-top: 12px; color: var(--muted); font-size: 0.8125rem; line-height: 1.45; }
+.ep-cap span:first-child { max-width: 52ch; }
+.ep-cap__k { font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.06em; }
+.ep figure { margin: 0; }
+.ep-media, .ep-hero__media { position: relative; overflow: hidden; background: var(--bg-2); }
+.ep-media img, .ep-hero__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+/* ---------- Masthead ---------- */
+.ep-mast { display: flex; align-items: center; justify-content: space-between; gap: 24px; width: auto; margin: 0; padding: 18px var(--ep-edge); border-bottom: 1px solid var(--line); }
+.ep-mast__mark { display: inline-flex; align-items: baseline; gap: 10px; min-height: 44px; align-items: center; font-weight: 760; font-stretch: var(--wide); font-size: 1.125rem; letter-spacing: -0.03em; text-decoration: none; }
+.ep-mast__mark span { font-family: var(--font-mono); font-weight: 500; font-stretch: normal; font-size: 0.6875rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.ep-mast nav { display: flex; gap: clamp(16px, 3vw, 40px); font-size: var(--text-sm); }
+.ep-mast nav a { display: inline-flex; align-items: center; gap: 0.35em; min-height: 44px; color: var(--ink-2); text-decoration: none; }
+.ep-mast nav a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 0.3em; }
+
+main#ep-main { display: grid; gap: var(--ep-gap); padding-top: clamp(28px, 4.4vw, 64px); }
+
+/* ---------- 1 · Hero: art-directed, copy beside the picture (split) or the title over it (stacked) ---------- */
+.ep-hero { display: grid; grid-template-columns: minmax(0, 5.4fr) minmax(0, 6.6fr); gap: var(--gutter); align-items: center; }
+.ep-hero__copy { display: grid; justify-items: start; gap: clamp(18px, 2.2vw, 30px); }
+.ep-hero__copy .ep-display { max-width: 14ch; font-size: clamp(2.9rem, 1.2rem + 4.1vw, 5.6rem); }
+.ep-hero__lede { max-width: 34ch; color: var(--ink-2); font-size: var(--text-lg); line-height: 1.55; text-wrap: pretty; }
+.ep-hero__media { aspect-ratio: 8 / 5; }
+
+.ep[data-hero='stacked'] .ep-hero { grid-template-columns: minmax(0, 1fr); row-gap: clamp(28px, 3.4vw, 48px); }
+.ep[data-hero='stacked'] .ep-hero__copy { grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--gutter); align-items: end; }
+.ep[data-hero='stacked'] .ep-hero__copy > :is(.ac-label, .ep-display) { grid-column: 1 / -1; }
+.ep[data-hero='stacked'] .ep-hero__copy .ep-display { max-width: 15ch; font-size: clamp(3rem, 0.6rem + 7.6vw, 8.75rem); }
+.ep[data-hero='stacked'] .ep-hero__lede { max-width: 44ch; }
+.ep[data-hero='stacked'] .ep-hero__media { aspect-ratio: 21 / 9; }
+
+/* ---------- 2 · Story: figure 1.35 parts, copy 1, top edges aligned, caption attached ---------- */
+.ep-story { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: var(--gutter); align-items: start; scroll-margin-top: 24px; }
+.ep-media--detail { aspect-ratio: 3 / 2; }
+.ep-story__copy { display: grid; justify-items: start; gap: 22px; padding-top: 18px; border-top: 1px solid var(--line-2); }
+.ep-story__copy .ep-heading { max-width: 11ch; margin-bottom: 6px; }
+.ep-body--first::first-letter {
+  float: left;
+  margin: 0.06em 0.1em 0 0;
+  font-family: var(--ep-head);
+  font-weight: var(--ep-head-w);
+  font-stretch: var(--ep-head-s);
+  font-size: 3.6em;
+  line-height: 0.8;
+  color: var(--ep-mark);
+}
+.ep-note { margin: 6px 0 0; padding-left: 18px; border-left: 1px solid var(--line-2); }
+.ep-note p { font-family: var(--font-serif); font-style: italic; font-size: 1.375rem; line-height: 1.3; color: var(--ink); max-width: 24ch; }
+.ep-note footer { margin-top: 10px; font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+
+/* ---------- 3 · Particulars: the profile held beside a definition list and a native disclosure ---------- */
+.ep-spec { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: var(--gutter); align-items: start; scroll-margin-top: 24px; }
+.ep-spec__figure { position: sticky; top: 24px; }
+.ep-media--profile { aspect-ratio: 4 / 3; }
+.ep-spec__facts { display: grid; gap: 14px; padding-top: 18px; border-top: 1px solid var(--line-2); }
+.ep-spec__facts .ep-heading { margin-bottom: clamp(18px, 3vw, 40px); }
+.ep-dl { margin: 0; border-top: 1px solid var(--line); }
+.ep-dl > div { display: grid; grid-template-columns: minmax(7.5rem, 0.75fr) minmax(0, 1.25fr); gap: 16px; padding-block: 14px; border-bottom: 1px solid var(--line); }
+.ep-dl dt { color: var(--muted); font-size: var(--text-sm); padding-top: 2px; }
+.ep-dl dd { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 0.4em; }
+.ep-dl__v { color: var(--ink); font-size: 1.0625rem; font-weight: 560; font-variant-numeric: tabular-nums; }
+.ep-dl__u { color: var(--ink); font-size: 0.9375rem; text-decoration: none; }
+.ep-dl__n { flex-basis: 100%; color: var(--muted); font-size: var(--text-sm); }
+.ep-details { border-bottom: 1px solid var(--line); }
+.ep-details summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 56px;
+  color: var(--ep-mark);
+  font-weight: 620;
+  cursor: pointer;
+  list-style: none;
+}
+.ep-details summary::-webkit-details-marker { display: none; }
+.ep-details summary::after { content: '+'; font-family: var(--font-mono); font-size: 1.25rem; font-weight: 400; transition: transform var(--dur-s) var(--ease-out); }
+.ep-details[open] summary::after { transform: rotate(45deg); }
+.ep-details p { max-width: 50ch; margin: 0 0 22px; color: var(--ink-2); line-height: 1.6; }
+
+/* ---------- 4 · Care: a slower passage with no picture, the type and three tones of larch ---------- */
+.ep-care { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 112px); align-items: start; scroll-margin-top: 24px; }
+.ep-care__intro { display: grid; gap: clamp(18px, 2.4vw, 32px); }
+.ep-display--care { max-width: 7ch; }
+.ep-care__lead { max-width: 26ch; font-size: clamp(1.25rem, 1rem + 0.8vw, 1.625rem); line-height: 1.35; letter-spacing: -0.01em; text-wrap: pretty; }
+.ep-care__body { display: grid; justify-items: start; gap: 20px; padding-top: 18px; border-top: 1px solid var(--line-2); }
+.ep-weather { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; width: 100%; margin: 12px 0 4px; }
+.ep-weather__step { display: grid; gap: 8px; }
+.ep-weather__chip {
+  --tone: color-mix(in oklab, var(--sand) 62%, var(--clay));
+  height: 72px;
+  border-radius: var(--radius-xs);
+  background:
+    repeating-linear-gradient(90deg, transparent 0 13px, color-mix(in oklab, var(--night) 16%, transparent) 13px 14px),
+    linear-gradient(180deg, color-mix(in oklab, var(--tone) 88%, white), var(--tone));
+}
+.ep-weather__step:nth-child(2) .ep-weather__chip { --tone: color-mix(in oklab, var(--sand) 46%, var(--muted)); }
+.ep-weather__step:nth-child(3) .ep-weather__chip { --tone: color-mix(in oklab, var(--faint) 70%, var(--sky) 12%); }
+.ep-weather__tone { font-size: var(--text-sm); font-weight: 600; }
+
+/* ---------- 5 · Close: reversed, one action, then signature, routes and colophon ---------- */
+.ep-close { margin-top: var(--ep-gap); padding-block: clamp(4.5rem, 2rem + 8vw, 9rem) 28px; background: var(--ep-close-bg); color: var(--ep-close-fg); scroll-margin-top: 0; }
+.ep-close a { color: inherit; }
+.ep-close :focus-visible { outline-color: currentColor; }
+.ep-close__message { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 32px var(--gutter); padding-bottom: clamp(3.5rem, 7vw, 7rem); }
+.ep-display--close { font-size: clamp(2.5rem, 1.2rem + 3.7vw, 4.9rem); }
+.ep-display--close span { display: block; }
+.ep-display--close span + span { color: color-mix(in oklab, var(--ep-close-fg) 62%, var(--ep-close-bg)); }
+.ep-close__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.4em;
+  min-height: 60px;
+  padding: 0 1.5em;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--on-accent) !important;
+  font-size: 1.1875rem;
+  font-weight: 650;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color var(--dur-s) var(--ease-out);
+}
+.ep-close__action:hover { background: color-mix(in oklab, var(--accent) 86%, var(--ep-close-fg)); }
+.ep[data-accent='quiet'] .ep-close__action, .ep[data-accent='field'] .ep-close__action { background: var(--ep-close-fg); color: var(--ep-close-bg) !important; }
+.ep-close__bottom {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) repeat(2, minmax(0, 1fr)) auto;
+  gap: 28px var(--gutter);
+  padding-block: 28px 40px;
+  border-top: 1px solid color-mix(in oklab, var(--ep-close-fg) 24%, transparent);
+  font-size: var(--text-sm);
+}
+.ep-close__sign { font-family: var(--ep-head); font-weight: var(--ep-head-w); font-stretch: var(--ep-head-s); font-size: clamp(1.75rem, 1.2rem + 1.6vw, 2.6rem); line-height: 0.92; letter-spacing: var(--ep-head-t); }
+.ep-close__sign span { display: block; }
+.ep-close__label { margin-bottom: 12px; font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.06em; text-transform: uppercase; color: color-mix(in oklab, var(--ep-close-fg) 66%, var(--ep-close-bg)); }
+.ep-close ul { display: grid; gap: 2px; margin: 0; }
+.ep-close ul a, .ep-close__return a { display: inline-flex; align-items: center; gap: 0.5em; min-height: 32px; text-underline-offset: 0.3em; }
+.ep-close address { font-style: normal; line-height: 1.7; }
+.ep-close__colophon { display: flex; justify-content: space-between; gap: 8px 24px; flex-wrap: wrap; padding-top: 18px; border-top: 1px solid color-mix(in oklab, var(--ep-close-fg) 24%, transparent); font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.04em; color: color-mix(in oklab, var(--ep-close-fg) 66%, var(--ep-close-bg)); }
+
+:root[data-motion='reduced'] .ep :is(.ep-link span, .ep-action span, .ep-details summary::after) { transition: none; }
+
+/* ---------- Tablet: the particulars stack, the story keeps its two columns ---------- */
+@media (max-width: 1000px) {
+  .ep-story { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); }
+  .ep-media--detail { aspect-ratio: 4 / 5; }
+  .ep-spec { grid-template-columns: minmax(0, 1fr); }
+  .ep-spec__figure { position: static; }
+  .ep-media--profile { aspect-ratio: 16 / 9; }
+  .ep-close__bottom { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .ep-close__sign { grid-column: 1 / -1; }
+}
+@media (max-width: 900px) {
+  .ep-hero { grid-template-columns: minmax(0, 1fr); row-gap: 36px; }
+  .ep-hero__copy .ep-display { max-width: 12ch; }
+  .ep-hero__media { aspect-ratio: 16 / 10; }
+}
+/* ---------- Phone: one column in reading order; the hero recrops to a portrait 4:5 ---------- */
+@media (max-width: 759px) {
+  .ep-mast nav a:not(:last-child) { display: none; }
+  .ep-hero__media, .ep[data-hero='stacked'] .ep-hero__media { aspect-ratio: 4 / 5; }
+  .ep[data-hero='stacked'] .ep-hero__copy { grid-template-columns: minmax(0, 1fr); }
+  .ep-story, .ep-care { grid-template-columns: minmax(0, 1fr); row-gap: 28px; }
+  .ep-media--detail { aspect-ratio: 3 / 2; }
+  .ep-weather__chip { height: 56px; }
+  .ep-close__message { grid-template-columns: minmax(0, 1fr); }
+  .ep-close__action { justify-self: start; }
+  .ep-close__bottom { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ep-close__return { grid-column: 1 / -1; }
+  .ep-dl > div { grid-template-columns: minmax(6.5rem, 0.7fr) minmax(0, 1.3fr); }
+}

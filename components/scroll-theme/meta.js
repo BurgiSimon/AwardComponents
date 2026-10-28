@@ -1,0 +1,36 @@
+export default {
+  id: 'scroll-theme',
+  title: 'Scroll theme swap',
+  category: 'foundations',
+  summary: 'A festival programme in three chapters — Day, Dusk, Night — whose colour tokens tween on the page as each one arrives, with a canvas sky and the browser’s theme colour following.',
+  description: 'Each chapter names a palette. Crossing its midpoint tweens the ground, ink and accent tokens on the root in one beat, retargeting from wherever the colour is when the scroll is fast. Every var() consumer follows, including the color-mix() shades derived from them, and the canvas behind the page paints from the same live values on every update, so the DOM and the render never disagree.\n\nThe palettes are built from the library’s own tokens and materials, so they hold in light and dark.',
+  recipe: 'theme-swap-tokens',
+  deps: ['gsap', 'lenis'],
+  tags: ['scroll', 'colour', 'theme', 'tokens', 'canvas', 'scrolltrigger', 'gsap', 'lenis'],
+  added: '2026-10-28',
+  order: 50,
+  preview: { height: 660, scroll: true, hint: 'Scroll through the chapters', capture: { scroll: 0.525, wait: 2200 } },
+  useCases: [
+    'A programme, timeline or story whose chapters each have a mood: day to night, raw to finished',
+    'A product page that changes colourway as each variant scrolls in',
+    'Case studies that take on each client’s colours as the reader reaches them',
+  ],
+  notes: [
+    'The swap still happens under reduced motion, instantly, because it carries wayfinding; only the tween is dropped.',
+    'Every palette is a contrast-checked pair: the ink is chosen per chapter, and the secondary shades are mixed from it, never fixed greys.',
+    'The chapter links in the header are real anchors with aria-current; the canvas is aria-hidden and only paints when a colour changes.',
+  ],
+  controls: [
+    { id: 'palette', label: 'Palette set', type: 'select', options: [{ value: 'festival', label: 'Sand · clay · night' }, { value: 'harbour', label: 'Sky · plum · night' }, { value: 'mono', label: 'Paper · ink' }], default: 'festival', group: 'Colour', prompt: (v) => `Chapter palettes, in scroll order: ${{ festival: 'pale sand with ink, clay with night-blue ink, then night blue with sand ink', harbour: 'pale sky with ink, a dark plum with sand ink and a clay accent, then night blue with sky ink and accent', mono: 'paper, paper with 10 % ink mixed in, then inverted (ink ground, paper text)' }[v]} (default: pale sand, clay, then night blue)` },
+    { id: 'mode', label: 'Swap', type: 'select', options: [{ value: 'triggered', label: 'Tween at the midpoint' }, { value: 'scrub', label: 'Scrub with the scroll' }], default: 'triggered', group: 'Timing', help: 'Scrub blends the two palettes across the boundary instead of tweening once.', prompt: (v) => (v === 'scrub' ? 'Scrub the colour with the scroll across each chapter boundary (top 80 % → top 20 %) instead of a timed tween' : 'Tween once when a chapter crosses the viewport midpoint') },
+    { id: 'duration', label: 'Tween length', type: 'range', min: 0.2, max: 2.4, step: 0.1, default: 1, unit: 's', group: 'Timing', when: { mode: ['triggered'] }, prompt: 'Swap tween: {value}, power2.inOut (default {default})' },
+    { id: 'sky', label: 'Canvas sky', type: 'toggle', default: true, group: 'Colour', help: 'A canvas behind the page painted from the same live values.', prompt: { on: 'Paint the background canvas from the same live colour object in the tween’s onUpdate', off: 'No canvas; only the DOM tokens change' } },
+  ],
+  prompt: {
+    skill: 'component',
+    ask: 'Give each chapter of {target} its own colour tokens, swapped on scroll.',
+    target: 'the long landing page',
+    brief: 'Each section names a theme (data-swap). Crossing its midpoint (top 50 % → bottom 50 %, on enter and enter back) tweens --bg, --ink and --accent on the root in one 1 s power2.inOut tween, killing the running one and retargeting from the current colour. Derived shades are color-mix() of those three, a canvas behind the page is repainted from the same live object in onUpdate, and meta theme-color is set when the tween completes.',
+    keep: ['the swap instant (but kept) under reduced motion; contrast checked for every palette; no CSS transition on the same colours.'],
+  },
+};

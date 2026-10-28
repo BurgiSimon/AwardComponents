@@ -1,0 +1,104 @@
+.st { --st-on: color-mix(in oklab, var(--sand) 14%, white); position: relative; overflow-x: clip; }
+.st a { text-decoration: none; }
+.st__bar { position: absolute; inset: 0 0 auto; z-index: 3; }
+.st__bag { display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 14px; border: 1px solid var(--line-2); border-radius: var(--radius-pill); font-size: var(--text-sm); font-weight: 600; }
+.st__bag span { display: inline-grid; place-items: center; min-width: 20px; height: 20px; border-radius: 10px; background: var(--ink); color: var(--bg); font-size: 11px; }
+
+/* 400 svh of scroll, a sticky stage of one viewport: ScrollTrigger only reads progress, nothing is pinned. */
+.st__scene { position: relative; height: 400svh; }
+.st__stage { position: sticky; top: 0; height: 100svh; padding: 64px var(--gutter) var(--gutter); }
+
+/* The room: an evening interior warmed by the lamp. --on (0 → 1) is the scrubbed value; everything reads it. */
+.st__room {
+  --on: 0;
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  height: 100%;
+  padding: clamp(18px, 3vw, 40px);
+  border-radius: var(--radius-xl);
+  overflow: clip;
+  background: linear-gradient(170deg, color-mix(in oklab, var(--night) 86%, var(--plum)), var(--night) 70%);
+  color: var(--st-on);
+  outline: 1px solid var(--line);
+  outline-offset: -1px;
+}
+.st__room::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(70% 62% at 50% 40%, color-mix(in oklab, var(--clay) 46%, transparent), color-mix(in oklab, var(--clay) 12%, transparent) 55%, transparent 80%);
+  opacity: var(--on);
+}
+
+.st__hud { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 10px 20px; }
+.st__name { color: color-mix(in oklab, var(--st-on) 72%, transparent); }
+.st__read { display: flex; gap: 18px; color: color-mix(in oklab, var(--st-on) 58%, transparent); }
+.st__read b { font-weight: 500; color: var(--st-on); }
+.st__step { display: grid; }
+.st__step > span { grid-area: 1 / 1; text-align: right; color: var(--st-on); }
+.st__step [data-step='on'] { opacity: 0; visibility: hidden; color: color-mix(in oklab, var(--sand) 40%, var(--clay)); }
+
+.st__figure { position: relative; display: grid; place-items: center; min-height: 0; }
+.st__lampbox { position: relative; height: min(100%, 560px, 96vw); aspect-ratio: 400 / 520; }
+.st__lamp { position: relative; width: 100%; height: 100%; overflow: visible; }
+.st__glow {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  width: 190%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in oklab, var(--sand) 55%, white), color-mix(in oklab, var(--clay) 42%, transparent) 38%, transparent 72%);
+  opacity: calc(var(--on) * 0.75);
+  transform: scale(calc(0.62 + var(--on) * 0.5));
+  pointer-events: none;
+}
+.st__opal-a { stop-color: color-mix(in oklab, var(--sand) 30%, var(--night)); }
+.st__opal-b { stop-color: color-mix(in oklab, var(--sand) 12%, var(--night)); }
+.st__lit { opacity: var(--on); }
+.st__lit-a { stop-color: color-mix(in oklab, var(--sand) 8%, white); }
+.st__lit-b { stop-color: color-mix(in oklab, var(--sand) 70%, var(--clay)); }
+.st__lit-c { stop-color: color-mix(in oklab, var(--clay) 85%, var(--sand)); }
+.st__shine { fill: color-mix(in oklab, var(--sand) 10%, white); opacity: calc(0.16 + var(--on) * 0.22); }
+.st__brass-a { stop-color: color-mix(in oklab, var(--clay) 55%, var(--night)); }
+.st__brass-b { stop-color: color-mix(in oklab, var(--sand) 70%, white); }
+.st__brass-c { stop-color: color-mix(in oklab, var(--clay) 40%, var(--night)); }
+.st__brass-top { fill: color-mix(in oklab, var(--sand) 72%, var(--clay)); }
+.st__knob { fill: color-mix(in oklab, var(--sand) 60%, white); stroke: color-mix(in oklab, var(--clay) 50%, var(--night)); stroke-width: 1.5; }
+.st__notch { stroke: var(--night); stroke-width: 2; stroke-linecap: round; }
+.st__pool { fill: color-mix(in oklab, var(--clay) 55%, var(--sand)); opacity: calc(var(--on) * 0.45); filter: blur(12px); }
+
+.st__cue { position: absolute; left: 50%; bottom: clamp(18px, 4svh, 36px); translate: -50% 0; display: inline-flex; align-items: center; gap: 10px; color: color-mix(in oklab, var(--st-on) 64%, transparent); opacity: clamp(0, 1 - var(--on) * 5, 1); white-space: nowrap; pointer-events: none; }
+.st__cue::before { content: ''; width: 1px; height: 22px; background: linear-gradient(transparent, currentColor); }
+:root[data-capture] .st__cue { display: none; }
+
+/* The copy: one grid cell, real text; the paused timelines hide and play it. */
+.st__copy { display: grid; min-height: 2.1em; font-size: clamp(1.55rem, 0.8rem + 3vw, 4rem); font-weight: 720; font-stretch: var(--wide); line-height: 1; letter-spacing: -0.035em; }
+.st__lines { grid-area: 1 / 1; display: grid; align-content: end; }
+.st__lines--final { justify-self: end; text-align: right; }
+.st__line { display: block; }
+
+.st__buy { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); align-items: end; gap: 32px clamp(24px, 5vw, 80px); padding-block: clamp(72px, 14svh, 140px); }
+.st__buy-copy { display: grid; gap: 16px; }
+.st__buy-actions { display: grid; gap: 18px; justify-items: start; }
+.st__sizes { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; border: 0; }
+.st__sizes legend { width: 100%; margin-bottom: 10px; padding: 0; }
+.st__sizes label { position: relative; }
+.st__sizes input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+.st__sizes span { display: inline-flex; align-items: center; height: 40px; padding: 0 18px; border: 1px solid var(--line-2); border-radius: var(--radius-pill); font-size: var(--text-sm); font-weight: 600; }
+.st__sizes input:checked + span { border-color: var(--ink); background: var(--ink); color: var(--bg); }
+.st__sizes input:focus-visible + span { outline: 2px solid var(--focus); outline-offset: 3px; }
+
+/* Reduced and static: the light still follows the scroll; the glow does not grow. */
+.st--still .st__glow { transform: none; }
+
+@media (max-width: 700px) {
+  .st__bar nav { display: none; }
+  .st__read { gap: 12px; }
+  .st__buy { grid-template-columns: 1fr; }
+}

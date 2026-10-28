@@ -1,0 +1,77 @@
+.pc {
+  --pc-blur: 6px;
+  --pc-dim: 0.2;
+  min-height: 100svh;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  grid-template-columns: minmax(0, 1fr);
+  overflow-x: clip;
+}
+.pc__brand { font-family: var(--font-serif); font-stretch: normal; font-weight: 600; font-style: italic; font-size: 1.35rem; letter-spacing: -0.01em; }
+.pc__bar a { text-decoration: none; }
+
+.pc__carousel { display: grid; grid-template-columns: minmax(0, 1fr); align-content: center; gap: clamp(18px, 3.2svh, 36px); padding-block: 8px clamp(28px, 6svh, 64px); }
+.pc__head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+.pc__heading { display: grid; gap: 10px; }
+.pc__title { font-family: var(--font-serif); font-weight: 500; font-size: clamp(2.2rem, 1.3rem + 3.2vw, 4.2rem); line-height: 0.95; letter-spacing: -0.015em; }
+.pc__controls { display: flex; align-items: center; gap: 8px; }
+.pc__count { min-width: 7ch; margin-right: 8px; text-align: right; color: var(--ink-2); }
+.pc__btn {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line-2);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--ink);
+  transition: background-color var(--dur-s), border-color var(--dur-s);
+}
+.pc__btn:hover { background: var(--bg-2); border-color: var(--ink); }
+.pc__btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* The viewport clips (clip, not hidden, so focus cannot scroll it); the track moves by transform only.
+   pan-y leaves vertical page scroll to the browser and hands horizontal drags to the pointer handlers. */
+.pc__viewport { overflow: clip; touch-action: pan-y; cursor: grab; }
+.pc.is-dragging .pc__viewport { cursor: grabbing; }
+.pc__track { display: flex; width: max-content; margin: 0; user-select: none; -webkit-user-select: none; will-change: transform; }
+
+/* Focus by subtraction: every card the same size, the neighbours dimmed and blurred, the centred one sharp. */
+.pc__item {
+  flex: 0 0 min(62vw, 880px, 66svh);
+  opacity: var(--pc-dim);
+  filter: blur(var(--pc-blur));
+  transition: opacity 0.5s var(--ease-in-out), filter 0.5s var(--ease-in-out);
+}
+.pc__item.is-active { opacity: 1; filter: none; }
+.pc--instant .pc__item { transition: none; }
+
+.pc__card { display: grid; gap: 8px; color: inherit; text-decoration: none; -webkit-user-drag: none; border-radius: var(--radius-lg); }
+.pc__card:focus-visible { outline-offset: 6px; }
+.pc__art { --ratio: 16 / 10; display: block; border-radius: var(--radius-lg); margin-bottom: 8px; }
+.pc__art img { transition: transform var(--dur-l) var(--ease-out); pointer-events: none; }
+.is-active .pc__card:hover .pc__art img { transform: scale(1.03); }
+.pc__name { font-family: var(--font-serif); font-weight: 500; font-size: clamp(1.5rem, 1rem + 1.5vw, 2.4rem); line-height: 1.02; letter-spacing: -0.01em; text-wrap: balance; }
+.pc__dek { max-width: 46ch; color: var(--ink-2); text-wrap: pretty; }
+.pc__by { font-size: var(--text-sm); color: var(--muted); }
+
+@media (max-width: 920px) {
+  .pc__item { flex-basis: min(60vw, 60svh); }
+}
+/* Phones and touch screens drop the blur (costly there) and dim a little harder instead. */
+@media (max-width: 560px), (pointer: coarse) {
+  .pc__item { filter: none; opacity: calc(var(--pc-dim) * 0.6); transition-property: opacity; }
+  .pc__item.is-active { opacity: 1; }
+}
+@media (max-width: 560px) {
+  .pc__bar nav { display: none; }
+  .pc__head { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .pc__controls { width: 100%; }
+  .pc__count { order: -1; margin-right: auto; text-align: left; }
+  .pc__art { --ratio: 4 / 5; }
+  .pc__name { font-size: 1.6rem; }
+  .pc__dek { font-size: var(--text-sm); }
+}
+@media (max-height: 560px) and (min-width: 561px) {
+  .pc__dek { display: none; }
+}

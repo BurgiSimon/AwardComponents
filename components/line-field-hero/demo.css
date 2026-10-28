@@ -1,0 +1,51 @@
+.lf { --lf-stroke: 1; --lf-tone: var(--ink); --lf-mix: 24%; overflow-x: clip; }
+.lf a { text-decoration: none; }
+
+.lf__hero { position: relative; min-height: 100svh; display: grid; align-content: end; overflow: clip; }
+/* One hairline weight for the whole field, light enough that the heading keeps its contrast on top. */
+.lf__field {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: color-mix(in oklab, var(--lf-tone) var(--lf-mix), var(--bg));
+  stroke-width: var(--lf-stroke);
+  pointer-events: none;
+}
+/* Small copy sits on page-coloured tape, so its contrast never depends on the lines. */
+.lf__tape { background: var(--bg); width: fit-content; }
+.lf__bar { position: absolute; inset: 0 0 auto; z-index: 1; }
+.lf__bar .ac-brand { padding: 2px 6px; margin-left: -6px; }
+.lf__bar nav a { padding: 2px 6px; }
+
+.lf__copy { position: relative; display: grid; gap: clamp(16px, 2.6vh, 26px); padding-block: 120px clamp(28px, 6vh, 56px); }
+.lf__kicker { display: inline-flex; align-items: center; gap: 10px; padding: 4px 8px; margin-left: -8px; color: var(--ink); }
+.lf__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+.lf__title {
+  max-width: 12ch;
+  font-size: clamp(2.8rem, 0.9rem + 6.4vw, 8rem);
+  font-weight: 760;
+  font-stretch: var(--wide);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+.lf__foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 20px 40px; }
+.lf__lede { max-width: 44ch; padding: 10px 12px; margin-left: -12px; font-size: var(--text-lg); line-height: 1.5; color: var(--ink-2); }
+.lf__cta { display: flex; flex-wrap: wrap; gap: 10px; }
+.lf__ghost { background: var(--bg); }
+
+.lf__specs { position: absolute; top: 88px; right: var(--gutter); z-index: 1; display: grid; justify-items: end; gap: 10px; margin: 0; text-align: right; }
+.lf__specs div { display: grid; gap: 4px; padding: 6px 8px; }
+.lf__specs dt { color: var(--muted); }
+.lf__specs dd { margin: 0; color: var(--ink); line-height: 1.5; }
+
+@media (max-width: 900px) {
+  .lf__specs { display: none; }
+}
+@media (max-width: 640px) {
+  .lf__bar nav a:not(:first-child) { display: none; }
+  .lf__cta { width: 100%; }
+  .lf__cta .ac-btn { flex: 1 1 auto; }
+}

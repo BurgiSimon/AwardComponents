@@ -1,0 +1,40 @@
+export default {
+  id: 'page-transition',
+  title: 'Page transition',
+  category: 'loaders-transitions',
+  summary: 'A three-page studio site routed by taxi: a wipe covers the old page with the next one’s name, the view swaps underneath, the scroll resets and the wipe leaves.',
+  description: 'Home, Work and Studio are real routes with real URLs and a working back button. A click on any internal link runs one lifecycle: the wipe covers the page, the old view’s motion is reverted, the new view is swapped in underneath, the scroll jumps to the top and the wipe leaves while the new headline rises.\n\nEverything a view starts, its line reveal and the scrubbed picture on the home page, lives in a gsap.context made on enter and reverted on leave, so nothing leaks from one page to the next. In this preview the three pages sit in taxi’s cache from the start; on a real site taxi fetches them.',
+  recipe: 'page-transitions',
+  deps: ['@unseenco/taxi', 'gsap', 'lenis'],
+  tags: ['transition', 'router', 'taxi', 'wipe', 'gsap', 'lenis', 'history'],
+  added: '2026-10-28',
+  order: 30,
+  preview: { height: 640, scroll: true, hint: 'Click Work or Studio', capture: { wait: 600 } },
+  useCases: [
+    'A studio or agency portfolio with a handful of routes that should feel like one place',
+    'Moving between a case study index and its projects without a white flash',
+    'Any multi-page site that wants transitions but keeps real links, URLs and history',
+  ],
+  notes: [
+    'Links stay real links and every page has its own URL, so the back button and a hard reload both work.',
+    'After each navigation the page title updates and focus moves to the new page’s heading, so screen readers start reading the new page.',
+    'Under reduced motion the wipe only fades in and out with no movement; static motion swaps the pages at once.',
+  ],
+  controls: [
+    { id: 'direction', label: 'Wipe direction', type: 'select', options: [{ value: 'up', label: '↑ Up' }, { value: 'down', label: '↓ Down' }, { value: 'left', label: '← Left' }, { value: 'right', label: 'Right →' }], default: 'up', group: 'Wipe', prompt: (v) => `The wipe travels ${v}: in from the ${{ up: 'bottom', down: 'top', left: 'right', right: 'left' }[v]} edge to cover, out through the ${{ up: 'top', down: 'bottom', left: 'left', right: 'right' }[v]} edge (default up)` },
+    { id: 'colour', label: 'Wipe colour', type: 'color', default: 'ink', group: 'Wipe', prompt: 'Wipe colour: {value} (default {default})' },
+    { id: 'duration', label: 'Duration', type: 'range', min: 0.3, max: 1.4, step: 0.05, default: 0.7, unit: 's', group: 'Wipe', help: 'Each half: cover, then reveal.', prompt: 'Each half of the wipe takes {value} with expo.inOut (default {default})' },
+    { id: 'label', label: 'Name the next page', type: 'toggle', default: true, group: 'Wipe', prompt: { on: 'The wipe carries the next page’s name, held still while the wipe slides over it', off: 'A plain wipe with no label' } },
+  ],
+  actions: [{ id: 'next', label: 'Next page', icon: 'arrowRight' }],
+  prompt: {
+    skill: 'component',
+    ask: 'Add page transitions to {target}.',
+    target: 'the site’s internal links',
+    brief: 'Route internal links through @unseenco/taxi: a wipe carrying the next page’s name (held still while the wipe slides over it) covers the old view (yPercent 100 → 0, 0.7 s, expo.inOut), the new view swaps in underneath, the scroll resets at once through Lenis, then the wipe leaves (0 → −100, 0.7 s, delay 0.1) while the new headline rises by lines (1.2 s, stagger 0.08). Each view’s motion is built in a gsap.context on enter and reverted on leave, and ScrollTrigger refreshes after each enter.',
+    keep: [
+      'real links, a URL per page, a working back button; the title updates and focus moves to the new heading',
+      'reduced motion fades the wipe without moving it; static motion swaps at once; nothing from a view survives its leave',
+    ],
+  },
+};

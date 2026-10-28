@@ -1,0 +1,7 @@
+/* One family carries the whole library: Mona Sans (OFL), variable in weight 200–900 and width 75–125 %.
+   Expanded widths make the display voice, 100 % the interface. JetBrains Mono (OFL) for code and labels.
+   The italic face is declared too; browsers fetch it only where italic Mona Sans is used.
+   Bodoni Moda is opt-in per demo through demo-kit/serif.css, never loaded by the shell. */
+@import '@fontsource-variable/mona-sans/wdth.css';
+@import '@fontsource-variable/mona-sans/wdth-italic.css';
+@import '@fontsource-variable/jetbrains-mono/wght.css';
