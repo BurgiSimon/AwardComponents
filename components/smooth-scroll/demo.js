@@ -27,9 +27,9 @@ export default function mount(root, options, ctx) {
   const next = magazine.articles[3];
   const P = magazine.longRead;
   const [lead] = photos({ tags: ['landscape'], count: 1, seed: 'ss-lead', orientation: 'portrait' });
-  const [wide] = photos({ tags: ['water'], count: 1, seed: 'ss-wide', orientation: 'landscape' });
-  const pair = photos({ tags: ['texture'], count: 1, seed: 'ss-pair-a' }).concat(photos({ tags: ['architecture'], count: 1, seed: 'ss-pair-b' }));
-  const [nextPic] = photos({ tags: ['night'], count: 1, seed: 'ss-next' });
+  const [wide] = photos({ tags: ['water'], not: ['art'], count: 1, seed: 'ss-wide', orientation: 'landscape' });
+  const pair = photos({ tags: ['texture'], count: 1, seed: 'ss-pair-a' }).concat(photos({ tags: ['architecture'], not: ['city'], count: 1, seed: 'ss-pair-b' }));
+  const [nextPic] = photos({ tags: ['water'], not: ['art'], count: 1, seed: 'ss-next-water' });
   const fig = (p, cls, sizes, cap, eager = false) => html`<figure class="${cls}" data-reveal><span class="ac-media">${raw(imageHTML(p, { sizes, alt: '', eager }))}</span><figcaption class="ac-small">${cap}</figcaption></figure>`;
   let cfg = { ...options };
 

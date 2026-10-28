@@ -1,0 +1,4 @@
+/* Title tunnel. Tokens and primitives come from src/demo-kit/base.css; use var(--…) for every colour. */
+.tt {
+  min-height: 100svh;
+}

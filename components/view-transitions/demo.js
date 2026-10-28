@@ -4,10 +4,23 @@
 // back through data-vt-dir on <html>). Back names the tile being returned to inside the update and clears it once
 // captured. No library. Reduced motion, static and browsers without the API: a plain swap; focus moves either way.
 import './demo.css';
-import { on, html, raw, photos, imageHTML, content, formatPrice } from '../../src/demo-kit/index.js';
+import { on, html, raw, photo, allPhotos, imageHTML, content, formatPrice } from '../../src/demo-kit/index.js';
 
 const NAMES = { media: 'ostra-media', title: 'ostra-title' };
 const KIND = { ceramic: 'Ceramics', lamp: 'Lighting', furniture: 'Furniture', textile: 'Textiles', object: 'Objects' };
+
+// One different picture per item: its own tag first, then the fallbacks, then a drawn stand-in. photo(id) marks only
+// the pictures actually shown, so the component page credits exactly those.
+function uniquePictures(keys, tagsOf, fallbacks) {
+  const pool = allPhotos();
+  const used = new Set();
+  const take = (tags) => pool.find((m) => !used.has(m.id) && tags.every((t) => m.tags?.includes(t)));
+  return Object.fromEntries(keys.map((k) => {
+    const m = [tagsOf(k), ...fallbacks].reduce((hit, tags) => hit || take(tags), null);
+    if (m) used.add(m.id);
+    return [k, photo(m ? m.id : `pick-${k}`)];
+  }));
+}
 
 export default function mount(root, options, ctx) {
   const { shop } = content;
@@ -15,7 +28,7 @@ export default function mount(root, options, ctx) {
   let cfg = { ...options };
   const html$ = document.documentElement;
   const startTitle = document.title;
-  const pics = Object.fromEntries(products.map((p) => [p.id, photos({ tags: p.tags.slice(0, 1), count: 1, seed: `vt-${p.id}` })[0]]));
+  const pics = uniquePictures(products.map((p) => p.id), (id) => products.find((p) => p.id === id).tags.slice(0, 1), [['product'], ['object']]);
   const urlFor = (id) => { const u = new URL(location.href); if (id) u.searchParams.set('product', id); else u.searchParams.delete('product'); u.hash = ''; return u.href; };
   const idOf = (url) => { const id = new URL(url, location.href).searchParams.get('product'); return products.some((p) => p.id === id) ? id : null; };
   let bag = 0;

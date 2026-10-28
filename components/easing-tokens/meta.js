@@ -21,7 +21,7 @@ export default {
     'The moments are real buttons, the sheet takes focus and closes on Escape, and the toasts sit in a polite live region; the curve plot is decoration beside text names.',
   ],
   controls: [
-    { id: 'curve', label: 'Default curve', type: 'select', options: [{ value: 'house', label: 'house · .6 .04 .1 1' }, { value: 'out', label: 'out · .2 .9 .3 1' }, { value: 'in-out', label: 'in-out · .72 0 .22 1' }, { value: 'write', label: 'write · .4 0 .6 1' }], default: 'house', group: 'Curve', help: 'The ease every unannotated tween and transition inherits.', prompt: 'Make the “{value}” curve the default (default house)' },
+    { id: 'curve', label: 'Default curve', type: 'select', options: [{ value: 'house', label: 'house · .6 .04 .1 1' }, { value: 'out', label: 'out · .2 .9 .3 1' }, { value: 'in-out', label: 'in-out · .72 0 .22 1' }, { value: 'write', label: 'write · .4 0 .6 1' }], default: 'house', group: 'Curve', help: 'The ease every unannotated tween and transition inherits.', prompt: (v) => `Make the “${v}” curve the default for every unannotated tween and transition (default house)` },
     { id: 'scale', label: 'Duration scale', type: 'range', min: 0.5, max: 2, step: 0.1, default: 1, unit: '×', group: 'Tempo', help: 'Multiplies the ladder: xs .15, s .3, m .55, l 1.1 s.', prompt: 'Scale the duration ladder by {value} (default {default})' },
     { id: 'stagger', label: 'Stagger', type: 'range', min: 0, max: 0.14, step: 0.01, default: 0.04, unit: 's', group: 'Tempo', prompt: 'Stagger token: {value} between items (default {default})' },
   ],

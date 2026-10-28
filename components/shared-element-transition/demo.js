@@ -6,7 +6,7 @@
 // its own id so a stale router never matches them. Reduced and static motion change the route at once.
 import './demo.css';
 import { Core, Renderer, Transition } from '@unseenco/taxi';
-import { html, raw, photos, imageHTML, content } from '../../src/demo-kit/index.js';
+import { html, raw, photo, allPhotos, imageHTML, content } from '../../src/demo-kit/index.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
 
 const PHONE = '(max-width: 48rem)';
@@ -21,6 +21,19 @@ const BODY = {
   'arc-chair': 'One length of ash, steam-bent into the back and both arms, made with a workshop in Os in an edition of two hundred.',
 };
 
+// One different picture per item: its own tag first, then the fallbacks, then a drawn stand-in. photo(id) marks only
+// the pictures actually shown, so the component page credits exactly those.
+function uniquePictures(keys, tagsOf, fallbacks) {
+  const pool = allPhotos();
+  const used = new Set();
+  const take = (tags) => pool.find((m) => !used.has(m.id) && tags.every((t) => m.tags?.includes(t)));
+  return Object.fromEntries(keys.map((k) => {
+    const m = [tagsOf(k), ...fallbacks].reduce((hit, tags) => hit || take(tags), null);
+    if (m) used.add(m.id);
+    return [k, photo(m ? m.id : `pick-${k}`)];
+  }));
+}
+
 export default function mount(root, options, ctx) {
   const { studio } = content;
   const projects = studio.projects;
@@ -29,7 +42,7 @@ export default function mount(root, options, ctx) {
   const startTitle = document.title;
   const urlFor = (slug) => { const u = new URL(location.href); if (slug) u.searchParams.set('p', slug); else u.searchParams.delete('p'); u.hash = ''; return u.href; };
   const slugOf = (url) => new URL(url, location.href).searchParams.get('p');
-  const pics = Object.fromEntries(projects.map((p) => [p.slug, photos({ tags: p.tags.slice(0, 1), count: 1, seed: `se-${p.slug}` })[0]]));
+  const pics = uniquePictures(projects.map((p) => p.slug), (slug) => projects.find((p) => p.slug === slug).tags.slice(0, 1), [['architecture'], ['interior'], ['landscape']]);
   const num = (i) => String(i + 1).padStart(2, '0');
 
   // One row layout for both pages, so the chosen row and the project page's heading line up exactly.

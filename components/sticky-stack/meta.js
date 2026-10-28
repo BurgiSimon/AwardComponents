@@ -1,0 +1,35 @@
+export default {
+  id: 'sticky-stack',
+  title: 'Sticky stack cards',
+  category: 'scroll',
+  summary: 'An architecture studio’s four disciplines as cards that stick and pile up: as each new card slides over, the one beneath shrinks and dims, so the list reads as depth.',
+  recipe: 'sticky-stack-cards',
+  deps: ['gsap', 'lenis'],
+  tags: ['scroll', 'sticky', 'stack', 'cards', 'scale', 'scrub', 'scrolltrigger', 'gsap', 'lenis'],
+  added: '2026-10-28',
+  order: 100,
+  preview: { height: 660, scroll: true, hint: 'Scroll to stack the cards', capture: { scroll: 0.36, wait: 1200 } },
+  useCases: [
+    'Services, disciplines or plans that deserve a full card each without a long list',
+    'A process in four steps where the finished ones stay visible behind the current one',
+    'Case-study highlights on a home page, each card a real article with its own link',
+  ],
+  notes: [
+    'Each card is a real article with a heading in reading order. Stacking is CSS position: sticky; nothing is pinned, so there is no spacer to drift.',
+    'The trigger reads the next card’s travel to its sticky top, so resize and refresh never desynchronise the pile. The dim is an overlay, so cards stay opaque and never show the one beneath through them.',
+    'Under reduced motion the cards still stick and stack (that is layout), but nothing scales or dims.',
+  ],
+  controls: [
+    { id: 'scale', label: 'Settled scale', type: 'range', min: 0.8, max: 1, step: 0.01, default: 0.92, group: 'Settle', help: 'Each deeper card settles 0.02 smaller than this.', prompt: 'A covered card settles to scale {value} − 0.02 × its index (default {default})' },
+    { id: 'dim', label: 'Dim amount', type: 'range', min: 0, max: 0.8, step: 0.05, default: 0.4, group: 'Settle', prompt: 'Covered cards dim by {value} (an overlay of the page ground; default {default})' },
+    { id: 'top', label: 'Top offset', type: 'range', min: 4, max: 24, step: 1, default: 12, unit: 'svh', group: 'Stack', help: 'The sticky top: the stack’s upper edge.', prompt: 'Sticky top: {value} (default {default})' },
+    { id: 'peek', label: 'Peek', type: 'range', min: 0, max: 32, step: 2, default: 14, unit: 'px', group: 'Stack', help: 'Each card sticks this much lower than the one before, so the edges of the pile show.', prompt: (v) => (v ? `Each card sticks ${v} px below the one before, so the pile’s edges show (default 14 px)` : 'All cards stick at the same top: no peeking edges') },
+  ],
+  prompt: {
+    skill: 'component',
+    ask: 'Stack {target} as sticky cards that settle.',
+    target: 'the services section',
+    brief: 'Every card is position: sticky at top 12 svh (min-height 70 svh, 18 svh apart). As the next card travels from the bottom of the viewport to its sticky top, a scrubbed tween (scrub 0.4) scales the card beneath to 0.92 − 0.02 × its index from its top centre and dims it, so the pile reads as depth rather than a list.',
+    keep: ['no pin; real articles with headings; still sticky but no scale or dim under reduced motion.'],
+  },
+};

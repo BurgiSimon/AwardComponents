@@ -102,13 +102,15 @@ export default function mount(root, options, ctx) {
       const pool = sign.filter((el) => el.textContent.trim());
       const el = pool[Math.floor(Math.random() * pool.length)];
       const step = cfg.step / 1000;
-      g.add(() => gsap.to(el, { keyframes: [0.15, 1, 0.3, 0.1, 1].map((o) => ({ opacity: o, duration: step })), ease: 'none', onUpdate: bloom }));
+      gsap.to(el, { keyframes: [0.15, 1, 0.3, 0.1, 1].map((o) => ({ opacity: o, duration: step })), ease: 'none', onUpdate: bloom });
       scheduleFault();
     });
   };
   let onScreen = false;
   const startLoop = () => { if (full && onScreen && cfg.trigger === 'loop' && !fault) scheduleFault(); };
   const stopLoop = () => { fault?.kill(); fault = null; };
+  // The loop's tweens live outside the context (it may run for hours), so they are killed here.
+  ctx.onCleanup(() => gsap.killTweensOf(sign));
   ctx.onCleanup(stopLoop);
 
   document.fonts.ready.then(() => {

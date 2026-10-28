@@ -5,7 +5,7 @@
 // mixed from the library's tokens and materials, so they hold in light and dark. Scrub mode blends across each
 // boundary instead. Reduced motion: the swap is instant but still happens, because it carries wayfinding.
 import './demo.css';
-import { on, observeResize, readToken, clamp, html, raw, photos, imageHTML, content } from '../../src/demo-kit/index.js';
+import { on, observeResize, readToken, html, raw, photos, imageHTML, content } from '../../src/demo-kit/index.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
 import { useLenis } from '../../src/demo-kit/lenis.js';
 
@@ -47,9 +47,9 @@ export default function mount(root, options, ctx) {
   const { festival } = content;
   let cfg = { ...options };
   const pics = {
-    day: photos({ tags: ['water'], count: 2, seed: 'st-day' }),
-    dusk: photos({ tags: ['warm'], count: 2, seed: 'st-dusk' }),
-    night: photos({ tags: ['night'], count: 2, seed: 'st-night' }),
+    day: photos({ tags: ['light'], not: ['art', 'city'], count: 2, seed: 'st-day' }),
+    dusk: photos({ tags: ['warm'], not: ['art', 'object'], count: 2, seed: 'st-dusk' }),
+    night: photos({ tags: ['dark'], not: ['art'], count: 2, seed: 'st-night' }),
   };
   const CHAPTERS = [
     { id: 'day', n: '01', hours: '12:00 – 18:00', where: `${festival.stages[0]} stage`, lede: 'Noon on the harbour front. The first sets are acoustic, and the ferry queue is shortest before one.', acts: [['12:00', 'Moss Theory', 'Harbour'], ['13:30', 'Hana Ekström', 'Harbour'], ['15:00', 'Sundial', 'Harbour'], ['16:45', 'Kiri Tanaka', 'Harbour']] },

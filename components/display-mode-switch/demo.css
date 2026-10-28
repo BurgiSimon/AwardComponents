@@ -1,0 +1,106 @@
+.dm {
+  --cols: 12;
+  --col-gap: clamp(12px, 1.8vw, 24px);
+  min-height: 100svh;
+  overflow-x: clip;
+  background: var(--bg);
+  color: var(--ink);
+}
+/* A held switch answers in 400 ms. Under reduced motion and static the state changes with no transition. */
+.dm, .dm__bar, .dm__dock, .dm__switch, .dm__opt, .dm__grid-btn, .dm .ac-input, .dm__tile .ac-media {
+  transition: background-color 0.4s var(--ease-out), color 0.4s var(--ease-out), border-color 0.4s var(--ease-out);
+}
+:root:is([data-motion='reduced'], [data-motion='static']) :is(.dm, .dm__bar, .dm__dock, .dm__switch, .dm__opt, .dm__grid-btn, .dm .ac-input, .dm__tile .ac-media, .dm__overlay) { transition: none !important; }
+.dm a { text-decoration: none; }
+
+.dm__bar { gap: 24px; border-bottom: 1px solid var(--line); }
+.dm__bar nav { margin-left: auto; }
+.dm__bar nav a[aria-current] { color: var(--ink); }
+.dm__search .ac-input { width: 200px; min-height: 36px; border-radius: var(--radius-pill); font-size: var(--text-sm); }
+
+/* The page's real grid; the overlay draws the same columns. */
+.dm__grid { display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); column-gap: var(--col-gap); }
+.dm__intro { align-items: end; row-gap: 20px; padding-block: clamp(36px, 8vh, 96px) clamp(32px, 6vh, 72px); }
+.dm__title { font-size: clamp(2.8rem, 1.2rem + 5.4vw, 7rem); max-width: 12ch; }
+.dm__lede { align-self: end; }
+.dm__work { align-items: start; row-gap: clamp(36px, 6vw, 88px); padding-bottom: clamp(80px, 14vh, 160px); }
+.dm__tile { display: grid; gap: 12px; }
+.dm__tile .ac-media { border-radius: var(--radius-sm); }
+.dm__tile img { transition: transform var(--dur-l) var(--ease-out); }
+.dm__tile:is(:hover, :focus-visible) img { transform: scale(1.03); }
+.dm__tile--drop { margin-top: clamp(40px, 10vw, 140px); }
+.dm__cap { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: var(--text-sm); }
+.dm__cap strong { font-weight: 600; }
+.dm__cap span { color: var(--muted); }
+
+.dm__close { display: grid; place-content: center; justify-items: center; gap: 24px; min-height: 100svh; padding-block: 64px 120px; text-align: center; }
+.dm__close .ac-h1 { max-width: 15ch; }
+.dm__large { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px; margin-block: 16px; }
+.dm__contact { margin-top: 24px; }
+
+/* The switch: native radios under a sliding indicator, then the Grid button. */
+.dm__dock {
+  position: fixed;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  left: 50%;
+  translate: -50% 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-pill);
+  background: color-mix(in oklab, var(--surface) 90%, transparent);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  box-shadow: var(--shadow-2);
+  transform-origin: 50% 100%;
+}
+.dm[data-dock='left'] .dm__dock { left: var(--gutter); translate: none; transform-origin: 0 100%; }
+.dm[data-dock='right'] .dm__dock { left: auto; right: var(--gutter); translate: none; transform-origin: 100% 100%; }
+.dm__switch { position: relative; display: inline-flex; min-inline-size: 0; margin: 0; padding: 3px; border: 0; border-radius: var(--radius-pill); background: var(--bg-2); }
+.dm__ind { position: absolute; top: 3px; bottom: 3px; left: 0; width: 0; border-radius: var(--radius-pill); background: var(--ink); }
+.dm__opt { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 16px; border-radius: var(--radius-pill); color: var(--ink-2); font-size: var(--text-sm); font-weight: 600; cursor: pointer; }
+.dm__opt input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+.dm__opt:has(input:checked) { color: var(--bg); }
+.dm__opt:has(input:focus-visible) { outline: 2px solid var(--focus); outline-offset: 2px; }
+.dm__grid-btn { display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 14px 0 16px; border: 0; border-radius: var(--radius-pill); background: transparent; color: var(--ink); font-size: var(--text-sm); font-weight: 600; }
+.dm__grid-btn:hover { background: var(--bg-2); }
+.dm__grid-btn[aria-pressed='true'] { background: var(--accent-soft); color: var(--accent-ink); }
+.dm__bracket { font-family: var(--font-mono); font-size: 12px; font-weight: 500; }
+.dm__key { display: none; place-items: center; min-width: 18px; height: 18px; padding: 0 4px; border: 1px solid currentColor; border-radius: 4px; font-family: var(--font-mono); font-size: 10px; font-weight: 500; line-height: 1; opacity: 0.55; }
+.dm--hints .dm__key { display: inline-grid; }
+
+.dm__large .dm__switch { padding: 5px; }
+.dm__large .dm__ind { top: 5px; bottom: 5px; }
+.dm__large .dm__opt { min-height: 64px; padding: 0 28px; font-size: clamp(1.15rem, 0.9rem + 0.9vw, 1.5rem); font-stretch: var(--wide); }
+.dm__large .dm__grid-btn { min-height: 74px; padding: 0 26px; border: 1px solid var(--line-2); font-size: clamp(1.15rem, 0.9rem + 0.9vw, 1.5rem); font-stretch: var(--wide); }
+.dm__large .dm__key { min-width: 22px; height: 22px; font-size: 12px; }
+
+/* The overlay: the same columns as the page, over everything, never in the way. */
+.dm__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 25;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  column-gap: var(--col-gap);
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s var(--ease-out), visibility 0s linear 0.4s;
+}
+.dm__overlay span { background: color-mix(in oklab, var(--accent) 7%, transparent); border-inline: 1px solid color-mix(in oklab, var(--accent) 45%, transparent); }
+.dm[data-grid='on'] .dm__overlay { opacity: 1; visibility: visible; transition: opacity 0.4s var(--ease-out), visibility 0s; }
+
+@media (max-width: 900px) {
+  .dm__search { display: none; }
+}
+@media (max-width: 760px) {
+  .dm__bar nav { display: none; }
+  .dm__tile--drop { margin-top: 0; }
+  .dm--hints .dm__key { display: none; }
+  .dm__dock, .dm[data-dock] .dm__dock { left: 50%; right: auto; translate: -50% 0; transform-origin: 50% 100%; }
+  .dm__opt { padding: 0 14px; }
+}

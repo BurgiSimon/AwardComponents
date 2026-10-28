@@ -1,0 +1,38 @@
+export default {
+  id: 'sound-toggle',
+  title: 'Sound toggle',
+  category: 'cursors-buttons',
+  summary: 'A studio site’s header sound switch, off until asked: a live equaliser icon, a quiet synthesised room tone, soft clicks on the navigation, and a remembered yes that waits for a gesture.',
+  description: 'Three states: off, armed and on, and only the last one has ever touched an AudioContext, because the context is built inside the click. The bed is two detuned sines and a band of filtered noise swept by a slow LFO; the cues are one-shot blips; the icon is an AnalyserNode drawn into the button. No audio file ships.\n\nA stored yes brings the switch back pressed but armed: the first press anywhere on the page starts the sound.',
+  recipe: 'sound-toggle-opt-in',
+  deps: [],
+  tags: ['sound', 'audio', 'web-audio', 'toggle', 'button', 'canvas', 'header', 'opt-in'],
+  requires: ['web-audio'],
+  added: '2026-10-28',
+  order: 40,
+  preview: { height: 600, hint: 'Turn the sound on, then hover the menu', capture: { action: 'toggle', wait: 1400 } },
+  useCases: [
+    'An ambient sound switch for a portfolio, a festival or a product launch',
+    'Interface sounds on navigation and buttons, available only to those who asked for them',
+    'A podcast, film or music page where sound is the content but never the default',
+  ],
+  notes: [
+    'A real button whose name carries the state (“Sound off” / “Sound on”) and aria-pressed carries it again; the equaliser is an aria-hidden canvas inside it.',
+    'No AudioContext exists until the visitor presses the switch, and a hidden tab suspends it. The choice is stored inside try/catch.',
+    'Under reduced motion the equaliser holds its on pose and subscribes to no clock; the sound itself still plays.',
+  ],
+  controls: [
+    { id: 'bars', label: 'Bars', type: 'range', min: 3, max: 7, step: 1, default: 4, group: 'Icon', prompt: 'Equaliser icon with {value} bars (default {default})', when: { style: ['bars'] } },
+    { id: 'style', label: 'Icon style', type: 'select', options: [{ value: 'bars', label: 'Bars' }, { value: 'wave', label: 'Wave' }], default: 'bars', group: 'Icon', prompt: (v) => (v === 'wave' ? 'Draw the icon as a waveform line from the analyser’s time-domain data' : 'Draw the icon as equaliser bars from the analyser’s frequency data') },
+    { id: 'volume', label: 'Room tone level', type: 'range', min: 0.1, max: 0.6, step: 0.025, default: 0.375, group: 'Sound', help: 'The ambient bed’s gain; interface cues stay at .35.', prompt: 'Ambient bed at a gain of {value} (default {default}); cues at .35' },
+    { id: 'cues', label: 'Clicks on the menu', type: 'toggle', default: true, group: 'Sound', prompt: { on: 'Soft one-shot cues when the navigation is hovered or pressed, only while sound is on', off: 'No interface cues; the toggle only starts and stops the bed' } },
+  ],
+  actions: [{ id: 'toggle', label: 'Toggle sound' }],
+  prompt: {
+    skill: 'component',
+    ask: 'Add an opt-in sound toggle to {target}.',
+    target: 'the site header',
+    brief: 'Off by default, with three states (off, armed, on). Build the AudioContext inside the click: a bed of two detuned sines (110 and 165 Hz) through a 420 Hz lowpass swept by a 0.07 Hz LFO, under band-passed noise, at a gain of .375, and short triangle blips at .35 for cues. The icon is an AnalyserNode drawn to a canvas inside the button. Store the yes; on return the switch is armed and the first gesture starts the sound.',
+    keep: ['a real button named by its state with aria-pressed; no context before a gesture; suspend on hidden tabs; the icon still under reduced motion.'],
+  },
+};

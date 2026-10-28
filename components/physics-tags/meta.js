@@ -8,7 +8,7 @@ export default {
   tags: ['physics', 'matter-js', 'pile', 'drag', 'toy', 'footer', 'pointer'],
   added: '2026-10-28',
   order: 30,
-  preview: { height: 720, hint: 'Drag a pill, or press the box to shake it', capture: { wait: 3400 } },
+  preview: { height: 720, hint: 'Drag a pill, or press the box to shake it', capture: { wait: 900 } },
   actions: [{ id: 'drop', label: 'Drop again' }, { id: 'shake', label: 'Shake the box' }],
   useCases: [
     'A studio’s services or disciplines at the close of the page',
@@ -22,7 +22,7 @@ export default {
   ],
   controls: [
     { id: 'gravity', label: 'Gravity', type: 'range', min: 0.6, max: 4, step: 0.2, default: 2.4, group: 'Physics', help: 'In matter-js units (× 0.001): low floats down, high drops hard.', prompt: 'Gravity: y {value} at matter-js’s 0.001 scale (default {default})' },
-    { id: 'bounce', label: 'Bounce', type: 'range', min: 0, max: 0.7, step: 0.05, default: 0.12, group: 'Physics', help: 'Restitution of every piece.', prompt: 'Restitution: {value} (default {default})' },
+    { id: 'bounce', label: 'Bounce', type: 'range', min: 0, max: 0.7, step: 0.01, default: 0.12, group: 'Physics', help: 'Restitution of every piece.', prompt: 'Restitution: {value} (default {default})' },
     { id: 'shapes', label: 'Shapes', type: 'select', options: [{ value: 'mixed', label: 'Mixed' }, { value: 'pills', label: 'Pills only' }, { value: 'blocks', label: 'Blocks only' }], default: 'mixed', group: 'Look', prompt: 'Pieces: {value} (default {default}); each body is built from the piece’s measured box' },
     { id: 'palette', label: 'Colours', type: 'select', options: [{ value: 'materials', label: 'Materials' }, { value: 'ink', label: 'Ink and paper' }, { value: 'accent', label: 'Accent' }], default: 'materials', group: 'Look', prompt: 'Colours: {value}, from the page tokens (default {default})' },
   ],

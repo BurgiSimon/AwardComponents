@@ -1,0 +1,45 @@
+export default {
+  id: 'scene-cuts',
+  title: 'Scene cuts',
+  category: 'webgl',
+  summary: 'A festival trailer hero that cuts between three generated scenes in its final shader pass: a blur dip, a diamond iris over a frozen frame, and a close onto the footer.',
+  description: 'Three procedural scenes share one canvas and one render target. The cut between them is not a second scene composited on top: it is a few uniforms in the last pass, the one that already grades the frame. The blur dip runs out of image (full, half, then quarter resolution, then a flat colour) and swaps the scene where no seam can show. The iris renders the outgoing scene once into a cache and opens the new one inside a growing diamond, its edge drawn crisp on a 2D canvas.\n\nScroll to the footer and a third diamond closes onto the footer’s ground while the frame zooms, leaving a small window of the world over the last words.',
+  recipe: 'gl-grade-pass-scene-cuts',
+  deps: ['three'],
+  tags: ['webgl', 'three', 'shader', 'post-processing', 'transition', 'carousel', 'hero', 'scroll'],
+  requires: ['webgl'],
+  added: '2026-10-28',
+  order: 60,
+  preview: { height: 640, scroll: true, hint: 'Next, or scroll to the footer', capture: { action: 'iris', wait: 1400 } },
+  useCases: [
+    'A trailer-like hero for an event, a film or a launch with a few chapters to show',
+    'Chapter changes on a scroll story, cut in post instead of with overlaid panels',
+    'A footer that closes the page onto the brand’s ground colour',
+  ],
+  notes: [
+    'The hero is a carousel with real buttons: a step per day, previous, next and a pause that holds the autoplay; hover and focus hold it too.',
+    'Inactive slides are inert and hidden from assistive tech; both canvases are aria-hidden and ignore the pointer, and no cut ever hides text.',
+    'Under reduced motion there is no clock and no autoplay, and every cut is a hard switch. The static tier and browsers without WebGL get a CSS gradient per day.',
+  ],
+  controls: [
+    { id: 'cut', label: 'Cut', type: 'select', options: [{ value: 'mixed', label: 'Dip, then iris' }, { value: 'dip', label: 'Blur dip' }, { value: 'iris', label: 'Iris' }, { value: 'hard', label: 'Hard cut' }], default: 'mixed', group: 'Cuts', prompt: (v) => ({ mixed: 'Alternate the cuts: a blur dip into the second scene, a frozen-frame iris into the third', dip: 'Every cut is a blur dip to a flat colour', iris: 'Every cut is a frozen-frame diamond iris', hard: 'Hard cuts only' }[v]) },
+    { id: 'duration', label: 'Cut length', type: 'range', min: 0.4, max: 2.6, step: 0.1, default: 1.2, unit: 's', group: 'Cuts', prompt: 'Each cut runs {value} (default {default})' },
+    { id: 'autoplay', label: 'Autoplay', type: 'toggle', default: true, group: 'Timing', prompt: { on: 'Autoplay, held by hover, focus and a pause button', off: 'No autoplay: the visitor steps through' } },
+    { id: 'hold', label: 'Hold per scene', type: 'range', min: 2.5, max: 10, step: 0.5, default: 5, unit: 's', group: 'Timing', when: { autoplay: true }, prompt: 'Each scene holds for {value} (default {default})' },
+  ],
+  actions: [
+    { id: 'next', label: 'Next scene' },
+    { id: 'dip', label: 'Play a blur dip' },
+    { id: 'iris', label: 'Play an iris' },
+  ],
+  prompt: {
+    skill: 'webgl',
+    ask: 'Cut between the scenes of {target} in the final pass.',
+    target: 'the hero',
+    brief: 'All scenes render into one half-float target and the cuts are uniforms in the last pass: a blur dip (full-res 4-tap over 0–0.33, half-res over 0.25–0.67, quarter-res over 0.67–1, a flat colour over 0.8–1, the scene swapping at the peak) and an iris that renders the outgoing scene once into a cache and opens the new one inside a diamond sized by the frame’s own corner distance, its edge drawn on a 2D canvas. Scrolling into the footer closes a diamond onto the footer ground while the frame zooms.',
+    keep: [
+      'carousel semantics: real buttons, a pause, autoplay held by hover and focus, inactive slides inert',
+      'hard switches and no clock under reduced motion; a CSS gradient per scene without WebGL',
+    ],
+  },
+};

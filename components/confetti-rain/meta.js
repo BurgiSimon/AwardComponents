@@ -1,0 +1,36 @@
+export default {
+  id: 'confetti-rain',
+  title: 'Sprite rain',
+  category: 'closers',
+  summary: 'A festival’s ticket-confirmed page celebrates with a shower of shapes on one canvas: each shape drawn once and stamped, the count capped by the device tier, nothing under reduced motion.',
+  recipe: 'sprite-rain-canvas2d',
+  deps: [],
+  tags: ['canvas', 'confetti', 'particles', 'celebration', 'easter-egg', 'quality-tier'],
+  added: '2026-10-28',
+  order: 40,
+  preview: { height: 680, hint: 'Press Celebrate', capture: { action: 'celebrate', wait: 650 } },
+  actions: [{ id: 'celebrate', label: 'Celebrate' }],
+  useCases: [
+    'A purchase, booking or sign-up confirmation that deserves a moment',
+    'A like, a finished course or a completed checklist',
+    'An easter egg behind a logo or a footer button',
+  ],
+  notes: [
+    'One full-viewport canvas, aria-hidden and pointer-events: none, so text and links under the shower stay usable; a polite status line confirms each press.',
+    'Each shape is drawn once to an offscreen bitmap and stamped with drawImage; the live count is capped by the device tier (240, 140 or 56) and the clock is released when the last sprite leaves.',
+    'Under reduced motion nothing spawns and the status line says why; the confirmation itself is unchanged.',
+  ],
+  controls: [
+    { id: 'count', label: 'Sprites per burst', type: 'range', min: 30, max: 240, step: 10, default: 120, group: 'Shower', help: 'Capped by the device’s quality tier.', prompt: 'Sprites per burst: {value}, never more live than the device tier allows (default {default})' },
+    { id: 'gravity', label: 'Gravity', type: 'range', min: 0.15, max: 0.9, step: 0.05, default: 0.45, unit: 'px/frame²', group: 'Shower', help: 'Per frame at 60 fps, scaled by dt × 60 so every refresh rate falls alike.', prompt: 'Gravity: {value} at 60 fps, scaled by dt × 60 (default {default})' },
+    { id: 'origin', label: 'Origin', type: 'select', options: [{ value: 'top', label: 'Rain from the top' }, { value: 'burst', label: 'Burst from the button' }], default: 'top', group: 'Shower', prompt: 'Origin: {value} (default {default})' },
+    { id: 'sprites', label: 'Sprite set', type: 'select', options: [{ value: 'shapes', label: 'Festival shapes' }, { value: 'paper', label: 'Paper confetti' }, { value: 'sparks', label: 'Sparks' }], default: 'shapes', group: 'Look', prompt: 'Sprites: {value}, in the page’s material colours (default {default})' },
+  ],
+  prompt: {
+    skill: 'component',
+    ask: 'Add a celebration shower to {target}.',
+    target: 'the order confirmation',
+    brief: 'One full-viewport canvas 2D overlay: shapes are drawn once to offscreen bitmaps and stamped with drawImage and a rotation. Each sprite gets gravity 0.45 px/frame², a sideways drift and a spin, every step multiplied by dt × 60; the emitter spawns about 100 sprites over 1.2 s, the live count is capped by the quality tier, sprites are dropped as they leave the screen and the ticker is released when the last one goes.',
+    keep: ['canvas aria-hidden with pointer-events: none; a polite status line; nothing spawns under reduced motion; the DPR and pixel budget from the device tier.'],
+  },
+};

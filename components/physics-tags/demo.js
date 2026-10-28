@@ -197,6 +197,13 @@ export default function mount(root, options, ctx) {
       Composite.add(engine.world, items.map((it) => it.body));
       if (fine) attachMouse();
       Events.on(engine, 'beforeUpdate', clampMouse);
+      // The frame capture wants the settled heap: step it to rest at once (a few hundred steps, well under 100 ms).
+      if (ctx.capture) {
+        for (let i = 0; i < 1500 && !items.every((it) => it.body.isSleeping); i++) {
+          Engine.update(engine, STEP);
+          if (!ceiling && items.every((it) => it.body.bounds.min.y > P + 1)) closeLid();
+        }
+      }
       draw();
       wake();
     };

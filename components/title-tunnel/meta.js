@@ -1,0 +1,35 @@
+export default {
+  id: 'title-tunnel',
+  title: 'Title tunnel',
+  category: 'scroll',
+  summary: 'A “Work” heading set in a capsule becomes a doorway: the scroll grows it to fill the screen and the projects inside fly towards you in CSS 3D, still real links.',
+  recipe: 'title-mask-tunnel',
+  deps: ['gsap', 'lenis'],
+  tags: ['scroll', 'css-3d', 'mask', 'tunnel', 'perspective', 'scrub', 'sticky', 'scrolltrigger', 'gsap', 'lenis'],
+  added: '2026-10-28',
+  order: 110,
+  preview: { height: 680, scroll: true, hint: 'Scroll into the title, or Tab to a project', capture: { scroll: 0.3, wait: 1400 } },
+  useCases: [
+    'The way into a portfolio’s work section from its home page',
+    'A festival line-up or a collection walked through rather than scrolled past',
+    'Any section title that should feel like a door, not a label',
+  ],
+  notes: [
+    'Plain DOM in CSS 3D: the heading stays a real h2 and the projects a real list of links, before and inside the tunnel. No canvas, no WebGL.',
+    'Tabbing to a project scrolls to the point of the flight where it is in front, so focus is never on a speck at the far end.',
+    'Under reduced motion the section is the heading and a flat grid of projects, with no 3D transform and no scrub.',
+  ],
+  controls: [
+    { id: 'gap', label: 'Depth between cards', type: 'range', min: 400, max: 1200, step: 50, default: 700, unit: 'px', group: 'Tunnel', prompt: 'Cards {value} apart in z under a 900 px perspective (default {default})' },
+    { id: 'curve', label: 'Zoom curve', type: 'select', options: [{ value: 'exp', label: 'Exponential' }, { value: 'linear', label: 'Linear' }, { value: 'in', label: 'Ease in' }], default: 'exp', group: 'Tunnel', help: 'How the doorway’s scale follows the linear scrub: cover^k reads as a constant approach speed.', prompt: (v) => ({ exp: 'Zoom the capsule as scale = cover^k (k scrubbed 0 → 1), a constant perceived approach', linear: 'Zoom the capsule linearly from 1 to the cover scale', in: 'Zoom the capsule with an ease-in (k⁴), slow then rushing, like a power4.in on the scale' })[v] },
+    { id: 'count', label: 'Projects', type: 'range', min: 4, max: 8, step: 1, default: 6, group: 'Tunnel', prompt: '{value} projects in the tunnel (default {default})' },
+    { id: 'scrub', label: 'Scrub catch-up', type: 'range', min: 0, max: 1.5, step: 0.1, default: 0.6, unit: 's', group: 'Scroll', prompt: 'Scrub catch-up: {value} (default {default})' },
+  ],
+  prompt: {
+    skill: 'component',
+    ask: 'Turn the heading of {target} into a doorway with a CSS 3D tunnel behind it.',
+    target: 'the work section',
+    brief: 'A 500 svh section with a sticky stage. The heading sits in a capsule (border-radius 999px, overflow: clip) that scales up as cover^k, k scrubbed linearly 0 → 1, to the computed cover scale; the viewport-sized scene inside is counter-scaled by 1/s so the projects stay 1:1. The title fades as it passes. The projects sit at translate3d(x, y, −i × 700px) under a 900 px perspective and only the list moves in z, ending with the last project at z 0.',
+    keep: ['a real h2 and a real list of links; focus brings a project to the front; a flat grid with no 3D under reduced motion.'],
+  },
+};

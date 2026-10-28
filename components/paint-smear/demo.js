@@ -330,7 +330,7 @@ export default function mount(root, options, ctx) {
 
   // A scripted wipe (on load, and the "Smear the cover" action): a fast S across the cover, through the same brush.
   let script = null;
-  const scriptAt = (u) => ({ x: w * (0.12 + 0.76 * u), y: h * (0.3 + 0.38 * u + Math.sin(u * Math.PI * 2) * 0.12) });
+  const scriptAt = (u) => ({ x: w * (0.1 + 0.8 * u), y: h * (0.24 + 0.22 * u + Math.sin(u * Math.PI * 2) * 0.1) });
 
   const from = paintMat.uniforms.uFrom.value;
   const to = paintMat.uniforms.uTo.value;
@@ -409,6 +409,6 @@ export default function mount(root, options, ctx) {
       smearMat.uniforms.uColorMul.value = cfg.fringe;
       return true;
     },
-    action(id) { if (id === 'smear') smear(); },
+    action(id) { if (id === 'smear') { touched = true; smear(); } },
   };
 }

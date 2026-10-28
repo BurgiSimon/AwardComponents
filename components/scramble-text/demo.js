@@ -131,7 +131,7 @@ export default function mount(root, options, ctx) {
     if (ctx.signal.aborted) return;
     if (ctx.capture) {
       // The thumbnail: the arrival decode held part-way, the top rows landed and the rest still scrambling.
-      render({ force: true, paused: true }).forEach(([a, delay]) => a.seek(Math.max(0, 420 - delay)));
+      render({ force: true, paused: true }).forEach(([a, delay]) => a.seek(Math.max(0, 800 - delay)));
       return;
     }
     render({ force: true });

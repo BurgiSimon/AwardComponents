@@ -25,8 +25,8 @@ const BARS = raw('<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6h9M3 
 export default function mount(root, options, ctx) {
   const { festival } = content;
   let cfg = { ...options };
-  const [heroPic] = photos({ tags: ['night'], count: 1, seed: 'ms-hero', orientation: 'portrait' });
-  const dayPics = photos({ tags: ['people'], count: 3, seed: 'ms-days' });
+  const [heroPic] = photos({ tags: ['sky'], count: 1, seed: 'ms-hero', orientation: 'portrait' });
+  const dayPics = photos({ tags: ['landscape'], not: ['space'], count: 3, seed: 'ms-days' });
   const days = [
     { day: 'Thursday 12', stage: festival.stages[0], acts: festival.lineup.slice(0, 3), doors: 'Doors 16:00' },
     { day: 'Friday 13', stage: festival.stages[1], acts: festival.lineup.slice(3, 6), doors: 'Doors 15:00' },

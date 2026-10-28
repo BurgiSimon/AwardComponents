@@ -112,12 +112,13 @@ async function renderSequence({ count, size, hex, signal, onProgress, only }) {
   const indices = only != null ? [only] : [...Array(count).keys()];
   try {
     for (const i of indices) {
+      // One frame per animation frame: the page keeps painting (and the readout moving) while the sequence renders.
+      await new Promise((r) => requestAnimationFrame(r));
       if (signal.aborted) break;
       group.rotation.y = (i / count) * Math.PI * 2;
       renderer.render(scene, camera);
       frames[i] = await createImageBitmap(renderer.domElement);
       onProgress?.(frames.filter(Boolean).length, indices.length);
-      if (frames.length % 6 === 0) await new Promise((r) => setTimeout(r)); // let the readout paint
     }
   } finally {
     scene.traverse((o) => { o.geometry?.dispose(); [].concat(o.material || []).forEach((m) => m.dispose()); });
@@ -225,7 +226,7 @@ export default function mount(root, options, ctx) {
 
   // Frame size: the turntable's box at a capped density (frames are decoded bitmaps: memory grows with the square).
   const box = root.querySelector('.fs__turntable').getBoundingClientRect();
-  const size = clamp(Math.round(Math.min(box.width, box.height) * Math.min(devicePixelRatio || 1, 1.5)), 320, 560);
+  const size = clamp(Math.round(Math.min(box.width, box.height) * Math.min(devicePixelRatio || 1, 1.5)), 300, 480);
   canvas.width = canvas.height = size;
   const still = Math.round(count * 0.38); // the chosen frame under reduced motion: a three-quarter view
 

@@ -1,0 +1,42 @@
+.gr { min-height: 100svh; overflow-x: clip; }
+.gr a { text-decoration: none; }
+.gr__brand { font-family: var(--font-serif); font-stretch: normal; font-style: italic; font-weight: 600; font-size: 1.35rem; letter-spacing: -0.01em; }
+.gr__bar nav a[aria-current='page'] { color: var(--ink); }
+
+/* Until the headings are armed (fonts in, at most 2.5 s) they hold at zero opacity, so the text never shows,
+   vanishes into the pool and then condenses. */
+.gr--wait [data-goo] { opacity: 0; }
+
+.gr__open { display: grid; gap: 22px; padding-block: clamp(24px, 6vh, 64px) clamp(28px, 5vh, 44px); }
+.gr__title { max-width: 8ch; font-family: var(--font-serif); font-variation-settings: 'opsz' 36; font-size: clamp(3.6rem, 1rem + 10vw, 11rem); font-weight: 560; line-height: 0.86; letter-spacing: -0.04em; }
+.gr__meta { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 16px 40px; padding-top: 20px; border-top: 1px solid var(--line); }
+.gr__dek { max-width: 28ch; font-family: var(--font-serif); font-style: italic; font-size: clamp(1.35rem, 1rem + 1.2vw, 2rem); line-height: 1.2; color: var(--ink-2); }
+.gr__by { text-align: right; line-height: 1.7; }
+@media (max-width: 1000px) { .gr__by { text-align: left; } }
+
+.gr__fig { display: grid; gap: 10px; margin-bottom: clamp(40px, 8vh, 80px); }
+.gr__pic { --ratio: 21 / 9; border-radius: var(--radius-lg); }
+
+.gr__body { padding-bottom: clamp(80px, 16vh, 180px); }
+.gr__body p { margin-bottom: 1.1em; font-family: var(--font-serif); font-size: clamp(1.125rem, 1rem + 0.4vw, 1.3rem); line-height: 1.6; color: var(--ink-2); text-wrap: pretty; }
+.gr__h2 {
+  margin: clamp(48px, 9vh, 96px) 0 clamp(28px, 5vh, 48px);
+  font-family: var(--font-serif);
+  font-variation-settings: 'opsz' 36;
+  font-size: clamp(2rem, 1rem + 3.4vw, 3.6rem);
+  font-weight: 520;
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+/* Reduced motion never filters text, even if a line were armed before the tier was read. */
+:root[data-motion='reduced'] .gr__line,
+:root[data-motion='static'] .gr__line { filter: none !important; }
+.gr__defs { position: absolute; width: 0; height: 0; overflow: hidden; pointer-events: none; }
+
+@media (max-width: 760px) {
+  .gr__bar nav { display: none; }
+  .gr__pic { --ratio: 4 / 3; }
+}

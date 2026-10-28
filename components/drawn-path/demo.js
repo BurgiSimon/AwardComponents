@@ -38,7 +38,7 @@ export default function mount(root, options, ctx) {
 
     <section class="dp__route ac-wrap" data-route aria-label="Timeline, 1976 to ${tern.year}">
       <svg class="dp__svg" data-svg aria-hidden="true" focusable="false">
-        <defs><mask id="${maskId}" maskUnits="userSpaceOnUse"><path class="dp__mask-path" data-mask-path/></mask></defs>
+        <defs><mask id="${maskId}" maskUnits="userSpaceOnUse"><path class="dp__mask-path" data-mask-path fill="none" stroke="#fff" stroke-linecap="round"/></mask></defs>
         <path class="dp__ghost" data-ghost/>
         <path class="dp__line" data-line/>
         <path class="dp__measure" data-measure/>

@@ -1,0 +1,4 @@
+/* Extruded logo. Tokens and primitives come from src/demo-kit/base.css; use var(--…) for every colour. */
+.sl {
+  min-height: 100svh;
+}
