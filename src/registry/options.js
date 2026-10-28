@@ -18,7 +18,7 @@
 export const RESERVED_PARAMS = ['c', 'theme', 'motion', 'embed', 'capture', 'tier', 'viewport', 'frame'];
 
 export const SWATCHES = [
-  { value: 'accent', label: 'Vermilion', hex: '#ff5420' },
+  { value: 'accent', label: 'Vermilion', hex: '#f94c16' },
   { value: 'ink', label: 'Ink', hex: '#121211' },
   { value: 'clay', label: 'Clay', hex: '#c9744b' },
   { value: 'moss', label: 'Moss', hex: '#6e7b4c' },

@@ -1,6 +1,6 @@
 // The welcome page: what the library is, how a prompt is made (a live, tunable example), the categories, a few
 // featured components, anything new, and how to install the awards plugin.
-import { components, groups, featured, byId } from '../../registry/index.js';
+import { components, groups, featured, loadComponent } from '../../registry/index.js';
 import { site } from '../../registry/site.js';
 import { resolve } from '../../registry/options.js';
 import { html, raw, href, reducedMotion } from '../dom.js';
@@ -29,8 +29,8 @@ function wall() {
     </div>`;
 }
 
-export default function welcomePage() {
-  const example = byId.get(EXAMPLE) || featured[0] || components[0];
+export default async function welcomePage() {
+  const example = await loadComponent(EXAMPLE) || await loadComponent((featured[0] || components[0]).id);
   const fresh = components.filter((c) => c.labels.includes('new'));
   const picks = (featured.length ? featured : components).slice(0, 6);
 
@@ -56,7 +56,7 @@ export default function welcomePage() {
     <section class="facts" aria-label="At a glance">
       <div><strong>${components.length}</strong><span>components, one per awards recipe</span></div>
       <div><strong>${groups.length}</strong><span>categories, from cursors to WebGL</span></div>
-      <div><strong>${components.filter((c) => c.controls.length).length}</strong><span>with live controls</span></div>
+      <div><strong>${components.filter((c) => c.controlCount).length}</strong><span>with live controls</span></div>
       <div><strong>2</strong><span>agents: Claude Code and Codex</span></div>
     </section>
 

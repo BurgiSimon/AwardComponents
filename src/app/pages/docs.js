@@ -1,5 +1,5 @@
 // Getting started: install the plugin, use a prompt, what a prompt contains, shortcuts, adding components.
-import { byId, components } from '../../registry/index.js';
+import { components, loadComponent } from '../../registry/index.js';
 import { site } from '../../registry/site.js';
 import { resolve } from '../../registry/options.js';
 import { buildPrompt } from '../../registry/prompt.js';
@@ -7,8 +7,8 @@ import { html, raw, href, escapeHTML } from '../dom.js';
 import { icon } from '../icons.js';
 import { bindCopy } from '../ui/copy.js';
 
-export default function docsPage() {
-  const example = byId.get('magnetic-button') || components[0];
+export default async function docsPage() {
+  const example = await loadComponent('magnetic-button') || await loadComponent(components[0]?.id);
   const sample = example
     ? buildPrompt(example, { ...resolve(example, {}), ...Object.fromEntries((example.controls || []).slice(0, 1).map((c) => [c.id, c.type === 'range' ? c.max : c.default])) }, { target: 'the “Book a call” button in the hero', url: `${location.origin}${href(`/components/${example.id}/`)}` }).text
     : '';

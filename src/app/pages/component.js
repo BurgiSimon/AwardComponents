@@ -1,10 +1,9 @@
 // A component page: header, the workbench (live preview + tweak panel), the prompt, details and code.
-import { byId, components } from '../../registry/index.js';
+import { components, loadComponent } from '../../registry/index.js';
 import { categoryById } from '../../registry/categories.js';
 import { resolve, fromParams, toParams } from '../../registry/options.js';
 import { features, unsupported } from '../../registry/features.js';
 import { TECH_LABELS } from '../../registry/normalize.js';
-import recipesData from '../../registry/recipes.json';
 import { site } from '../../registry/site.js';
 import { html, raw, href, debounce, escapeHTML } from '../dom.js';
 import { icon } from '../icons.js';
@@ -19,14 +18,17 @@ import { frameImg } from '../frames.js';
 import { prefs } from '../prefs.js';
 import notFound from './not-found.js';
 
-const sources = import.meta.glob('/components/*/{demo.js,demo.css,meta.js}', { query: '?raw', import: 'default' });
 
 function list(items) {
   return items?.length ? `<ul class="ticks">${items.map((t) => `<li>${escapeHTML(t)}</li>`).join('')}</ul>` : '';
 }
 
+// The recipe snapshot loads with the first component page, not with the shell.
+let recipesData = null;
+const loadRecipes = () => import('../../registry/recipes.json').then((m) => (recipesData = m.default));
+
 function recipeCard(id) {
-  const r = recipesData.recipes[id];
+  const r = recipesData?.recipes[id];
   if (!r) return '';
   const seen = r.seen;
   return html`
@@ -39,10 +41,10 @@ function recipeCard(id) {
     </a>`;
 }
 
-export default function componentPage({ params, query }) {
-  const c = byId.get(params[0]);
+export default async function componentPage({ params, query }) {
+  const c = await loadComponent(params[0]);
   if (!c) return notFound();
-  const index = components.indexOf(c);
+  const index = components.findIndex((x) => x.id === c.id);
   const prev = components[index - 1];
   const next = components[index + 1];
   const cat = categoryById.get(c.category);
@@ -92,7 +94,7 @@ export default function componentPage({ params, query }) {
           </div>
           <aside class="overview__side">
             <h3>Built from</h3>
-            ${raw(c.recipes.map(recipeCard).join(''))}
+            <div data-slot="recipes">${raw(recipesData ? c.recipes.map(recipeCard).join('') : '')}</div>
             ${c.deps.length ? raw(`<h3>Libraries in the demo</h3><ul class="deps">${c.deps.map((d) => `<li><code>${escapeHTML(d)}</code></li>`).join('')}</ul>`) : raw('<h3>Libraries in the demo</h3><p class="muted">None — plain CSS and a little JavaScript.</p>')}
             ${c.tags.length ? raw(`<h3>Tags</h3><p class="tags">${c.tags.map((t) => `<a class="tag" href="${href(`/components/?q=${encodeURIComponent(t)}`)}">${escapeHTML(t)}</a>`).join('')}</p>`) : ''}
           </aside>
@@ -116,6 +118,8 @@ export default function componentPage({ params, query }) {
       ${prev ? raw(html`<a class="pager__link" href="${href(`/components/${prev.id}/`)}" rel="prev"><span class="pager__k">${raw(icon('arrowLeft', { size: 14 }))} Previous</span><span class="pager__t">${prev.title}</span>${raw(frameImg(prev.id, { size: 'sm' }))}</a>`) : raw('<span></span>')}
       ${next ? raw(html`<a class="pager__link pager__link--next" href="${href(`/components/${next.id}/`)}" rel="next"><span class="pager__k">Next ${raw(icon('arrowRight', { size: 14 }))}</span><span class="pager__t">${next.title}</span>${raw(frameImg(next.id, { size: 'sm' }))}</a>`) : raw('<span></span>')}
     </nav>`;
+
+  if (!recipesData) loadRecipes().then(() => { const slot = node.querySelector('[data-slot="recipes"]'); if (slot) slot.innerHTML = c.recipes.map(recipeCard).join(''); });
 
   const syncUrl = debounce(() => setQuery(toParams(c, values)), 250);
 
@@ -177,11 +181,11 @@ export default function componentPage({ params, query }) {
   // Code tab: sources load on first open.
   let codeText = '';
   async function loadFile(file) {
-    const loader = sources[`/components/${c.id}/${file}`];
     const box = node.querySelector('[data-code]');
     node.querySelectorAll('[data-file]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.file === file)));
-    if (!loader) { box.textContent = `${file} is not part of this component.`; codeText = ''; return; }
-    codeText = await loader();
+    const res = await fetch(href(`source/${c.id}/${file}.txt`)).catch(() => null);
+    if (!res?.ok) { box.textContent = `${file} is not part of this component.`; codeText = ''; return; }
+    codeText = await res.text();
     box.innerHTML = highlight(codeText, file.endsWith('.css') ? 'css' : 'js');
   }
   node.querySelector('.code__files').addEventListener('click', (e) => {

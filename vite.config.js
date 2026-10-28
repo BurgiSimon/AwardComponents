@@ -5,6 +5,8 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'node:path';
 import { routes } from './scripts/lib/routes.js';
+import { componentIndex } from './scripts/lib/index-plugin.js';
+import { componentSources } from './scripts/lib/sources-plugin.js';
 
 const base = process.env.BASE_PATH || '/';
 
@@ -24,5 +26,5 @@ export default defineConfig({
     },
   },
   server: { port: 5173 },
-  plugins: [routes({ base, siteUrl: process.env.SITE_URL || '' })],
+  plugins: [componentIndex(), componentSources(), routes({ base, siteUrl: process.env.SITE_URL || '' })],
 });

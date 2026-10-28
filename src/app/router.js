@@ -76,6 +76,7 @@ async function go(href, { initial = false, pop = false, scroll = 0 } = {}) {
   if (!initial && document.startViewTransition && !reducedMotion()) {
     document.documentElement.classList.add('route-swap');
     const vt = document.startViewTransition(swap);
-    vt.finished.finally(() => document.documentElement.classList.remove('route-swap'));
+    vt.ready.catch(() => {});
+    vt.finished.catch(() => {}).finally(() => document.documentElement.classList.remove('route-swap'));
   } else swap();
 }

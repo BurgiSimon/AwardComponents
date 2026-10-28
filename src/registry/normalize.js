@@ -40,6 +40,8 @@ export function normalize(meta) {
     preview: { height: 600, scroll: false, ...(meta.preview || {}) },
     controls: meta.controls || [],
     actions: meta.actions || [],
+    controlCount: meta.controlCount ?? (meta.controls || []).length,
+    actionCount: meta.actionCount ?? (meta.actions || []).length,
     tags: meta.tags || [],
   };
   c.labels = labelsFor(c);

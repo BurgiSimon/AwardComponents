@@ -9,8 +9,6 @@ import { startRouter } from './router.js';
 import welcome from './pages/welcome.js';
 import browse from './pages/browse.js';
 import component from './pages/component.js';
-import docs from './pages/docs.js';
-import changelog from './pages/changelog.js';
 import notFound from './pages/not-found.js';
 
 initTheme();
@@ -23,8 +21,8 @@ startRouter(
     [/^\/$/, welcome],
     [/^\/components\/?$/, browse],
     [/^\/components\/([a-z0-9-]+)\/?$/, ({ params, query }) => component({ params, query })],
-    [/^\/docs\/?$/, docs],
-    [/^\/changelog\/?$/, changelog],
+    [/^\/docs\/?$/, (ctx) => import('./pages/docs.js').then((m) => m.default(ctx))],
+    [/^\/changelog\/?$/, (ctx) => import('./pages/changelog.js').then((m) => m.default(ctx))],
     [/^\/404$/, notFound],
   ],
   (result, info) => {

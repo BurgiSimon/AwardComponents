@@ -49,7 +49,7 @@ export function createPreview(c, getValues, { height, compact = false, onReady, 
       <button class="icon-btn icon-btn--sm" type="button" data-motion aria-pressed="false" title="Preview with reduced motion" aria-label="Preview with reduced motion">${raw(icon('motion', { size: 16 }))}</button>
       <button class="icon-btn icon-btn--sm" type="button" data-replay title="Restart the demo" aria-label="Restart the demo">${raw(icon('refresh', { size: 16 }))}</button>
       ${compact ? '' : raw(html`
-      <a class="icon-btn icon-btn--sm" data-open target="_blank" rel="noopener" title="Open in a new tab" aria-label="Open the demo in a new tab" data-external>${raw(icon('arrowUpRight', { size: 16 }))}</a>
+      <a class="icon-btn icon-btn--sm" href="${playUrl(c, getValues(), { embed: false })}" data-open target="_blank" rel="noopener" title="Open in a new tab" aria-label="Open the demo in a new tab" data-external>${raw(icon('arrowUpRight', { size: 16 }))}</a>
       <button class="icon-btn icon-btn--sm" type="button" data-full title="Fullscreen" aria-label="Show the preview fullscreen">${raw(icon('maximize', { size: 16 }))}</button>`)}
     </div>
     <div class="preview__stage" data-viewport="${viewport}">
@@ -96,14 +96,14 @@ export function createPreview(c, getValues, { height, compact = false, onReady, 
     viewport = id;
     prefs.set('viewport', id);
     stage.dataset.viewport = id;
-    root.querySelectorAll('[data-viewport]').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.viewport === id)));
+    root.querySelectorAll('button[data-viewport]').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.viewport === id)));
     const w = VIEWPORTS.find((v) => v.id === id)?.width || 0;
     stage.style.setProperty('--device-w', w ? `${w}px` : '100%');
   };
   setViewport(viewport);
 
   root.addEventListener('click', (e) => {
-    const vp = e.target.closest('[data-viewport]');
+    const vp = e.target.closest('button[data-viewport]');
     if (vp) { setViewport(vp.dataset.viewport); return; }
     const act = e.target.closest('[data-action]');
     if (act) { post('ac:action', { action: act.dataset.action }); return; }

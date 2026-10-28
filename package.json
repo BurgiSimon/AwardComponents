@@ -16,6 +16,7 @@
     "new": "node scripts/new-component.mjs",
     "smoke": "node scripts/smoke.mjs",
     "frames": "node scripts/frames.mjs",
+    "shot": "node scripts/shot.mjs",
     "sync-recipes": "node scripts/sync-recipes.mjs"
   },
   "dependencies": {

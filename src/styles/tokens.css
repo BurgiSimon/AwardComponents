@@ -13,18 +13,18 @@
   --raised: #ffffff;
   --ink: #121211;
   --ink-2: #474742;
-  --muted: #74746c;
+  --muted: #68685f;
   --faint: #a3a39b;
   --line: rgb(18 18 17 / 0.1);
   --line-2: rgb(18 18 17 / 0.16);
   --scrim: rgb(12 12 11 / 0.42);
 
-  /* The one accent: vermilion, the colour of an award seal. Fills and marks use --accent;
-     text on a light ground uses --accent-ink, which keeps 4.5:1. */
-  --accent: #ff5420;
+  /* The one accent: vermilion, the colour of an award seal. Fills, marks and display type use --accent (3:1 on
+     the ground); small text on a light ground uses --accent-ink (5:1). Text on an accent fill is dark: --on-accent. */
+  --accent: #f94c16;
   --accent-ink: #c6370b;
-  --accent-soft: rgb(255 84 32 / 0.12);
-  --on-accent: #ffffff;
+  --accent-soft: rgb(249 76 22 / 0.12);
+  --on-accent: #160803;
 
   /* Content materials: the five colours demo content may use for cards, pills, charts and stand-in art.
      Muted on purpose so a page of demos still reads as one set. */
@@ -40,6 +40,7 @@
   --warn: #b7791f;
   --danger: #c93c2c;
   --focus: #2f5dff;
+  --info-ink: #1f3fbf;
 
   /* Type */
   --font-sans: 'Mona Sans Variable', 'Mona Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -123,6 +124,7 @@
   --warn: #e0a447;
   --danger: #ef6a58;
   --focus: #7d9bff;
+  --info-ink: #a9bbff;
 
   --shadow-1: 0 1px 2px rgb(0 0 0 / 0.5);
   --shadow-2: 0 10px 30px -10px rgb(0 0 0 / 0.7), 0 2px 6px rgb(0 0 0 / 0.4);

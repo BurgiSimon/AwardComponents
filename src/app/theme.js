@@ -26,7 +26,9 @@ export function setTheme(theme) {
   const swap = () => apply(theme);
   if (document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
     document.documentElement.classList.add('theme-swap');
-    document.startViewTransition(swap).finished.finally(() => document.documentElement.classList.remove('theme-swap'));
+    const vt = document.startViewTransition(swap);
+    vt.ready.catch(() => {});
+    vt.finished.catch(() => {}).finally(() => document.documentElement.classList.remove('theme-swap'));
   } else swap();
 }
 
