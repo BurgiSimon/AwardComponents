@@ -1,0 +1,42 @@
+export default {
+  id: 'counter-preloader',
+  title: 'Counter preloader',
+  category: 'loaders-transitions',
+  summary: 'A festival’s opening panel counts what is really loading in uneven jumps, holds at 100 for a beat, then lifts away as the headline rises line by line.',
+  description: 'The number never runs ahead of the truth: its ceiling is the share of real promises that have settled (the type, each hero picture’s decode and the programme data), and it climbs toward that ceiling in jumps of 3 to 14. At 100 it holds for a beat, the number lifts out of its mask and the panel leaves, either whole or as a curtain of strips, while the hero headline rises underneath.\n\nA flag in sessionStorage skips the whole thing on a repeat visit in the same session. Restart the preview to see that path, or press Replay to clear the flag and watch it again.',
+  recipe: 'preloader-counter-hold',
+  deps: ['gsap'],
+  tags: ['preloader', 'loading', 'counter', 'intro', 'gsap', 'session'],
+  added: '2026-10-28',
+  order: 10,
+  preview: { height: 620, capture: { wait: 600 } },
+  useCases: [
+    'The first visit to a festival, label or launch site that has heavy pictures above the fold',
+    'A portfolio whose hero is a WebGL scene: count its asset promises instead of a timer',
+    'A boot screen for a campaign page, shown once per session and never again',
+  ],
+  notes: [
+    'A Skip button is the first stop for the keyboard, the page underneath is inert until the panel leaves, and the panel is hidden from assistive tech afterwards.',
+    'Screen readers hear a polite status at each real milestone, not every number the counter shows.',
+    'Under reduced motion the count and a 300 ms hold remain, then the panel fades out and the headline is simply there. Repeat visits in a session skip it entirely.',
+  ],
+  controls: [
+    { id: 'style', label: 'Counter', type: 'select', options: [{ value: 'number', label: 'Big number' }, { value: 'bar', label: 'Bar' }, { value: 'both', label: 'Both' }], default: 'both', group: 'Look', prompt: 'Show the progress as {value} (default {default})' },
+    { id: 'accent', label: 'Colour', type: 'color', default: 'accent', group: 'Look', prompt: 'Progress colour: {value} (default {default})' },
+    { id: 'tick', label: 'Tick', type: 'range', min: 40, max: 200, step: 10, default: 90, unit: 'ms', group: 'Timing', help: 'How often the number jumps toward the real progress, 3 to 14 at a time.', prompt: 'The number jumps 3–14 every {value} toward the real progress (default {default})' },
+    { id: 'hold', label: 'Hold at 100', type: 'range', min: 0, max: 1500, step: 50, default: 450, unit: 'ms', group: 'Timing', prompt: 'Hold at 100 for {value} before the exit (default {default})' },
+    { id: 'exit', label: 'Exit', type: 'select', options: [{ value: 'lines', label: 'Lift' }, { value: 'curtain', label: 'Curtain' }], default: 'lines', group: 'Timing', help: 'Lift moves the panel up whole; Curtain raises it in six strips, one after another.', prompt: (v) => (v === 'curtain' ? 'Exit: the panel rises as a curtain of six strips staggered from the left' : 'Exit: the panel lifts away whole') },
+    { id: 'repeat', label: 'Skip on repeat visits', type: 'toggle', default: true, group: 'Behaviour', help: 'Restart the preview to see the repeat-visit path.', prompt: { on: 'Skip it on repeat visits in the same session (a sessionStorage flag)', off: 'Show it on every load' } },
+  ],
+  actions: [{ id: 'replay', label: 'Replay', icon: 'refresh' }],
+  prompt: {
+    skill: 'component',
+    ask: 'Add a counting preloader to {target}.',
+    target: 'the home page',
+    brief: 'A full-screen panel counts what is actually loading: fonts, the hero pictures’ decodes and the page’s data. The number chases done ÷ total in uneven jumps of 3–14 every 90 ms but never overtakes it, holds at 100 for 450 ms, then lifts out of its mask (0.8 s, expo.in) while the panel exits upward (0.9 s, expo.inOut) and the hero headline rises line by line (1.4 s, stagger 0.09).',
+    keep: [
+      'a Skip button, a polite status at each real milestone, the page inert underneath, and the panel hidden afterwards',
+      'reduced motion keeps the count and a 300 ms hold, then fades to the hero with its lines in place',
+    ],
+  },
+};

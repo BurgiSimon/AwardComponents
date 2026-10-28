@@ -1,0 +1,4 @@
+/* Autoplay tabs. Tokens and primitives come from src/demo-kit/base.css; use var(--…) for every colour. */
+.at {
+  min-height: 100svh;
+}

@@ -1,0 +1,36 @@
+export default {
+  id: 'spec-sheet',
+  title: 'Specification sheet',
+  category: 'commerce',
+  summary: 'A lamp’s product page where the facts are a real description list: switch size or metric and imperial units and the values and a dimensioned drawing update in place.',
+  recipe: 'product-specification',
+  deps: [],
+  tags: ['product', 'specification', 'description-list', 'details', 'units', 'responsive', 'accessibility'],
+  added: '2026-10-28',
+  order: 10,
+  preview: { height: 760, hint: 'Switch the size or the units' },
+  useCases: [
+    'The facts block of a furniture, lighting or hardware product page',
+    'A technical sheet where buyers in two markets read different units',
+    'Any page where care, delivery and returns belong beside the product, not on another page',
+  ],
+  notes: [
+    'The facts are one <dl> of term and description pairs with the units as real text, so they read and copy as written.',
+    'Size and units are native radio groups; care and delivery are <details> disclosures that need no script.',
+    'Changed values rise into place; under reduced motion they only fade, and the drawing changes without moving.',
+  ],
+  controls: [
+    { id: 'layout', label: 'Layout', type: 'select', options: [{ value: 'split', label: 'Two columns' }, { value: 'stacked', label: 'Stacked' }], default: 'split', group: 'Layout', help: 'Stacked puts a wide picture band above the facts.', prompt: 'Layout on wide screens: {value} (default {default}); one column on phones, picture first' },
+    { id: 'units', label: 'Units', type: 'select', options: [{ value: 'metric', label: 'Metric (cm, kg)' }, { value: 'imperial', label: 'Imperial (in, lb)' }], default: 'metric', group: 'Layout', prompt: 'Open in {value} units (default {default}); the switch stays on the page' },
+    { id: 'change', label: 'Value change', type: 'select', options: [{ value: 'rise', label: 'Rise' }, { value: 'fade', label: 'Fade' }, { value: 'none', label: 'Instant' }], default: 'rise', group: 'Motion', help: 'How a value that changed with the size or the units comes in.', prompt: 'Changed values: {value} (default {default}; fade only under reduced motion)' },
+    { id: 'drawing', label: 'Dimension drawing', type: 'toggle', default: true, group: 'Content', prompt: { on: 'A dimensioned line drawing beside the picture that follows the size and the units', off: 'No dimension drawing; the list carries the measurements alone' } },
+    { id: 'care', label: 'Care and delivery', type: 'toggle', default: true, group: 'Content', prompt: { on: 'Care and delivery as native <details> disclosures under the facts', off: 'No disclosures under the facts' } },
+  ],
+  prompt: {
+    skill: 'component',
+    ask: 'Build the specification block of {target}.',
+    target: 'the product page',
+    brief: 'A product photo beside a ruled <dl> of term and description pairs with the units as real text. A size choice and a metric/imperial switch (native radios) rewrite the values in place, each changed value rising about 0.4 em into place with a 30 ms stagger, and a dimensioned line drawing follows both. Care and delivery sit under the facts as native <details>. One column on phones, picture first.',
+    keep: ['term/description pairs in reading order; native radios and <details>; values fade only under reduced motion.'],
+  },
+};

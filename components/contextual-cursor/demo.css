@@ -1,0 +1,174 @@
+.cc {
+  --cc-ring: 40px;
+  --cc-badge: var(--accent);
+  --cc-badge-ink: var(--on-accent);
+  --cc-ink: var(--ink);
+  --cc-light: var(--surface);
+  --cc-on-night: var(--bg);
+  min-height: 100svh;
+  overflow-x: clip;
+}
+:root[data-theme='dark'] .cc { --cc-light: var(--ink); --cc-on-night: var(--ink); }
+.cc a { text-decoration: none; }
+.cc.has-cursor, .cc.has-cursor * { cursor: none; }
+
+.cc__bar nav a[aria-current] { color: var(--ink); }
+.cc__main { padding-bottom: 40px; }
+.cc__intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 26rem);
+  align-items: end;
+  gap: 16px 48px;
+  padding-block: clamp(20px, 4vh, 44px) clamp(22px, 3.4vh, 36px);
+}
+.cc__intro .ac-lede { font-size: var(--text-md); justify-self: end; }
+
+/* The work grid: a lead project beside the reel, then rows of three and of two. */
+.cc__grid {
+  --h: clamp(220px, 27vw, 360px);
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: clamp(28px, 3.4vw, 44px) clamp(14px, 1.6vw, 22px);
+  margin: 0;
+}
+.cc__item { grid-column: span 4; min-width: 0; }
+.cc__item--reel { display: grid; gap: 12px; align-content: start; }
+.cc__item--lead, .cc__item--reel { --h: clamp(240px, 37vw, 500px); }
+.cc__item--lead, .cc__item--wide { grid-column: span 7; }
+.cc__item--reel, .cc__item--narrow { grid-column: span 5; }
+.cc__item--wide, .cc__item--narrow { --h: clamp(220px, 30vw, 420px); }
+
+.cc__card { display: grid; gap: 12px; color: inherit; border-radius: var(--radius-md); }
+.cc__media { display: block; height: var(--h); aspect-ratio: auto; border-radius: var(--radius-md); }
+.cc__media img { transition: transform var(--dur-l) var(--ease-out); }
+.cc__card:is(:hover, :focus-visible) .cc__media img { transform: scale(1.035); }
+.cc__cap { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: var(--text-sm); }
+.cc__cap strong { font-weight: 640; }
+.cc__cap span { color: var(--muted); white-space: nowrap; }
+
+/* The reel: a real toggle button laid over its picture, with a scrim under the copy. */
+.cc__reel { display: block; width: 100%; padding: 0; border: 0; background: none; text-align: left; border-radius: var(--radius-md); }
+.cc__media--reel { background: var(--night); }
+.cc__media--reel img, .cc__media--reel video { animation: cc-drift 16s var(--ease-in-out) infinite alternate paused; transform-origin: 60% 40%; }
+.cc__reel[aria-pressed='true'] .cc__media--reel :is(img, video) { animation-play-state: running; }
+.cc__reel-veil { position: absolute; inset: 0; background: linear-gradient(to top, color-mix(in oklab, var(--night) 86%, transparent) 0%, color-mix(in oklab, var(--night) 30%, transparent) 46%, transparent 72%); }
+.cc__reel-copy { position: absolute; inset: auto 0 0; display: grid; gap: 10px; padding: clamp(16px, 2vw, 26px); color: var(--cc-on-night); }
+.cc__reel-copy .ac-label { color: color-mix(in oklab, var(--cc-on-night) 72%, transparent); }
+.cc__reel-title { font-size: clamp(1.15rem, 0.8rem + 1vw, 1.6rem); font-weight: 680; font-stretch: 108%; line-height: 1.12; letter-spacing: -0.015em; max-width: 18ch; text-wrap: balance; }
+.cc__reel-bar { display: flex; align-items: center; gap: 14px; margin-top: 6px; }
+.cc__reel-play { display: grid; place-items: center; flex: none; width: 42px; height: 42px; border-radius: 50%; background: var(--cc-on-night); color: var(--night); transition: transform var(--dur-s) var(--ease-out); }
+.cc__reel-play svg { grid-area: 1 / 1; width: 16px; height: 16px; }
+.cc__reel-play svg:nth-of-type(2), .cc__reel[aria-pressed='true'] .cc__reel-play svg:first-of-type { display: none; }
+.cc__reel[aria-pressed='true'] .cc__reel-play svg:nth-of-type(2) { display: block; }
+.cc__reel:is(:hover, :focus-visible) .cc__reel-play { transform: scale(1.06); }
+.cc__progress { flex: 1; height: 2px; border-radius: 2px; background: color-mix(in oklab, var(--cc-on-night) 28%, transparent); overflow: hidden; }
+.cc__progress span { display: block; height: 100%; background: var(--cc-on-night); transform-origin: left; transform: scaleX(0); animation: cc-progress 102s linear infinite paused; }
+.cc__reel[aria-pressed='true'] .cc__progress span { animation-play-state: running; }
+.cc__time { color: var(--cc-on-night) !important; }
+@keyframes cc-progress { to { transform: scaleX(1); } }
+@keyframes cc-drift { from { transform: scale(1.02); } to { transform: scale(1.12) translate(-2%, 1%); } }
+
+/* The workshop strip: native sideways overflow, mouse drag on top. */
+.cc__workshop { display: grid; gap: 18px; margin-top: clamp(56px, 8vw, 96px); padding-top: 28px; border-top: 1px solid var(--line); }
+.cc__ws-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px 24px; flex-wrap: wrap; }
+.cc__strip {
+  display: flex;
+  gap: clamp(12px, 1.4vw, 18px);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  padding-bottom: 14px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-2) transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 64px), transparent);
+  mask-image: linear-gradient(90deg, #000 calc(100% - 64px), transparent);
+}
+.cc__shot { flex: 0 0 clamp(180px, 21vw, 270px); display: grid; gap: 8px; }
+.cc__shot .cc__media { height: auto; aspect-ratio: 4 / 5; border-radius: var(--radius-sm); }
+.cc__shot img { pointer-events: none; }
+.cc__foot { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--line); }
+@media (hover: hover) and (pointer: fine) { .cc__touch-hint { display: none; } }
+
+/* The cursor layer: aria-hidden, never hit-tested, faded in on the first move. */
+.cc__cursor { display: contents; }
+.cc__layer { position: fixed; inset: 0; z-index: 40; pointer-events: none; opacity: 0; transition: opacity var(--dur-s) var(--ease-out); }
+.is-visible .cc__layer { opacity: 1; }
+/* Difference: the ring and the dot invert what they pass over; the badge stays a normal fill so it can be read. */
+.cc[data-blend='difference'] .cc__layer--marks { mix-blend-mode: difference; --cc-ink: var(--cc-light); }
+.cc__follow { position: absolute; left: 0; top: 0; will-change: transform; }
+.cc__ring {
+  position: absolute;
+  left: calc(var(--cc-ring) / -2);
+  top: calc(var(--cc-ring) / -2);
+  width: var(--cc-ring);
+  height: var(--cc-ring);
+  border-radius: 50%;
+  border: 1.5px solid var(--cc-ink);
+  opacity: 0.35;
+  transition: transform var(--dur-m) var(--ease-out), opacity var(--dur-s) var(--ease-out), width var(--dur-s), height var(--dur-s), left var(--dur-s), top var(--dur-s);
+}
+.cc__dot { position: absolute; left: -4px; top: -4px; width: 8px; height: 8px; border-radius: 50%; background: var(--cc-ink); transition: transform var(--dur-s) var(--ease-out); }
+.is-hover .cc__ring { transform: scale(1.35); opacity: 0.8; }
+.is-hover .cc__dot { transform: scale(0.7); }
+
+/* Disc badge: the ring hands over to a filled disc that names the gesture. */
+.cc__disc {
+  position: absolute;
+  left: -46px;
+  top: -46px;
+  width: 92px;
+  height: 92px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--cc-badge);
+  color: var(--cc-badge-ink);
+  opacity: 0;
+  transform: scale(0.35);
+  transition: transform var(--dur-m) var(--ease-out), opacity var(--dur-s) var(--ease-out);
+}
+.cc__disc-label { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 640; letter-spacing: -0.005em; }
+.cc__disc-label svg { width: 14px; height: 14px; }
+.cc[data-badge='disc'] .has-badge .cc__disc { opacity: 1; transform: scale(1); }
+.cc[data-badge='disc'] .has-badge .cc__ring { transform: scale(2); opacity: 0; }
+.cc[data-badge='disc'] .has-badge .cc__dot { transform: scale(0); }
+.cc[data-badge='disc'].is-pressing .has-badge .cc__disc { transform: scale(0.86); }
+
+/* Tag badge: the recipe's own form, a label 14 px off the dot. */
+.cc__tag {
+  position: absolute;
+  left: 14px;
+  top: 14px;
+  padding: 5px 9px;
+  border-radius: var(--radius-pill);
+  background: var(--cc-badge);
+  color: var(--cc-badge-ink);
+  font: 600 10.5px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  transform: scale(0.8);
+  transform-origin: 0 0;
+  transition: opacity var(--dur-s) var(--ease-out), transform var(--dur-m) var(--ease-out);
+}
+.cc[data-badge='tag'] .has-badge .cc__tag { opacity: 1; transform: none; }
+
+/* Reduced motion: no lag (handled in script), no growing; the badge fades in place. */
+:root:is([data-motion='reduced'], [data-motion='static']) .cc__disc { transform: none; transition: opacity var(--dur-s); }
+:root:is([data-motion='reduced'], [data-motion='static']) .cc__ring,
+:root:is([data-motion='reduced'], [data-motion='static']) .cc__tag { transition: opacity var(--dur-s); }
+:root:is([data-motion='reduced'], [data-motion='static']) .cc__media img { transition: none; }
+:root:is([data-motion='reduced'], [data-motion='static']) .cc__media--reel :is(img, video) { animation: none; }
+
+@media (max-width: 720px) {
+  .cc__intro { grid-template-columns: 1fr; }
+  .cc__intro .ac-lede { justify-self: start; }
+  .cc__grid { grid-template-columns: 1fr; }
+  .cc__item, .cc__item--lead, .cc__item--reel, .cc__item--wide, .cc__item--narrow { grid-column: auto; --h: clamp(220px, 64vw, 380px); }
+  .cc__item--reel { --h: clamp(300px, 92vw, 420px); }
+}
+@media (max-width: 560px) {
+  .cc__bar nav a:not([aria-current]) { display: none; }
+}

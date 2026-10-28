@@ -1,0 +1,147 @@
+.vw {
+  --vw-glow: 1;
+  --vw-seam: var(--sand);
+  --vw-on: color-mix(in oklab, var(--sand) 12%, white);
+  --vw-light: color-mix(in oklab, var(--vw-seam) 28%, white);
+  --vw-pad: clamp(20px, 3.6vw, 52px);
+  height: 100svh;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  overflow: clip;
+  background: var(--bg);
+}
+.vw a { text-decoration: none; }
+.vw__edition { font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.06em; color: var(--muted); font-stretch: 100%; }
+.vw__bar nav a[aria-current] { color: var(--ink); }
+
+/* The framed stage: two media buffers, the seam and a legibility shade under the copy. */
+.vw__frame {
+  position: relative;
+  margin-inline: var(--gutter);
+  border-radius: var(--radius-xl);
+  overflow: clip;
+  isolation: isolate;
+  background: var(--night);
+  touch-action: pinch-zoom;
+}
+.vw__media { position: absolute; inset: 0; }
+.vw__layer { position: absolute; inset: 0; visibility: hidden; overflow: clip; }
+.vw__layer.is-front { visibility: visible; z-index: 1; }
+.vw__layer.is-incoming { visibility: visible; z-index: 2; }
+.vw__layer :is(img, video) { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; }
+.vw__layer [hidden] { display: none; }
+/* Photos stand in for footage with one slow push-in per change; a <video> plays instead when the set has clips. */
+:root[data-motion='full'] .vw__layer:is(.is-front, .is-incoming) img { animation: vw-drift 9s var(--ease-out) both; }
+.vw.is-away .vw__layer img { animation-play-state: paused; }
+@keyframes vw-drift { from { transform: scale(1.09) translate3d(-1.2%, 0.6%, 0); } to { transform: scale(1.02); } }
+
+/* The seam: a full-frame box translated by its own size × progress; its leading edge is the 1 px light. */
+.vw__seam { position: absolute; inset: 0; z-index: 3; opacity: 0; pointer-events: none; will-change: transform; }
+.vw__seam::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 1px;
+  background: var(--vw-light);
+  box-shadow: 0 0 calc(32px * var(--vw-glow)) calc(7px * var(--vw-glow)) color-mix(in oklab, var(--vw-light) 45%, transparent);
+}
+.vw[data-dir='rise'] .vw__seam::before { inset: 0 0 auto 0; width: auto; height: 1px; }
+.vw__shade {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, color-mix(in oklab, var(--night) 70%, transparent), transparent 66%),
+    linear-gradient(0deg, color-mix(in oklab, var(--night) 62%, transparent), transparent 46%);
+}
+
+/* The deck: panels share the frame; only the active one (and the one leaving) is visible. */
+.vw__deck { position: absolute; inset: 0; z-index: 5; }
+.vw__panel {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-content: end;
+  padding: var(--vw-pad);
+  color: var(--vw-on);
+  visibility: hidden;
+}
+.vw__panel:is(.is-active, .is-leaving) { visibility: visible; }
+.vw__copy { display: grid; gap: 14px; max-width: 40rem; }
+.vw__kicker { color: color-mix(in oklab, var(--vw-on) 76%, transparent); }
+.vw__title { font-size: clamp(2.6rem, 1.1rem + 6.4vw, 7.6rem); line-height: 0.9; }
+.vw__body { max-width: 44ch; font-size: var(--text-lg); line-height: 1.45; color: color-mix(in oklab, var(--vw-on) 86%, transparent); text-wrap: pretty; }
+.vw__acts { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 4px; font-size: var(--text-sm); font-weight: 620; }
+.vw__acts li { display: inline-flex; align-items: baseline; gap: 8px; white-space: nowrap; }
+.vw__acts .ac-label { color: color-mix(in oklab, var(--vw-on) 62%, transparent); }
+.vw__cap {
+  position: absolute;
+  top: var(--vw-pad);
+  right: var(--vw-pad);
+  padding: 7px 12px;
+  border: 1px solid color-mix(in oklab, var(--vw-on) 30%, transparent);
+  border-radius: var(--radius-pill);
+  background: color-mix(in oklab, var(--night) 34%, transparent);
+  color: var(--vw-on);
+}
+
+/* The stage list under the frame: each segment fills on the same clock as the wipe. */
+.vw__nav { display: flex; align-items: center; gap: clamp(14px, 2.4vw, 32px); padding: 10px var(--gutter) 16px; }
+.vw__tabs { flex: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(8px, 1.4vw, 18px); margin: 0; }
+.vw__tab {
+  position: relative;
+  width: 100%;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0 4px;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-size: var(--text-sm);
+  font-weight: 620;
+  text-align: left;
+  transition: color var(--dur-s) var(--ease-out);
+}
+.vw__tab:hover { color: var(--ink-2); }
+.vw__tab[aria-current] { color: var(--ink); }
+.vw__tab-n { color: inherit; }
+.vw__tab-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vw__tab-bar { position: absolute; inset: 0 0 auto; height: 2px; border-radius: 2px; background: var(--line-2); overflow: hidden; }
+.vw__tab-bar::after { content: ''; position: absolute; inset: 0; background: var(--ink); transform-origin: left; transform: scaleX(var(--p, 0)); }
+.vw__count { min-width: 6ch; text-align: center; color: var(--ink-2); }
+.vw__keys { display: flex; gap: 8px; }
+.vw__key {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line-2);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--ink);
+  transition: background-color var(--dur-s), border-color var(--dur-s), opacity var(--dur-s);
+}
+.vw__key:hover { background: var(--bg-2); }
+.vw__key svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.vw__key[aria-disabled='true'] { opacity: 0.38; cursor: default; }
+
+/* Reduced motion: a .2 s cross-fade, no seam and no push-in. */
+:root[data-motion='reduced'] .vw__seam,
+:root[data-motion='static'] .vw__seam { display: none; }
+
+@media (max-width: 720px) {
+  .vw__bar nav { display: none; }
+  .vw__tab-name { display: none; }
+  .vw__tab { justify-content: center; }
+  .vw__count { display: none; }
+}
+@media (max-width: 560px) {
+  .vw__frame { margin-inline: 12px; border-radius: var(--radius-lg); }
+  .vw__shade { background: linear-gradient(0deg, color-mix(in oklab, var(--night) 82%, transparent), color-mix(in oklab, var(--night) 30%, transparent) 62%, transparent); }
+  .vw__body { font-size: var(--text-md); }
+  .vw__nav { padding-inline: 12px; }
+  .vw__bar .ac-btn { padding-inline: 0.8em; }
+}

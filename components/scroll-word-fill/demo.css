@@ -1,0 +1,75 @@
+.swf { --swf-length: 300svh; --swf-hi: var(--accent-ink); overflow-x: clip; }
+.swf a { text-decoration: none; }
+
+/* The bar sits over the stage so the section starts at the top and the stage is whole at scroll 0. */
+.swf__bar { position: absolute; top: 0; left: 0; right: 0; z-index: 2; }
+.swf__bar nav a[aria-current] { color: var(--ink); }
+
+/* The section consumes its own height; the stage inside it is sticky, so no pin spacer is injected. */
+.swf__fill { position: relative; height: var(--swf-length); }
+.swf__stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 24px;
+  padding-block: 84px clamp(20px, 4vh, 36px);
+}
+.swf__top { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.swf__label { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); }
+.swf__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+
+.swf__statement {
+  align-self: center;
+  max-width: 23ch;
+  font-size: clamp(1.85rem, 0.7rem + 3.9vw, 4.7rem);
+  font-weight: 620;
+  font-stretch: 112%;
+  line-height: 1.04;
+  letter-spacing: -0.032em;
+  text-wrap: pretty;
+}
+.swf__statement em { font-style: normal; color: var(--swf-hi); }
+
+.swf__sign { display: flex; align-items: center; gap: 14px; padding-top: 16px; border-top: 1px solid var(--line); }
+.swf__face { --ratio: 1; width: 44px; border-radius: 50%; flex: none; }
+.swf__sign p { display: grid; font-size: var(--text-sm); line-height: 1.35; }
+.swf__sign p span { color: var(--muted); }
+.swf__sign .swf__cue { margin-left: auto; display: inline-flex; align-items: center; gap: 10px; }
+.swf__cue::after { content: ''; width: 1px; height: 28px; background: linear-gradient(var(--ink), transparent); }
+:root[data-capture] .swf__cue { visibility: hidden; }
+
+/* After the fill. */
+.swf__after { display: grid; gap: clamp(32px, 5vw, 56px); padding-block: clamp(72px, 12vh, 140px) clamp(48px, 8vh, 96px); }
+.swf__after .ac-h2 { max-width: 22ch; }
+.swf__list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(20px, 3vw, 40px); margin: 0; }
+.swf__list li { display: grid; gap: 10px; align-content: start; padding-top: 18px; border-top: 1px solid var(--line-2); }
+.swf__list .ac-label { color: var(--accent-ink); }
+.swf__strip { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 2vw, 20px); }
+.swf__strip figure { display: grid; gap: 10px; }
+.swf__strip .ac-media { --ratio: 4 / 3; border-radius: var(--radius-sm); }
+.swf__foot { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding-block: 28px 40px; border-top: 1px solid var(--line); font-size: var(--text-sm); }
+
+/* Reduced motion and static: no stage, no fill. Also before the script runs under prefers-reduced-motion. */
+.swf--still .swf__fill { height: auto; }
+.swf--still .swf__stage { position: static; height: auto; min-height: 100svh; }
+.swf--still .swf__sign .swf__cue { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .swf .swf-word, .swf .swf-char { opacity: 1 !important; }
+}
+
+@media (max-width: 760px) {
+  .swf__bar nav { gap: 16px; }
+  .swf__top p { display: none; }
+  .swf__list { grid-template-columns: 1fr; }
+  .swf__strip { grid-template-columns: 1fr 1fr; }
+  .swf__strip figure:nth-child(3) { display: none; }
+}
+@media (max-width: 480px) {
+  .swf__bar nav a:not([aria-current]):not(:first-child) { display: none; }
+  .swf__statement { font-size: clamp(1.7rem, 0.6rem + 5.6vw, 2.2rem); }
+  .swf__sign .swf__cue { display: none; }
+  .swf__strip { grid-template-columns: 1fr; }
+  .swf__strip figure:nth-child(2) { display: none; }
+}

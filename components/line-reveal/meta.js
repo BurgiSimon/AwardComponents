@@ -1,0 +1,40 @@
+export default {
+  id: 'line-reveal',
+  title: 'Masked line reveal',
+  category: 'text',
+  summary: 'A magazine story opener whose headline, dek and paragraphs rise line by line out of masks once the fonts have landed, each block firing once as it enters.',
+  recipe: 'split-text-masked-reveal',
+  deps: ['gsap', 'lenis'],
+  tags: ['text', 'splittext', 'reveal', 'mask', 'scroll', 'editorial', 'gsap', 'lenis'],
+  added: '2026-10-28',
+  order: 10,
+  preview: { height: 640, scroll: true, hint: 'Scroll — each block rises once as it enters', capture: { wait: 2400 } },
+  useCases: [
+    'The opener of a long read: headline, dek and byline set in order',
+    'Chapter headings and pull quotes on a studio or magazine site',
+    'A product page whose statements arrive one line at a time as the visitor reads down',
+  ],
+  notes: [
+    'The split waits for the fonts, so the lines it measures are the lines a reader sees; a resize re-splits and rebuilds without leaving text hidden.',
+    'Headings keep their level and get an aria-label with the whole sentence; split paragraphs are hidden from assistive tech behind a visually hidden copy, so sentences are read whole.',
+    'Under reduced motion nothing is split: each block fades in for 0.4 s. In the static tier the text is simply there.',
+  ],
+  controls: [
+    { id: 'unit', label: 'Split headlines by', type: 'select', options: [{ value: 'lines', label: 'Lines' }, { value: 'words', label: 'Words' }, { value: 'chars', label: 'Characters' }], default: 'lines', group: 'Split', help: 'Headlines and the pull quote. Body copy always reveals by lines.', prompt: 'Split headlines by {value}; body copy always by lines (default {default})' },
+    { id: 'stagger', label: 'Stagger', type: 'range', min: 0, max: 0.3, step: 0.01, default: 0.1, unit: 's', group: 'Split', help: 'Between lines. Words step at 30 % of it, characters at 12 %.', prompt: 'Stagger: {value} between lines, 30 % of that between words, 12 % between characters (default {default})' },
+    { id: 'duration', label: 'Duration', type: 'range', min: 0.4, max: 2.4, step: 0.1, default: 1.4, unit: 's', group: 'Motion', prompt: 'Each unit takes {value} to rise (default {default})' },
+    { id: 'direction', label: 'Rise from', type: 'select', options: [{ value: 'below', label: 'Below' }, { value: 'above', label: 'Above' }], default: 'below', group: 'Motion', prompt: 'Lines enter from {value} the mask (yPercent ±120; default {default})' },
+    { id: 'ease', label: 'Curve', type: 'select', options: [{ value: 'expo.out', label: 'Expo out' }, { value: 'quart.out', label: 'Quart out' }, { value: 'back.out(1.4)', label: 'Back out' }], default: 'expo.out', group: 'Motion', prompt: 'Ease: {value} (default {default})' },
+  ],
+  actions: [{ id: 'replay', label: 'Replay', icon: 'refresh' }],
+  prompt: {
+    skill: 'component',
+    ask: 'Reveal {target} line by line from masks.',
+    target: 'the article headline, dek and body copy',
+    brief: 'After document.fonts.ready, split each heading and paragraph into lines with GSAP SplitText (mask: lines, autoSplit, the tween built and returned inside onSplit). Lines rise from yPercent 120 to 0 over 1.4 s with expo-out and a 0.1 s stagger; the dek follows the headline by 0.5 s, and blocks below the fold fire once at top 85 %.',
+    keep: [
+      'text visible if the script never runs; headings keep their level with an aria-label, split paragraphs get a visually hidden whole copy.',
+      'no split under reduced motion: a 0.4 s fade per block; static shows the text at once.',
+    ],
+  },
+};
