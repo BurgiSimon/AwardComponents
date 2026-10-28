@@ -157,9 +157,10 @@ function applyOptions(next) {
 function setTheme(theme) {
   if (meta.theme === 'dark' || meta.theme === 'light') return;
   if (theme !== 'dark' && theme !== 'light') return;
+  // Record the site's theme first: a demo may already have set the same value itself, and unmount restores this.
+  if (snapshot) snapshot.html['data-theme'] = theme;
   if (theme === currentTheme()) return;
   html.dataset.theme = theme;
-  if (snapshot) snapshot.html['data-theme'] = theme;
   if (meta.preview?.remountOnTheme) { remount({ keepScroll: true }); return; }
   for (const fn of themeListeners) {
     try { fn(theme); } catch (e) { console.error(e); }

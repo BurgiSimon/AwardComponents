@@ -3,11 +3,19 @@
 // Every helper takes the ctx passed to mount() and registers its own teardown.
 import { ticker } from './ticker.js';
 
-// Subscribe to the shared ticker for the life of the mount.
+// Subscribe to the shared ticker for the life of the mount. The returned function unsubscribes early; loops that
+// start and stop many times (whileVisible) share one cleanup per mount instead of piling one up per start.
+const frameSets = new WeakMap();
 export function onFrame(ctx, fn) {
-  const off = ticker.add(fn);
-  ctx.onCleanup(off);
-  return off;
+  let set = frameSets.get(ctx);
+  if (!set) {
+    set = new Set();
+    frameSets.set(ctx, set);
+    ctx.onCleanup(() => { for (const f of set) ticker.remove(f); set.clear(); });
+  }
+  set.add(fn);
+  ticker.add(fn);
+  return () => { set.delete(fn); ticker.remove(fn); };
 }
 
 // addEventListener bound to the mount's AbortSignal.
