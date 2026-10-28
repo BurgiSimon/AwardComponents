@@ -196,7 +196,14 @@ export default function mount(root, options, ctx) {
   }
   document.title = `${TITLES[first]} — ${studio.name}`;
 
-  const onEnd = ({ to }) => to?.renderer?.content?.querySelector('h1')?.focus({ preventScroll: true });
+  // Focus follows a link into the new page, with a ring only when the link was pressed with a key. The toolbar's
+  // Next page (navigateTo, trigger false) leaves focus where it is.
+  let keyNav = false;
+  on(ctx, root, 'click', (e) => { keyNav = e.detail === 0; }, { capture: true });
+  const onEnd = ({ to, trigger }) => {
+    if (!trigger) return;
+    to?.renderer?.content?.querySelector('h1')?.focus({ preventScroll: true, focusVisible: keyNav && trigger !== 'popstate' });
+  };
   taxi.on('NAVIGATE_END', onEnd);
   ctx.onCleanup(() => {
     window.removeEventListener('popstate', taxi.onPopstate);

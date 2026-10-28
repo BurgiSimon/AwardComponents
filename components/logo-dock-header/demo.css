@@ -17,6 +17,8 @@
 .ld__nav a:hover, .ld__nav a[aria-current] { color: var(--ink); }
 .ld__line { position: absolute; left: 0; bottom: 9px; width: 0; height: 2px; border-radius: 1px; background: var(--ink); pointer-events: none; }
 .ld__bag { font-size: var(--text-sm); font-weight: 600; white-space: nowrap; }
+.ld__nav, .ld__bag { transition: opacity var(--dur-s) var(--ease-out); }
+.ld__bar.is-crossed :is(.ld__nav, .ld__bag) { opacity: 0; pointer-events: none; }
 
 /* The mark: laid out in the slot, drawn into the hero by a 2D transform. No will-change: painted, so it stays sharp. */
 .ld__mark { position: fixed; z-index: 21; top: calc((var(--bar) - var(--mark)) / 2); left: var(--edge); width: max-content; height: var(--mark); transform-origin: 0 0; border-radius: 2px; }

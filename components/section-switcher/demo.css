@@ -20,7 +20,7 @@
   inset: 0;
   background:
     linear-gradient(to top, color-mix(in oklab, var(--night) 82%, transparent) 0%, color-mix(in oklab, var(--night) 28%, transparent) 50%, transparent 72%),
-    linear-gradient(to bottom, color-mix(in oklab, var(--night) 46%, transparent), transparent 22%);
+    linear-gradient(to bottom, color-mix(in oklab, var(--night) 66%, transparent), color-mix(in oklab, var(--night) 30%, transparent) 12%, transparent 26%);
 }
 .sw__copy { position: absolute; left: var(--gutter); right: var(--gutter); bottom: clamp(104px, 15vh, 132px); display: grid; gap: 16px; max-width: 44rem; }
 .sw__copy .ac-display { font-size: clamp(3rem, 1.2rem + 5.6vw, 7rem); }

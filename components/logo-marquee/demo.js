@@ -119,12 +119,20 @@ export default function mount(root, options, ctx) {
     row.querySelectorAll('img').forEach((img) => img.addEventListener('load', refill, { once: true, signal: ctx.signal }));
   });
   on(ctx, window, 'resize', () => rows.forEach((r) => r.track?.refill()));
+  // The fixed hint steps aside once the figures below reach it (at rest on a phone, or after a little scroll).
+  const hint = root.querySelector('.lm__hint');
+  const after = root.querySelector('.lm__after');
+  const placeHint = () => hint.classList.toggle('is-gone', after.getBoundingClientRect().top < innerHeight - 64);
+  on(ctx, window, 'scroll', placeHint, { passive: true });
+  on(ctx, window, 'resize', placeHint);
   apply();
+  placeHint();   // after apply: hiding the work row lifts the figures
+  document.fonts?.ready.then(placeHint);
 
   return {
     update(next, changed) {
       cfg = { ...next };
-      if (changed.some((k) => k === 'fade' || k === 'rows')) apply();
+      if (changed.some((k) => k === 'fade' || k === 'rows')) { apply(); placeHint(); }
     },
   };
 }

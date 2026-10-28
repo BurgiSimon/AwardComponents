@@ -67,7 +67,7 @@
 .mh__spot:hover .mh__dot { transform: scale(1.1); }
 .mh__spot:focus-visible { outline: none; }
 .mh__spot:focus-visible .mh__dot { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--focus); }
-.mh__spot[aria-pressed='true'] .mh__dot { background: var(--mh-accent); border-color: transparent; color: var(--on-accent); }
+.mh__spot[aria-pressed='true'] .mh__dot { background: var(--mh-accent); border: 2px solid var(--surface); color: var(--on-accent); }
 .mh__spot[aria-pressed='true'] .mh__name { background: var(--ink); color: var(--bg); }
 
 /* Numbered dots: the name stays the button's text, shown on hover, focus and selection. */

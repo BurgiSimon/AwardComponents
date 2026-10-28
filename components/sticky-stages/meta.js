@@ -8,7 +8,7 @@ export default {
   tags: ['scroll', 'sticky', 'scrub', 'hinge', 'scrolltrigger', 'gsap', 'lenis', 'product'],
   added: '2026-10-28',
   order: 20,
-  preview: { height: 660, scroll: true, hint: 'Scroll to swing the card away', capture: { scroll: 0.105, wait: 1400 } },
+  preview: { height: 660, scroll: true, hint: 'Scroll to swing the card away', capture: { scroll: 0.085, wait: 1400 } },
   useCases: [
     'A product launch: the hero card swings aside to open the making-of',
     'A process chapter (survey, sketch, build) where each step gets its own held beat',

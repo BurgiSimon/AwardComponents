@@ -6,7 +6,7 @@
 // its own id so a stale router never matches them. Reduced and static motion change the route at once.
 import './demo.css';
 import { Core, Renderer, Transition } from '@unseenco/taxi';
-import { html, raw, photo, allPhotos, imageHTML, content } from '../../src/demo-kit/index.js';
+import { on, html, raw, photo, allPhotos, imageHTML, content } from '../../src/demo-kit/index.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
 
 const PHONE = '(max-width: 48rem)';
@@ -218,7 +218,17 @@ export default function mount(root, options, ctx) {
   projects.forEach((p, i) => prime(urlFor(p.slug), `${p.title} — ${studio.name}`, caseView(p, i)));
   document.title = firstSlug ? `${projects.find((p) => p.slug === firstSlug).title} — ${studio.name}` : `Work — ${studio.name}`;
 
-  const onEnd = ({ to }) => to?.renderer?.content?.querySelector('h1')?.focus({ preventScroll: true });
+  // Focus follows a link into the new page, with a ring only when the link was pressed with a key. The toolbar's
+  // actions leave focus where it is.
+  let keyNav = false;
+  let fromAction = false;
+  on(ctx, root, 'click', (e) => { keyNav = e.detail === 0; }, { capture: true });
+  const onEnd = ({ to, trigger }) => {
+    const skip = fromAction;
+    fromAction = false;
+    if (skip) return;
+    to?.renderer?.content?.querySelector('h1')?.focus({ preventScroll: true, focusVisible: keyNav && trigger !== 'popstate' });
+  };
   taxi.on('NAVIGATE_END', onEnd);
   ctx.onCleanup(() => {
     window.removeEventListener('popstate', taxi.onPopstate);
@@ -240,9 +250,13 @@ export default function mount(root, options, ctx) {
       const view = root.querySelector('[data-taxi-view]:last-child');
       if (name === 'open' && view?.dataset.view === 'index') {
         const row = view.querySelectorAll('[data-row]')[2];
-        taxi.navigateTo(row.href, false, row).catch(() => {});
+        fromAction = true;
+        taxi.navigateTo(row.href, false, row).catch(() => { fromAction = false; });
       }
-      if (name === 'back' && view?.dataset.view === 'case') taxi.navigateTo(urlFor(null), false, back).catch(() => {});
+      if (name === 'back' && view?.dataset.view === 'case') {
+        fromAction = true;
+        taxi.navigateTo(urlFor(null), false, back).catch(() => { fromAction = false; });
+      }
     },
   };
 }

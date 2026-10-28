@@ -30,6 +30,8 @@
 .vw__layer.is-incoming { visibility: visible; z-index: 2; }
 .vw__layer :is(img, video) { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; }
 .vw__layer [hidden] { display: none; }
+/* Some clips in the set carry thin letterbox bars (the orbit time-lapse has 3 % top and bottom); a slight crop hides them. */
+.vw__layer video { transform: scale(1.08); }
 /* Photos stand in for footage with one slow push-in per change; a <video> plays instead when the set has clips. */
 :root[data-motion='full'] .vw__layer:is(.is-front, .is-incoming) img { animation: vw-drift 9s var(--ease-out) both; }
 .vw.is-away .vw__layer img { animation-play-state: paused; }

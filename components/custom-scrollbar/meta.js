@@ -10,7 +10,7 @@ export default {
   tags: ['scrollbar', 'scroll', 'drag', 'pointer', 'docs', 'navigation', 'lenis'],
   added: '2026-10-28',
   order: 40,
-  preview: { height: 680, scroll: true, hint: 'Drag the thumb on the right edge', capture: { scroll: 0.3, hover: '[data-track]', wait: 1000 } },
+  preview: { height: 680, scroll: true, hint: 'Drag the thumb on the right edge', capture: { scroll: 0.312, hover: '[data-track]', wait: 1000 } },
   useCases: [
     'Long documentation, guides and terms, where ticks show how the page is divided',
     'A portfolio or long read with a themed bar that matches the brand colour',

@@ -10,7 +10,7 @@
 .wr__scrim {
   pointer-events: none;
   background:
-    linear-gradient(0deg, color-mix(in oklab, var(--night) 78%, transparent) 0%, color-mix(in oklab, var(--night) 40%, transparent) 34%, transparent 62%),
+    linear-gradient(0deg, color-mix(in oklab, var(--night) 80%, transparent) 0%, color-mix(in oklab, var(--night) 54%, transparent) 38%, color-mix(in oklab, var(--night) 40%, transparent) 60%, transparent 82%),
     linear-gradient(180deg, color-mix(in oklab, var(--night) 22%, transparent), transparent 22%);
 }
 

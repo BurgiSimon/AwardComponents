@@ -31,13 +31,16 @@ const EDGE = 32;               // px a focused tile keeps from the stage edge
 const mod = (a, n) => ((a % n) + n) % n;
 const residue = (v, span) => mod(v + span / 2, span) - span / 2;   // the shortest way back round the wrap
 
-// One picture per project, by discipline, never twice; drawn fields fill in when the set runs out.
+// One picture per project, by discipline, never twice; when a discipline runs out, an unused material or site
+// picture stands in (a blurred drawn field reads as an image that failed to load); drawn fields only after that.
+const NEAR = ['texture', 'landscape'];
 function pictures(projects) {
   const pool = allPhotos();
   const taken = new Set();
+  const free = (tags) => pool.find((m) => tags.every((t) => m.tags?.includes(t)) && !taken.has(m.id));
   return projects.map((p) => {
-    const tags = TAGS[p.discipline] || [];
-    const hit = pool.find((m) => tags.every((t) => m.tags?.includes(t)) && !taken.has(m.id));
+    let hit = free(TAGS[p.discipline] || []);
+    for (const t of NEAR) hit ||= free([t]);
     if (hit) { taken.add(hit.id); return photo(hit.id); }
     return photo(`halden-${p.slug}`);
   });

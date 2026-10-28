@@ -114,6 +114,11 @@
 .ss--reveal [data-reveal].is-in { opacity: 1; transform: none; }
 :root[data-motion='reduced'] .ss--reveal [data-reveal] { transform: none; transition-duration: 0.4s; }
 
+/* Where the caption sits under the readout's column (the in-page preview, tablets, small laptops): the lead picture ends above the readout so its caption stays clear. */
+@media (min-width: 761px) and (max-width: 1200px) {
+  .ss__lead .ac-media { height: min(calc(95svh - 240px), 640px); }
+}
+
 @media (max-width: 900px) {
   .ss__issue, .ss__bar nav { display: none; }
   .ss__brand { margin-right: auto; }

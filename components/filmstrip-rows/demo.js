@@ -60,7 +60,7 @@ export default function mount(root, options, ctx) {
               <span class="fr__n ac-label">${String(i + 1).padStart(2, '0')} — ${p.discipline}</span>
               <span class="fr__name">${p.title}</span>
               <span class="fr__line">${p.summary}</span>
-              <span class="fr__info ac-label">${p.place} · ${p.year}<span class="fr__view"> · View project</span></span>
+              <span class="fr__info ac-label">${p.place} · ${p.year} <span class="fr__view">· View project</span></span>
             </a>
           </p>
           <div class="fr__reel" aria-hidden="true"><div class="fr__grow"><div class="fr__track" data-track>${raw(framesFor(p.slug, i).map(still).join('').repeat(2))}</div></div></div>

@@ -49,7 +49,9 @@
   z-index: 1;
   --c: color-mix(in oklab, var(--night) calc(var(--scrim) * 100%), transparent);
   --c2: color-mix(in oklab, var(--night) calc(var(--scrim) * 45%), transparent);
-  background: linear-gradient(var(--dir, 90deg), var(--c) 0%, var(--c2) 38%, transparent 66%);
+  /* The peak holds under the whole copy column (it ends 45–56 % across), so a light picture never shows through
+     the headline's last words or the ghost button. */
+  background: linear-gradient(var(--dir, 90deg), var(--c) 0%, var(--c) 42%, var(--c2) 64%, transparent 86%);
 }
 .adh[data-layout='overlay'][data-side='right'] .adh__media::after { --dir: 270deg; }
 .adh[data-layout='overlay'][data-side='bottom'] .adh__media::after { --dir: 0deg; }
@@ -101,7 +103,7 @@
   .adh[data-layout] .adh__media { position: relative; inset: auto; height: auto; width: 100%; aspect-ratio: 4 / 5; border-radius: var(--radius-lg); }
   .adh[data-layout='overlay'] .adh__hero { min-height: calc(100svh - 64px); padding: 0; align-items: end; }
   .adh[data-layout='overlay'] .adh__media { position: absolute; inset: 0; aspect-ratio: auto; border-radius: 0; }
-  .adh[data-layout='overlay'] .adh__media::after { --dir: 0deg; background: linear-gradient(0deg, var(--c) 0%, var(--c2) 45%, transparent 75%); }
+  .adh[data-layout='overlay'] .adh__media::after { --dir: 0deg; background: linear-gradient(0deg, var(--c) 0%, var(--c) 44%, var(--c2) 64%, transparent 86%); }
   .adh[data-layout='overlay'] .adh__copy { align-self: end; justify-self: stretch; padding: 24px var(--gutter) 32px; }
   .adh[data-layout='overlay'] .adh__cap { top: 14px; bottom: auto; right: 14px; left: auto; }
   .adh__actions .ac-btn { flex: 1 1 auto; }

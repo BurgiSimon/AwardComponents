@@ -6,14 +6,15 @@
 // controls only change the side, the measure and the type voice.
 import './demo.css';
 import '../../src/demo-kit/serif.css';
-import { on, html, raw, photos, imageHTML, content } from '../../src/demo-kit/index.js';
+import { on, html, raw, photo, photos, imageHTML, content } from '../../src/demo-kit/index.js';
 
 export default function mount(root, options, ctx) {
   const { magazine } = content;
   const article = magazine.articles[0];
   const next = magazine.articles[3];
   const [p1, p2, p3, p4, p5] = magazine.longRead;
-  const [lead] = photos({ tags: ['landscape'], count: 1, seed: 'ef-flats', orientation: 'portrait' });
+  // The caption names sand flats, so the lead is the sand picture, not a seeded landscape (that drew alpine snow).
+  const lead = photo('land-dunes', { fallbackTags: ['landscape', 'warm'] });
   const [inset] = photos({ tags: ['texture'], count: 1, seed: 'ef-salt' });
   root.className = 'ef';
   root.innerHTML = html`

@@ -46,7 +46,7 @@ const SECTION = `<svg viewBox="60 180 1920 823" preserveAspectRatio="xMidYMid me
   <g class="cs-dwg__people">${[640, 760, 880].map((x) => `<g transform="translate(${x} 652)"><path d="M-30 -58 h 70"/><path d="M28 -58 v 58"/><circle cx="-4" cy="-96" r="11"/><path d="M-4 -84 v 30 l 22 0 v 28"/></g>`).join('')}</g>
   <circle class="cs-dwg__sun" cx="190" cy="610" r="26"/>
   <path class="cs-dwg__ray" d="M216 604 L900 560"/>
-  <g class="cs-dwg__label"><text x="90" y="920">SOUND</text><text x="600" y="700">READING ROOM  +0.0</text><text x="1210" y="420">STACKS  +3.6</text><text x="210" y="580">NOON, JANUARY</text></g>
+  <g class="cs-dwg__label"><text x="90" y="920">SOUND</text><text x="600" y="686">READING ROOM  +0.0</text><text x="1210" y="420">STACKS  +3.6</text><text x="210" y="580">NOON, JANUARY</text></g>
 </svg>`;
 
 export default function mount(root, options, ctx) {

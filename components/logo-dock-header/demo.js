@@ -99,6 +99,10 @@ export default function mount(root, options, ctx) {
     copy.style.setProperty('--big', (r.width / mw).toFixed(4));
     const n = nav.getBoundingClientRect();
     geo.items = links.map((a) => { const b = a.getBoundingClientRect(); return { left: b.left - n.left, width: b.width }; });
+    geo.mw = mw;
+    geo.mh = mh;
+    geo.navLeft = n.left;
+    geo.barH = bar.offsetHeight;
   };
 
   let lastTransform = '';
@@ -115,6 +119,10 @@ export default function mount(root, options, ctx) {
       const ty = lerp(geo.ry - y - geo.sy, 0, e);
       const sc = lerp(big, 1, e);
       transform = e >= 1 ? 'none' : `translate(${tx.toFixed(2)}px, ${ty.toFixed(2)}px) scale(${sc.toFixed(4)})`;
+      // While the still-large name passes through the bar, the nav steps aside instead of being drawn over.
+      const top = geo.sy + ty;
+      const crossing = e < 1 && top < geo.barH && top + geo.mh * sc > 0 && geo.sx + tx + geo.mw * sc > geo.navLeft - 16;
+      bar.classList.toggle('is-crossed', crossing);
     } else {
       copy.classList.toggle('is-gone', raw_ > 0.5);
     }

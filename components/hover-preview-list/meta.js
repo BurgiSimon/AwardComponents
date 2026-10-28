@@ -9,7 +9,7 @@ export default {
   added: '2026-10-28',
   featured: true,
   order: 40,
-  preview: { height: 640, scroll: true, hint: 'Hover or Tab through the rows', capture: { pointer: [0.36, 0.56], wait: 1000 } },
+  preview: { height: 640, scroll: true, hint: 'Hover or Tab through the rows', capture: { pointer: [0.49, 0.58], wait: 1000 } },
   useCases: [
     'A portfolio index or a full project archive',
     'A list of articles, releases or events that each have one strong picture',

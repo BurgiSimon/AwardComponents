@@ -15,7 +15,7 @@
 .fr__cap a { display: grid; gap: 6px; justify-items: start; color: var(--ink); border-radius: var(--radius-xs); }
 .fr__name { font-size: var(--text-xl); font-weight: 680; font-stretch: var(--wide); letter-spacing: -0.02em; line-height: 1.1; }
 .fr__line { font-size: var(--text-sm); color: var(--ink-2); max-width: 34ch; text-wrap: pretty; }
-.fr__view { color: var(--accent-ink); opacity: 0; transition: opacity var(--dur-s); }
+.fr__view { color: var(--accent-ink); white-space: nowrap; opacity: 0; transition: opacity var(--dur-s); }
 .fr__view::after { content: ' →'; }
 .fr__row.is-hover .fr__view, .fr__cap a:focus-visible .fr__view { opacity: 1; }
 .fr__cap a:focus-visible { outline-offset: 8px; }

@@ -40,7 +40,7 @@
 .fs__poster, .fs__canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 .fs__canvas { opacity: 0; transition: opacity var(--dur-m) var(--ease-out); }
 .fs--ready .fs__canvas { opacity: 1; }
-.fs--ready .fs__poster { visibility: hidden; }
+.fs--ready .fs__poster { visibility: hidden; transition: visibility 0s linear var(--dur-m); }
 .fs__loading { position: absolute; left: 50%; bottom: 4%; translate: -50% 0; display: grid; justify-items: center; gap: 8px; white-space: nowrap; transition: opacity var(--dur-m); }
 .fs--ready .fs__loading, .fs--poster .fs__loading { opacity: 0; }
 .fs__loading-bar { position: relative; width: 140px; height: 2px; border-radius: 2px; background: var(--line-2); overflow: hidden; }

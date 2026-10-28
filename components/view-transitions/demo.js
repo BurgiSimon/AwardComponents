@@ -163,7 +163,15 @@ export default function mount(root, options, ctx) {
       const t = go(null, { push: false });
       t?.ready.then(() => {
         const at = cfg.duration * 1000 * 0.56;
-        document.getAnimations().forEach((a) => { if (String(a.effect?.pseudoElement || '').startsWith('::view-transition')) { a.pause(); a.currentTime = at; } });
+        // The name's two snapshots cross-fade at different sizes, which a still frame shows as a double image: the
+        // frame holds the name's cross-fade at its end, so one name flies home with the picture.
+        const nameFade = /^::view-transition-(old|new)\(ostra-title\)/;
+        document.getAnimations().forEach((a) => {
+          const pe = String(a.effect?.pseudoElement || '');
+          if (!pe.startsWith('::view-transition')) return;
+          a.pause();
+          a.currentTime = nameFade.test(pe) ? a.effect.getComputedTiming().endTime : at;
+        });
       });
     });
   }

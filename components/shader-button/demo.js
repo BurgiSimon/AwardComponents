@@ -15,7 +15,7 @@ const PRESETS = { calm: { vignette: 0.3, grain: 0.035, density: 96 }, charged: {
 
 const vertexShader = /* glsl */ 'void main() { gl_Position = vec4(position.xy, 0.0, 1.0); }';
 const fragmentShader = /* glsl */ `
-  uniform vec2 uRes, uCenter, uBoxCenter, uBoxHalf;
+  uniform vec2 uRes, uCenter, uBoxCenter, uBoxHalf, uCopyCenter, uCopyHalf;
   uniform float uPx;
   uniform vec3 uGround, uShade, uRest, uTarget;
   uniform float uHover, uSwell, uVignette, uGrain, uDensity;
@@ -27,8 +27,10 @@ const fragmentShader = /* glsl */ `
     vec3 tint = mix(uRest, uTarget, uHover);
     float reach = 0.42 + 0.14 * uSwell;
     float rings = smoothstep(0.55, 0.9, 0.5 + 0.5 * cos(r * uDensity - uSwell * 4.0));
-    // The rings stay off the form itself (a rounded box from its rectangle), so its label and note keep their contrast.
-    float calm = smoothstep(2.0 * uPx, 44.0 * uPx, sdBox(gl_FragCoord.xy - uBoxCenter, uBoxHalf));
+    // The rings stay off the form and the copy (rounded boxes from their rectangles), so the label, lede and note keep
+    // their contrast, also where the layout stacks the copy inside the rings' reach (a phone).
+    float quiet = min(sdBox(gl_FragCoord.xy - uBoxCenter, uBoxHalf), sdBox(gl_FragCoord.xy - uCopyCenter, uCopyHalf));
+    float calm = smoothstep(2.0 * uPx, 44.0 * uPx, quiet);
     float halo = rings * calm * (1.0 - smoothstep(reach * 0.3, reach, r)) * (0.5 + 0.5 * uHover);
     vec3 col = mix(uGround, tint, halo);
     col = mix(col, uTarget, uHover * 0.16 * (1.0 - smoothstep(0.0, reach * 1.4, r)));   // a warm pool under the charge
@@ -78,6 +80,7 @@ export default function mount(root, options, ctx) {
   const email = root.querySelector('[data-email]');
   const status = root.querySelector('[data-status]');
   const form = root.querySelector('[data-form]');
+  const copy = root.querySelector('.sb__copy');
 
   // Timing per motion tier. Full: entrance slower than exit, spatial swell on. Reduced: colour only, short. Static: instant.
   const timing = () => ({
@@ -94,6 +97,8 @@ export default function mount(root, options, ctx) {
     uCenter: { value: new THREE.Vector2(0, 0) },
     uBoxCenter: { value: new THREE.Vector2(0, 0) },
     uBoxHalf: { value: new THREE.Vector2(0, 0) },
+    uCopyCenter: { value: new THREE.Vector2(-1e5, -1e5) },
+    uCopyHalf: { value: new THREE.Vector2(0, 0) },
     uPx: { value: 1 },
     uGround: { value: new THREE.Color() },
     uShade: { value: new THREE.Color() },
@@ -170,16 +175,20 @@ export default function mount(root, options, ctx) {
   ctx.onCleanup(() => { quad.geometry.dispose(); material.dispose(); });
   paint();
 
-  // The rings are centred on the button, wherever the layout puts it; the form's rectangle is their quiet zone.
+  // The rings are centred on the button, wherever the layout puts it; the form's and the copy's rectangles are their
+  // quiet zones.
   const centre = () => {
     const br = band.getBoundingClientRect();
     const r = button.getBoundingClientRect();
     const fr = form.getBoundingClientRect();
+    const cr = copy.getBoundingClientRect();
     const dpr = renderer.getPixelRatio();
     u.uPx.value = dpr;
     u.uCenter.value.set((r.left + r.width / 2 - br.left) * dpr, (br.bottom - (r.top + r.height / 2)) * dpr);
     u.uBoxCenter.value.set((fr.left + fr.width / 2 - br.left) * dpr, (br.bottom - (fr.top + fr.height / 2)) * dpr);
     u.uBoxHalf.value.set((fr.width / 2 + 6) * dpr, (fr.height / 2 + 6) * dpr);
+    u.uCopyCenter.value.set((cr.left + cr.width / 2 - br.left) * dpr, (br.bottom - (cr.top + cr.height / 2)) * dpr);
+    u.uCopyHalf.value.set((cr.width / 2 + 6) * dpr, (cr.height / 2 + 6) * dpr);
     markDirty();
   };
   onResize(({ width, height }) => {
@@ -187,7 +196,7 @@ export default function mount(root, options, ctx) {
     u.uRes.value.set(width * dpr, height * dpr);
     centre();
   });
-  observeResize(ctx, [button, form], centre);
+  observeResize(ctx, [button, form, copy], centre);
   document.fonts?.ready.then(() => { if (!ctx.signal.aborted) centre(); });
 
   // GSAP owns the clock: ticker listeners run after tweens update, so the frame drawn shows this tick's values.

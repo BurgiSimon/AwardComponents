@@ -43,7 +43,8 @@
 .lm__after div { display: grid; gap: 6px; }
 .lm__after strong { font-size: var(--text-3xl); font-weight: 760; font-stretch: var(--wide); letter-spacing: -0.04em; line-height: 1; }
 .lm__after span { color: var(--muted); font-size: var(--text-sm); max-width: 24ch; }
-.lm__hint { position: fixed; left: 50%; bottom: 18px; translate: -50% 0; padding: 7px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-1); }
+.lm__hint { position: fixed; left: 50%; bottom: 18px; translate: -50% 0; width: max-content; max-width: calc(100% - 32px); padding: 7px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-1); transition: opacity var(--dur-s), visibility var(--dur-s); }
+.lm__hint.is-gone { opacity: 0; visibility: hidden; }
 :root[data-capture] .lm__hint { display: none; }
 
 /* Reduced motion: a still, centred grid of every mark. */

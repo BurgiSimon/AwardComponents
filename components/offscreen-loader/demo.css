@@ -64,6 +64,15 @@
 .ol__foot { padding-top: 10px; }
 .ol__foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
 
+/* Short viewports (the in-page preview, a laptop tab under 780 px): tighten the panel so its footer stays on screen. */
+@media (max-height: 780px) {
+  .ol { padding-block: 12px; }
+  .ol__panel { gap: 8px; padding-block: 16px 14px; }
+  .ol__loader { padding: 8px 0; }
+  .ol__loader canvas { height: clamp(88px, 14vh, 200px); }
+  .ol__steps li { padding-block: 6px; }
+}
+
 @media (max-width: 720px) {
   .ol__app { grid-template-columns: 1fr; }
   .ol__side { display: none; }

@@ -3,7 +3,7 @@
 .sl__hero { display: grid; grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr); align-items: center; gap: clamp(24px, 4.5vw, 72px); padding-block: 32px; }
 .sl__copy { display: grid; gap: 18px; align-content: center; }
 .sl__copy .ac-h1 { font-size: clamp(2.4rem, 1.4rem + 3vw, 4.4rem); }
-.sl__price { font-size: var(--text-xl); font-weight: 620; }
+.sl__price { font-size: var(--text-xl); font-weight: 620; line-height: 1.25; text-wrap: balance; }
 .sl__price .ac-small { font-weight: 400; }
 .sl__copy .ac-lede { font-size: var(--text-md); }
 
