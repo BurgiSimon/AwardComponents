@@ -53,6 +53,7 @@ export default function mount(root, options, ctx) {
             </p>
           </div>
           <div class="st__figure"><div class="st__lampbox"><span class="st__glow" aria-hidden="true"></span>${raw(LAMP)}</div></div>
+          <p class="st__cue ac-label" aria-hidden="true">Scroll to turn the dial</p>
           <div class="st__copy">
             <p class="st__lines" data-copy><span class="st__line">Turn the dial slowly.</span><span class="st__line">It warms before it brightens.</span></p>
             <p class="st__lines st__lines--final" data-final><span class="st__line">Then it glows</span><span class="st__line">all evening.</span></p>
