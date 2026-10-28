@@ -1,0 +1,37 @@
+export default {
+  id: 'big-footer',
+  title: 'Designed footer',
+  category: 'closers',
+  summary: 'An architecture studio’s close: one statement and a contact action, a newsletter field, link columns, the studio’s local time and a wordmark fitted to the full width.',
+  recipe: 'designed-footer',
+  deps: [],
+  tags: ['footer', 'close', 'wordmark', 'newsletter', 'contact', 'type', 'layout'],
+  added: '2026-10-28',
+  order: 10,
+  preview: { height: 720, scroll: true, hint: 'Scroll to the close', capture: { scroll: 1, wait: 1600 } },
+  actions: [{ id: 'replay', label: 'Replay the wordmark' }],
+  useCases: [
+    'The close of a studio, agency or portfolio site',
+    'A shop or magazine footer that ends on one action instead of a link dump',
+    'A campaign page that signs off with the brand at full width',
+  ],
+  notes: [
+    'One <footer> landmark with its own heading; the contact action is a real mailto: link at least 44 px tall, and every column is a labelled <nav>.',
+    'The wordmark is decorative and aria-hidden (the name is in the colophon); it is fitted to the width with one measurement on resize, not a scaling loop.',
+    'The newsletter field validates with the page’s own message tied by aria-describedby; under reduced motion the wordmark fades in instead of rising, and under static it is simply there.',
+  ],
+  controls: [
+    { id: 'layout', label: 'Layout', type: 'select', options: [{ value: 'statement', label: 'Statement first' }, { value: 'wordmark', label: 'Wordmark first' }], default: 'statement', group: 'Layout', prompt: 'Layout: {value} (default {default})' },
+    { id: 'size', label: 'Wordmark width', type: 'range', min: 40, max: 100, step: 5, default: 100, unit: '%', group: 'Layout', help: 'Share of the content width the wordmark is fitted to.', prompt: 'The wordmark is fitted to {value} of the content width (default {default})' },
+    { id: 'tone', label: 'Footer theme', type: 'select', options: [{ value: 'inverted', label: 'Dark ground' }, { value: 'plain', label: 'Plain' }, { value: 'accent', label: 'Accent' }], default: 'inverted', group: 'Look', help: 'Dark ground is the ink colour on a light page and a raised surface on a dark one.', prompt: 'Footer ground: {value}, built from the page tokens (default {default})' },
+    { id: 'entrance', label: 'Wordmark entrance', type: 'toggle', default: true, group: 'Look', prompt: { on: 'The wordmark’s letters rise from a mask with a 60 ms stagger as the footer comes into view', off: 'The wordmark is simply there' } },
+    { id: 'newsletter', label: 'Newsletter field', type: 'toggle', default: true, group: 'Content', prompt: { on: 'A newsletter field with native email validation and the page’s own error message', off: 'No newsletter field' } },
+  ],
+  prompt: {
+    skill: 'component',
+    ask: 'Design the footer of {target}.',
+    target: 'the site',
+    brief: 'An authored close instead of a link dump: one plain statement and a large mailto: contact action, a newsletter field, three labelled link columns, the address with the studio’s local time, a colophon with a return to the top, and the wordmark fitted exactly to the content width (measured once per resize). The wordmark’s letters rise from a mask with a 60 ms stagger when it enters view.',
+    keep: ['one footer landmark with a heading; 44 px targets and visible focus on the dark ground; the wordmark aria-hidden; a fade under reduced motion.'],
+  },
+};

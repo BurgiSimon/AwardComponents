@@ -1,0 +1,36 @@
+export default {
+  id: 'filmstrip-rows',
+  title: 'Filmstrip rows',
+  category: 'galleries',
+  summary: 'A studio’s project index where every project is a strip of its own photographs running at one shared speed; a row pauses and grows when you hover or focus it.',
+  description: 'Each strip is a CSS keyframe loop, but its duration is computed from its measured width, so a strip of four frames and a strip of eight travel at the same pixels per second and the list reads as one system. Rows stop for a pointer, for keyboard focus and when they leave the screen.\n\nEach project is one link; the frames are decoration hidden from assistive tech, so six projects are six Tab stops, not sixty.',
+  recipe: 'filmstrip-index-rows',
+  deps: [],
+  tags: ['marquee', 'filmstrip', 'index', 'hover', 'css-animation', 'gallery'],
+  added: '2026-10-28',
+  order: 45,
+  preview: { height: 640, scroll: true, hint: 'Hover a row', capture: { hover: '.fr__row:nth-child(2) .fr__cap a', wait: 1200 } },
+  useCases: [
+    'A studio or agency work index where every project has a handful of good stills',
+    'A photographer’s series list, each series as its own strip',
+    'A shop’s collections page, one strip of products per collection',
+  ],
+  notes: [
+    'One link per project in a list; each reel is aria-hidden with no links, so Tab meets six stops.',
+    'Hover, focus inside a row and leaving the screen each pause it; focus also grows it, so a keyboard reader sees it at rest.',
+    'Under reduced motion and static every reel stands still and nothing grows; touch screens never mount a hover clip.',
+  ],
+  controls: [
+    { id: 'speed', label: 'Speed', type: 'range', min: 20, max: 200, step: 5, default: 70, unit: 'px/s', group: 'Motion', help: 'One speed for every row; each row’s duration is its width divided by this.', prompt: 'Shared speed: {value}; each row’s duration is one copy’s width divided by it (default {default})' },
+    { id: 'alternate', label: 'Alternate rows', type: 'toggle', default: false, group: 'Motion', prompt: { on: 'Every second row runs the other way', off: 'All rows run the same way' } },
+    { id: 'height', label: 'Frame height', type: 'range', min: 72, max: 200, step: 4, default: 120, unit: 'px', group: 'Look', prompt: 'Frame height: {value} (default {default})' },
+    { id: 'grow', label: 'Hover grow', type: 'range', min: 1, max: 1.4, step: 0.05, default: 1.2, unit: '×', group: 'Look', help: 'Scale of the hovered or focused reel, over 0.4 s on a late, overshooting curve.', prompt: 'Hover grow: {value} over 0.4 s on cubic-bezier(1, 0, .47, 1.25) (default {default})' },
+  ],
+  prompt: {
+    skill: 'component',
+    ask: 'Turn {target} into filmstrip rows.',
+    target: 'the project index',
+    brief: 'Each project is a strip of its stills duplicated once and looped by a CSS keyframe to −50 %; each strip’s duration is its measured width / 70 px/s, recomputed on resize, so every row moves at the same speed. Gaps are margins, so two copies are exactly twice one. A row pauses (animation-play-state) on hover, focus inside and off-screen, and its reel scales 1.2× from the left over 0.4 s on cubic-bezier(1, 0, .47, 1.25).',
+    keep: ['one link per project, reels aria-hidden; focus pauses and grows; every reel still under reduced motion; a hover clip only for hover pointers on the full tier.'],
+  },
+};

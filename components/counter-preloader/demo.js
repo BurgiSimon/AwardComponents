@@ -41,7 +41,7 @@ export default function mount(root, options, ctx) {
               <a class="ac-btn ac-btn--lg ac-btn--ghost" href="#lineup">See the line-up</a>
             </div>
           </div>
-          <figure class="cp__fig cp__fade">
+          <figure class="cp__fig">
             <div class="ac-media cp__pic">${raw(imageHTML(pics[0], { eager: true, sizes: '(max-width: 760px) 100vw, 36vw', alt: 'The harbour stage at night' }))}</div>
             <figcaption class="ac-label">Harbour stage, 2026</figcaption>
           </figure>
@@ -62,6 +62,7 @@ export default function mount(root, options, ctx) {
         <div class="cp__pre-main">
           <p class="ac-label cp__pre-label" data-fadeout>Loading the 2027 programme</p>
           <p class="cp__count" aria-hidden="true"><span class="cp__mask"><span class="cp__line" data-count>000</span></span></p>
+          <p class="cp__word" aria-hidden="true"><span class="cp__mask"><span class="cp__line" data-word>${festival.name}</span></span></p>
           <ul class="cp__signals" role="list" aria-hidden="true">
             <li data-signal="type"><span>Type</span><span data-state>Waiting</span></li>
             <li data-signal="pictures"><span>Pictures</span><span data-state>0 of 4</span></li>
@@ -81,6 +82,7 @@ export default function mount(root, options, ctx) {
   const page = root.querySelector('[data-page]');
   const pre = root.querySelector('[data-pre]');
   const count = root.querySelector('[data-count]');
+  const word = root.querySelector('[data-word]');
   const readout = root.querySelector('[data-readout]');
   const status = root.querySelector('[data-status]');
   const toast = root.querySelector('[data-toast]');
@@ -151,7 +153,7 @@ export default function mount(root, options, ctx) {
     const id = runId;
     risen = false;
     toast.hidden = true;
-    gsap.set([pre, count, ...strips, ...signals, ...fadeouts], { clearProps: 'all' });
+    gsap.set([pre, count, word, ...strips, ...signals, ...fadeouts], { clearProps: 'all' });
     gsap.set(lines, { yPercent: full ? 120 : 0 });
     gsap.set(fades, { autoAlpha: 0 });
     signals.forEach((s) => s.classList.remove('is-done'));
@@ -221,13 +223,13 @@ export default function mount(root, options, ctx) {
       return;
     }
     tl = gsap.timeline()
-      .to(count, { yPercent: -120, duration: 0.8, ease: 'expo.in' })
+      .to([count, word], { yPercent: -120, duration: 0.8, ease: 'expo.in' })
       .to(signals, { autoAlpha: 0, duration: 0.3, stagger: 0.05 }, '<')
       .to(fadeouts, { autoAlpha: 0, duration: 0.3 }, '<0.25')
       .addLabel('exit', '-=0.2');
     if (cfg.exit === 'curtain') tl.to(strips, { yPercent: -100, duration: 0.85, ease: 'expo.inOut', stagger: 0.06 }, 'exit');
     else tl.to(pre, { yPercent: -100, duration: 0.9, ease: 'expo.inOut' }, 'exit');
-    tl.call(release).add(rise(), 'exit+=0.4');
+    tl.call(release).add(rise(), 'exit+=0.25');
   };
 
   const replay = () => { remember(false); start(); };

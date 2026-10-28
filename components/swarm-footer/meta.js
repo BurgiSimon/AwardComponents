@@ -1,0 +1,41 @@
+export default {
+  id: 'swarm-footer',
+  title: 'Lit swarm footer',
+  category: 'closers',
+  summary: 'A shop footer with a swarm of glazed pebbles drifting behind its copy, lit by a light you hold with the pointer and shading each other through a voxel grid.',
+  description: 'The close of a ceramics shop’s page. About a thousand small pebbles drift along a spiral path behind the footer’s words, its newsletter form and its links. A point light floats in front of them at the pointer, so moving the mouse moves the shading; on touch it idles on a slow figure-eight.\n\nShadow comes without shadow maps: every pebble marks one voxel in a coarse 32 × 16 × 16 grid, one pass blurs and eases it, and each pebble reads its occlusion from it. three.js is fetched only when the footer comes within a screen, and the loop runs only while the footer is visible.',
+  recipe: 'gl-swarm-light-field',
+  deps: ['three'],
+  tags: ['webgl', 'three', 'instancing', 'footer', 'pointer', 'light', 'shader', 'lazy-load'],
+  requires: ['webgl2'],
+  added: '2026-10-28',
+  order: 50,
+  preview: { height: 700, scroll: true, hint: 'Scroll to the footer, then move the light', capture: { scroll: 1, pointer: [0.58, 0.46], wait: 2600 } },
+  useCases: [
+    'The last screen of a brand or shop site, where a small playful thing rewards reaching the end',
+    'A footer that swaps the pebbles for its own small object: beans, petals, bolts, pills',
+    'A closing chapter behind a newsletter sign-up',
+  ],
+  notes: [
+    'The canvas is aria-hidden; every word, link and the form are DOM above it, and nothing in the footer depends on the pointer.',
+    'three.js is a dynamic import fetched when the footer is within a screen; pages that never reach the footer never pay for it.',
+    'Under reduced motion it draws one settled frame with the light parked. The static tier and browsers without WebGL 2 get a drawn still of the swarm.',
+  ],
+  controls: [
+    { id: 'count', label: 'Pebbles', type: 'select', options: [{ value: '24', label: '576' }, { value: '32', label: '1,024' }, { value: '40', label: '1,600' }], default: '32', group: 'Swarm', help: 'Capped at 576 on phones, coarse pointers and low-tier devices.', prompt: (v) => `Swarm of ${Number(v) ** 2} objects (${v}² float-texture grid) on a desktop, 576 on phones (default 1,024)` },
+    { id: 'push', label: 'Pointer push', type: 'range', min: 0, max: 0.8, step: 0.05, default: 0.25, group: 'Swarm', help: 'How hard the pointer’s sphere (radius 0.2) shoves the pebbles aside.', prompt: 'Pointer push: {value} inside a sphere of radius 0.2 (default {default})' },
+    { id: 'intensity', label: 'Light power', type: 'range', min: 0.5, max: 5, step: 0.1, default: 2.2, group: 'Light', prompt: 'Light power: {value}, attenuation 1 / (1 + 9 d²) (default {default})' },
+    { id: 'field', label: 'Voxel shadows', type: 'toggle', default: true, group: 'Light', help: 'Ambient occlusion and shadow read from the coarse grid of where the swarm is.', prompt: { on: 'AO and shadow read from a 32 × 16 × 16 voxel field of the swarm', off: 'No voxel occlusion: direct light only' } },
+    { id: 'glaze', label: 'Glaze', type: 'color', default: 'clay', options: ['clay', 'moss', 'sky', 'plum', 'accent'], group: 'Look', prompt: 'Object colour: {value} (default {default})' },
+  ],
+  prompt: {
+    skill: 'webgl',
+    ask: 'Add a lit swarm behind {target}.',
+    target: 'the site footer',
+    brief: 'About a thousand small instanced objects drift along a spiral path behind the footer’s copy, simulated on the CPU into two float textures that one instanced draw reads. A point light floats 0.3 units in front of the swarm at the pointer (an idle figure-eight on touch). Shadow and AO come from a coarse 32 × 16 × 16 voxel grid the swarm splats itself into with MAX blending, blurred and eased each frame.',
+    keep: [
+      'three.js imported only when the footer is within a screen, and the loop running only while it is visible',
+      'every word, link and the form in the DOM above an aria-hidden canvas; one settled frame under reduced motion; a still without WebGL 2',
+    ],
+  },
+};

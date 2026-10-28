@@ -1,0 +1,36 @@
+export default {
+  id: 'adaptive-quality',
+  title: 'Adaptive quality tiers',
+  category: 'foundations',
+  summary: 'A speaker launch hero whose generative sound field takes its density, pixel ratio and effects from a one-time device probe, with a readout card showing the budget it was given.',
+  description: 'The device is probed once: pixel ratio, memory, cores, the GPU string, WebGL 2 and 500 ms of real frame times. The score becomes a tier, and every effect reads the tier’s budget instead of measuring again: a DPR cap, an absolute pixel budget, a particle share and which effects may run.\n\nLow tier gets a drawn still, not a stuttering field. Force a tier to see each budget on this device.',
+  recipe: 'quality-tiers',
+  deps: [],
+  tags: ['canvas', 'performance', 'quality', 'device', 'particles', 'dpr', 'hero', 'reduced-motion'],
+  added: '2026-10-28',
+  order: 40,
+  preview: { height: 620, hint: 'Force a tier from the card', capture: { tier: 'high', wait: 1800 } },
+  useCases: [
+    'Any canvas or WebGL hero that has to hold its frame rate on budget phones',
+    'A shared profile that every heavy effect on a site reads: particles, blur samples, post-processing',
+    'Deciding, once, whether a page loads its GPU effects at all or shows a still',
+  ],
+  notes: [
+    'The probe runs once per page and is never repeated per frame, so the tier cannot flicker.',
+    'Low tier and reduced motion show a still drawn from the same field, as a real image with alt text; the canvas is aria-hidden.',
+    'The tier buttons are a real button group with aria-pressed, and the active tier is announced politely.',
+  ],
+  controls: [
+    { id: 'force', label: 'Tier', type: 'select', options: [{ value: 'auto', label: 'Auto (probe)' }, { value: 'high', label: 'High' }, { value: 'mid', label: 'Mid' }, { value: 'low', label: 'Low' }], default: 'auto', group: 'Budget', help: 'Auto uses the probe. Forcing skips it, the way a QA switch would.', prompt: false },
+    { id: 'density', label: 'High-tier particles', type: 'range', min: 300, max: 2400, step: 100, default: 1200, group: 'Budget', help: 'For a 1280 × 800 hero; mid gets 40 %, low none, and smaller screens a share by area.', prompt: 'High-tier particle count: {value} for a 1280 × 800 hero (mid 40 %, low none; default {default})' },
+    { id: 'trails', label: 'Trails on mid and high', type: 'toggle', default: true, group: 'Budget', prompt: { on: 'Fading trails on mid and high tiers', off: 'No trails: particles are cleared each frame' } },
+    { id: 'readout', label: 'Show the readout', type: 'toggle', default: true, group: 'Demo', prompt: false },
+  ],
+  prompt: {
+    skill: 'webgl',
+    ask: 'Give {target} quality tiers from a one-time device probe.',
+    target: 'the hero’s canvas effect',
+    brief: 'Probe once on load (devicePixelRatio, deviceMemory, hardwareConcurrency, the WebGL renderer string, WebGL 2 and 500 ms of frame timing) and score it into high, mid or low. High: DPR ≤ 2, a 2560 × 1440 pixel budget, full particles and effects. Mid: DPR ≤ 1.5, 1920 × 1080, 40 % of the particles. Low: DPR 1, 1280 × 720, no particles and a still image. Every effect reads the profile; nothing re-measures.',
+    keep: ['an absolute pixel budget on top of the DPR cap; a real image with alt text for low tier and reduced motion; the canvas aria-hidden.'],
+  },
+};

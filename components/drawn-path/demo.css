@@ -1,0 +1,4 @@
+/* Drawn path. Tokens and primitives come from src/demo-kit/base.css; use var(--…) for every colour. */
+.dp {
+  min-height: 100svh;
+}

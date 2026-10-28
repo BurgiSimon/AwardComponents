@@ -1,0 +1,38 @@
+export default {
+  id: 'model-hotspots',
+  title: 'Model with hotspots',
+  category: 'commerce',
+  summary: 'An architecture studio’s massing model you can turn inside a clamped orbit, with real buttons pinned to its buildings that fly the camera to each one and tell its story.',
+  recipe: 'gl-orbit-model-hotspots',
+  deps: ['three'],
+  tags: ['webgl', 'three', '3d', 'orbit', 'hotspots', 'model', 'architecture', 'keyboard'],
+  requires: ['webgl'],
+  added: '2026-10-28',
+  order: 50,
+  preview: { height: 720, hint: 'Drag the model or press a label', capture: { action: 'corner', wait: 2400 } },
+  actions: [{ id: 'next', label: 'Fly to the next building' }, { id: 'reset', label: 'Reset view' }],
+  useCases: [
+    'A master plan or a building on an architecture studio’s project page',
+    'A product with parts worth naming: a speaker, a bike, a chair',
+    'A venue or campus map where every zone has its own facts',
+  ],
+  notes: [
+    'Every hotspot is a real <button aria-pressed> pinned over the canvas; the canvas is aria-hidden and needs no hit-testing.',
+    'The stage is focusable: arrows orbit, + and − zoom, Home resets; the wheel zooms only with ⌘ or Ctrl held, so the page still scrolls past it. On touch a sideways drag turns the model and an upward one scrolls the page.',
+    'Under reduced motion the camera lands at once and nothing turns on its own; without WebGL, or under static motion, a drawn site plan takes the stage with the same buttons.',
+  ],
+  controls: [
+    { id: 'glide', label: 'Fly time', type: 'range', min: 0.3, max: 2, step: 0.1, default: 0.8, unit: 's', group: 'Camera', help: 'How long a fly-to takes to cover 95 % of the way, framerate-independent.', prompt: 'Fly-to time: {value} to cover 95 % of the way, damped with 1 − k^dt (default {default})' },
+    { id: 'zoom', label: 'Zoom range', type: 'select', options: [{ value: 'tight', label: 'Tight' }, { value: 'normal', label: 'Normal' }, { value: 'wide', label: 'Wide' }], default: 'normal', group: 'Camera', help: 'How far in and out the camera may go, as a share of the distance that frames the whole site.', prompt: 'Zoom range: {value} (default {default}); the polar band stays 0.8–1.3 rad' },
+    { id: 'spin', label: 'Turn when idle', type: 'toggle', default: false, group: 'Camera', prompt: { on: 'Turn slowly after 3 s without input, only while on screen', off: 'Never turn on its own' } },
+    { id: 'hotspots', label: 'Hotspot style', type: 'select', options: [{ value: 'labels', label: 'Labels' }, { value: 'dots', label: 'Numbered dots' }], default: 'labels', group: 'Look', prompt: 'Hotspots as {value}; the name stays the button’s text either way (default {default})' },
+    { id: 'accent', label: 'Selected colour', type: 'color', default: 'accent', group: 'Look', prompt: 'The selected building renders in {value} (default {default})' },
+  ],
+  prompt: {
+    skill: 'webgl',
+    ask: 'Make {target} an explorable 3D model with hotspots.',
+    target: 'the project’s site model',
+    brief: 'A clamped orbit camera written by hand: input only writes a goal, clamped as it is written (polar 0.8–1.3 rad, distance 0.6–1.25 × the framing distance), and the camera eases toward it with 1 − k^dt, k = 0.0004 while dragging and about 0.8 s for fly-tos. Each named zone is a DOM button pinned to its projected point that flies the camera there and paints the zone in the accent, with a polite detail panel beside the stage. Frames render only while the camera moves.',
+    keep: ['real buttons for every zone and a focusable stage with arrow keys; modifier + wheel to zoom inline; instant moves under reduced motion; a drawn plan with the same buttons without WebGL.'],
+  },
+};

@@ -1,0 +1,40 @@
+export default {
+  id: 'wake-reveal-hero',
+  title: 'Wake reveal',
+  category: 'heroes',
+  summary: 'A project hero shown by day; where the pointer passes, a short-lived wake opens onto the same view graded to a December night, and closes again within a second.',
+  recipe: 'gl-pointer-wake-reveal',
+  deps: ['three'],
+  tags: ['webgl', 'three', 'shader', 'pointer', 'mask', 'reveal', 'hero', 'image'],
+  requires: ['webgl'],
+  added: '2026-10-28',
+  order: 30,
+  preview: { height: 640, hint: 'Move the pointer across the picture', capture: { wait: 1200 } },
+  useCases: [
+    'A house, hotel or landscape project shown in two seasons or two times of day',
+    'A product photograph with its X-ray, wireframe or “inside” view under the pointer',
+    'A campaign hero that hides a second world for people who explore with a mouse',
+  ],
+  notes: [
+    'The day photograph is an ordinary image and the complete page; the canvas over it is aria-hidden, ignores the pointer and draws nothing at rest.',
+    'Touch, reduced motion and no WebGL get no wake. The Night button shows the second world to everyone: through WebGL where it runs, as a CSS-graded copy of the picture where it does not.',
+    'Copy sits on a scrim above both worlds, so it keeps its contrast while the wake passes under it.',
+  ],
+  controls: [
+    { id: 'radius', label: 'Wake radius', type: 'range', min: 0.04, max: 0.2, step: 0.005, default: 0.095, unit: '×', group: 'Wake', help: 'Of the hero’s short side; a fast flick opens up to 1.5 × wider.', prompt: 'Wake radius: {value} the short side, widened by pointer speed up to 1,600 px/s (default {default})' },
+    { id: 'life', label: 'Life', type: 'range', min: 300, max: 2000, step: 50, default: 750, unit: 'ms', group: 'Wake', prompt: 'Each wake point lives {value} (default {default})' },
+    { id: 'softness', label: 'Edge softness', type: 'range', min: 0.08, max: 1, step: 0.02, default: 0.5, group: 'Wake', help: 'The mask is read through smoothstep(0.02, softness): low is a crisp edge, high a misty one.', prompt: 'Mask edge: smoothstep(0.02, {value}) (default {default})' },
+    { id: 'grade', label: 'Second world', type: 'select', options: [{ value: 'night', label: 'Night' }, { value: 'dusk', label: 'Dusk' }, { value: 'winter', label: 'Winter' }], default: 'night', group: 'Look', prompt: 'The second world is the same picture graded to {value} (default {default})' },
+  ],
+  actions: [{ id: 'night', label: 'Day / night', icon: 'moon' }],
+  prompt: {
+    skill: 'webgl',
+    ask: 'Hide a second world under {target}, opened by the pointer’s wake.',
+    target: 'the hero photograph',
+    brief: 'The pointer leaves up to 140 points (one per 6 px, each living 750 ms, radius 0.095 × the short side widened by speed), stamped as radial gradients with lighter compositing into a small 2D canvas that the shader reads as a mask (smoothstep 0.02–0.5). Under it, the same photograph graded to night renders into its own target at 0.62 of the pixel ratio, every second frame, and nothing renders when no point is alive.',
+    keep: [
+      'the photograph is the complete page; the canvas is aria-hidden and pointer-transparent.',
+      'no wake on touch, under reduced motion or without WebGL, plus a button that shows the second world to everyone.',
+    ],
+  },
+};

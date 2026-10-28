@@ -1,0 +1,148 @@
+.cd { min-height: 100svh; overflow-x: clip; }
+.cd a { text-decoration: none; }
+:root.cd-locked { overflow: hidden; } /* a modal dialog does not stop the page behind it from scrolling */
+
+.cd__bar { border-bottom: 1px solid var(--line); }
+.cd__bar nav a[aria-current='page'] { color: var(--ink); }
+.cd__bag-btn {
+  min-height: 40px;
+  padding: 0 18px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  transition: background-color var(--dur-s) var(--ease-out), border-color var(--dur-s) var(--ease-out), color var(--dur-s) var(--ease-out);
+}
+.cd__bag-btn:hover { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+.cd__bag-btn.is-bumped { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+
+.cd__main { padding-block: clamp(24px, 3.6vw, 44px) clamp(48px, 7vw, 96px); }
+.cd__intro { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); align-items: end; gap: 16px 48px; }
+.cd__intro > div { display: grid; gap: 12px; }
+.cd__intro .ac-h1 { max-width: 18ch; }
+.cd__intro .ac-body { max-width: 36ch; }
+
+/* The page's polite answer to an add: words, beside the count in the header. */
+.cd__status { display: flex; align-items: center; gap: 10px; min-height: 22px; margin-block: 18px 16px; font-size: var(--text-sm); color: var(--ink-2); }
+.cd__status:not(:empty)::before { content: ''; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--ok); }
+
+.cd__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px clamp(16px, 2vw, 28px); margin: 0; }
+.cd__card { display: grid; align-content: start; gap: 14px; }
+.cd__link { display: grid; gap: 10px; }
+.cd__media { --ratio: 6 / 5; border-radius: var(--radius-md); }
+.cd__media img { transition: transform var(--dur-l) var(--ease-out); }
+.cd__link:hover .cd__media img, .cd__link:focus-visible .cd__media img { transform: scale(1.03); }
+.cd__link:focus-visible { outline-offset: 4px; border-radius: var(--radius-md); }
+.cd__meta { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.cd__name { font-size: var(--text-lg); font-weight: 650; letter-spacing: -0.015em; text-underline-offset: 0.2em; }
+.cd__link:hover .cd__name { text-decoration: underline; text-decoration-thickness: 1px; }
+.cd__price { font-variant-numeric: tabular-nums; }
+.cd__glaze { margin-top: -6px; font-size: var(--text-sm); color: var(--muted); }
+
+.cd__buy { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.cd__sizes { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; margin: 0; padding: 0; border: 0; }
+.cd__size { position: relative; display: inline-grid; place-items: center; min-width: 46px; min-height: 44px; padding: 0 14px; border: 1px solid var(--line-2); border-radius: var(--radius-pill); font-size: var(--text-sm); font-weight: 600; color: var(--ink-2); cursor: pointer; transition: background-color var(--dur-s) var(--ease-out), color var(--dur-s) var(--ease-out); }
+.cd__size input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.cd__size:hover { color: var(--ink); border-color: var(--ink); }
+.cd__size:has(input:checked) { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+.cd__size:has(input:focus-visible) { outline: 2px solid var(--focus); outline-offset: 3px; }
+.cd__size--out { border-style: dashed; color: var(--muted); }
+.cd__size--out span:first-of-type { text-decoration: line-through; text-decoration-thickness: 1px; }
+
+/* Quick add: the label and "Added" share one cell and swap; the button's name stays its aria-label throughout. */
+.cd__add { flex: 1 1 140px; display: grid; place-items: center; min-height: 44px; padding: 0 18px; border: 0; border-radius: var(--radius-pill); background: var(--ink); color: var(--bg); font-size: var(--text-sm); font-weight: 600; overflow: hidden; transition: background-color var(--dur-s) var(--ease-out); }
+.cd__add:hover { background: color-mix(in oklab, var(--ink) 84%, var(--bg)); }
+.cd__add-label, .cd__add-done { grid-area: 1 / 1; transition: opacity 160ms linear, transform 220ms var(--ease-out); }
+.cd__add-done { opacity: 0; transform: translateY(80%); }
+.cd__add-done::before { content: '✓  ' / ''; }
+.cd__add[data-added] { background: var(--accent); color: var(--on-accent); }
+.cd__add[data-added] .cd__add-label { opacity: 0; transform: translateY(-80%); }
+.cd__add[data-added] .cd__add-done { opacity: 1; transform: none; }
+.cd__note { min-height: 1.4em; margin-top: -4px; font-size: var(--text-sm); color: var(--accent-ink); }
+
+/* The bag: the dialog is a full-viewport frame; the scrim and the panel inside carry the look so both animate. */
+.cd__bag { position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: transparent; color: var(--ink); overflow: hidden; }
+.cd__bag::backdrop { background: transparent; }
+.cd__bag[open] { display: grid; justify-items: end; }
+.cd[data-side='start'] .cd__bag[open] { justify-items: start; }
+.cd__scrim { position: absolute; inset: 0; background: var(--scrim); }
+.cd__panel { position: relative; display: flex; flex-direction: column; width: min(28rem, 100%); height: 100%; background: var(--surface); border-inline-start: 1px solid var(--line); box-shadow: var(--shadow-3); }
+.cd[data-side='start'] .cd__panel { border-inline-start: 0; border-inline-end: 1px solid var(--line); }
+
+.cd__bag-head { flex: none; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'title close' 'count close'; align-items: center; column-gap: 16px; padding: 22px 24px 16px; }
+.cd__bag-title { grid-area: title; font-size: 1.6rem; font-weight: 720; font-stretch: var(--wide); letter-spacing: -0.03em; line-height: 1.1; }
+.cd__bag-title:focus { outline: none; } /* a programmatic landing point, not a control */
+.cd__bag-head .ac-label { grid-area: count; margin-top: 4px; }
+.cd__close { grid-area: close; min-height: 40px; padding: 0 16px; border: 1px solid var(--line-2); border-radius: var(--radius-pill); background: transparent; font-size: var(--text-sm); font-weight: 600; }
+.cd__close:hover { background: var(--ink); color: var(--bg); }
+
+.cd__ship { flex: none; display: grid; gap: 8px; margin: 0 24px 4px; padding: 12px 14px 14px; border-radius: var(--radius-md); background: var(--bg-2); font-size: var(--text-sm); color: var(--ink-2); }
+.cd__ship[hidden] { display: none; }
+.cd__ship strong { color: var(--ink); font-weight: 650; font-variant-numeric: tabular-nums; }
+.cd__meter { height: 4px; border-radius: var(--radius-pill); background: var(--line-2); overflow: hidden; }
+.cd__meter i { display: block; height: 100%; background: var(--accent); transform-origin: 0 50%; transform: scaleX(0); transition: transform var(--dur-l) var(--ease-out), background-color var(--dur-m); }
+.cd__ship.is-free .cd__meter i { background: var(--ok); }
+:root[data-motion='reduced'] .cd__meter i { transition: background-color var(--dur-m); }
+
+.cd__body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 0 24px; }
+.cd__lines { margin: 0; }
+.cd__line { display: grid; grid-template-columns: 72px minmax(0, 1fr) auto; grid-template-areas: 'art info total' 'art step remove'; align-items: center; gap: 10px 16px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+.cd__thumb { --ratio: 4 / 5; grid-area: art; align-self: start; width: 72px; border-radius: var(--radius-sm); }
+.cd__line-info { grid-area: info; min-width: 0; }
+.cd__line-name { font-weight: 650; letter-spacing: -0.01em; }
+.cd__line-meta { margin-top: 2px; font-size: var(--text-sm); color: var(--muted); font-variant-numeric: tabular-nums; }
+.cd__line-total { grid-area: total; font-weight: 600; font-variant-numeric: tabular-nums; text-align: end; }
+.cd__stepper { grid-area: step; justify-self: start; display: inline-flex; align-items: center; border: 1px solid var(--line-2); border-radius: var(--radius-pill); }
+.cd__stepper button { display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: var(--radius-pill); background: transparent; font-size: 1.15rem; line-height: 1; }
+.cd__stepper button:hover { background: var(--bg-2); }
+.cd__stepper button[aria-disabled='true'] { color: var(--faint); cursor: not-allowed; background: transparent; }
+.cd__stepper input { width: 3ch; min-height: 44px; padding: 0; border: 0; background: transparent; text-align: center; font-weight: 600; font-variant-numeric: tabular-nums; appearance: textfield; -moz-appearance: textfield; }
+.cd__stepper input::-webkit-inner-spin-button, .cd__stepper input::-webkit-outer-spin-button { margin: 0; appearance: none; }
+.cd__remove { grid-area: remove; min-height: 44px; padding: 0 2px; border: 0; background: none; font-size: var(--text-sm); color: var(--muted); text-decoration: underline; text-underline-offset: 0.25em; text-decoration-color: var(--line-2); }
+.cd__remove:hover { color: var(--ink); text-decoration-color: currentColor; }
+
+.cd__empty { display: grid; justify-items: start; gap: 16px; padding: 32px 0; }
+.cd__empty[hidden] { display: none; }
+
+.cd__foot { flex: none; display: grid; gap: 10px; padding: 18px 24px 22px; border-top: 1px solid var(--line); background: var(--surface); }
+.cd__sum { display: flex; align-items: baseline; justify-content: space-between; margin: 0; }
+.cd__sum dt { font-weight: 600; }
+.cd__sum dd { margin: 0; font-size: 1.45rem; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.cd__tax { margin-top: -6px; }
+.cd__checkout { width: 100%; margin-top: 4px; }
+.cd__demo:empty { display: none; }
+.cd__panel[data-empty] :is(.cd__sum, .cd__tax, .cd__checkout) { display: none; }
+
+/* Reduced: the drawer fades (from demo.js); the quick-add swap is a crossfade with no travel. */
+:root[data-motion='reduced'] :is(.cd__add-done, .cd__add[data-added] .cd__add-label) { transform: none; }
+:root[data-motion='reduced'] :is(.cd__add-label, .cd__add-done) { transition: opacity 120ms linear; }
+
+@media (max-width: 980px) {
+  .cd__intro { grid-template-columns: minmax(0, 1fr); }
+  .cd__intro .ac-body { display: none; }
+  .cd__buy { flex-direction: column; align-items: stretch; }
+  .cd__add { flex: none; }
+}
+
+/* Phone: each piece is a compact row (picture beside its name and price, the choice under it); the bag a bottom sheet. */
+@media (max-width: 767.98px) {
+  .cd__bar nav { display: none; }
+  .cd__intro .ac-body { display: block; }
+  .cd__grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .cd__card { gap: 12px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+  .cd__card:first-child { padding-top: 4px; }
+  .cd__link { grid-template-columns: 104px minmax(0, 1fr); grid-template-rows: auto auto 1fr; column-gap: 16px; row-gap: 4px; }
+  .cd__media { grid-row: 1 / span 3; --ratio: 4 / 5; }
+  .cd__meta { flex-direction: column; gap: 2px; align-self: end; }
+  .cd__glaze { margin: 0; }
+  .cd__buy { flex-direction: row; flex-wrap: wrap; }
+  .cd__add { flex: 1 1 100%; }
+  .cd__bag[open], .cd[data-side='start'] .cd__bag[open] { justify-items: stretch; align-items: end; }
+  .cd__panel, .cd[data-side='start'] .cd__panel { width: 100%; height: auto; max-height: 88dvh; border: 0; border-top: 1px solid var(--line); border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+  .cd__bag-head { padding: 18px 20px 12px; }
+  .cd__ship { margin-inline: 20px; }
+  .cd__body { padding: 0 20px; }
+  .cd__foot { padding: 14px 20px 18px; }
+}

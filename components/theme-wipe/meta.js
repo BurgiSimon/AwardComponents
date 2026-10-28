@@ -1,0 +1,40 @@
+export default {
+  id: 'theme-wipe',
+  title: 'Theme wipe',
+  category: 'loaders-transitions',
+  summary: 'A light and dark switch that grows the next theme from the press point as a full-screen WebGL wipe with a ragged edge; the page flips only once it is fully covered.',
+  description: 'Changing the theme is the one frame that flickers: the tokens change in one style recalculation, but pictures, canvases and mixed colours repaint on their own schedule. Here a fixed, full-screen quad covers all of it. It grows the next theme’s ground from where the switch was pressed, its rim roughened by value noise, and when the cover has passed the farthest corner the data-theme attribute flips underneath it. Then the cover fades.\n\nThe radius runs from minus the edge to the farthest corner plus the edge, and the noise moves the rim by at most half the edge, so the start covers nothing and the end covers every pixel. A second press during the cover turns the same edge around. Without WebGL a CSS clip-path circle does the same job without the noise.',
+  recipe: 'gl-noise-edge-theme-wipe',
+  deps: ['three', 'gsap'],
+  tags: ['webgl', 'shader', 'theme', 'dark-mode', 'toggle', 'noise', 'gsap'],
+  requires: ['webgl'],
+  added: '2026-10-28',
+  order: 60,
+  preview: { height: 620, hint: 'Press Night reading', capture: { wait: 900 } },
+  useCases: [
+    'The light and dark switch on a magazine, a portfolio or a documentation site',
+    'A switch between two brand grounds, such as a day and a night edition',
+    'Any token swap that should look caused rather than flash, such as a high-contrast mode',
+  ],
+  notes: [
+    'The switch is a button with aria-pressed that changes the moment it is pressed; the cover is aria-hidden and lets clicks through, and focus never moves.',
+    'Under reduced and static motion the theme swaps at once and no WebGL context is ever created.',
+    'Without WebGL, or with the CSS cover forced on, a clip-path circle grows from the same point in the next ground.',
+  ],
+  controls: [
+    { id: 'duration', label: 'Cover time', type: 'range', min: 0.4, max: 2, step: 0.05, default: 0.9, unit: 's', group: 'Wipe', prompt: 'The cover grows past the farthest corner in {value} with power2.inOut, then fades in 0.3 s (default {default})' },
+    { id: 'edge', label: 'Edge width', type: 'range', min: 0, max: 160, step: 4, default: 56, unit: 'px', group: 'Edge', help: 'The width of the ragged band, in CSS pixels.', prompt: 'Edge band: {value} wide, scaled by the device pixel ratio (default {default})' },
+    { id: 'noise', label: 'Edge noise', type: 'range', min: 0, max: 1, step: 0.05, default: 1, group: 'Edge', help: '0 gives a clean circle; 1 moves the rim by up to half the edge.', prompt: 'Noise strength: {value} of the half-edge (default {default})' },
+    { id: 'css', label: 'Force the CSS cover', type: 'toggle', default: false, group: 'Demo', help: 'What browsers without WebGL get.', prompt: false },
+  ],
+  prompt: {
+    skill: 'webgl',
+    ask: 'Add a WebGL theme wipe to {target}.',
+    target: 'the light and dark switch in the header',
+    brief: 'Pressing the switch shows a fixed, full-screen orthographic quad that grows the next theme’s ground from the press point (a key press starts at the button’s centre) over 0.9 s with power2.inOut. Its rim is roughened by two octaves of value noise across a 56 px edge band; the radius runs from −edge to the farthest corner + edge so both ends are exact. data-theme flips in the tween’s onComplete, under full cover, then the cover fades in 0.3 s and is hidden again.',
+    keep: [
+      'a button with aria-pressed that updates at once; the cover aria-hidden and click-through; a second press mid-cover reverses it',
+      'an instant swap with no WebGL context under reduced motion; a CSS clip-path circle without WebGL; the choice kept for the visit in sessionStorage',
+    ],
+  },
+};

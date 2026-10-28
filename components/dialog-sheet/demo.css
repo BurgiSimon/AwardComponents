@@ -1,0 +1,70 @@
+.ds { --dw: 760px; --blur: 6px; min-height: 100svh; overflow-x: clip; }
+.ds a:not(.ac-btn) { color: inherit; text-decoration: none; }
+
+/* The issue page. */
+.ds__bar { display: flex; align-items: center; gap: 28px; height: 68px; border-bottom: 1px solid var(--line); }
+.ds__brand { font-family: var(--font-serif); font-size: 1.6rem; font-style: italic; font-weight: 600; letter-spacing: -0.02em; }
+.ds__bar nav { display: flex; gap: 22px; margin-left: auto; font-size: var(--text-sm); color: var(--ink-2); }
+.ds__bar nav a:hover { color: var(--ink); }
+.ds__page { padding-block: clamp(24px, 4.5vh, 48px) 96px; }
+.ds__feature { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(20px, 3vw, 48px); align-items: end; }
+.ds__lead { grid-column: span 7; --ratio: 5 / 4; max-height: 74svh; border-radius: var(--radius-md); }
+.ds__card { grid-column: span 5; display: grid; gap: 18px; justify-items: start; padding-bottom: 8px; }
+.ds__title { font-family: var(--font-serif); font-size: clamp(3rem, 1.8rem + 4.2vw, 6.25rem); font-weight: 500; line-height: 0.92; letter-spacing: -0.03em; text-wrap: balance; }
+.ds__card .ac-lede { font-size: var(--text-lg); }
+.ds__card .ac-btn { margin-top: 6px; }
+.ds__more { display: grid; gap: 18px; margin-top: clamp(56px, 9vh, 96px); padding-top: 24px; border-top: 1px solid var(--line); }
+.ds__more ul { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2.4vw, 32px); margin: 0; }
+.ds__more a { display: grid; gap: 8px; }
+.ds__more .ac-media { --ratio: 3 / 2; border-radius: var(--radius-sm); margin-bottom: 6px; }
+.ds__more strong { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 500; letter-spacing: -0.01em; line-height: 1.1; }
+
+/* The dialog element is a full-viewport frame; the scrim and the panel inside it carry the look, so both can be tweened. */
+.ds__dialog { position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: transparent; color: inherit; overflow: hidden; }
+.ds__dialog::backdrop { background: transparent; }
+.ds__dialog[open] { display: grid; place-items: center; }
+.ds__scrim { position: absolute; inset: 0; background: color-mix(in oklab, var(--night) 46%, transparent); backdrop-filter: blur(var(--blur)); -webkit-backdrop-filter: blur(var(--blur)); }
+.ds__panel { position: relative; display: grid; grid-template-rows: auto minmax(0, 1fr); width: min(var(--dw), 100% - 2 * var(--gutter)); height: min(86svh, 60rem); overflow: hidden; border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-3); }
+.ds__head { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 12px 10px clamp(20px, 4vw, 32px); border-bottom: 1px solid var(--line); }
+.ds__grip { display: none; }
+.ds__close { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 14px; border: 1px solid var(--line-2); border-radius: var(--radius-pill); background: none; color: var(--ink); font-size: var(--text-sm); font-weight: 600; transition: background-color var(--dur-s); }
+.ds__close:hover { background: var(--bg-2); }
+.ds__close svg { width: 14px; height: 14px; }
+.ds__scroller { overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--line-2) transparent; }
+.ds__scroller:focus-visible { outline-offset: -3px; }
+.ds__content { max-width: 680px; margin-inline: auto; padding: clamp(28px, 5vh, 48px) clamp(20px, 5vw, 56px) 80px; }
+
+/* The story inside. */
+.ds__story-head { display: grid; gap: 14px; }
+.ds__story-head .ds__title { font-size: clamp(2.6rem, 1.8rem + 2.6vw, 4.25rem); }
+.ds__figure { display: grid; gap: 10px; margin-block: 32px; }
+.ds__figure .ac-media { --ratio: 3 / 2; border-radius: var(--radius-md); }
+.ds__body p { margin-bottom: 1.1em; font-size: 1.0625rem; line-height: 1.7; color: var(--ink-2); text-wrap: pretty; }
+.ds__body > p:first-child::first-letter { float: left; margin: 0.06em 0.1em 0 0; font-family: var(--font-serif); font-size: 3.6em; line-height: 0.82; color: var(--ink); }
+.ds__quote { margin: 36px 0; padding-top: 20px; border-top: 2px solid var(--accent); }
+.ds__quote p { font-family: var(--font-serif); font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem); font-style: italic; line-height: 1.2; color: var(--ink); }
+.ds__ledger { display: grid; gap: 12px; margin-block: 32px; }
+.ds__pane { max-height: 13rem; margin: 0; padding: 0 4px 0 0; overflow-y: auto; overscroll-behavior: contain; border-block: 1px solid var(--line); scrollbar-width: thin; }
+.ds__pane li { display: grid; grid-template-columns: 4.5ch 7rem minmax(0, 1fr); gap: 12px; align-items: baseline; padding-block: 10px; border-bottom: 1px solid var(--line); font-size: var(--text-sm); }
+.ds__pane li:last-child { border-bottom: 0; }
+.ds__pane .ac-num { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--muted); }
+.ds__end { padding-top: 20px; border-top: 1px solid var(--line); }
+
+/* The sheet: the same markup docked to the bottom, dragged away from its header. */
+.ds__dialog[data-variant='sheet'][open] { place-items: end stretch; }
+.ds__dialog[data-variant='sheet'] .ds__panel { width: 100%; height: 90dvh; border-radius: var(--radius-xl) var(--radius-xl) 0 0; }
+.ds__dialog[data-variant='sheet'] .ds__head { padding-top: 22px; touch-action: none; cursor: grab; }
+.ds__dialog[data-variant='sheet'] .ds__grip { display: block; position: absolute; top: 8px; left: 50%; width: 40px; height: 4px; margin-left: -20px; border-radius: 2px; background: var(--line-2); }
+
+@media (max-width: 760px) {
+  .ds__bar nav { display: none; }
+  .ds__bar .ac-btn { margin-left: auto; }
+  .ds__lead, .ds__card { grid-column: 1 / -1; }
+  .ds__lead { --ratio: 4 / 3; }
+  .ds__more ul { grid-template-columns: 1fr; }
+  .ds__more a { grid-template-columns: 112px minmax(0, 1fr); column-gap: 14px; }
+  .ds__more .ac-media { grid-row: span 3; margin: 0; --ratio: 1; }
+  .ds__more a .ac-small { display: none; }
+  .ds__pane li { grid-template-columns: 4.5ch minmax(0, 1fr); }
+  .ds__pane li .ac-small { display: none; }
+}

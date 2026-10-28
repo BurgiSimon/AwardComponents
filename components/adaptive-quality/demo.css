@@ -1,0 +1,75 @@
+.aq { overflow-x: clip; }
+.aq a { text-decoration: none; }
+.aq [hidden] { display: none !important; }
+.aq__bar { position: relative; z-index: 3; }
+
+/* Hero: the field fills it and fades out under the copy; the readout card docks bottom right. */
+.aq__hero {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+  min-height: calc(100svh - 64px);
+  padding-inline: var(--gutter);
+}
+.aq__field {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  -webkit-mask-image: linear-gradient(90deg, transparent 14%, #000 58%);
+  mask-image: linear-gradient(90deg, transparent 14%, #000 58%);
+}
+.aq__field canvas, .aq__still { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.aq__copy { display: grid; gap: clamp(16px, 2.6vh, 22px); width: auto; margin: 0; padding-block: 40px; }
+.aq__copy > * { max-width: 34rem; }
+.aq__copy .ac-display { font-size: clamp(2.6rem, 1.2rem + 4.4vw, 6rem); max-width: 10ch; }
+.aq__buy { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 4px; }
+
+.aq__card {
+  align-self: end;
+  display: grid;
+  gap: 12px;
+  width: 340px;
+  margin-bottom: 28px;
+  padding: 16px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-lg);
+  background: color-mix(in oklab, var(--surface) 86%, transparent);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  box-shadow: var(--shadow-2);
+}
+.aq__card-head { display: flex; justify-content: space-between; align-items: start; gap: 12px; }
+.aq__card-head .ac-label { color: var(--ink); }
+.aq__card-sub { margin-top: 3px; font-size: var(--text-xs); color: var(--muted); }
+.aq__tier { padding: 5px 11px; border-radius: var(--radius-pill); background: var(--bg-2); border: 1px solid var(--line-2); font-family: var(--font-mono); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; transition: background-color var(--dur-s), color var(--dur-s); }
+.aq__tier[data-tier='high'] { background: var(--accent); border-color: transparent; color: var(--on-accent); }
+.aq__tier[data-tier='mid'] { background: var(--ink); border-color: transparent; color: var(--bg); }
+.aq__rows { display: grid; margin: 0; }
+.aq__rows div { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 7px 0; border-top: 1px solid var(--line); font-size: var(--text-sm); }
+.aq__rows dt { color: var(--muted); }
+.aq__rows dd { margin: 0; font-family: var(--font-mono); font-size: 12px; font-variant-numeric: tabular-nums; text-align: right; }
+.aq__probe { padding: 8px 10px; border-radius: var(--radius-sm); background: var(--bg-2); font-family: var(--font-mono); font-size: 10.5px; line-height: 1.55; color: var(--ink-2); }
+.aq__force { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 3px; border: 1px solid var(--line); border-radius: var(--radius-pill); background: var(--bg-2); }
+.aq__force button { height: 30px; border: 0; border-radius: var(--radius-pill); background: transparent; color: var(--ink-2); font-size: var(--text-xs); font-weight: 600; transition: background-color var(--dur-s), color var(--dur-s); }
+.aq__force button:hover { color: var(--ink); }
+.aq__force [aria-pressed='true'] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-1); }
+
+.aq__specs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; margin: 0 auto; padding-block: 32px 72px; border-top: 1px solid var(--line); }
+.aq__specs div { display: grid; gap: 6px; }
+.aq__specs dd { margin: 0; font-size: var(--text-sm); color: var(--ink-2); }
+
+@media (max-width: 1000px) {
+  .aq__card { width: 290px; padding: 14px; }
+  .aq__rows div { padding: 6px 0; }
+}
+@media (max-width: 720px) {
+  .aq__bar nav { display: none; }
+  .aq__hero { grid-template-columns: 1fr; align-items: start; min-height: 0; padding-top: 36svh; }
+  .aq__field { inset: 0 0 auto; height: 52svh; -webkit-mask-image: linear-gradient(180deg, #000 40%, transparent); mask-image: linear-gradient(180deg, #000 40%, transparent); }
+  .aq__copy { padding-block: 0 8px; }
+  .aq__card { width: auto; margin-bottom: 32px; }
+  .aq__specs { grid-template-columns: 1fr 1fr; }
+}

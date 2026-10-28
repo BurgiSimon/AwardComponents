@@ -1,0 +1,64 @@
+.pp { --neon: var(--accent); --stage-ink: color-mix(in oklab, var(--sand) 18%, white); min-height: 100svh; display: grid; grid-template-rows: auto 1fr; overflow-x: clip; }
+.pp a { text-decoration: none; }
+.pp__bar nav a[aria-current] { color: var(--ink); }
+
+/* The stage is night in both themes: a dark set inside the page, like a lit room seen from the street. */
+.pp__stage {
+  position: relative;
+  margin: 0 var(--gutter) var(--gutter);
+  min-height: 480px;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 24px;
+  padding: clamp(24px, 4vw, 56px);
+  color: var(--stage-ink);
+  background:
+    radial-gradient(50% 60% at 70% 38%, color-mix(in oklab, var(--neon) 22%, transparent), transparent 70%),
+    var(--night);
+}
+.pp__gl { position: absolute; inset: 0; z-index: -1; }
+.pp__still { position: absolute; inset: 8% 6% 34% 46%; z-index: -1; display: grid; place-items: center; color: var(--neon); }
+.pp__still[hidden] { display: none; }
+.pp__still svg { width: min(100%, 360px); height: auto; overflow: visible; filter: drop-shadow(0 0 6px var(--neon)) drop-shadow(0 0 24px var(--neon)); }
+
+/* A soft floor of shade under the copy, so the text never sits on a bright reflection. */
+.pp__stage::before { content: ''; position: absolute; inset: 40% 0 0; z-index: -1; background: linear-gradient(to top, color-mix(in oklab, var(--night) 75%, transparent), transparent); pointer-events: none; }
+
+.pp__copy { display: grid; gap: 18px; max-width: 34rem; }
+.pp__label { color: color-mix(in oklab, var(--stage-ink) 70%, transparent); }
+.pp__copy .ac-display { font-size: clamp(2.6rem, 1.4rem + 4.4vw, 5.6rem); }
+.pp__lede { max-width: 40ch; font-size: var(--text-lg); line-height: 1.5; color: color-mix(in oklab, var(--stage-ink) 80%, transparent); text-wrap: pretty; }
+.pp__buy { display: flex; align-items: center; flex-wrap: wrap; gap: 14px 22px; margin-top: 6px; }
+.pp__link { font-size: var(--text-sm); font-weight: 600; border-bottom: 1px solid color-mix(in oklab, var(--stage-ink) 40%, transparent); padding-bottom: 2px; }
+.pp__link:hover { border-color: var(--stage-ink); }
+.pp__stage :focus-visible { outline-color: var(--stage-ink); }
+
+/* The three looks: a segmented control in the corner, the numbers of the active one under it. */
+.pp__looks { display: grid; gap: 10px; justify-items: end; }
+.pp__switch { display: inline-flex; padding: 4px; gap: 2px; border-radius: 999px; background: color-mix(in oklab, var(--night) 60%, transparent); border: 1px solid color-mix(in oklab, var(--stage-ink) 18%, transparent); backdrop-filter: blur(8px); }
+.pp__switch button { display: inline-flex; align-items: baseline; gap: 7px; min-height: 38px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent; color: color-mix(in oklab, var(--stage-ink) 72%, transparent); font-size: var(--text-sm); font-weight: 600; transition: background-color var(--dur-s), color var(--dur-s); }
+.pp__switch button span { font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 500; opacity: 0.7; }
+.pp__switch button:hover { color: var(--stage-ink); }
+.pp__switch button[aria-pressed='true'] { background: var(--stage-ink); color: var(--night); }
+.pp__read { color: color-mix(in oklab, var(--stage-ink) 60%, transparent); }
+
+@media (max-width: 860px) {
+  .pp__stage { grid-template-columns: 1fr; align-content: space-between; padding-top: 60px; }
+  .pp__looks { justify-items: start; order: -1; }
+  .pp__copy { max-width: 26rem; }
+  .pp__copy .ac-display { font-size: clamp(2.4rem, 1.2rem + 4vw, 3.6rem); }
+}
+@media (max-width: 720px) {
+  .pp__stage { align-content: end; }
+  .pp__looks { order: 0; }
+  .pp__copy { max-width: none; }
+  .pp__bar nav a:not([aria-current]) { display: none; }
+  .pp__stage { margin: 0 12px 12px; padding: 22px; min-height: calc(100svh - 76px); border-radius: var(--radius-lg); }
+  .pp__still { inset: 6% 8% 52%; }
+  .pp__lede { font-size: var(--text-md); }
+  .pp__switch button { padding: 0 11px; }
+}

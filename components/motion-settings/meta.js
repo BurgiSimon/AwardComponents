@@ -1,0 +1,37 @@
+export default {
+  id: 'motion-settings',
+  title: 'Motion preference switch',
+  category: 'foundations',
+  summary: 'A festival site’s motion setting — Follow system, Full, Reduced or Static — that rebuilds the hero’s reveals, parallax and line-up ticker live and is remembered.',
+  description: 'One place answers how much motion the page may use, and every effect is built inside a function of that answer. Full is the authored score; Reduced keeps state changes and hierarchy and drops movement across the screen; Static settles everything and subscribes nothing to a clock.\n\nThe visitor’s choice beats the system setting and is saved on the device. Each change tears the current tier down before the next one is built, so tiers never stack.',
+  recipe: 'reduced-motion-switch',
+  deps: ['gsap'],
+  tags: ['reduced-motion', 'accessibility', 'settings', 'popover', 'marquee', 'parallax', 'gsap'],
+  added: '2026-10-28',
+  order: 30,
+  preview: { height: 640, scroll: true, hint: 'Open the motion setting', capture: { action: 'open', wait: 1500 } },
+  useCases: [
+    'A site-wide motion setting in the header or footer of any page with scroll-linked or looping motion',
+    'Festival, launch and portfolio sites whose heroes loop, so visitors can calm them without changing their system',
+    'The one function every effect on a page asks before it builds itself',
+  ],
+  notes: [
+    'A native radio group inside a popover: arrow keys move the choice, Escape and a click outside close it, and the header pill announces the active tier politely.',
+    'Reduced is a tier, not a kill switch: the popover still fades and the headline still appears, but nothing travels; the ticker parks as a still row with a text mirror.',
+    'The saved choice is read and written inside try/catch, so private windows and blocked storage fall back to the system setting.',
+  ],
+  controls: [
+    { id: 'start', label: 'First visit', type: 'select', options: [{ value: 'system', label: 'Follow system' }, { value: 'full', label: 'Full' }, { value: 'reduced', label: 'Reduced' }, { value: 'static', label: 'Static' }], default: 'system', group: 'Setting', help: 'The tier before the visitor chooses. Changing it here also applies it now.', prompt: 'Start a first visit on {value} (default {default})' },
+    { id: 'placement', label: 'Placement', type: 'select', options: [{ value: 'header', label: 'Header pill' }, { value: 'footer', label: 'Footer bar' }], default: 'header', group: 'Setting', prompt: (v) => (v === 'footer' ? 'Put the setting in a slim footer bar instead of the header' : 'Put the setting in the header as a pill') },
+    { id: 'system', label: 'Offer “Follow system”', type: 'toggle', default: true, group: 'Setting', prompt: { on: 'Offer “Follow system” as the first choice', off: 'Offer only the three tiers, without “Follow system”' } },
+    { id: 'remember', label: 'Remember the choice', type: 'toggle', default: true, group: 'Setting', prompt: { on: 'Save the choice on the device (localStorage, inside try/catch)', off: 'Keep the choice for this visit only' } },
+  ],
+  actions: [{ id: 'open', label: 'Open the setting' }],
+  prompt: {
+    skill: 'motion',
+    ask: 'Add a motion setting to {target}.',
+    target: 'the site header',
+    brief: 'One function answers the tier (full, reduced or static): a saved visitor choice wins over prefers-reduced-motion, and “Follow system” hands it back. Every effect is built inside a gsap.context for that tier and reverted, with its ticker subscription, before the next tier applies. Full: line reveals (yPercent 110 → 0, 1.2 s expo-out, stagger .1), scrubbed parallax, a 60 px/s marquee and loops that pause off-screen. Reduced: fades only (.4 s). Static: end states, no clock.',
+    keep: ['a real radio group, the active tier announced politely, a text mirror for the marquee, storage inside try/catch.'],
+  },
+};

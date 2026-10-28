@@ -1,0 +1,36 @@
+export default {
+  id: 'easing-tokens',
+  title: 'Easing tokens',
+  category: 'foundations',
+  summary: 'A banking app’s list, invoice sheet and toasts all moving on one named curve family, with a live plot of the default curve and its duration ladder beside them.',
+  description: 'Five curves and a duration ladder are written once as CSS custom properties. At boot the script reads them, registers each with CustomEase under its token name and makes the house pair GSAP’s default, so a tween that names nothing and a CSS transition share one feel.\n\nNothing in the app names an ease. Change the default curve and every move changes with it.',
+  recipe: 'custom-ease-house-defaults',
+  deps: ['gsap'],
+  tags: ['easing', 'gsap', 'customease', 'tokens', 'motion-system', 'duration', 'stagger', 'reduced-motion'],
+  added: '2026-10-28',
+  order: 20,
+  preview: { height: 640, hint: 'Press Play, or one moment', capture: { wait: 900 } },
+  useCases: [
+    'The motion section of a design system, where curves and durations are tokens like colours',
+    'A product UI whose toasts, sheets and lists should feel like one hand made them',
+    'Moving a site from scattered “power3.out” strings to one house default',
+  ],
+  notes: [
+    'The curves live in CSS, so transitions have them before any script runs; JavaScript reads the same strings and cannot drift.',
+    'Under reduced motion every movement duration and the stagger become 0 s; the fade token survives, so state changes still read. Static zeroes the fade too.',
+    'The moments are real buttons, the sheet takes focus and closes on Escape, and the toasts sit in a polite live region; the curve plot is decoration beside text names.',
+  ],
+  controls: [
+    { id: 'curve', label: 'Default curve', type: 'select', options: [{ value: 'house', label: 'house · .6 .04 .1 1' }, { value: 'out', label: 'out · .2 .9 .3 1' }, { value: 'in-out', label: 'in-out · .72 0 .22 1' }, { value: 'write', label: 'write · .4 0 .6 1' }], default: 'house', group: 'Curve', help: 'The ease every unannotated tween and transition inherits.', prompt: 'Make the “{value}” curve the default (default house)' },
+    { id: 'scale', label: 'Duration scale', type: 'range', min: 0.5, max: 2, step: 0.1, default: 1, unit: '×', group: 'Tempo', help: 'Multiplies the ladder: xs .15, s .3, m .55, l 1.1 s.', prompt: 'Scale the duration ladder by {value} (default {default})' },
+    { id: 'stagger', label: 'Stagger', type: 'range', min: 0, max: 0.14, step: 0.01, default: 0.04, unit: 's', group: 'Tempo', prompt: 'Stagger token: {value} between items (default {default})' },
+  ],
+  actions: [{ id: 'play', label: 'Play' }],
+  prompt: {
+    skill: 'motion',
+    ask: 'Give {target} one named easing vocabulary.',
+    target: 'the site’s motion',
+    brief: 'Five curves (house .6,.04,.1,1 · out · in · in-out · write) and a duration ladder (xs .15, s .3, m .55, l 1.1 s, fade .2 s, stagger .04 s) written once as CSS custom properties. At boot read them, register each with CustomEase.create under its token name and call gsap.defaults({ ease: "house", duration: m }), so unannotated tweens and CSS transitions share one feel. Scrubbed tweens stay ease none.',
+    keep: ['movement durations and the stagger at 0 s under reduced motion with the fade token kept; everything 0 s under static; the curves defined in CSS, read by JavaScript.'],
+  },
+};

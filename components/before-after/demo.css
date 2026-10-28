@@ -1,0 +1,167 @@
+.ba {
+  --ba-hi: var(--surface);   /* the divider and grip read light on any picture, in both themes */
+  --ba-lo: var(--ink);
+  --ba-glide: 200ms;
+  min-height: 100svh;
+  overflow-x: clip;
+}
+:root[data-theme='dark'] .ba { --ba-hi: var(--ink); --ba-lo: var(--bg); }
+.ba a { text-decoration: none; }
+
+.ba__bar { border-bottom: 1px solid var(--line); }
+.ba__brand { font-family: var(--font-serif); font-style: italic; font-weight: 600; font-stretch: normal; font-size: 1.35rem; letter-spacing: -0.01em; }
+.ba__bar nav a[aria-current='page'] { color: var(--ink); }
+
+.ba__page {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(28px, 4.4vw, 72px);
+  min-height: calc(100svh - 64px);
+  padding-block: clamp(20px, 3vw, 36px) clamp(32px, 5vw, 64px);
+}
+.ba__fig { display: grid; gap: 12px; margin: 0; }
+
+/* The frame: two aligned copies; the graded one is clipped at --split. */
+.ba__compare {
+  --split: 50%;
+  position: relative;
+  aspect-ratio: 4 / 3;
+  max-height: calc(100svh - 64px - 96px);
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--bg-2);
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: pan-y;
+  cursor: zoom-in;
+}
+.ba__layer { position: absolute; inset: 0; }
+.ba__layer img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; -webkit-user-drag: none; }
+.ba__after { clip-path: inset(0 0 0 var(--split)); }
+
+/* The before side is the same photograph through filters. */
+.ba[data-before='raw'] .ba__before img { filter: saturate(0.42) contrast(0.72) brightness(1.1) sepia(0.12) hue-rotate(-10deg); }
+.ba[data-before='contact'] .ba__before img { filter: grayscale(1) contrast(1.28) brightness(0.94) sepia(0.1); }
+.ba[data-before='faded'] .ba__before img { filter: sepia(0.6) saturate(0.7) contrast(0.8) brightness(1.08) hue-rotate(-14deg); }
+
+.ba__tag {
+  position: absolute;
+  top: 14px;
+  padding: 6px 10px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in oklab, var(--surface) 86%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+.ba__tag--a { left: 14px; opacity: var(--tag-a, 1); }
+.ba__tag--b { right: 14px; opacity: var(--tag-b, 1); }
+
+/* The handle: a 44 px column centred on the divider, with the line drawn through it. */
+.ba__handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--split);
+  width: 44px;
+  margin-left: -22px;
+  display: grid;
+  place-items: center;
+  cursor: ew-resize;
+  touch-action: none;
+  outline: none;
+}
+.ba__handle::before { content: ''; position: absolute; top: 0; bottom: 0; left: 21px; width: 2px; background: var(--ba-hi); box-shadow: 0 0 12px rgb(0 0 0 / 0.18); }
+.ba__grip {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--ba-hi);
+  color: var(--ba-lo);
+  box-shadow: var(--shadow-2);
+  transition: transform var(--dur-s) var(--ease-out), box-shadow var(--dur-s) var(--ease-out);
+}
+.ba__grip svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.ba__handle:hover .ba__grip, .is-dragging .ba__grip { transform: scale(1.08); }
+.ba__handle:focus-visible .ba__grip { box-shadow: 0 0 0 3px var(--ba-hi), 0 0 0 6px var(--focus); }
+.ba[data-grip='bar'] .ba__grip { width: 10px; height: 56px; border-radius: var(--radius-pill); }
+.ba[data-grip='bar'] .ba__grip svg { display: none; }
+.ba[data-grip='ring'] .ba__grip { background: color-mix(in oklab, var(--ba-hi) 16%, transparent); border: 2px solid var(--ba-hi); color: var(--ba-hi); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+
+/* A first-time hint that leaves once the divider has been used. */
+.ba__hint {
+  position: absolute;
+  left: var(--split);
+  bottom: 16px;
+  translate: -50% 0;
+  padding: 6px 11px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in oklab, var(--surface) 86%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--ink-2);
+  white-space: nowrap;
+  pointer-events: none;
+  transition: opacity var(--dur-m) var(--ease-out);
+}
+.ba__hint span { color: var(--ink); }
+.is-used .ba__hint, .is-holding .ba__hint { opacity: 0; }
+.is-holding .ba__handle { opacity: 0; }
+:root[data-capture] .ba__hint { display: none; }
+
+/* The glide: full motion only, never while dragging. */
+.is-ready .ba__after { transition: clip-path var(--ba-glide) linear; }
+.is-ready :is(.ba__handle, .ba__hint) { transition: left var(--ba-glide) linear, top var(--ba-glide) linear, opacity var(--dur-s) var(--ease-out); }
+.is-ready .ba__tag { transition: opacity var(--dur-s) linear; }
+.is-ready.is-dragging :is(.ba__after, .ba__handle, .ba__hint) { transition: none; }
+
+/* Top and bottom. */
+.ba[data-orientation='vertical'] .ba__compare { touch-action: pan-x; }
+.ba[data-orientation='vertical'] .ba__after { clip-path: inset(var(--split) 0 0 0); }
+.ba[data-orientation='vertical'] .ba__handle { top: var(--split); bottom: auto; left: 0; right: 0; width: auto; height: 44px; margin: -22px 0 0; cursor: ns-resize; }
+.ba[data-orientation='vertical'] .ba__handle::before { top: 21px; bottom: auto; left: 0; right: 0; width: auto; height: 2px; }
+.ba[data-orientation='vertical'] .ba__grip svg { rotate: 90deg; }
+.ba[data-orientation='vertical'][data-grip='bar'] .ba__grip { width: 56px; height: 10px; }
+.ba[data-orientation='vertical'] .ba__tag--b { top: auto; bottom: 14px; left: 14px; right: auto; }
+.ba[data-orientation='vertical'] .ba__hint { left: auto; right: 16px; bottom: auto; top: var(--split); translate: 0 -50%; margin-top: 34px; }
+
+.ba__fig figcaption { padding-inline: 2px; }
+
+.ba__notes { display: grid; gap: 16px; align-content: center; }
+.ba__title { font-family: var(--font-serif); font-size: clamp(2.2rem, 1.3rem + 2.4vw, 3.6rem); font-weight: 500; line-height: 1; letter-spacing: -0.015em; text-wrap: balance; }
+.ba__dl { display: grid; grid-template-columns: minmax(7.5rem, auto) minmax(0, 1fr); margin: 6px 0 0; border-top: 1px solid var(--ink); font-size: var(--text-sm); }
+.ba__dl dt, .ba__dl dd { margin: 0; padding-block: 9px; border-bottom: 1px solid var(--line); }
+.ba__dl dt { color: var(--muted); padding-right: 16px; }
+.ba__keys { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+.ba__keys .ac-kbd { margin-right: 2px; }
+
+/* Narrower: a wide frame first, then the notes in two columns under it. */
+@media (max-width: 1000px) {
+  .ba__page { grid-template-columns: minmax(0, 1fr); min-height: 0; align-items: start; gap: 28px; }
+  .ba__compare { aspect-ratio: 16 / 9; max-height: none; }
+  .ba__notes { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); column-gap: 40px; align-items: start; }
+  .ba__notes > :not(.ba__dl, .ba__keys) { grid-column: 1; }
+  .ba__dl { grid-column: 2; grid-row: 1 / span 4; margin: 0; }
+  .ba__keys { grid-column: 1; }
+}
+@media (max-width: 720px) {
+  .ba__bar nav { display: none; }
+  .ba__compare { aspect-ratio: 4 / 5; }
+  .ba__notes { grid-template-columns: minmax(0, 1fr); }
+  .ba__dl { grid-column: 1; grid-row: auto; margin-top: 6px; }
+  .ba__keys { display: none; }
+}
+@media (pointer: coarse) {
+  .ba__keys { display: none; }
+}

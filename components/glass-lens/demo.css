@@ -1,0 +1,4 @@
+/* Glass lens. Tokens and primitives come from src/demo-kit/base.css; use var(--…) for every colour. */
+.gl {
+  min-height: 100svh;
+}

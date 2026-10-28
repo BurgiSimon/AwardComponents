@@ -1,0 +1,36 @@
+export default {
+  id: 'flip-grid',
+  title: 'Flip grid',
+  category: 'galleries',
+  summary: 'A shop index that changes layout without a cut: grid to list, a category filter that re-flows what is left, and a product picture that flies into its detail view and back.',
+  description: 'All three changes follow the same three steps with GSAP Flip: record where things are, change a class, a hidden attribute or a parent, then animate from the record to the new layout. Nothing is rebuilt, so focus, listeners and the accessibility tree survive every change.\n\nEach change uses the options it needs: grid to list flips the cards and their parts together without scaling, so text never squashes; the filter scales and lets leavers go absolute; the detail reparents the product picture into a native dialog and flies it there.',
+  recipe: 'flip-layout-state',
+  deps: ['gsap'],
+  tags: ['flip', 'layout', 'filter', 'grid', 'list', 'dialog', 'gsap'],
+  added: '2026-10-28',
+  order: 50,
+  preview: { height: 680, scroll: true, hint: 'Filter, switch the view or open a product' },
+  actions: [{ id: 'view', label: 'Switch view', icon: 'grid' }, { id: 'open', label: 'Open a product', icon: 'maximize' }],
+  useCases: [
+    'A shop’s collection page with a filter and a grid / list switch',
+    'A studio archive whose projects open into a detail view without leaving the page',
+    'Any index where readers change the arrangement more often than the content',
+  ],
+  notes: [
+    'Filters and views are aria-pressed buttons in labelled groups with counts; a status line says “4 of 8 objects, as a grid” after each change, and focus stays on the pressed control.',
+    'Each product’s name is a button inside its heading; the detail is a native modal dialog, Escape runs the authored close and focus returns to the product that opened it.',
+    'Under reduced motion and static every change lands on the next frame with no Flip and no fade.',
+  ],
+  controls: [
+    { id: 'duration', label: 'Duration', type: 'range', min: 0.3, max: 1.6, step: 0.05, default: 0.75, unit: 's', group: 'Motion', prompt: 'Flip duration: {value} (default {default})' },
+    { id: 'stagger', label: 'Stagger', type: 'range', min: 0, max: 0.12, step: 0.005, default: 0.025, unit: 's', group: 'Motion', help: 'Per item, so a card and its parts share one delay.', prompt: 'Stagger: {value} per item, never per part (default {default})' },
+    { id: 'ease', label: 'Ease', type: 'select', options: [{ value: 'inOut', label: 'In-out, cubic-bezier(.76, 0, .24, 1)' }, { value: 'out', label: 'Out, expo.out' }, { value: 'spring', label: 'Soft overshoot, back.out(1.3)' }], default: 'inOut', group: 'Motion', prompt: 'Ease: {value} (default {default})' },
+  ],
+  prompt: {
+    skill: 'motion',
+    ask: 'Animate the layout changes of {target} with GSAP Flip.',
+    target: 'the shop index',
+    brief: 'Grid ↔ list, a category filter and a detail view, each as Flip.getState() → change a class, hidden or parent → Flip.from(), never rebuilding the DOM. Grid ↔ list flips items and their parts with nested: true, absolute: true and no scale, pinning the list height; the filter uses scale: true, absoluteOnLeave with onEnter / onLeave fades to 0.85; the detail reparents the picture into a dialog frame of the same ratio. 0.75 s on cubic-bezier(.76, 0, .24, 1), stagger 0.025 s by item.',
+    keep: ['aria-pressed controls with counts and a status line; focus stays put; a native dialog with Escape and focus return; no Flip under reduced motion.'],
+  },
+};

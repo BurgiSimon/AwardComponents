@@ -1,0 +1,35 @@
+export default {
+  id: 'frame-scrub',
+  title: 'Frame scrub',
+  category: 'scroll',
+  summary: 'A speaker turns a full circle as you scroll: a pre-rendered frame sequence, decoded before the scrub arms, drawn to a canvas on a sticky stage beside feature callouts.',
+  recipe: 'image-sequence-scrub',
+  deps: ['three', 'gsap', 'lenis'],
+  tags: ['scroll', 'canvas', 'image-sequence', 'turntable', 'scrub', 'sticky', 'product', 'scrolltrigger'],
+  added: '2026-10-28',
+  order: 70,
+  preview: { height: 660, scroll: true, hint: 'Scroll to turn the speaker', capture: { scroll: 0.3, wait: 7000 } },
+  useCases: [
+    'A product page turntable: the object shown from every side without a 3D engine at runtime',
+    'An exploded view or an assembly sequence exported from Blender or Cinema 4D',
+    'A time-lapse (a building going up, a glaze firing) scrubbed by the reader',
+  ],
+  notes: [
+    'The canvas only shows the sequence and is aria-hidden; a poster image with alt text and the feature callouts stay in the DOM in reading order.',
+    'Every frame is decoded before the scrub arms, and the count drives a visible progress readout, so the first scroll never stutters.',
+    'Under reduced motion one chosen frame is drawn and all callouts are listed; without WebGL (which renders the stand-in frames here) the poster stays.',
+  ],
+  controls: [
+    { id: 'frames', label: 'Frames', type: 'range', min: 24, max: 72, step: 12, default: 48, group: 'Sequence', help: 'More frames turn more smoothly and cost more memory and load time.', prompt: 'Sequence length: {value} frames for one full turn (default {default})' },
+    { id: 'smooth', label: 'Smoothing', type: 'range', min: 0, max: 2, step: 0.1, default: 0.5, unit: 's', group: 'Sequence', help: 'Scrub catch-up: 0 locks the frame to the scrollbar.', prompt: 'Scrub smoothing: {value} (default {default})' },
+    { id: 'callouts', label: 'Callouts', type: 'toggle', default: true, group: 'Look', prompt: { on: 'Feature callouts beside the stage, each active over its quarter of the turn', off: 'No callouts: the turntable and its frame readout only' } },
+    { id: 'finish', label: 'Finish', type: 'select', options: [{ value: 'clay', label: 'Clay' }, { value: 'graphite', label: 'Graphite' }, { value: 'chalk', label: 'Chalk' }], default: 'clay', group: 'Look', prompt: false },
+  ],
+  prompt: {
+    skill: 'component',
+    ask: 'Show {target} as a scroll-scrubbed image sequence.',
+    target: 'the product turntable',
+    brief: 'A pre-rendered frame sequence (48 frames for one turn, exported from a renderer) is fetched and decoded up front with createImageBitmap, its count driving a progress readout; only then does the scrub arm. A 300 svh section holds a sticky stage, and one tween scrubbed from top top to bottom bottom (scrub 0.5) picks the frame to draw on a canvas. Feature callouts switch with the turn.',
+    keep: ['a poster <img> with alt text for no canvas and no script; the canvas aria-hidden; reduced motion draws one chosen frame and lists every callout.'],
+  },
+};

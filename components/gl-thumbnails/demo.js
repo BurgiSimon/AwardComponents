@@ -16,7 +16,7 @@ const V = (x, y) => new THREE.Vector2(x, y);
 const ITEMS = [
   { id: 'tide-vase', kind: 'Stoneware', badge: 'New', tones: [['Oat', ['--sand']], ['Iron', ['--night', '--clay', 0.12]], ['Celadon', ['--moss', 'white', 0.45]]] },
   { id: 'dune-bowl', kind: 'Stoneware', tones: [['Ash', ['--sand', '--night', 0.42]], ['Sand', ['--sand', '--clay', 0.18]]] },
-  { id: 'luma-lamp', kind: 'Opal glass', tones: [['Opal', ['--sand', 'white', 0.72]], ['Smoke', ['--night', '--sky', 0.2]]] },
+  { id: 'luma-lamp', kind: 'Opal glass', tones: [['Opal', ['--sand', 'white', 0.6]], ['Smoke', ['--night', '--sky', 0.2]]] },
   { id: 'ember-cup', kind: 'Porcelain', tones: [['Rust', ['--clay']], ['Chalk', ['--sand', 'white', 0.6]], ['Moss', ['--moss']]] },
   { id: 'arc-chair', kind: 'Steam-bent ash', tones: [['Natural', ['--sand', '--clay', 0.38]], ['Smoked', ['--night', '--clay', 0.3]]] },
   { id: 'pebble-dish', kind: 'Porcelain', badge: 'Last few', tones: [['Celadon', ['--moss', 'white', 0.5]], ['Oat', ['--sand']]] },
@@ -185,7 +185,7 @@ function stillSVG(id, fill) {
     'strand-throw': [0, 1, 2, 3].map((i) => `<rect x="-0.75" y="${(0.3 - i * 0.19 - 0.1).toFixed(2)}" width="1.5" height="0.2" rx="0.09"/>`).join(''),
     'wick-candle': `${outline(PROFILES.holder)}<rect x="-0.16" y="-0.97" width="0.32" height="1.05"/>`,
   };
-  return `<svg viewBox="-1.5 -1.45 3 2.9" aria-hidden="true" style="color:${fill}" fill="currentColor">${shapes[id]}</svg>`;
+  return `<svg viewBox="-1.3 -1.25 2.6 2.5" aria-hidden="true" style="color:${fill}" fill="currentColor">${shapes[id]}</svg>`;
 }
 
 export default function mount(root, options, ctx) {

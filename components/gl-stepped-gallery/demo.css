@@ -1,0 +1,51 @@
+.sg {
+  height: 100svh;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  overflow: clip;
+  background: radial-gradient(60% 55% at 50% 52%, color-mix(in oklab, var(--sky) 12%, var(--bg)), var(--bg) 72%);
+}
+.sg a { text-decoration: none; }
+.sg__brand { font-family: var(--font-serif); font-stretch: normal; font-style: italic; font-weight: 600; font-size: 1.35rem; letter-spacing: -0.01em; }
+.sg__bar nav a[aria-current] { color: var(--ink); }
+
+.sg__gallery { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; min-height: 0; }
+.sg__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; padding-top: clamp(4px, 2vh, 20px); }
+
+/* The stage owns wheel, drag and keys; pan-y leaves vertical page scroll to touch. The canvas only paints. */
+.sg__stage { position: relative; min-height: 240px; touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none; }
+.sg.is-dragging .sg__stage { cursor: grabbing; }
+.sg__stage:focus-visible { outline-offset: -6px; border-radius: var(--radius-lg); }
+.sg__stage canvas { position: absolute; inset: 0; }
+/* Without WebGL: the active cover as a DOM canvas; caption, buttons, keys and the announcer work the same. */
+.sg__still { position: absolute; top: 8%; bottom: 8%; left: 50%; translate: -50% 0; aspect-ratio: 600 / 780; margin: 0; }
+.sg__still canvas { position: static; width: 100%; height: 100%; border-radius: var(--radius-md); box-shadow: var(--shadow-3); }
+
+.sg__caption { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px clamp(16px, 3vw, 40px); padding-block: 16px 22px; border-top: 1px solid var(--line); }
+.sg__count { color: var(--ink-2); min-width: 7ch; }
+.sg__text { display: grid; gap: 3px; min-width: 0; }
+.sg__title { font-size: var(--text-xl); font-weight: 680; font-stretch: var(--wide); letter-spacing: -0.02em; line-height: 1.15; }
+.sg__meta { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sg__actions { display: flex; align-items: center; gap: 8px; }
+.sg__actions .ac-btn { margin-right: 6px; min-width: 9.5em; }
+.sg__key {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line-2);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--ink);
+  transition: background-color var(--dur-s), border-color var(--dur-s);
+}
+.sg__key:hover { background: var(--bg-2); border-color: var(--ink); }
+.sg__key svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+@media (max-width: 720px) {
+  .sg__bar nav { display: none; }
+  .sg__caption { grid-template-columns: auto minmax(0, 1fr); }
+  .sg__actions { grid-column: 1 / -1; }
+  .sg__actions .ac-btn { margin-right: auto; }
+  .sg__meta { white-space: normal; }
+}

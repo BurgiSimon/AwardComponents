@@ -46,7 +46,7 @@ export default function mount(root, options, ctx) {
         <ul class="tt__shelf" role="list" aria-label="Shelf">
           ${blocks.map((b, i) => html`<li class="tt__spot"><div class="tt__obj" data-obj="${i}" style="--w:${b.w};--h:${b.h};--d:${b.d};--m:var(--${b.m})" role="img" aria-label="${b.name} block">
             <div class="tt__body" data-body aria-hidden="true">${FACES.map((f) => (f === 'front'
-              ? html`<span class="tt__face tt__f-front"><b>${b.key}</b><small>${b.name}</small></span>`
+              ? html`<span class="tt__face tt__f-front"><b>${b.key}</b><small>${String(i + 1).padStart(2, '0')}</small></span>`
               : html`<span class="tt__face tt__f-${f}"></span>`))}</div>
           </div></li>`)}
         </ul>
@@ -55,7 +55,8 @@ export default function mount(root, options, ctx) {
           <ol class="tt__slots">${blocks.map((b) => html`<li class="tt__slot" data-slot><span>${b.key}</span></li>`)}</ol>
           <p class="tt__tray-label ac-label">Your brief</p>
         </div>
-        <p class="tt__hint ac-label" data-hint>${finePointer() ? 'Drag a block and let go mid-swing' : 'Drag a block, or use the buttons'}</p>
+        <p class="tt__hint ac-label" data-hint>${finePointer() ? 'Drag a block, let go mid-swing' : 'Drag a block'}</p>
+        <button type="button" class="ac-btn ac-btn--ghost ac-btn--sm tt__reset" data-reset>Back on the shelf</button>
       </div>
       <div class="tt__picks">
         <div class="tt__chips" role="group" aria-label="Disciplines in your brief">
@@ -63,7 +64,7 @@ export default function mount(root, options, ctx) {
         </div>
         <div class="tt__send">
           <a class="ac-btn ac-btn--lg" href="mailto:${studio.email}" data-send>Send the brief <span class="tt__count ac-num" data-count>0</span></a>
-          <button type="button" class="ac-btn ac-btn--ghost" data-reset>Back on the shelf</button>
+          <a class="ac-link ac-small" href="mailto:${studio.email}" data-mail>${studio.email}</a>
         </div>
         <p class="ac-small tt__status" data-status aria-live="polite">The brief is empty.</p>
       </div>
@@ -189,7 +190,7 @@ export default function mount(root, options, ctx) {
 
   picks.forEach((b, i) => on(ctx, b, 'click', () => (caught.has(i) ? toShelf(i) : throwToSlot(i))));
   on(ctx, root.querySelector('[data-reset]'), 'click', reset);
-  on(ctx, send, 'click', (e) => e.preventDefault());
+  [send, root.querySelector('[data-mail]')].forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   // Layout changes move the slots: caught blocks follow them, loose blocks go back to the shelf.
   let resizeTimer = 0;

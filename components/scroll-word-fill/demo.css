@@ -68,7 +68,7 @@
 }
 @media (max-width: 480px) {
   .swf__bar nav a:not([aria-current]):not(:first-child) { display: none; }
-  .swf__statement { font-size: clamp(1.7rem, 0.6rem + 5.6vw, 2.2rem); }
+  .swf__statement { font-size: clamp(1.7rem, 0.4rem + 7vw, 2.5rem); }
   .swf__sign .swf__cue { display: none; }
   .swf__strip { grid-template-columns: 1fr; }
   .swf__strip figure:nth-child(2) { display: none; }

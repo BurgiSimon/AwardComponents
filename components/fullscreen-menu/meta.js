@@ -1,0 +1,40 @@
+export default {
+  id: 'fullscreen-menu',
+  title: 'Fullscreen menu',
+  category: 'navigation',
+  summary: 'A studio header whose Menu button wipes open a full-screen overlay of display-size links with a picture preview, while the page behind goes inert and stops.',
+  recipe: 'nav-overlay-fullscreen',
+  deps: ['gsap', 'lenis'],
+  tags: ['menu', 'overlay', 'navigation', 'clip-path', 'focus-trap', 'inert', 'gsap'],
+  added: '2026-10-28',
+  order: 10,
+  preview: { height: 640, scroll: true, hint: 'Press Menu', capture: { action: 'open', wait: 1900 } },
+  actions: [{ id: 'open', label: 'Open menu' }],
+  useCases: [
+    'The main navigation of a portfolio or studio site with four to six sections',
+    'A brand site whose menu doubles as a contact card: address, email and socials in one place',
+    'A phone-first site where the menu is the one place the type gets to be huge',
+  ],
+  notes: [
+    'The overlay is a modal dialog: the page behind, header included, is inert and stops scrolling; focus moves to the first link and is trapped inside, Escape or any link closes it, and focus returns to the Menu button.',
+    'The Menu button is a real button with aria-expanded and aria-controls; the overlay carries its own Close button in the same spot, so the way out is where the way in was.',
+    'Under reduced motion the menu appears and disappears without the wipe or the stagger; the preview cross-fades instead of scaling.',
+  ],
+  controls: [
+    { id: 'origin', label: 'Wipe from', type: 'select', options: [{ value: 'top', label: 'Top' }, { value: 'button', label: 'Button' }, { value: 'diagonal', label: 'Corner' }], default: 'top', group: 'Wipe', prompt: (v) => ({ top: 'Wipe: clip-path inset from the top edge down', button: 'Wipe: a clip-path circle that grows from the Menu button to the farthest corner, and shrinks back into it on close', diagonal: 'Wipe: a diagonal clip-path polygon that sweeps in from the top-right corner' }[v]) },
+    { id: 'duration', label: 'Wipe duration', type: 'range', min: 0.4, max: 1.6, step: 0.05, default: 0.9, unit: 's', group: 'Wipe', prompt: 'Wipe duration: {value}, expo.inOut (default {default})' },
+    { id: 'stagger', label: 'Link stagger', type: 'range', min: 0.02, max: 0.16, step: 0.01, default: 0.07, unit: 's', group: 'Links', help: 'Delay between links rising out of their masks.', prompt: 'Links rise out of masks (yPercent 110 → 0, 1 s, expo.out) {value} apart (default {default})' },
+    { id: 'numbered', label: 'Numbered links', type: 'toggle', default: false, group: 'Links', help: 'Only when the site is an index or a catalogue.', prompt: { on: 'Number the links 01–04 beside the words', off: 'No numbers beside the links' } },
+    { id: 'tone', label: 'Overlay colour', type: 'select', options: [{ value: 'inverted', label: 'Inverted' }, { value: 'accent', label: 'Accent' }], default: 'inverted', group: 'Look', prompt: (v) => (v === 'accent' ? 'The overlay is the accent colour with on-accent text' : 'The overlay inverts the page: ink ground, paper text') },
+  ],
+  prompt: {
+    skill: 'component',
+    ask: 'Give {target} a full-screen menu overlay.',
+    target: 'the site header',
+    brief: 'The Menu button wipes a full-screen overlay in with clip-path (0.9 s, expo.inOut), on its own colours; display-size links rise out of masks with a 0.07 s stagger and a picture beside them follows the hovered or focused link. Closing sends the words up (0.5 s, expo.in) and wipes the overlay away.',
+    keep: [
+      'role="dialog" and aria-modal, the page inert and Lenis stopped while open, focus on the first link and trapped in the overlay with a Close button where the toggle sits, Escape and link activation close, focus back on the toggle.',
+      'under reduced motion the overlay appears and disappears with no wipe or stagger.',
+    ],
+  },
+};

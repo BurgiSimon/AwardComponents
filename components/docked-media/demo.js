@@ -1,0 +1,167 @@
+// Docked media — an architecture studio's film. The reel is laid out at its final box: a 100 svh section with the
+// gutter as padding. While docked, the same box is position: fixed at inset: gutter and scaled down around its
+// bottom corner, so that corner stays at the gutter corner at every scale. A linear scrub from the section's top at
+// 85 % to top top grows it to scale 1; at that end the fixed box and the section box coincide and onLeave hands the
+// reel back to the flow. Transform only; the radius is counter-scaled. Phones and reduced motion: no dock.
+import './demo.css';
+import { on, html, raw, photos, videos, imageHTML, whileVisible, content } from '../../src/demo-kit/index.js';
+import { useGsap } from '../../src/demo-kit/gsap.js';
+import { useLenis } from '../../src/demo-kit/lenis.js';
+
+const DOCK_MAX = 0.32; // the docked card never exceeds this share of the final box
+const DOCK_MEDIA = '(min-width: 700px)'; // below it a fixed card would cover a phone's content: the reel stays in the flow
+
+export default function mount(root, options, ctx) {
+  const { studio } = content;
+  const work = studio.projects.filter((p) => ['fjordhus', 'kiln-house', 'saltworks'].includes(p.slug));
+  const shots = photos({ tags: ['architecture'], count: 3, seed: 'dm-work' });
+  const [still] = photos({ tags: ['landscape'], count: 1, seed: 'dm-film' });
+  const clip = videos.find((v) => v.tags?.some((t) => ['architecture', 'landscape', 'nature', 'water'].includes(t))) || videos[0];
+  let cfg = { ...options };
+
+  root.className = 'dm';
+  root.innerHTML = html`
+    <header class="ac-bar dm__bar">
+      <a class="ac-brand" href="#top">${studio.name}</a>
+      <nav aria-label="Studio">${studio.nav.map((n) => html`<a href="#top">${n}</a>`)}</nav>
+    </header>
+    <a class="dm__cue" href="#dm-film" data-cue hidden><span class="dm__cue-play" aria-hidden="true"></span>Watch the film <span class="dm__cue-time ac-num">2:40</span></a>
+
+    <section class="dm__hero ac-wrap" aria-labelledby="dm-title">
+      <p class="ac-label">${studio.full} · ${studio.city}</p>
+      <h1 class="ac-display" id="dm-title">${studio.tagline}</h1>
+      <p class="ac-lede">Houses, libraries and bathing places on the west coast of Norway, drawn by eleven people above a boatyard in ${studio.city}.</p>
+      <div class="dm__actions"><a class="ac-btn ac-btn--lg" href="#dm-work">See the work</a><a class="ac-btn ac-btn--lg ac-btn--ghost" href="#top">${studio.email}</a></div>
+      <a class="dm__inline-cue" href="#dm-film" data-inline-cue><span class="dm__cue-play" aria-hidden="true"></span>Watch the film <span class="dm__cue-time ac-num">2:40</span></a>
+    </section>
+
+    <section class="dm__work ac-wrap" id="dm-work" aria-labelledby="dm-work-title">
+      <div class="dm__work-head"><h2 class="ac-h2" id="dm-work-title">Recent work</h2><a class="ac-link ac-small" href="#top">All ${studio.projects.length} projects</a></div>
+      <ul class="dm__cards" role="list">
+        ${work.map((p, i) => html`<li><a class="dm__card" href="#top"><span class="ac-media">${raw(imageHTML(shots[i], { sizes: '(max-width: 700px) 92vw, 30vw', alt: '' }))}</span><span class="dm__card-cap"><strong>${p.title}</strong><span>${p.place} · ${p.year}</span></span></a></li>`)}
+      </ul>
+    </section>
+
+    <section class="dm__film" id="dm-film" data-section aria-labelledby="dm-film-title">
+      <div class="dm__reel" data-reel>
+        <div class="dm__media">
+          ${clip
+            ? raw(`<video muted playsinline loop preload="metadata" poster="${clip.poster || ''}" src="${clip.src}" aria-hidden="true"></video>`)
+            : raw(imageHTML(still, { sizes: '100vw', alt: '' }))}
+        </div>
+        <div class="dm__over" data-over>
+          <p class="ac-label">Film · 2 min 40 · with sound</p>
+          <h2 class="dm__film-title" id="dm-film-title">Fjordhus, one winter</h2>
+          <div class="dm__film-foot">
+            <p>Twelve months on a granite shelf above the Hardanger fjord, from the first snow to the last ferry.</p>
+            <button class="dm__pause" type="button" data-pause aria-pressed="false"><span class="dm__pause-icon" aria-hidden="true"></span><span data-pause-label>Pause</span></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="dm__outro ac-wrap" aria-labelledby="dm-outro-title">
+      <h2 class="ac-h1" id="dm-outro-title">Have a site in mind? Start with a walk around it.</h2>
+      <a class="ac-btn ac-btn--lg ac-btn--accent" href="#top">Book a site visit</a>
+    </section>`;
+  root.querySelectorAll('a[href="#top"], a[href="#dm-work"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
+
+  const section = root.querySelector('[data-section]');
+  const reel = root.querySelector('[data-reel]');
+  const over = root.querySelector('[data-over]');
+  const cue = root.querySelector('[data-cue]');
+  const video = root.querySelector('video');
+  const pauseBtn = root.querySelector('[data-pause]');
+  const pauseLabel = root.querySelector('[data-pause-label]');
+
+  // The film plays only while on screen, not paused by the visitor, and only in the full tier.
+  let userPaused = ctx.motion !== 'full';
+  let visible = false;
+  const sync = () => {
+    const playing = visible && !userPaused;
+    root.classList.toggle('dm--playing', playing);
+    pauseBtn.setAttribute('aria-pressed', String(userPaused));
+    pauseLabel.textContent = userPaused ? 'Play' : 'Pause';
+    if (video) { if (playing) video.play().catch(() => {}); else video.pause(); }
+  };
+  on(ctx, pauseBtn, 'click', () => { userPaused = !userPaused; sync(); });
+  whileVisible(ctx, reel, () => { visible = true; sync(); }, () => { visible = false; sync(); });
+  sync();
+
+  const apply = () => {
+    root.dataset.corner = cfg.corner;
+    root.style.setProperty('--dm-radius', `${cfg.radius}px`);
+  };
+  apply();
+
+  const lenis = useLenis(ctx);
+  if (ctx.motion !== 'full') {
+    on(ctx, root.querySelector('[data-inline-cue]'), 'click', (e) => { e.preventDefault(); section.scrollIntoView(); });
+    return { update(next) { cfg = { ...next }; apply(); } };
+  }
+
+  const { gsap, ScrollTrigger } = useGsap(ctx, root);
+  // reel.offsetWidth is the layout box, which ignores transforms: safe at any point of the scrub.
+  const dockScale = () => Math.min(DOCK_MAX, cfg.dock / Math.max(1, reel.offsetWidth));
+  const setDocked = (docked) => root.classList.toggle('dm--docked', docked);
+  // Counter-scale the radius, and fade a lift shadow out as the card reaches its section.
+  let s0 = 1;
+  const radius = () => {
+    const s = Number(gsap.getProperty(reel, 'scale')) || 1;
+    reel.style.borderRadius = `${(cfg.radius / s).toFixed(2)}px`;
+    reel.style.setProperty('--s', s.toFixed(4));
+    reel.style.setProperty('--lift', s0 < 1 ? ((1 - s) / (1 - s0)).toFixed(3) : '0');
+  };
+
+  let mm = null;
+  const build = () => {
+    mm?.revert();
+    mm = gsap.matchMedia();
+    mm.add(DOCK_MEDIA, () => {
+      cue.hidden = false;
+      root.classList.add('dm--live');
+      setDocked(true);
+      const tl = gsap.timeline({
+        defaults: { ease: 'none' }, // scrubbed: linear, the smoothing is Lenis'
+        scrollTrigger: {
+          trigger: section,
+          start: `top ${cfg.start}%`,
+          end: 'top top', // the section's top reaches the viewport's: fixed box = section box
+          scrub: true, // no catch-up, so the hand-off at the end lands on scale 1 exactly
+          invalidateOnRefresh: true,
+          onRefresh: (self) => setDocked(self.progress < 1),
+          onLeave: () => setDocked(false),
+          onEnterBack: () => setDocked(true),
+        },
+      });
+      s0 = dockScale();
+      tl.fromTo(reel, { scale: dockScale }, { scale: 1, duration: 1, onUpdate: radius }, 0)
+        .to(cue, { autoAlpha: 0, duration: 0.15 }, 0)
+        .fromTo(over, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.25 }, 0.75);
+      radius();
+      return () => { cue.hidden = true; root.classList.remove('dm--live'); setDocked(false); reel.style.borderRadius = ''; reel.style.removeProperty('--lift'); };
+    });
+  };
+  build();
+  ctx.onCleanup(() => mm?.revert());
+
+  const goToFilm = (e) => {
+    e.preventDefault();
+    if (lenis) lenis.scrollTo(section, { duration: 1.2 }); else section.scrollIntoView();
+  };
+  on(ctx, cue, 'click', goToFilm);
+  on(ctx, root.querySelector('[data-inline-cue]'), 'click', goToFilm);
+  document.fonts?.ready.then(() => ScrollTrigger.refresh());
+  on(ctx, window, 'load', () => ScrollTrigger.refresh());
+
+  return {
+    update(next, changed) {
+      cfg = { ...next };
+      apply();
+      if (changed.includes('start') || changed.includes('dock')) build();
+      else radius();
+      ScrollTrigger.refresh();
+      return undefined;
+    },
+  };
+}

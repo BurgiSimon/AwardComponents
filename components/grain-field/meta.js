@@ -1,0 +1,41 @@
+export default {
+  id: 'grain-field',
+  title: 'Grain field',
+  category: 'webgl',
+  summary: 'A project hero covered in sand: the pointer brushes GPU grains aside to show the plan drawing underneath, and the copy card is masked so the brush never covers it.',
+  description: 'Every grain keeps its own displacement and velocity in one texel of a float render target that is read and rewritten each frame (ping-pong), so marks stay where the visitor left them instead of washing out like a fluid.\n\nThe brush is a capsule from the last pointer position to the current one, so a fast flick still moves every grain on its way, and a protect mask drawn from the copy card’s rectangle scales the force to zero over the text. “Smooth the sand” glides every grain home.',
+  recipe: 'gl-ping-pong-grain-field',
+  deps: ['three'],
+  tags: ['webgl', 'three', 'pointer', 'particles', 'ping-pong', 'simulation', 'hero', 'mask'],
+  requires: ['webgl2'],
+  added: '2026-10-28',
+  order: 41,
+  preview: { height: 640, hint: 'Drag across the sand', capture: { action: 'stroke', wait: 4200 } },
+  useCases: [
+    'A project or place page whose subject is hidden under a surface: sand, snow, salt, soil',
+    'A campaign hero that rewards play while the headline and the button stay untouched',
+    'A reveal of a drawing, map or second photograph under a textured cover',
+  ],
+  notes: [
+    'The canvas is aria-hidden; the headline, facts and buttons are real HTML, and the brush has no force over them.',
+    '“Smooth the sand” is a real button. On touch the canvas keeps vertical swipes for scrolling; horizontal swipes brush.',
+    'Under reduced motion no grain flies: the brush uncovers the plan in place and the reset fades it. Static draws the sand once.',
+    'Without WebGL 2 (or a renderable state format) the hero keeps a drawn sand ground and the copy card.',
+  ],
+  controls: [
+    { id: 'brush', label: 'Brush radius', type: 'range', min: 24, max: 120, step: 4, default: 56, unit: 'px', group: 'Brush', prompt: 'Brush radius: {value} with a 1 − r³ falloff (default {default})' },
+    { id: 'inertia', label: 'Inertia', type: 'range', min: 0.6, max: 0.96, step: 0.01, default: 0.88, group: 'Brush', help: 'Share of a grain’s velocity kept each 60 fps frame: low values stop dead, high values let the sand coast.', prompt: 'Inertia: grains keep {value} of their velocity per 60 fps frame (default {default})' },
+    { id: 'grain', label: 'Grain size', type: 'range', min: 3, max: 8, step: 0.5, default: 3.5, unit: 'px', group: 'Field', help: 'One grain per cell; the count is capped near 110,000. Changing it resets the field.', prompt: 'Grain size: one grain per {value} cell (default {default})' },
+  ],
+  actions: [
+    { id: 'stroke', label: 'Draw a stroke' },
+    { id: 'reset', label: 'Smooth the sand' },
+  ],
+  prompt: {
+    skill: 'webgl',
+    ask: 'Cover {target} with a grain field the pointer can brush.',
+    target: 'the hero',
+    brief: 'Each grain keeps its displacement and velocity in one texel of a float render target that is read and rewritten every frame (ping-pong; RGBA32F → 16F → 8 with packed displacement as a fallback). The pointer pushes grains along a capsule from its last position to the current one (56 px radius, 1 − r³ falloff, delta clamped to 24 px), velocity keeps 0.88 per frame, and a protect mask drawn from the copy block’s rectangle zeroes the force there. Moved grains reveal an under-layer; a reset glides them home over 1.6 s, and the loop sleeps 150 frames after the last input.',
+    keep: ['the copy stays real DOM and is never brushed; a real reset button; touch-action: pan-y; reduced motion reveals in place without flying grains; a CSS ground without WebGL 2.'],
+  },
+};

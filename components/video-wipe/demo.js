@@ -217,7 +217,7 @@ export default function mount(root, options, ctx) {
     });
     // The thumbnail: hold the gate a little past half open, with the incoming copy already set.
     if (ctx.capture) {
-      tl.pause(SEAM_AT + D * 0.515);
+      tl.pause(SEAM_AT + D * 0.515, false);   // false: run onUpdate, which writes the clip and the seam
       gsap.set(copyIn, { y: 0, opacity: 1 });
     }
   }

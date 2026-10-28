@@ -1,0 +1,4 @@
+/* Flicker text. Tokens and primitives come from src/demo-kit/base.css; use var(--…) for every colour. */
+.ft {
+  min-height: 100svh;
+}
