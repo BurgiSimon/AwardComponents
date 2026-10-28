@@ -129,6 +129,7 @@ export default function mount(root, options, ctx) {
 | `damp`, `lerp`, `clamp`, `mapRange`, `smoothstep` | `index.js` | Framerate-independent maths |
 | `finePointer()`, `motionTier()` | `index.js` | Pointer-follow effects only for fine pointers with hover |
 | `qualityTier()` | `index.js` | One-time device probe → `{ name, dpr, pixels, particles }` |
+| `webglAvailable()`, `webgl2Available()` | `index.js` | Feature checks without loading a GL library (also re-exported by `three.js`) |
 | `html`, `raw`, `escapeHTML` | `index.js` | Escaping template tag; nested `html` results pass through, trusted markup needs `raw()` |
 | `colour(value)`, `readToken(name)` | `index.js` | A colour control's value → CSS; a token's computed value |
 | `photo`, `photos`, `image`, `imageHTML`, `loadImage`, `art`, `videos` | `index.js` | The shared picture set |

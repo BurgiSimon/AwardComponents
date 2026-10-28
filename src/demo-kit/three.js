@@ -5,14 +5,7 @@ import * as THREE from 'three';
 import { qualityTier } from './quality.js';
 import { observeResize } from './lifecycle.js';
 
-export function webglAvailable() {
-  try {
-    const c = document.createElement('canvas');
-    return !!(c.getContext('webgl2') || c.getContext('webgl'));
-  } catch {
-    return false;
-  }
-}
+export { webglAvailable, webgl2Available } from './gl.js';
 
 // useRenderer(ctx, host, options) → { renderer, canvas, size, onResize(fn), render(scene, camera) }
 // host: the element the canvas fills (positioned by the demo's CSS). The canvas is appended to it.
