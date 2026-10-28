@@ -3,7 +3,7 @@
 // wordmark fitted to the content width: measured once at a reference size, then scaled to fit on every resize.
 // When the wordmark enters view its letters rise from a mask (60 ms stagger). Reduced: they fade. Static: no motion.
 import './demo.css';
-import { on, every, observeResize, observeIntersection, html, raw, photos, imageHTML, content } from '../../src/demo-kit/index.js';
+import { on, every, observeResize, observeIntersection, html, raw, photo, photos, imageHTML, content } from '../../src/demo-kit/index.js';
 
 const NAME = 'Halden';
 
@@ -11,7 +11,8 @@ export default function mount(root, options, ctx) {
   const { studio } = content;
   let cfg = { ...options };
   const next = studio.projects[1];
-  const pic = photos({ tags: ['architecture'], count: 1, seed: 'bf-next' })[0];
+  const chosen = photo('arch-marble-stair'); // a public interior for the library; any architecture otherwise
+  const pic = chosen.drawn ? photos({ tags: ['architecture'], count: 1, seed: 'bf-next' })[0] : chosen;
   const clock = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Oslo' });
 
   root.className = 'bf';

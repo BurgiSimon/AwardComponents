@@ -152,17 +152,17 @@ export default function mount(root, options, ctx) {
     return { update(next) { cfg = { ...next }; style(); render(1); } };
   }
 
-  const { gsap, ScrollTrigger } = useGsap(ctx, root);
+  const { gsap, ScrollTrigger, context } = useGsap(ctx, root);
   const state = { p: 0 };
   let tween = null;
   const arm = () => {
     if (tween) { tween.scrollTrigger?.kill(); tween.kill(); }
-    tween = gsap.to(state, {
+    tween = context.add(() => gsap.to(state, {
       p: 1,
       ease: 'none', // the reading pace is the easing
       onUpdate: () => render(state.p),
       scrollTrigger: { trigger: route, start: 'top 70%', end: 'bottom bottom', scrub: cfg.scrub > 0 ? cfg.scrub : true, invalidateOnRefresh: true },
-    });
+    }));
   };
   arm();
   document.fonts?.ready.then(() => ScrollTrigger.refresh());

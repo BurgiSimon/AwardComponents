@@ -252,14 +252,14 @@ export default function mount(root, options, ctx) {
       return;
     }
     // Decoded: now the scrub arms.
-    const { gsap, ScrollTrigger } = useGsap(ctx, root);
+    const { gsap, ScrollTrigger, context } = useGsap(ctx, root);
     const obj = { f: 0 };
-    gsap.to(obj, {
+    context.add(() => gsap.to(obj, {
       f: count,
       ease: 'none',
       onUpdate: () => draw(obj.f), // the tween's own update, so the frame keeps easing after the scroll event
       scrollTrigger: { trigger: seq, start: 'top top', end: 'bottom bottom', scrub: cfg.smooth > 0 ? cfg.smooth : true, invalidateOnRefresh: true },
-    });
+    }));
     draw(obj.f);
     ScrollTrigger.refresh();
   }).catch(() => {

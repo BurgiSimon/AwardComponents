@@ -5,7 +5,7 @@
 // event, which returns focus to the bag button. Lines are keyed and updated in place so a focused stepper survives.
 // Full: the panel slides from the inline edge (bottom sheet on phones); reduced: fades; static: appears.
 import './demo.css';
-import { on, later, html, raw, photos, imageHTML, content } from '../../src/demo-kit/index.js';
+import { on, later, html, raw, photo, photos, imageHTML, content } from '../../src/demo-kit/index.js';
 
 const MAX_QTY = 9;
 const ADDED_MS = 1400;
@@ -25,17 +25,18 @@ const listPrice = (eur, code) => {
   return Math.round((eur * c.rate) / c.round) * c.round * 100;
 };
 
-// Three pieces with a real choice each; the vase's large size is sold out and stays focusable.
+// Three pieces with a real choice each; the vase's large size is sold out and stays focusable. Each names the
+// picture from the shared set that shows it, and falls back to any ceramic when that picture is missing.
 const PRODUCTS = [
-  { id: 'tide-vase', name: 'Tide Vase', glaze: 'Oat glaze, stoneware', tags: ['ceramic'], options: [{ v: 'S', eur: 118 }, { v: 'M', eur: 148 }, { v: 'L', eur: 178, out: true }], pick: 1 },
-  { id: 'ember-cup', name: 'Ember Cup', glaze: 'Iron-speckled porcelain', tags: ['ceramic'], options: [{ v: '180 ml', eur: 32 }, { v: '260 ml', eur: 38 }], pick: 0 },
-  { id: 'wick-holder', name: 'Wick Holder', glaze: 'Hand-forged iron', tags: ['object'], options: [{ v: 'Single', eur: 46 }, { v: 'Pair', eur: 84 }], pick: 0 },
+  { id: 'tide-vase', name: 'Tide Vase', glaze: 'Celadon glaze, porcelain stoneware', pic: 'obj-celadon-vase', options: [{ v: 'S', eur: 118 }, { v: 'M', eur: 148 }, { v: 'L', eur: 178, out: true }], pick: 1 },
+  { id: 'ember-bowl', name: 'Ember Tea Bowl', glaze: 'Streaked iron glaze, stoneware', pic: 'obj-jian-tea-bowl', options: [{ v: '180 ml', eur: 32 }, { v: '260 ml', eur: 38 }], pick: 0 },
+  { id: 'fern-vase', name: 'Fern Vase', glaze: 'Matte leaf-green glaze, earthenware', pic: 'obj-grueby-vase', options: [{ v: 'Short', eur: 86 }, { v: 'Tall', eur: 124 }], pick: 0 },
 ];
 
 export default function mount(root, options, ctx) {
   const { shop } = content;
   let cfg = { ...options };
-  const pics = PRODUCTS.map((p, i) => photos({ tags: p.tags, count: 3, seed: 'cd-kiln' })[i]);
+  const pics = PRODUCTS.map((p, i) => { const hit = photo(p.pic); return hit.drawn ? photos({ tags: ['ceramic'], count: i + 1, seed: 'cd-kiln' })[i] : hit; });
 
   let money; let tag;
   const setCurrency = () => {
@@ -353,12 +354,11 @@ export default function mount(root, options, ctx) {
     action(id) {
       if (id === 'open') open();
       if (id === 'sample') {
-        // Two cups and a holder: under the free-delivery line, so the meter has something to show.
+        // A tea bowl and the short vase: under the free-delivery line, so the meter has something to show.
         if (!cart.size) {
-          const cup = cards[1].card.querySelector('input[value="260 ml"]');
-          cup.checked = true;
+          const bowl = cards[1].card.querySelector('input[value="260 ml"]');
+          bowl.checked = true;
           cards[1].sync();
-          cards[1].add(true);
           cards[1].add(true);
           cards[2].add(true);
         }

@@ -5,7 +5,7 @@
 // thank-you replaces the send row. The sentence arrives phrase by phrase (rise / fade / none); reduced: fade only.
 import './demo.css';
 import '../../src/demo-kit/serif.css';
-import { on, html, raw, photos, imageHTML, content } from '../../src/demo-kit/index.js';
+import { on, html, raw, photo, photos, imageHTML, content } from '../../src/demo-kit/index.js';
 
 const MESSAGES = {
   name: { valueMissing: 'Your name first: the sentence starts with it.' },
@@ -28,7 +28,8 @@ function replyBy(from = new Date()) {
 export default function mount(root, options, ctx) {
   const { studio, people } = content;
   let cfg = { ...options };
-  const pic = photos({ tags: ['interior'], count: 1, seed: 'sf-studio' })[0];
+  const chosen = photo('interior-butterfly-chair'); // a room with tall studio windows; any interior otherwise
+  const pic = chosen.drawn ? photos({ tags: ['interior'], count: 1, seed: 'sf-studio' })[0] : chosen;
   const reader = people[1].name;
 
   root.className = 'sf';

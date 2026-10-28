@@ -5,7 +5,7 @@
 // Reduced/static: the divider jumps straight to its value instead of gliding.
 import './demo.css';
 import '../../src/demo-kit/serif.css';
-import { on, later, html, raw, photos, imageHTML, content } from '../../src/demo-kit/index.js';
+import { on, later, html, raw, photo, photos, imageHTML, content } from '../../src/demo-kit/index.js';
 
 // What the before side is called, and the notes on the grade that turned it into the cover.
 const BEFORE = {
@@ -25,8 +25,9 @@ const NOTES = [
 export default function mount(root, options, ctx) {
   const { magazine, people } = content;
   let cfg = { ...options };
-  const pick = [['landscape', 'sky'], ['landscape'], ['water'], ['nature']].map((tags) => photos({ tags, count: 1, seed: 'ba-cover' })[0]);
-  const pic = pick.find((p) => !p.drawn) || pick[0];
+  // A weather picture from the shared set (the overcast sea), else any landscape; the drawn stand-in last.
+  const chosen = photo('land-overcast-sea');
+  const pic = chosen.drawn ? photos({ tags: ['landscape'], count: 1, seed: 'ba-cover' })[0] : chosen;
   const alt = pic.drawn ? '' : pic.alt;
 
   root.className = 'ba';
@@ -49,7 +50,7 @@ export default function mount(root, options, ctx) {
           </div>
           <p class="ba__hint ac-label" aria-hidden="true"><span>Drag</span> or hold</p>
         </div>
-        <figcaption class="ac-small">Cover, ${magazine.issue}. Photograph by ${people[3].name}; grade by ${people[2].name.split(' ')[0]} at the photo desk.</figcaption>
+        <figcaption class="ac-small">Cover, ${magazine.issue}. Grade signed off by ${people[3].name}, editor.</figcaption>
       </figure>
 
       <section class="ba__notes" aria-labelledby="ba-title">

@@ -3,7 +3,7 @@
 // drift. A `holds` set (hover, keyboard focus, off-screen, the pause button) pauses that one tween; any choice
 // restarts it from 0. Real tabs with a roving tabindex. Reduced/static: no autoplay, no bar, no pause control.
 import './demo.css';
-import { on, observeIntersection, html, raw, photos, imageHTML, colour, content } from '../../src/demo-kit/index.js';
+import { on, observeIntersection, html, raw, photo, photos, imageHTML, colour, content } from '../../src/demo-kit/index.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
 
 // Each panel's screen: a small, believable slice of the app, decorative (the panel's text carries the point).
@@ -50,12 +50,14 @@ const SCREENS = [
     </div>`,
 ];
 const TABS = ['Invoicing', 'Tax pot', 'Team cards', 'Bookkeeping'];
+// Studio rooms behind each screen: chosen pictures from the shared set, any interior when one is missing.
+const ROOMS = ['interior-butterfly-chair', 'interior-concrete-hall', 'tex-curtain-shadow', 'arch-spiral-stair'];
 
 export default function mount(root, options, ctx) {
   const { app } = content;
   let cfg = { ...options };
   const autoplay = ctx.motion === 'full';
-  const shots = photos({ tags: ['interior'], count: 4, seed: 'at-studios' });
+  const shots = ROOMS.map((id, i) => { const p = photo(id); return p.drawn ? photos({ tags: ['interior'], count: i + 1, seed: 'at-studios' })[i] : p; });
 
   root.className = 'at';
   root.innerHTML = html`

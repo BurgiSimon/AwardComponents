@@ -106,7 +106,7 @@ export default function mount(root, options, ctx) {
   const stepSize = () => cards[0].offsetWidth + cfg.gap;
 
   const lenis = useLenis(ctx);
-  const { gsap, ScrollTrigger } = useGsap(ctx, root);
+  const { gsap, ScrollTrigger, context } = useGsap(ctx, root);
   const native = ctx.motion !== 'full' || matchMedia('(pointer: coarse)').matches;
   root.classList.toggle('hr--native', native);
 
@@ -136,7 +136,7 @@ export default function mount(root, options, ctx) {
     if (tween) { tween.scrollTrigger?.kill(); tween.kill(); tween = null; }
     gsap.set(track, { clearProps: 'transform' });
     rail.style.height = `${innerHeight + distance()}px`;
-    tween = gsap.to(track, {
+    tween = context.add(() => gsap.to(track, {
       x: () => -distance(),
       ease: 'none',
       scrollTrigger: {
@@ -147,7 +147,7 @@ export default function mount(root, options, ctx) {
         invalidateOnRefresh: true,
         onUpdate: (s) => readout(s.progress),
       },
-    });
+    }));
     readout(tween.scrollTrigger.progress);
   };
   build();
