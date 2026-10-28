@@ -149,6 +149,7 @@ export default function mount(root, options, ctx) {
       },
     }));
     readout(tween.scrollTrigger.progress);
+    lenis?.resize(); // the rail's height just changed; Lenis' own resize is debounced
   };
   build();
 

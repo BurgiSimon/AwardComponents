@@ -4,7 +4,7 @@
 // 85 % to top top grows it to scale 1; at that end the fixed box and the section box coincide and onLeave hands the
 // reel back to the flow. Transform only; the radius is counter-scaled. Phones and reduced motion: no dock.
 import './demo.css';
-import { on, html, raw, photos, videos, imageHTML, whileVisible, content } from '../../src/demo-kit/index.js';
+import { on, html, raw, photo, photos, videos, imageHTML, whileVisible, content } from '../../src/demo-kit/index.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
 import { useLenis } from '../../src/demo-kit/lenis.js';
 
@@ -15,8 +15,10 @@ export default function mount(root, options, ctx) {
   const { studio } = content;
   const work = studio.projects.filter((p) => ['fjordhus', 'kiln-house', 'saltworks'].includes(p.slug));
   const shots = photos({ tags: ['architecture'], count: 3, seed: 'dm-work' });
-  const [still] = photos({ tags: ['landscape'], count: 1, seed: 'dm-film' });
-  const clip = videos.find((v) => v.tags?.some((t) => ['architecture', 'landscape', 'nature', 'water'].includes(t))) || videos[0];
+  // The film: a clip from the shared set when one shows a building or water, else a still that drifts slowly.
+  const named = photo('land-lake-reflection');
+  const still = named.drawn ? photos({ tags: ['landscape'], count: 1, seed: 'dm-film' })[0] : named;
+  const clip = videos.find((v) => v.tags?.some((t) => ['architecture', 'interior', 'water'].includes(t)));
   let cfg = { ...options };
 
   root.className = 'dm';

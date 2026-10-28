@@ -3,16 +3,19 @@
 // (x −10 %, −15°) while the seal on it turns harder and starts a beat later; across the second rail each step card
 // rises, holds and settles in turn. Reduced motion: the rails collapse to their content and nothing moves.
 import './demo.css';
-import { on, html, raw, clamp, photos, imageHTML, content, formatPrice } from '../../src/demo-kit/index.js';
+import { on, html, raw, clamp, photo, photos, imageHTML, content, formatPrice } from '../../src/demo-kit/index.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
 import { useLenis } from '../../src/demo-kit/lenis.js';
 
 const STEPS = [
-  { k: 'Thrown', t: 'On the wheel', b: 'Each vase starts as 2.2 kg of stoneware, thrown in one pull and left to stiffen overnight.', tags: ['ceramic'] },
-  { k: 'Glazed', t: 'Dipped twice', b: 'An oat glaze mixed in the workshop; the foot is wiped back so the bare clay shows.', tags: ['texture'] },
-  { k: 'Fired', t: '1,280 °C', b: 'Fourteen hours in a reduction kiln. The flame decides the last tenth of the colour.', tags: ['warm'] },
-  { k: 'Packed', t: 'Paper, not foam', b: 'Wrapped in moulded pulp and sent within three days, with the potter’s initials on the base.', tags: ['interior'] },
+  { k: 'Thrown', t: 'On the wheel', b: 'Each vase starts as 2.2 kg of stoneware, thrown in one pull and left to stiffen overnight.', id: 'obj-jian-tea-bowl', tags: ['ceramic'] },
+  { k: 'Glazed', t: 'Dipped twice', b: 'An oat glaze mixed in the workshop; the foot is wiped back so the bare clay shows.', id: 'obj-grueby-vase', tags: ['ceramic', 'cool'] },
+  { k: 'Fired', t: '1,280 °C', b: 'Fourteen hours in a reduction kiln. The flame decides the last tenth of the colour.', id: 'obj-roman-oil-lamp', tags: ['ceramic', 'warm'] },
+  { k: 'Packed', t: 'Paper, not foam', b: 'Wrapped in moulded pulp and sent within three days, with the potter’s initials on the base.', id: 'tex-paper-sheets', tags: ['texture'] },
 ];
+
+// A named picture when the shared set has it, else a pick by tag (the set may change; a demo never depends on one file).
+const pick = (id, tags, seed) => { const p = photo(id); return p.drawn ? photos({ tags, count: 1, seed })[0] : p; };
 
 export default function mount(root, options, ctx) {
   const { shop } = content;
@@ -20,8 +23,8 @@ export default function mount(root, options, ctx) {
   let cfg = { ...options };
   const count = clamp(Math.round(cfg.stages), 2, STEPS.length);
   const steps = STEPS.slice(0, count);
-  const [hero] = photos({ tags: ['ceramic'], count: 1, seed: 'ss-hero' });
-  const shots = steps.map((s, i) => photos({ tags: s.tags, count: 1, seed: `ss-step-${i}` })[0]);
+  const hero = pick('obj-celadon-vase', ['ceramic'], 'ss-hero');
+  const shots = steps.map((s, i) => pick(s.id, s.tags, `ss-step-${i}`));
 
   root.className = 'ss';
   root.innerHTML = html`

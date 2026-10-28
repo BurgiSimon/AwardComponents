@@ -34,14 +34,13 @@ export default function mount(root, options, ctx) {
       <a class="ac-brand" href="#top">${studio.name}</a>
       <nav aria-label="Studio">${studio.nav.map((n, i) => html`<a href="#top" ${i === 0 ? raw('aria-current="page"') : ''}>${n}</a>`)}</nav>
     </header>
-    <section class="tt__intro ac-wrap" aria-labelledby="tt-title">
-      <p class="ac-label">${studio.full} · ${studio.city}</p>
-      <h1 class="ac-h1" id="tt-title">${studio.tagline}</h1>
-      <p class="tt__cue ac-label" aria-hidden="true">Scroll into the work</p>
-    </section>
-
     <section class="tt__tunnel" data-tunnel data-mode="flat" aria-labelledby="tt-work">
       <div class="tt__stage" data-stage>
+        <div class="tt__lead" data-lead>
+          <p class="ac-label">${studio.full} · ${studio.city}</p>
+          <h1 class="tt__h1" id="tt-title">${studio.tagline}</h1>
+          <p class="tt__cue ac-label" aria-hidden="true">Scroll into the work</p>
+        </div>
         <div class="tt__mask" data-mask>
           <h2 class="tt__title" id="tt-work" data-title>Work</h2>
           <div class="tt__inner" data-inner>
@@ -72,15 +71,17 @@ export default function mount(root, options, ctx) {
   const inner = root.querySelector('[data-inner]');
   const scene = root.querySelector('[data-scene]');
   const title = root.querySelector('[data-title]');
+  const lead = root.querySelector('[data-lead]');
   const items = [...scene.children];
 
-  const lenis = useLenis(ctx);
   if (ctx.motion !== 'full') {
     return { update(next, changed) { cfg = { ...next }; return changed.includes('count') ? false : undefined; } };
   }
 
-  const { gsap, ScrollTrigger, context } = useGsap(ctx, root);
+  // Deep mode first: the section grows to 500 svh, and Lenis should measure the page at its real height.
   section.dataset.mode = 'deep';
+  const lenis = useLenis(ctx);
+  const { gsap, ScrollTrigger, context } = useGsap(ctx, root);
   // Smallest scale at which the capsule's straight part covers the stage: (W − H)·s ≥ stage width, H·s ≥ stage
   // height. offsetWidth/Height ignore transforms, so this is safe at any point of the scrub.
   const coverScale = () => 1.02 * Math.max(stage.clientWidth / Math.max(1, mask.offsetWidth - mask.offsetHeight), stage.clientHeight / mask.offsetHeight);
@@ -88,7 +89,7 @@ export default function mount(root, options, ctx) {
   let tl = null;
   const build = () => {
     if (tl) { tl.scrollTrigger?.kill(); tl.kill(); }
-    gsap.set([mask, inner, scene, title], { clearProps: 'transform,opacity' });
+    gsap.set([mask, inner, scene, title, lead], { clearProps: 'transform,opacity' });
     scene.style.setProperty('--gap', `${cfg.gap}px`);
     const depth = count * cfg.gap; // the flight ends with the last project at z 0
     let cover = coverScale();
@@ -111,6 +112,7 @@ export default function mount(root, options, ctx) {
         },
       });
       tl.to(zoom, { k: 1, duration: ZOOM, onUpdate: applyZoom }, 0)
+        .to(lead, { opacity: 0, duration: 0.12 }, 0.02)
         .to(title, { opacity: 0, duration: 0.5 }, 0.35)
         .fromTo(scene, { z: 0 }, { z: depth, duration: TRAVEL }, TRAVEL_AT);
       tl.depth = depth;

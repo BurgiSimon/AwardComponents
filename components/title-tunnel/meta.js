@@ -8,7 +8,7 @@ export default {
   tags: ['scroll', 'css-3d', 'mask', 'tunnel', 'perspective', 'scrub', 'sticky', 'scrolltrigger', 'gsap', 'lenis'],
   added: '2026-10-28',
   order: 110,
-  preview: { height: 680, scroll: true, hint: 'Scroll into the title, or Tab to a project', capture: { scroll: 0.3, wait: 1400 } },
+  preview: { height: 680, scroll: true, hint: 'Scroll into the title, or Tab to a project', capture: { scroll: 0.11, wait: 1400 } },
   useCases: [
     'The way into a portfolio’s work section from its home page',
     'A festival line-up or a collection walked through rather than scrolled past',

@@ -5,7 +5,7 @@
 // scroll listener for the bar and an IntersectionObserver that clears marks on blocks still below the fold.
 import './demo.css';
 import '../../src/demo-kit/serif.css';
-import { on, html, raw, clamp, photos, imageHTML, content, observeIntersection } from '../../src/demo-kit/index.js';
+import { on, html, raw, clamp, photo, photos, imageHTML, content, observeIntersection } from '../../src/demo-kit/index.js';
 
 const MORE = {
   kilns: 'Each boiling house has one pan, three metres across, set over a brick firebox. Brine from the shallow wells is ladled in at dawn and boiled down by dusk.',
@@ -25,12 +25,15 @@ function ledgerPath() {
   return `M${pts.join(' L')}`;
 }
 
+// A named picture when the shared set has it, else a pick by tag (the set may change; a demo never depends on one file).
+const pick = (id, tags, seed) => { const p = photo(id); return p.drawn ? photos({ tags, count: 1, seed })[0] : p; };
+
 export default function mount(root, options, ctx) {
   const { magazine, people } = content;
   const article = magazine.articles.find((a) => a.slug === 'salt-and-time');
   const p = magazine.longRead;
-  const [heroShot] = photos({ tags: ['landscape'], count: 1, seed: 'cst-hero' });
-  const [ledgerShot] = photos({ tags: ['water'], count: 1, seed: 'cst-ledger' });
+  const heroShot = pick('land-dunes', ['landscape'], 'cst-hero');
+  const ledgerShot = pick('land-overcast-sea', ['water'], 'cst-ledger');
   let cfg = { ...options };
 
   const supported = { scroll: CSS.supports('animation-timeline: scroll()'), view: CSS.supports('animation-timeline: view()') };
@@ -55,7 +58,7 @@ export default function mount(root, options, ctx) {
           <p class="cst__byline">Words by <strong>${article.author}</strong> · Photographs by <strong>${people[3].name}</strong></p>
         </div>
         <figure class="cst__hero-fig">
-          <span class="ac-media">${raw(imageHTML(heroShot, { sizes: '(max-width: 760px) 92vw, 44vw', eager: true, alt: 'The salt flats at low water, late in the afternoon' }))}</span>
+          <span class="ac-media">${raw(imageHTML(heroShot, { sizes: '(max-width: 760px) 92vw, 44vw', eager: true, alt: 'Pale dunes above the boiling houses, late in the afternoon' }))}</span>
           <figcaption class="ac-small">Læsø in August. The boiling houses sit on the dune line, upwind of the village.</figcaption>
         </figure>
       </section>
@@ -75,7 +78,7 @@ export default function mount(root, options, ctx) {
           <h2 class="cst__h2" id="cst-c3">The ledger</h2>
           <figure class="cst__fig">
             <div class="cst__frame" data-frame>
-              <span class="cst__photo ac-media">${raw(imageHTML(ledgerShot, { sizes: '(max-width: 760px) 92vw, 72rem', alt: 'Brine pans on the shore below the archive' }))}</span>
+              <span class="cst__photo ac-media">${raw(imageHTML(ledgerShot, { sizes: '(max-width: 760px) 92vw, 72rem', alt: 'Surf around a low rocky islet off the salt coast' }))}</span>
               <div class="cst__chart" aria-hidden="true">
                 <span class="ac-label">Salt boiled each summer, in tonnes</span>
                 <div class="cst__plot">

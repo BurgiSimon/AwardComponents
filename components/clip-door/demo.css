@@ -21,7 +21,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, color-mix(in oklab, var(--night) 84%, transparent) 0%, color-mix(in oklab, var(--night) 34%, transparent) 42%, transparent 70%);
+  background: linear-gradient(to top, color-mix(in oklab, var(--night) 90%, transparent) 0%, color-mix(in oklab, var(--night) 62%, transparent) 30%, color-mix(in oklab, var(--night) 18%, transparent) 56%, transparent 76%);
 }
 .cd__room-copy { position: absolute; inset: auto 0 0; z-index: 1; display: grid; gap: clamp(12px, 2svh, 20px); padding: 0 var(--pad-x) clamp(24px, 6svh, 56px); }
 .cd__room-copy .ac-label { color: color-mix(in oklab, var(--cd-on) 74%, transparent); }

@@ -8,7 +8,7 @@ export default {
   tags: ['scroll', 'sticky', 'stack', 'cards', 'scale', 'scrub', 'scrolltrigger', 'gsap', 'lenis'],
   added: '2026-10-28',
   order: 100,
-  preview: { height: 660, scroll: true, hint: 'Scroll to stack the cards', capture: { scroll: 0.36, wait: 1200 } },
+  preview: { height: 660, scroll: true, hint: 'Scroll to stack the cards', capture: { scroll: 0.44, wait: 1200 } },
   useCases: [
     'Services, disciplines or plans that deserve a full card each without a long list',
     'A process in four steps where the finished ones stay visible behind the current one',

@@ -69,7 +69,7 @@
 .dm__media img { animation: dm-drift 26s var(--ease-in-out) infinite alternate paused; transform-origin: 40% 60%; }
 .dm--playing .dm__media img { animation-play-state: running; }
 @keyframes dm-drift { from { transform: scale(1.04); } to { transform: scale(1.14) translate(-2%, -1.5%); } }
-.dm__reel::after { content: ''; position: absolute; inset: -2px; background: linear-gradient(to top, color-mix(in oklab, var(--night) 80%, transparent), color-mix(in oklab, var(--night) 20%, transparent) 45%, transparent 70%); pointer-events: none; }
+.dm__reel::after { content: ''; position: absolute; inset: -2px; background: linear-gradient(to top, color-mix(in oklab, var(--night) 88%, transparent), color-mix(in oklab, var(--night) 55%, transparent) 32%, color-mix(in oklab, var(--night) 12%, transparent) 58%, transparent 76%); pointer-events: none; }
 
 .dm__over { position: absolute; inset: auto 0 0; z-index: 1; display: grid; gap: clamp(10px, 2svh, 18px); padding: clamp(20px, 4vw, 56px); }
 .dm__over .ac-label { color: color-mix(in oklab, var(--dm-on) 72%, transparent); }

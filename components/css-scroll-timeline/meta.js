@@ -9,7 +9,7 @@ export default {
   requires: ['scroll-timeline'],
   added: '2026-10-28',
   order: 40,
-  preview: { height: 680, scroll: true, hint: 'Scroll the article', capture: { scroll: 0.5, wait: 900 } },
+  preview: { height: 680, scroll: true, hint: 'Scroll the article', capture: { scroll: 0.555, wait: 900 } },
   useCases: [
     'A long-read article: reading progress, paragraphs that settle in, a figure that opens',
     'A marketing page that wants scroll motion without shipping a scroll library',
