@@ -7,6 +7,7 @@ export default {
   deps: [],
   tags: ['list', 'archive', 'hover', 'pointer', 'preview', 'portfolio', 'damping'],
   added: '2026-10-28',
+  featured: true,
   order: 40,
   preview: { height: 640, scroll: true, hint: 'Hover or Tab through the rows', capture: { pointer: [0.36, 0.56], wait: 1000 } },
   useCases: [

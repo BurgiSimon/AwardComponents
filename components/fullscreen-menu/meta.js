@@ -7,6 +7,7 @@ export default {
   deps: ['gsap', 'lenis'],
   tags: ['menu', 'overlay', 'navigation', 'clip-path', 'focus-trap', 'inert', 'gsap'],
   added: '2026-10-28',
+  featured: true,
   order: 10,
   preview: { height: 640, scroll: true, hint: 'Press Menu', capture: { action: 'open', wait: 1900 } },
   actions: [{ id: 'open', label: 'Open menu' }],

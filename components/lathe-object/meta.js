@@ -9,6 +9,7 @@ export default {
   tags: ['webgl', 'three', 'lathe', 'procedural', 'configurator', 'worker', 'product', 'hover'],
   requires: ['webgl'],
   added: '2026-10-28',
+  featured: true,
   order: 70,
   preview: { height: 660, hint: 'Drag the sliders, then rest the mouse on the vase', capture: { wait: 2400 } },
   useCases: [

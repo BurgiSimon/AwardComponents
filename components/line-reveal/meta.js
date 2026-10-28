@@ -7,6 +7,7 @@ export default {
   deps: ['gsap', 'lenis'],
   tags: ['text', 'splittext', 'reveal', 'mask', 'scroll', 'editorial', 'gsap', 'lenis'],
   added: '2026-10-28',
+  featured: true,
   order: 10,
   preview: { height: 640, scroll: true, hint: 'Scroll — each block rises once as it enters', capture: { wait: 2400 } },
   useCases: [

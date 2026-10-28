@@ -9,6 +9,7 @@ export default {
   tags: ['webgl', 'shader', 'dispersion', 'stripes', 'card', 'product', 'fwidth', 'raw-webgl'],
   requires: ['webgl2'],
   added: '2026-10-28',
+  featured: true,
   order: 46,
   preview: { height: 600, capture: { wait: 1600 } },
   useCases: [

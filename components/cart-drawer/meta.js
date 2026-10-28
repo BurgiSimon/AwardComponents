@@ -7,6 +7,7 @@ export default {
   deps: [],
   tags: ['cart', 'bag', 'dialog', 'drawer', 'quick-add', 'commerce', 'live-region', 'accessibility'],
   added: '2026-10-28',
+  featured: true,
   order: 30,
   preview: { height: 720, hint: 'Add a piece, then open the bag', capture: { action: 'sample', wait: 1000 } },
   actions: [{ id: 'open', label: 'Open bag' }, { id: 'sample', label: 'Fill and open the bag' }],

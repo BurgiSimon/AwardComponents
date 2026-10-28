@@ -32,7 +32,7 @@ function wall() {
 export default async function welcomePage() {
   const example = await loadComponent(EXAMPLE) || await loadComponent((featured[0] || components[0]).id);
   const fresh = components.filter((c) => c.labels.includes('new'));
-  const picks = (featured.length ? featured : components).slice(0, 6);
+  const picks = (featured.length ? featured : components).slice(0, 8);
 
   const node = document.createElement('div');
   node.className = 'welcome';

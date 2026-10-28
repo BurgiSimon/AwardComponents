@@ -10,6 +10,7 @@ export default {
   deps: [],
   tags: ['composition', 'editorial', 'page', 'responsive', 'static', 'serif', 'layout'],
   added: '2026-10-28',
+  featured: true,
   order: 10,
   preview: { height: 760, scroll: true, hint: 'Scroll the whole page' },
   useCases: [

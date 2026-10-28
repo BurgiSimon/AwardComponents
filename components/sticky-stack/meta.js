@@ -7,6 +7,7 @@ export default {
   deps: ['gsap', 'lenis'],
   tags: ['scroll', 'sticky', 'stack', 'cards', 'scale', 'scrub', 'scrolltrigger', 'gsap', 'lenis'],
   added: '2026-10-28',
+  featured: true,
   order: 100,
   preview: { height: 660, scroll: true, hint: 'Scroll to stack the cards', capture: { scroll: 0.44, wait: 1200 } },
   useCases: [
