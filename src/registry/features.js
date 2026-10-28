@@ -35,6 +35,11 @@ export const features = {
     note: 'Plays synthesised sound through the Web Audio API, only after a press.',
     test: () => typeof (window.AudioContext || window.webkitAudioContext) === 'function',
   },
+  webcodecs: {
+    label: 'WebCodecs',
+    note: 'Decodes video frames with WebCodecs; other browsers draw the same frames from stills.',
+    test: () => typeof window.VideoDecoder === 'function' && typeof window.EncodedVideoChunk === 'function',
+  },
   'field-sizing': {
     label: 'field-sizing',
     note: 'Blanks grow with their text through field-sizing: content; elsewhere they keep a fixed width.',

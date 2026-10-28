@@ -127,6 +127,35 @@ export const app = {
   clients: ['Northgate', 'Arden & Vale', 'Morrow', 'Hollis', 'Kestrel', 'Fable & Co', 'Lumen', 'Orchard', 'Tessel', 'Brightwater'],
 };
 
+// Meridian — a public observatory and planetarium on the coast north of Tromsø. Shows, exhibitions, visits.
+// Its pictures are the footage in media.json (the Earth from deep space, an orbit time-lapse, desert clouds).
+export const observatory = {
+  name: 'Meridian',
+  full: 'Meridian Observatory',
+  tagline: 'A dark-sky observatory and planetarium at 69° north.',
+  place: 'Skulsfjord, north of Tromsø',
+  email: 'visit@meridian.no',
+  exhibition: { title: 'One orbit', dek: 'Ninety-two minutes around the planet, filmed from the station window.', dates: '14 November 2026 – 30 March 2027' },
+  shows: [
+    { title: 'The night side', time: '19:00', length: '35 min', room: 'Dome', note: 'The planet after dark, city by city.' },
+    { title: 'A million miles out', time: '20:00', length: '40 min', room: 'Dome', note: 'The whole disc of the Earth, one day in eleven minutes.' },
+    { title: 'Aurora season', time: '21:30', length: '30 min', room: 'Dome', note: 'Live from the roof camera when the sky is clear.' },
+    { title: 'First telescope', time: '11:00', length: '25 min', room: 'Studio', note: 'For ages six and up: build one and keep it.' },
+  ],
+  visit: [
+    { label: 'Open', value: 'Wednesday to Sunday, 10–23' },
+    { label: 'Getting here', value: 'Bus 420 from Tromsø, 50 minutes' },
+    { label: 'Tickets', value: 'Adult 190 kr, under 16 free' },
+  ],
+  // Captions for the orbit time-lapse (video-earth-orbit, all daylight), by share of the clip.
+  orbit: [
+    { at: 0.06, label: 'Cloud bands over open ocean, 400 km below' },
+    { at: 0.32, label: 'Dark water through a gap in the cloud' },
+    { at: 0.58, label: 'One of the station’s solar wings, 35 m long' },
+    { at: 0.84, label: 'The horizon curves away into black' },
+  ],
+};
+
 // People for testimonials, teams and bylines (fictional).
 export const people = [
   { name: 'Ingrid Vold', role: 'Founding partner, Halden' },

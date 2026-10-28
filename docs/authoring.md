@@ -25,7 +25,7 @@ Read the recipe first: `README.md` (why it is built that way, its parameters, it
 
 ## Design rules
 
-These keep 96 demos reading as one library.
+These keep every demo reading as one library.
 
 1. **One theme.** Every colour is a token from `src/styles/tokens.css` (`--bg`, `--surface`, `--ink`, `--ink-2`, `--muted`, `--line`, `--accent`, the content materials `--clay`, `--moss`, `--sky`, `--sand`, `--plum`, `--night`, and for copy on photographs `--on-media`, `--on-media-2`, `--media-scrim`, which stay light in both themes). `data-theme="dark"` or `"light"` on any element re-themes that subtree, for a dark band on a light page. No hex values in `demo.css` except inside a gradient built from tokens with `color-mix()`. Canvas and WebGL code read tokens with `readToken('--accent')`.
 2. **One type system.** Mona Sans for everything (its width axis gives the display voice: `font-stretch: var(--wide)`), JetBrains Mono for labels and numbers. Use the primitives `.ac-display`, `.ac-h1`, `.ac-h2`, `.ac-h3`, `.ac-lede`, `.ac-body`, `.ac-label`, `.ac-small`. An editorial demo may opt into Bodoni Moda with `import '../../src/demo-kit/serif.css'` and `var(--font-serif)`.
@@ -57,7 +57,7 @@ Plain data with no imports: Node scripts, the shell and the play runtime all rea
 | `featured` | no | `true` puts it on the welcome page and at the front of the wall. |
 | `order` | no | Sort key inside its category (default 50; lower first). |
 | `status` | no | `'experimental'` adds a label. |
-| `labels` | no | Extra label kinds from `src/registry/labels.js`. |
+| `labels` | no | Extra label kinds from `src/registry/labels.js`. `'new'` here marks a component that joined after the launch set on the launch day itself; it still expires with the date rule. |
 | `requires` | no | Browser features from `src/registry/features.js` (`webgl`, `webgl2`, `view-transitions`, `scroll-timeline`, `offscreen-canvas`, `web-audio`, `field-sizing`). The page warns visitors whose browser lacks one. |
 | `theme` | no | `'dark'` or `'light'` locks the demo to one theme (one frame pair, theme toggles ignored). Default follows the site. |
 | `preview` | no | `{ height, scroll, hint, capture, remountOnTheme }`. `height` 320–1200 (default 600). `scroll: true` shows "Scroll inside the preview". `hint` is a short instruction ("Drag the divider"). `capture: { wait, scroll, pointer: [x, y], hover, action, tier }` sets the frame's moment. `remountOnTheme: true` re-mounts on a theme change instead of calling `ctx.onTheme` listeners. |
@@ -172,7 +172,7 @@ The prompt names the skill command (`/awards:component` in Claude Code, `$awards
 
 ## Labels, dates and the changelog
 
-- `added` sets **New** automatically for components added after launch; nothing to remove later.
+- `added` sets **New** automatically for components added after launch; nothing to remove later. Only a component added on `site.launch` itself, after the launch set, needs `labels: ['new']`.
 - Bump `updated` and add a `changelog` entry when a demo changes meaningfully.
 - **WebGL** and **CSS only** come from `deps` and `tags`.
 - A new label kind is one entry in `src/registry/labels.js`; a new category one entry in `src/registry/categories.js` (with an icon from `src/app/icons.js`); a new browser feature one entry in `src/registry/features.js`.

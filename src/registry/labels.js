@@ -12,17 +12,23 @@ export const labelKinds = {
 };
 
 const DAY = 864e5;
+// Kinds that come from dates: an author's own `labels` entry cannot make them permanent.
+const DATED = new Set(['new', 'updated']);
 const daysSince = (iso, now) => (now - Date.parse(`${iso}T00:00:00Z`)) / DAY;
 
 // → array of label kinds for a normalised component, most important first.
 export function labelsFor(c, now = Date.now()) {
   const out = [];
   const launched = Date.parse(`${site.launch}T00:00:00Z`);
-  if (c.added && Date.parse(`${c.added}T00:00:00Z`) > launched && daysSince(c.added, now) <= site.newForDays) out.push('new');
+  const own = c.labels || [];
+  // New: added after launch, or marked `labels: ['new']` (joined after the launch set on the launch day itself).
+  // Either way it expires `newForDays` after `added`, so the mark never needs removing.
+  const afterLaunch = Date.parse(`${c.added}T00:00:00Z`) > launched || own.includes('new');
+  if (c.added && afterLaunch && daysSince(c.added, now) <= site.newForDays) out.push('new');
   else if (c.updated && daysSince(c.updated, now) <= site.updatedForDays) out.push('updated');
   if (c.status === 'experimental') out.push('experimental');
   if (c.tech.includes('webgl')) out.push('webgl');
   else if (c.tech.length === 0 || (c.tech.length === 1 && c.tech[0] === 'css')) out.push('css');
-  for (const extra of c.labels || []) if (labelKinds[extra] && !out.includes(extra)) out.push(extra);
+  for (const extra of own) if (labelKinds[extra] && !DATED.has(extra) && !out.includes(extra)) out.push(extra);
   return out;
 }

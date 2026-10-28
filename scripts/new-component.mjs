@@ -7,6 +7,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { ROOT, COMPONENTS_DIR } from './lib/components.js';
 import { categories } from '../src/registry/categories.js';
+import { site } from '../src/registry/site.js';
 
 const argv = process.argv.slice(2);
 const flag = (name) => (argv.includes(`--${name}`) ? argv[argv.indexOf(`--${name}`) + 1] : undefined);
@@ -42,7 +43,7 @@ export default {
   recipe: ${q(recipeId)},
   deps: [], // libraries demo.js imports (check.mjs verifies); the recipe uses: ${recipe.deps.join(', ') || 'none'}
   tags: [${recipe.tags.slice(0, 6).map(q).join(', ')}],
-  added: ${q(today)},
+  added: ${q(today)},${today === site.launch ? `\n  labels: ['new'], // added on the launch day after the launch set; expires like any New label` : ''}
   preview: { height: 600 },
   useCases: [
     'TODO: a real place this fits',
