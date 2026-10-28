@@ -29,6 +29,12 @@ npm run preview
 
 Node 22.12+ or 24. `BASE_PATH=/AwardComponents/` builds for a GitHub project page; `SITE_URL=https://…/` adds canonicals, Open Graph URLs and a sitemap.
 
+## How it is checked
+
+- `npm run check` validates every component's meta, controls, declared libraries against the demo's real imports and its prompt, and reports which awards recipes no component covers yet (all 96 are covered).
+- `npm run smoke` runs every demo in headless Chromium: mount, every control changed, every action, scroll, re-mount, reduced motion, a 390 px touch phone and, for WebGL demos, WebGL switched off.
+- The shell is axe-core clean (WCAG 2.2 A/AA) on every page in both themes.
+
 ## Add a component
 
 One folder, three files, no registration: see **[docs/authoring.md](docs/authoring.md)**.
@@ -47,7 +53,7 @@ npm run frames -- --only <id>
 - `components/<id>/` — `meta.js` (data), `demo.js` (`mount(root, options, ctx)`), `demo.css`.
 - `src/demo-kit/` — what demos share: the base styles and primitives, the ticker and damping maths, motion tiers, lifecycle helpers, GSAP / Lenis / three.js wrappers that clean up after themselves, the fictional content cast and the picture set.
 - `src/registry/` — categories, labels, browser features, site settings, the options model and the prompt builder; `recipes.json` is a snapshot of the awards recipes (`npm run sync-recipes`).
-- `scripts/` — `check`, `smoke`, `frames`, `new-component`, `sync-recipes`, `media`, and the route-file Vite plugin.
+- `scripts/` — `check`, `smoke`, `frames`, `shot`, `new-component`, `sync-recipes`, `media`, `og`, and the Vite plugins (light component index, demo sources, route files).
 - `public/frames/` — captured previews (both themes, two sizes) used by cards, the hover preview, the palette and as the demo's poster while it loads. Only the open component runs live, so the library stays light with a hundred components.
 
 ## Credits and licence

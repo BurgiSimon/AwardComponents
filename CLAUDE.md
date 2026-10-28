@@ -14,9 +14,14 @@ npm run check [-- --only id,id] [--strict]    # validate component metas (runs b
 npm run smoke [-- --only id,id]               # headless Chromium: mount, options, actions, reduced motion, phone
 npm run frames [-- --only id,id] [--missing]  # capture preview frames into public/frames/
 npm run new -- <id> --recipe <recipe-id>      # scaffold a component
+npm run shot -- <id> [--size 800x620] [--theme dark] [--steps "scroll:0.5,action:open"] [--params "k=v"]   # screenshot one demo
 npm run sync-recipes -- --awards ../awards    # refresh src/registry/recipes.json
+npm run media [-- --only id] [--force]        # rebuild the shared photo set and CREDITS.md from scripts/data/media-sources.json
+npm run og                                    # redraw public/og.png from the frames
 npm run build                                 # check + vite build + per-route HTML
 ```
+
+`play.html?c=<id>&nogl` shows a WebGL demo's no-WebGL path; smoke loads every GL demo that way.
 
 Playwright is pinned in package.json; `scripts/lib/browser.mjs` falls back to `AC_CHROMIUM` or a preinstalled Chromium when Playwright's own browser build is missing.
 
