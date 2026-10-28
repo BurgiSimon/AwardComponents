@@ -1,7 +1,8 @@
 // Command palette (⌘K / Ctrl+K, or "/" on wide pages): search every component by name, category, tag or recipe,
 // jump to pages, switch the theme. Results are a listbox driven from the input (aria-activedescendant), with the
 // active component's frame shown beside the list on wide screens.
-import { components, categories } from '../../registry/index.js';
+import { components, categories, byId, featured } from '../../registry/index.js';
+import { prefs } from '../prefs.js';
 import { html, raw, href, escapeHTML } from '../dom.js';
 import { icon } from '../icons.js';
 import { frameSrc } from '../frames.js';
@@ -49,6 +50,20 @@ const ACTIONS = [
 ];
 
 function results(q) {
+  if (!q) {
+    // With no query: what the visitor looked at last, then the featured set.
+    const seen = prefs.get('seen', []).filter((id) => byId.has(id));
+    const pick = [...new Set([...seen, ...featured.map((c) => c.id)])].slice(0, 10);
+    const item = (id) => { const c = byId.get(id); return { kind: 'component', id, title: c.title, hint: c.categoryTitle, to: `/components/${id}/`, c }; };
+    const recent = pick.filter((id) => seen.includes(id)).map(item);
+    const feat = pick.filter((id) => !seen.includes(id)).map(item);
+    return [
+      ...recent.length ? [{ group: 'Recently viewed' }, ...recent] : [],
+      ...feat.length ? [{ group: 'Featured' }, ...feat] : [],
+      { group: 'Pages' }, ...PAGES,
+      { group: 'Actions' }, ...ACTIONS,
+    ];
+  }
   const comps = components
     .map((c) => ({ c, s: scoreComponent(c, q) }))
     .filter((x) => x.s > 0)
@@ -128,7 +143,7 @@ function setActive(index, scroll = true) {
   const peek = dialog.querySelector('.palette__peek');
   if (item.kind === 'component') {
     peek.hidden = false;
-    peek.querySelector('img').src = frameSrc(item.id);
+    peek.querySelector('img').src = frameSrc(item.id, { size: devicePixelRatio > 1.5 ? 'md' : 'sm' });
     peek.querySelector('img').dataset.frame = item.id;
     peek.querySelector('.palette__peek-title').textContent = item.title;
     peek.querySelector('.palette__peek-sum').textContent = item.c.summary;

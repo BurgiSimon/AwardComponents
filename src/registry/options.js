@@ -150,9 +150,9 @@ export function promptLine(control, value) {
   if (typeof p === 'function') return p(value, control);
   if (control.type === 'toggle' && p && typeof p === 'object') return value ? p.on : p.off;
   const template = typeof p === 'string' ? p : '{label}: {value}';
-  const line = template
-    .replaceAll('{label}', control.label)
-    .replaceAll('{value}', formatValue(control, value))
-    .replaceAll('{default}', formatValue(control, control.default));
+  // One pass with a function replacer: a visitor's text value is inserted literally ($&, $$ and a typed
+  // "{default}" stay as typed).
+  const vals = { label: control.label, value: formatValue(control, value), default: formatValue(control, control.default) };
+  const line = template.replace(/\{(label|value|default)\}/g, (_, k) => vals[k]);
   return template.includes('{default}') ? line : `${line} (default ${formatValue(control, control.default)})`;
 }

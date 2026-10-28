@@ -20,7 +20,10 @@ export const href = (path = '') => BASE + String(path).replace(/^\//, '');
 export const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 export const finePointer = () => matchMedia('(hover: hover) and (pointer: fine)').matches;
 
+// Debounced fn with cancel(): pages cancel pending work in destroy() so it never lands on the next page.
 export function debounce(fn, ms) {
   let t = 0;
-  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+  const d = (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+  d.cancel = () => clearTimeout(t);
+  return d;
 }

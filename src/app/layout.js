@@ -1,13 +1,13 @@
 // The persistent shell: top bar, sidebar (library routes), main column and footer.
 import { html, raw, el, $, $$, href, BASE } from './dom.js';
 import { icon, mark } from './icons.js';
-import { groups, components } from '../registry/index.js';
+import { groups, components, byId } from '../registry/index.js';
 import { labelKinds } from '../registry/labels.js';
 import { site } from '../registry/site.js';
 import { prefs } from './prefs.js';
 import { toggleTheme, currentTheme, onThemeChange } from './theme.js';
 import { initHoverPreview } from './ui/hover-preview.js';
-import { openPalette } from './ui/palette.js';
+import { openPalette, scoreComponent } from './ui/palette.js';
 
 export function labelChips(c, { max = 3, only } = {}) {
   const kinds = (only ? c.labels.filter((k) => only.includes(k)) : c.labels).slice(0, max);
@@ -73,7 +73,7 @@ function footer() {
   <footer class="site-footer">
     <div class="site-footer__in">
       <div class="site-footer__brand">
-        <a class="brand" href="${href('/')}">${raw(mark(20))}<span class="brand__word">Award<b>Components</b></span></a>
+        <a class="brand" href="${href('/')}" aria-label="${site.name} home">${raw(mark(20))}<span class="brand__word">Award<b>Components</b></span></a>
         <p>Every component is rebuilt from a verified recipe in the <a href="${site.awards.repo}" target="_blank" rel="noopener" data-external>awards plugin</a> and ships with a prompt that adapts it to your project.</p>
       </div>
       <nav class="site-footer__nav" aria-label="Footer">
@@ -115,26 +115,39 @@ export function mountShell(root) {
     prefs.set('collapsed', $$('.sb-group[data-collapsed]', side).map((x) => x.dataset.group));
   });
 
-  // Filter: hides items and empty groups; Enter opens the first match; Escape clears.
+  // Filter: hides items and empty groups; Enter opens the best match (ranked like the palette); Escape clears.
   const filter = $('[data-sb-filter]', side);
   filter.addEventListener('input', () => applyFilter(side, filter.value));
   filter.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') { filter.value = ''; applyFilter(side, ''); filter.blur(); }
-    if (e.key === 'Enter') { const first = $('.sb-item:not([hidden])', side); first?.click(); }
+    if (e.key === 'Enter') {
+      const q = filter.value.trim();
+      const items = $$('.sb-item:not([hidden])', side);
+      const best = q ? items.map((a) => [a, scoreComponent(byId.get(a.dataset.id), q)]).sort((x, y) => y[1] - x[1])[0]?.[0] : items[0];
+      best?.click();
+    }
     if (e.key === 'ArrowDown') { e.preventDefault(); $('.sb-item:not([hidden])', side)?.focus(); }
   });
 
-  // Phone: the sidebar is a drawer.
+  // Narrow screens: the sidebar is a drawer. Closed, it is inert (off the tab order and the accessibility tree);
+  // open, the page behind it is. The filter takes focus only for keyboard openers, so a tap does not raise the
+  // on-screen keyboard over the list; a tap lands on the current item instead.
   const menuBtn = $('[data-menu]', root);
   const scrim = $('[data-menu-close]', root);
-  const setDrawer = (open) => {
+  const mainCol = $('.main-col', root);
+  const narrow = matchMedia('(max-width: 960px)');
+  const setDrawer = (open, { focusFilter = false } = {}) => {
     shell.toggleAttribute('data-drawer', open);
     menuBtn.setAttribute('aria-expanded', String(open));
     scrim.hidden = !open;
-    if (open) { side.removeAttribute('inert'); filter.focus({ preventScroll: true }); }
+    side.inert = narrow.matches && !open;
+    mainCol.inert = narrow.matches && open;
+    if (open) (focusFilter ? filter : $('.sb-item[aria-current], .sb-top', side))?.focus({ preventScroll: true });
   };
-  menuBtn.addEventListener('click', () => setDrawer(!shell.hasAttribute('data-drawer')));
-  scrim.addEventListener('click', () => setDrawer(false));
+  setDrawer(false);
+  narrow.addEventListener('change', () => setDrawer(false));
+  menuBtn.addEventListener('click', (e) => setDrawer(!shell.hasAttribute('data-drawer'), { focusFilter: e.detail === 0 }));
+  scrim.addEventListener('click', () => { setDrawer(false); menuBtn.focus(); });
   side.addEventListener('click', (e) => { if (e.target.closest('a.sb-item, a.sb-top')) setDrawer(false); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && shell.hasAttribute('data-drawer')) { setDrawer(false); menuBtn.focus(); } });
 

@@ -1,8 +1,8 @@
 // The welcome page: what the library is, how a prompt is made (a live, tunable example), the categories, a few
 // featured components, anything new, and how to install the awards plugin.
-import { components, groups, featured, loadComponent } from '../../registry/index.js';
+import { components, groups, featured, loadComponent, byId } from '../../registry/index.js';
 import { site } from '../../registry/site.js';
-import { resolve } from '../../registry/options.js';
+import { resolve, toParams } from '../../registry/options.js';
 import { html, raw, href, reducedMotion } from '../dom.js';
 import { icon } from '../icons.js';
 import { frameImg } from '../frames.js';
@@ -22,15 +22,18 @@ function wall() {
   const picks = order.slice(0, 24);
   const cols = [[], [], [], []];
   picks.forEach((c, i) => cols[i % 4].push(c));
-  const tile = (c, dup) => html`<a class="wall__tile" href="${href(`/components/${c.id}/`)}" ${dup ? raw('tabindex="-1" aria-hidden="true"') : ''}>${raw(frameImg(c.id, { size: 'sm', alt: '', sizes: '260px' }))}<span class="wall__name">${c.title}</span></a>`;
+  // Decorative: every tile is also linked from Featured, Categories and Browse, so the moving wall stays out of
+  // the tab order and the accessibility tree; a visible button pauses it (WCAG 2.2.2).
+  const tile = (c) => html`<a class="wall__tile" href="${href(`/components/${c.id}/`)}" tabindex="-1">${raw(frameImg(c.id, { size: 'sm', alt: '', sizes: '260px' }))}<span class="wall__name">${c.title}</span></a>`;
   return html`
-    <div class="wall" aria-label="A selection of components">
-      ${cols.map((col, i) => raw(html`<div class="wall__col" style="--dur:${[70, 86, 64, 92][i]}s" data-dir="${i % 2 ? 'down' : 'up'}"><div class="wall__track">${raw(col.map((c) => tile(c, false)).join(''))}${raw(col.map((c) => tile(c, true)).join(''))}</div></div>`))}
+    <div class="wall" aria-hidden="true">
+      ${cols.map((col, i) => raw(html`<div class="wall__col" style="--dur:${[70, 86, 64, 92][i]}s" data-dir="${i % 2 ? 'down' : 'up'}"><div class="wall__track">${raw(col.map((c) => tile(c)).join(''))}${raw(col.map((c) => tile(c)).join(''))}</div></div>`))}
     </div>`;
 }
 
-export default async function welcomePage() {
-  const example = await loadComponent(EXAMPLE) || await loadComponent((featured[0] || components[0]).id);
+export default function welcomePage() {
+  const exampleId = byId.has(EXAMPLE) ? EXAMPLE : (featured[0] || components[0]).id;
+  const exampleTitle = byId.get(exampleId)?.title || '';
   const fresh = components.filter((c) => c.labels.includes('new'));
   const picks = (featured.length ? featured : components).slice(0, 8);
 
@@ -51,6 +54,7 @@ export default async function welcomePage() {
         </button>
       </div>
       ${raw(wall())}
+      <button class="chip-btn wall-pause" type="button" aria-pressed="false" data-wall-pause>${raw(icon('motion', { size: 13 }))}<span>Pause the wall</span></button>
     </section>
 
     <section class="facts" aria-label="At a glance">
@@ -76,7 +80,7 @@ export default async function welcomePage() {
         <div class="how__panel" data-slot="controls"></div>
         <div class="how__prompt" data-slot="prompt"></div>
       </div>
-      <p class="how__note">Try it: drag a slider and watch the prompt change. This is the <a href="${href(`/components/${example.id}/`)}">${example.title}</a>.</p>
+      <p class="how__note">Try it: drag a slider and watch the prompt change. This is the <a href="${href(`/components/${exampleId}/`)}" data-example-link>${exampleTitle}</a>; the link keeps your settings.</p>
     </section>
 
     <section class="cats" aria-labelledby="cats-title">
@@ -127,26 +131,52 @@ export default async function welcomePage() {
   bindCopy(node.querySelector('[data-copy-install]'), () => site.awards.install.claude.join('\n'), { message: 'Install commands copied' });
   node.querySelectorAll('[data-copy-cmd]').forEach((b) => bindCopy(b, () => site.awards.install[b.dataset.copyCmd].join('\n'), { message: 'Commands copied' }));
 
-  // The live example: the same preview, controls and prompt the component pages use.
-  let values = resolve(example, {});
-  const preview = createPreview(example, () => values, { compact: true, height: 380 });
-  const prompt = createPromptPanel(example, () => values, { compact: true });
-  const controls = createControls(example, values, {
-    onChange(next) { values = next; preview.setValues(values); prompt.update(); },
+  // The live example: the same preview, controls and prompt the component pages use. The page renders at once;
+  // the example's full meta (controls, prompt) arrives a moment later and fills the bench.
+  let preview = null;
+  let prompt = null;
+  let gone = false;
+  loadComponent(exampleId).then((example) => {
+    if (gone || !example) return;
+    let values = resolve(example, {});
+    const link = node.querySelector('[data-example-link]');
+    preview = createPreview(example, () => values, { compact: true, height: 380 });
+    prompt = createPromptPanel(example, () => values, { compact: true });
+    const controls = createControls(example, values, {
+      onChange(next) {
+        values = next;
+        preview.setValues(values);
+        prompt.update();
+        // The link to the component page carries what the visitor tuned here.
+        const q = toParams(example, values).toString();
+        link.href = href(`/components/${example.id}/`) + (q ? `?${q}` : '');
+      },
+    });
+    node.querySelector('.how [data-slot="preview"]').append(preview.el);
+    node.querySelector('.how [data-slot="controls"]').append(controls.el);
+    node.querySelector('.how [data-slot="prompt"]').append(prompt.el);
   });
-  node.querySelector('.how [data-slot="preview"]').append(preview.el);
-  node.querySelector('.how [data-slot="controls"]').append(controls.el);
-  node.querySelector('.how [data-slot="prompt"]').append(prompt.el);
 
-  // The wall drifts only while the hero is on screen and motion is allowed.
+  // The wall drifts only while the hero is on screen, motion is allowed and the visitor has not paused it.
   const wallEl = node.querySelector('.wall');
-  const io = new IntersectionObserver(([e]) => wallEl.classList.toggle('is-paused', !e.isIntersecting || reducedMotion()), { threshold: 0 });
+  const pauseBtn = node.querySelector('[data-wall-pause]');
+  let userPaused = false;
+  let onScreen = true;
+  const syncWall = () => wallEl.classList.toggle('is-paused', userPaused || !onScreen || reducedMotion());
+  pauseBtn.hidden = reducedMotion();
+  pauseBtn.addEventListener('click', () => {
+    userPaused = !userPaused;
+    pauseBtn.setAttribute('aria-pressed', String(userPaused));
+    pauseBtn.querySelector('span').textContent = userPaused ? 'Play the wall' : 'Pause the wall';
+    syncWall();
+  });
+  const io = new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; syncWall(); }, { threshold: 0 });
   io.observe(wallEl);
 
   return {
     node,
     title: `${site.name} — award-league components you can prompt`,
     layout: 'wide',
-    destroy() { io.disconnect(); preview.destroy(); prompt.destroy(); },
+    destroy() { gone = true; io.disconnect(); preview?.destroy(); prompt?.destroy(); },
   };
 }

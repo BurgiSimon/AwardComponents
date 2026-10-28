@@ -6,6 +6,7 @@ import { initTheme } from './theme.js';
 import { initFrameSwap } from './frames.js';
 import { mountShell } from './layout.js';
 import { startRouter } from './router.js';
+import { initToast } from './ui/toast.js';
 import welcome from './pages/welcome.js';
 import browse from './pages/browse.js';
 import component from './pages/component.js';
@@ -15,6 +16,7 @@ initTheme();
 initFrameSwap();
 
 const shell = mountShell(document.getElementById('app'));
+initToast();
 
 startRouter(
   [

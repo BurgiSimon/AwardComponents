@@ -37,12 +37,15 @@ export function initHoverPreview(side) {
   let front = 0;
   const preloaded = new Set();
 
+  // The card is ~320 px wide: the 480 px frame is enough unless the screen is dense.
+  const size = () => (devicePixelRatio > 1.5 ? 'md' : 'sm');
+  let swapTimer = 0;
   const preload = (id) => {
     if (!id || preloaded.has(id)) return;
     preloaded.add(id);
     const i = new Image();
     i.decoding = 'async';
-    i.src = frameSrc(id);
+    i.src = frameSrc(id, { size: size() });
   };
 
   const place = (item) => {
@@ -55,14 +58,15 @@ export function initHoverPreview(side) {
     card.style.setProperty('--arrow', `${Math.round(Math.min(Math.max(r.top + r.height / 2 - top, 18), h - 18))}px`);
   };
 
-  const setFrame = (id) => {
-    const src = frameSrc(id);
+  const setFrame = (id, neighbours = []) => {
+    const src = frameSrc(id, { size: size() });
     const back = imgs[1 - front];
     const swap = () => {
       if (currentId !== id) return;
       back.classList.add('is-on');
       imgs[front].classList.remove('is-on');
       front = 1 - front;
+      neighbours.forEach(preload);
     };
     back.onload = null;
     back.onerror = null;
@@ -83,10 +87,13 @@ export function initHoverPreview(side) {
       title.textContent = c.title;
       sum.textContent = c.summary;
       labels.innerHTML = labelChips(c, { max: 3 });
-      setFrame(id);
+      // Text follows at once; the frame swaps once the pointer rests (~70 ms), and the neighbours preload only
+      // after that frame has arrived, so sweeping down the list does not fetch every picture on the way.
       const li = item.closest('li');
-      preload(li?.previousElementSibling?.querySelector('.sb-item')?.dataset.id);
-      preload(li?.nextElementSibling?.querySelector('.sb-item')?.dataset.id);
+      const neighbours = [li?.previousElementSibling, li?.nextElementSibling].map((n) => n?.querySelector('.sb-item')?.dataset.id);
+      clearTimeout(swapTimer);
+      if (visible) swapTimer = setTimeout(() => setFrame(id, neighbours), 70);
+      else setFrame(id, neighbours);
     }
     place(item);
     if (!visible) {
@@ -126,6 +133,8 @@ export function initHoverPreview(side) {
   side.addEventListener('focusout', (e) => { if (!e.relatedTarget?.closest?.('.sb-item')) hide(); });
   side.querySelector('.sidebar__in')?.addEventListener('scroll', hide, { passive: true });
   side.addEventListener('click', hide);
+  // Content shown on hover or focus can be dismissed without moving the pointer or focus (WCAG 1.4.13).
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && visible) hide(); });
   window.addEventListener('resize', hide);
   onThemeChange(() => { if (currentId) { const id = currentId; currentId = null; preloaded.clear(); const item = side.querySelector(`.sb-item[data-id="${id}"]`); if (visible && item) show(item); } });
 }

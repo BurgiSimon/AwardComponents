@@ -8,7 +8,7 @@ import { site } from '../../registry/site.js';
 import { html, raw, href, debounce, escapeHTML } from '../dom.js';
 import { icon } from '../icons.js';
 import { labelChips } from '../layout.js';
-import { setQuery } from '../router.js';
+import { setQuery, strip } from '../router.js';
 import { createPreview } from '../ui/preview.js';
 import { createControls } from '../ui/controls.js';
 import { createPromptPanel } from '../ui/prompt-panel.js';
@@ -104,8 +104,8 @@ export default async function componentPage({ params, query }) {
         <p class="muted code-note">The demo as it runs above. To use it, copy the prompt: the awards plugin rebuilds it inside your project's own tokens and stack instead of pasting this file.</p>
         <div class="code">
           <div class="code__bar">
-            <div class="code__files" role="tablist" aria-label="Files">
-              ${['demo.js', 'demo.css', 'meta.js'].map((f, i) => raw(`<button type="button" role="tab" aria-selected="${i === 0}" data-file="${f}">${f}</button>`))}
+            <div class="code__files" role="group" aria-label="File">
+              ${['demo.js', 'demo.css', 'meta.js'].map((f, i) => raw(`<button type="button" aria-pressed="${i === 0}" data-file="${f}">${f}</button>`))}
             </div>
             <button class="icon-btn icon-btn--sm" type="button" data-copy-code aria-label="Copy this file">${raw(icon('copy', { size: 15 }))}</button>
           </div>
@@ -121,7 +121,8 @@ export default async function componentPage({ params, query }) {
 
   if (!recipesData) loadRecipes().then(() => { const slot = node.querySelector('[data-slot="recipes"]'); if (slot) slot.innerHTML = c.recipes.map(recipeCard).join(''); });
 
-  const syncUrl = debounce(() => setQuery(toParams(c, values)), 250);
+  const myPath = strip(location.pathname);
+  const syncUrl = debounce(() => setQuery(toParams(c, values), { path: myPath }), 250);
 
   const preview = createPreview(c, () => values, {
     onReady: (msg) => renderCredits(node.querySelector('[data-slot="credits"]'), msg.media || []),
@@ -140,20 +141,28 @@ export default async function componentPage({ params, query }) {
         prompt.update();
         syncUrl();
       },
-      onAction(id) { preview.el.querySelector(`[data-action="${id}"]`)?.click() || preview.iframe.contentWindow?.postMessage({ type: 'ac:action', action: id }, location.origin); },
+      onAction(id) { preview.action(id); },
       footer: `<button class="btn btn--accent btn--block" type="button" data-copy-panel>${icon('copy', { size: 15 })}<span data-label>Copy prompt</span></button><a class="btn btn--ghost btn--block" href="#prompt">${icon('arrowRight', { size: 15 })}<span>See the prompt</span></a>`,
     });
     node.querySelector('[data-slot="controls"]').append(controls.el);
     bindCopy(controls.el.querySelector('[data-copy-panel]'), () => prompt.text, { message: 'Prompt copied — paste it into your agent' });
     const bench = node.querySelector('.workbench');
     const toggle = node.querySelector('[data-panel-toggle]');
-    toggle.addEventListener('click', () => {
-      panelOpen = bench.dataset.panel !== 'open';
-      bench.dataset.panel = panelOpen ? 'open' : 'closed';
-      toggle.setAttribute('aria-expanded', String(panelOpen));
-      toggle.querySelector('span').textContent = panelOpen ? 'Hide controls' : 'Customize';
-      prefs.set('panel', panelOpen);
-    });
+    // The panel closes from its own header (wide screens) and reopens from the floating Customize button.
+    controls.el.querySelector('.tweaks__head').insertAdjacentHTML('beforeend', `<button class="icon-btn icon-btn--sm tweaks__hide" type="button" data-panel-hide aria-label="Hide controls" title="Hide controls">${icon('x', { size: 15 })}</button>`);
+    const hideBtn = controls.el.querySelector('[data-panel-hide]');
+    const setPanel = (open) => {
+      panelOpen = open;
+      bench.dataset.panel = open ? 'open' : 'closed';
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.querySelector('span').textContent = 'Customize';
+      prefs.set('panel', open);
+      if (open) controls.el.querySelector('.tweaks__head h2')?.focus({ preventScroll: true });
+      else toggle.focus({ preventScroll: true });
+    };
+    controls.el.querySelector('.tweaks__head h2')?.setAttribute('tabindex', '-1');
+    toggle.addEventListener('click', () => setPanel(true));
+    hideBtn.addEventListener('click', () => setPanel(false));
   }
 
   // Tabs (roving focus).
@@ -165,7 +174,7 @@ export default async function componentPage({ params, query }) {
       t.tabIndex = on ? 0 : -1;
       node.querySelector(`#${t.getAttribute('aria-controls')}`).hidden = !on;
     });
-    if (tab.id === 'tab-code') loadFile(node.querySelector('[data-file][aria-selected="true"]').dataset.file);
+    if (tab.id === 'tab-code') loadFile(node.querySelector('[data-file][aria-pressed="true"]').dataset.file);
   };
   tabs.forEach((t) => t.addEventListener('click', () => selectTab(t)));
   node.querySelector('.details .tabs').addEventListener('keydown', (e) => {
@@ -180,12 +189,17 @@ export default async function componentPage({ params, query }) {
 
   // Code tab: sources load on first open.
   let codeText = '';
+  let fileReq = 0;
   async function loadFile(file) {
+    const my = ++fileReq;
     const box = node.querySelector('[data-code]');
-    node.querySelectorAll('[data-file]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.file === file)));
+    node.querySelectorAll('[data-file]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.file === file)));
     const res = await fetch(href(`source/${c.id}/${file}.txt`)).catch(() => null);
+    if (my !== fileReq) return;
     if (!res?.ok) { box.textContent = `${file} is not part of this component.`; codeText = ''; return; }
-    codeText = await res.text();
+    const text = await res.text();
+    if (my !== fileReq) return;
+    codeText = text;
     box.innerHTML = highlight(codeText, file.endsWith('.css') ? 'css' : 'js');
   }
   node.querySelector('.code__files').addEventListener('click', (e) => {
@@ -201,8 +215,10 @@ export default async function componentPage({ params, query }) {
     componentId: c.id,
     mounted() {
       if (cat) document.querySelector('meta[name="description"]')?.setAttribute('content', c.summary);
+      prefs.set('seen', [c.id, ...prefs.get('seen', []).filter((x) => x !== c.id)].slice(0, 6));
     },
     destroy() {
+      syncUrl.cancel();
       preview.destroy();
       prompt.destroy();
     },

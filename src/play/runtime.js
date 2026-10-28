@@ -71,15 +71,21 @@ function currentTheme() {
   return html.dataset.theme === 'dark' ? 'dark' : 'light';
 }
 
+let generation = 0;
+
 async function mount({ keepScroll = false } = {}) {
   const scrollY = keepScroll ? window.scrollY : 0;
   unmount();
+  const my = ++generation;
   const tier = motionTier();
   html.dataset.motion = tier;
   snapshot = takeSnapshot();
   abort = new AbortController();
-  cleanups = [];
-  themeListeners = [];
+  // Each mount owns its lists: a slow mount that resolves after a newer one started cannot push its cleanups
+  // into the newer mount's, and it tears itself down instead of becoming the live instance.
+  const mine = { cleanups: [], theme: [] };
+  cleanups = mine.cleanups;
+  themeListeners = mine.theme;
   root.replaceChildren();
   root.removeAttribute('class');
   root.removeAttribute('style');
@@ -91,19 +97,29 @@ async function mount({ keepScroll = false } = {}) {
     signal: abort.signal,
     capture: params.has('capture'),
     embedded,
-    onCleanup(fn) { cleanups.push(fn); },
-    onTheme(fn) { themeListeners.push(fn); },
+    onCleanup(fn) { mine.cleanups.push(fn); },
+    onTheme(fn) { mine.theme.push(fn); },
     emit(type, data) { post(`ac:demo:${type}`, { data }); },
   };
+  const discard = (inst) => {
+    try { inst?.destroy?.(); } catch (e) { console.error(e); }
+    for (const fn of mine.cleanups.splice(0).reverse()) {
+      try { fn(); } catch (e) { console.error(e); }
+    }
+  };
+  let next;
   try {
-    instance = (await mountFn(root, { ...values }, ctx)) || {};
+    next = (await mountFn(root, { ...values }, ctx)) || {};
   } catch (error) {
+    if (my !== generation) { discard(null); return; }
     console.error(error);
     mountError = error;
     showError(error);
     post('ac:error', { message: String(error?.message || error) });
     return;
   }
+  if (my !== generation) { discard(next); return; }
+  instance = next;
   mountError = null;
   if (scrollY) {
     requestAnimationFrame(() => {
@@ -117,7 +133,7 @@ function unmount() {
   if (!abort) return;
   abort.abort();
   try { instance?.destroy?.(); } catch (e) { console.error(e); }
-  for (const fn of cleanups.reverse()) {
+  for (const fn of cleanups.splice(0).reverse()) {
     try { fn(); } catch (e) { console.error(e); }
   }
   cleanups = [];

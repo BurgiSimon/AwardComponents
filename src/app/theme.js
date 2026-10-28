@@ -7,9 +7,10 @@ const listeners = new Set();
 export const currentTheme = () => (document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
 
 function apply(theme) {
+  // The browser chrome colour follows even when the head script already set the theme.
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#0c0c0d' : '#f4f4f1');
   if (theme === currentTheme()) return;
   document.documentElement.dataset.theme = theme;
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#0c0c0d' : '#f4f4f1');
   for (const fn of listeners) fn(theme);
 }
 

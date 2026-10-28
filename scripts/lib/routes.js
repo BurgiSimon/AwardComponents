@@ -13,23 +13,30 @@ export function routes({ base = '/', siteUrl = '' } = {}) {
     name: 'ac-routes',
     apply: 'build',
     configResolved(config) { outDir = path.resolve(config.root, config.build.outDir); },
-    async closeBundle() {
+    async writeBundle(_options, bundle) {
+      // A component page needs its meta chunk before it can render: preload it from that route's HTML.
+      const metaChunk = new Map();
+      for (const out of Object.values(bundle)) {
+        const m = out.type === 'chunk' && out.facadeModuleId?.replace(/\\/g, '/').match(/\/components\/([a-z0-9-]+)\/meta\.js$/);
+        if (m) metaChunk.set(m[1], out.fileName);
+      }
       const template = fs.readFileSync(path.join(outDir, 'index.html'), 'utf8');
       const components = await loadComponents({ fresh: true });
       const abs = (route) => (siteUrl ? new URL(route.replace(/^\//, ''), siteUrl.endsWith('/') ? siteUrl : `${siteUrl}/`).href : '');
-      const page = (route, title, description, image) => {
+      const page = (route, title, description, image, preload) => {
         let out = template
-          .replace(/<title>[^<]*<\/title>/, `<title>${esc(title)}</title>`)
-          .replace(/(<meta name="description" content=")[^"]*(")/, `$1${esc(description)}$2`)
-          .replace(/(<meta property="og:title" content=")[^"]*(")/, `$1${esc(title)}$2`)
-          .replace(/(<meta property="og:description" content=")[^"]*(")/, `$1${esc(description)}$2`);
+          .replace(/<title>[^<]*<\/title>/, () => `<title>${esc(title)}</title>`)
+          .replace(/(<meta name="description" content=")[^"]*(")/, (_, a, b) => `${a}${esc(description)}${b}`)
+          .replace(/(<meta property="og:title" content=")[^"]*(")/, (_, a, b) => `${a}${esc(title)}${b}`)
+          .replace(/(<meta property="og:description" content=")[^"]*(")/, (_, a, b) => `${a}${esc(description)}${b}`);
+        if (preload) out = out.replace('</head>', () => `    <link rel="modulepreload" crossorigin href="${base}${preload}">\n  </head>`);
         if (siteUrl) {
           const extra = [
             `<link rel="canonical" href="${abs(route)}">`,
             `<meta property="og:url" content="${abs(route)}">`,
             image ? `<meta property="og:image" content="${abs(image)}">` : '',
           ].filter(Boolean).join('\n    ');
-          out = out.replace('</head>', `    ${extra}\n  </head>`);
+          out = out.replace('</head>', () => `    ${extra}\n  </head>`);
         }
         return out;
       };
@@ -46,11 +53,11 @@ export function routes({ base = '/', siteUrl = '' } = {}) {
         ['/changelog/', `Changelog — ${site.name}`, 'Every component added or changed, newest first.'],
       ];
       for (const c of components) {
-        list.push([`/components/${c.id}/`, `${c.title} — ${site.name}`, c.summary, `frames/${c.id}-light.webp`]);
+        list.push([`/components/${c.id}/`, `${c.title} — ${site.name}`, c.summary, `frames/${c.id}-light.webp`, metaChunk.get(c.id)]);
       }
-      for (const [route, title, description, image] of list) {
-        if (route === '/') fs.writeFileSync(path.join(outDir, 'index.html'), page(route, title, description, 'og.png'));
-        else write(route, page(route, title, description, image || 'og.png'));
+      for (const [route, title, description, image, preload] of list) {
+        if (route === '/') fs.writeFileSync(path.join(outDir, 'index.html'), page(route, title, description, 'og.png', metaChunk.get('magnetic-button')));
+        else write(route, page(route, title, description, image || 'og.png', preload));
       }
       write('404.html', page('/404', `Not found — ${site.name}`, site.description));
 

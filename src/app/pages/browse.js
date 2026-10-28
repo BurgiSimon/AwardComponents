@@ -2,9 +2,9 @@
 import { components, groups, categories } from '../../registry/index.js';
 import { TECH_LABELS } from '../../registry/normalize.js';
 import { site } from '../../registry/site.js';
-import { html, raw, debounce } from '../dom.js';
+import { html, raw, debounce, escapeHTML } from '../dom.js';
 import { icon } from '../icons.js';
-import { setQuery } from '../router.js';
+import { setQuery, strip } from '../router.js';
 import { card } from '../ui/card.js';
 import { scoreComponent } from '../ui/palette.js';
 
@@ -18,7 +18,9 @@ export default function browsePage({ query }) {
     tech: TECH.includes(query.get('tech')) ? query.get('tech') : '',
     sort: SORTS[query.get('sort')] ? query.get('sort') : 'category',
   };
-  const techCount = (t) => components.filter((c) => (t === 'css' ? !c.tech.some((x) => x !== 'css') : c.tech.includes(t))).length;
+  const techMatch = (c, t) => (t === 'css' ? !c.tech.some((x) => x !== 'css') : c.tech.includes(t));
+  const techCount = (t) => components.filter((c) => techMatch(c, t)).length;
+  const myPath = strip(location.pathname);
 
   const node = document.createElement('div');
   node.className = 'browse';
@@ -58,7 +60,7 @@ export default function browsePage({ query }) {
   const filtered = () => {
     let list = components.filter((c) =>
       (!state.cat || c.category === state.cat) &&
-      (!state.tech || (state.tech === 'css' ? !c.tech.some((x) => x !== 'css') : c.tech.includes(state.tech))));
+      (!state.tech || techMatch(c, state.tech)));
     if (state.q) {
       list = list.map((c) => ({ c, s: scoreComponent(c, state.q) })).filter((x) => x.s > 0).sort((a, b) => b.s - a.s).map((x) => x.c);
     } else if (state.sort === 'az') list = list.slice().sort((a, b) => a.title.localeCompare(b.title));
@@ -69,8 +71,15 @@ export default function browsePage({ query }) {
   const render = () => {
     const list = filtered();
     count.textContent = list.length === components.length ? `${list.length} components` : `${list.length} of ${components.length} components`;
+    // Technology chips that would leave the current category empty are disabled, not hidden.
+    node.querySelectorAll('[data-tech]').forEach((b) => {
+      const t = b.dataset.tech;
+      b.disabled = !!t && t !== state.tech && !components.some((c) => (!state.cat || c.category === state.cat) && techMatch(c, t));
+    });
     if (!list.length) {
-      results.innerHTML = `<div class="empty">${icon('search', { size: 22 })}<p>Nothing matches “${state.q.replace(/[<&>]/g, '')}”.</p><button class="btn btn--ghost" type="button" data-clear>Clear filters</button></div>`;
+      const cat = categories.find((x) => x.id === state.cat);
+      const what = [state.q && `“${escapeHTML(state.q)}”`, cat && escapeHTML(cat.title), state.tech && TECH_LABELS[state.tech]].filter(Boolean).join(' + ');
+      results.innerHTML = `<div class="empty">${icon('search', { size: 22 })}<p>No component matches ${what}.</p><button class="btn btn--ghost" type="button" data-clear>Clear filters</button></div>`;
       return;
     }
     if (state.sort === 'category' && !state.q && !state.cat) {
@@ -91,7 +100,7 @@ export default function browsePage({ query }) {
     if (state.cat) p.set('cat', state.cat);
     if (state.tech) p.set('tech', state.tech);
     if (state.sort !== 'category') p.set('sort', state.sort);
-    setQuery(p);
+    setQuery(p, { path: myPath });
   };
   const syncLater = debounce(sync, 300);
 
@@ -114,10 +123,11 @@ export default function browsePage({ query }) {
       node.querySelector('[data-q]').value = '';
       node.querySelectorAll('[data-cat],[data-tech]').forEach((b) => b.setAttribute('aria-pressed', String(!b.dataset.cat && !b.dataset.tech)));
       render(); sync();
+      node.querySelector('[data-q]').focus();
     }
   });
   node.querySelector('[data-sort]').addEventListener('change', (e) => { state.sort = e.target.value; render(); sync(); });
 
   render();
-  return { node, title: `All components — ${site.name}`, layout: 'library' };
+  return { node, title: `All components — ${site.name}`, layout: 'library', destroy() { syncLater.cancel(); } };
 }

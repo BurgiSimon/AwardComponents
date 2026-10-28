@@ -87,7 +87,7 @@ export function createControls(c, initial, { onChange, onAction, footer = '' } =
     <header class="tweaks__head">
       <h2 id="${titleId}">${raw(icon('sliders', { size: 15 }))}Customize</h2>
       <span class="tweaks__count" data-count hidden></span>
-      <button class="tweaks__reset" type="button" data-reset-all disabled>Reset</button>
+      <button class="tweaks__reset" type="button" data-reset-all aria-disabled="true">Reset</button>
     </header>
     <div class="tweaks__body">
       ${raw(actions)}
@@ -108,7 +108,8 @@ export function createControls(c, initial, { onChange, onAction, footer = '' } =
     const count = el.querySelector('[data-count]');
     count.hidden = n === 0;
     count.textContent = `${n} changed`;
-    el.querySelector('[data-reset-all]').disabled = n === 0;
+    // aria-disabled, not disabled: a focused Reset that becomes disabled would drop focus to <body>.
+    el.querySelector('[data-reset-all]').setAttribute('aria-disabled', String(n === 0));
   };
 
   const paint = (id) => {
@@ -174,8 +175,16 @@ export function createControls(c, initial, { onChange, onAction, footer = '' } =
     const sw = e.target.closest('.switch');
     if (sw) { set(sw.dataset.input, sw.getAttribute('aria-checked') !== 'true'); return; }
     const r = e.target.closest('[data-reset]');
-    if (r) { const control = byId.get(r.dataset.reset); set(control.id, control.default); return; }
-    if (e.target.closest('[data-reset-all]')) {
+    if (r) {
+      const control = byId.get(r.dataset.reset);
+      set(control.id, control.default);
+      // The reset button hides once the value is back at its default: hand focus to the control itself.
+      el.querySelector(`[data-row="${control.id}"] [data-input]`)?.focus();
+      return;
+    }
+    const all = e.target.closest('[data-reset-all]');
+    if (all && all.getAttribute('aria-disabled') === 'true') return;
+    if (all) {
       values = Object.fromEntries(controls.map((x) => [x.id, x.default]));
       controls.forEach((x) => paint(x.id));
       sync();

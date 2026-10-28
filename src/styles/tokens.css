@@ -43,8 +43,10 @@
   --media-scrim: linear-gradient(180deg, rgb(10 10 9 / 0) 30%, rgb(10 10 9 / 0.62) 100%);
 
   /* State */
-  --ok: #2f8a4c;
+  --ok: #25763f;
+  --on-ok: #ffffff;
   --warn: #b7791f;
+  --warn-ink: #8a5a12;
   --danger: #c93c2c;
   --focus: #2f5dff;
   --info-ink: #1f3fbf;
@@ -129,7 +131,9 @@
   --night: #0e0f13;
 
   --ok: #4fb36d;
+  --on-ok: #0c0c0d;
   --warn: #e0a447;
+  --warn-ink: #e0a447;
   --danger: #ef6a58;
   --focus: #7d9bff;
   --info-ink: #a9bbff;
