@@ -21,7 +21,7 @@ export default {
   ],
   controls: [
     { id: 'size', label: 'Preview size', type: 'range', min: 14, max: 32, step: 1, default: 22, unit: 'vw', group: 'Preview', prompt: 'Preview width: {value} of the viewport (default {default})' },
-    { id: 'lerp', label: 'Follow', type: 'range', min: 0.06, max: 0.6, step: 0.02, default: 0.25, group: 'Preview', help: 'Share of the gap the preview closes each 60 fps frame. Lower trails further.', prompt: 'Follow: lerp {value} per 60 fps frame toward the pointer, through framerate-independent damping (default {default})' },
+    { id: 'lerp', label: 'Follow', type: 'range', min: 0.05, max: 0.6, step: 0.01, default: 0.25, group: 'Preview', help: 'Share of the gap the preview closes each 60 fps frame. Lower trails further.', prompt: 'Follow: lerp {value} per 60 fps frame toward the pointer, through framerate-independent damping (default {default})' },
     { id: 'rotate', label: 'Rotation from speed', type: 'range', min: 0, max: 14, step: 1, default: 5, unit: '°', group: 'Preview', help: 'The preview leans with the pointer’s horizontal speed, up to this angle, and settles upright.', prompt: (v) => (v ? `Lean the preview with the pointer’s horizontal speed, up to ${v}°, settling upright when it stops` : 'No lean: the preview stays upright') },
     { id: 'shape', label: 'Shape', type: 'select', options: [{ value: 'portrait', label: 'Portrait 4:5' }, { value: 'landscape', label: 'Landscape 4:3' }], default: 'portrait', group: 'Preview', prompt: 'Preview shape: {value} (default {default})' },
   ],

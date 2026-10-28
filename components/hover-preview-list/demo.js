@@ -87,7 +87,9 @@ export default function mount(root, options, ctx) {
     if (how === 'keyboard') {
       // No pointer to follow: sit in the open space between the row's title and its place, centred on the row.
       const r = rows[i].getBoundingClientRect();
-      const name = rows[i].querySelector('.hp__name').getBoundingClientRect();
+      const range = document.createRange();
+      range.selectNodeContents(rows[i].querySelector('.hp__name'));
+      const name = range.getBoundingClientRect(); // the text's own box, not its grid cell
       const place = rows[i].querySelector('.hp__place').getBoundingClientRect();
       const w = preview.offsetWidth;
       target.x = pos.x = clamp((name.right + place.left) / 2, w / 2 + 16, innerWidth - w / 2 - 16);

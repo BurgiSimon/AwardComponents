@@ -27,7 +27,7 @@ Read the recipe first: `README.md` (why it is built that way, its parameters, it
 
 These keep 96 demos reading as one library.
 
-1. **One theme.** Every colour is a token from `src/styles/tokens.css` (`--bg`, `--surface`, `--ink`, `--ink-2`, `--muted`, `--line`, `--accent`, and the content materials `--clay`, `--moss`, `--sky`, `--sand`, `--plum`, `--night`). No hex values in `demo.css` except inside a gradient built from tokens with `color-mix()`. Canvas and WebGL code read tokens with `readToken('--accent')`.
+1. **One theme.** Every colour is a token from `src/styles/tokens.css` (`--bg`, `--surface`, `--ink`, `--ink-2`, `--muted`, `--line`, `--accent`, the content materials `--clay`, `--moss`, `--sky`, `--sand`, `--plum`, `--night`, and for copy on photographs `--on-media`, `--on-media-2`, `--media-scrim`, which stay light in both themes). `data-theme="dark"` or `"light"` on any element re-themes that subtree, for a dark band on a light page. No hex values in `demo.css` except inside a gradient built from tokens with `color-mix()`. Canvas and WebGL code read tokens with `readToken('--accent')`.
 2. **One type system.** Mona Sans for everything (its width axis gives the display voice: `font-stretch: var(--wide)`), JetBrains Mono for labels and numbers. Use the primitives `.ac-display`, `.ac-h1`, `.ac-h2`, `.ac-h3`, `.ac-lede`, `.ac-body`, `.ac-label`, `.ac-small`. An editorial demo may opt into Bodoni Moda with `import '../../src/demo-kit/serif.css'` and `var(--font-serif)`.
 3. **Shared primitives.** `.ac-wrap`, `.ac-section`, `.ac-btn` (`--accent`, `--ghost`, `--sm`, `--lg`), `.ac-chip`, `.ac-input`, `.ac-card`, `.ac-bar` + `.ac-brand`, `.ac-media`, `.ac-link`, `.ac-kbd` — all in `src/demo-kit/base.css`.
 4. **A real use case.** The demo is a section of a believable site, not a diagram of the technique. Use the cast in `src/demo-kit/content.js`: Halden (architecture studio), Ostra (ceramics shop), Fieldnote (magazine), Kova (speaker), Signal (festival), Parallel (banking app). Extend it there when you need more.
@@ -143,6 +143,7 @@ export default function mount(root, options, ctx) {
 - Respect every path the recipe has: keyboard, coarse pointer, reduced motion, no WebGL. A WebGL demo must render something without WebGL (a drawn still or a DOM version).
 - Don't burn frames off-screen or at rest: stop the ticker when nothing moves, gate canvas loops with `whileVisible`.
 - Storage access goes inside `try { } catch { }`.
+- Focus moved by script shows a ring only when the visitor is using the keyboard: call `el.focus({ focusVisible: false })` unless the opener was pressed with a key (`event.detail === 0` on a click).
 - Don't move focus from `action(id)`: actions are pressed in the shell's toolbar, and a `focus()` inside the frame pulls the visitor out of it. Move focus only from the demo's own controls (a menu button opening its menu).
 - Real elements: links are `<a href>`, actions are `<button>`, disclosures have `aria-expanded`, decorative canvases are `aria-hidden`.
 

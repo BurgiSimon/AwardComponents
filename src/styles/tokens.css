@@ -1,8 +1,10 @@
 /* AwardComponents tokens — one theme for the shell and every demo.
    The shell and each demo frame import this file; demos read these names and never bring their own palette.
-   Light is the default; [data-theme="dark"] on <html> switches. The play runtime and the shell set it. */
+   Light is the default; [data-theme="dark"] on <html> switches (the play runtime and the shell set it). The same
+   attribute on any element re-themes that subtree, so a demo can hold a dark band on a light page or the reverse. */
 
-:root {
+:root,
+[data-theme='light'] {
   color-scheme: light;
 
   /* Grounds and inks */
@@ -34,6 +36,11 @@
   --sand: #e3d2b1;
   --plum: #6b4968;
   --night: #1b1d24;
+
+  /* Text and scrims on photographs and on --night: light in both themes, so copy over a picture never flips. */
+  --on-media: #f7f6f2;
+  --on-media-2: rgb(247 246 242 / 0.78);
+  --media-scrim: linear-gradient(180deg, rgb(10 10 9 / 0) 30%, rgb(10 10 9 / 0.62) 100%);
 
   /* State */
   --ok: #2f8a4c;
@@ -92,7 +99,8 @@
   --dur-l: 640ms;
 }
 
-:root[data-theme='dark'] {
+:root[data-theme='dark'],
+[data-theme='dark'] {
   color-scheme: dark;
 
   --bg: #0c0c0d;

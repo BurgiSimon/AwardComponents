@@ -55,6 +55,10 @@
   .hp__thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 }
 
+@media (min-width: 761px) and (max-width: 980px) {
+  .hp { --cols: minmax(0, 1fr) minmax(0, 10rem) 3.5rem; }
+  .hp__cols span:last-child, .hp__disc { display: none; }
+}
 @media (max-width: 760px) {
   .hp__intro { grid-template-columns: 1fr; }
   .hp__intro .ac-lede { justify-self: start; }
