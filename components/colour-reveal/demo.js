@@ -29,7 +29,7 @@ function patch(material, shared, own) {
       return src.replace(chunk, code);
     };
     let f = swap(shader.fragmentShader, 'void main() {', /* glsl */ `
-      uniform vec2 uCenter; uniform float uRadius, uSoft, uMask, uColor, uSide, uSat, uTime, uWobble;
+      uniform vec2 uCenter; uniform float uRadius, uSoft, uMask, uColor, uSide, uSat, uTime, uWobble; uniform vec3 uTint;
       float grain(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
       void main() {`);
     // Grained circular discard in drawing-buffer pixels: k < 0 inside, k > 1 outside, the band between dithered.
@@ -40,12 +40,14 @@ function patch(material, shared, own) {
         bool inside = k < grain(gl_FragCoord.xy);
         if (inside != (uSide > 0.5)) discard;
       }`);
-    // Luma mix after the map is sampled: grey at 0, saturation-boosted colour at 1.
+    // Luma mix after the map is sampled: undyed at 0 (the weave's luma, softened into natural wool shades and
+    // tinted oat), saturation-boosted colour at 1.
     f = swap(f, '#include <map_fragment>', /* glsl */ `
       #include <map_fragment>
       float luma = dot(diffuseColor.rgb, vec3(0.2126, 0.7152, 0.0722));
+      vec3 undyed = (0.4 + 0.55 * luma) * uTint;
       vec3 boosted = max(mix(vec3(luma), diffuseColor.rgb, uSat), 0.0);
-      diffuseColor.rgb = mix(vec3(luma), boosted, uColor);`);
+      diffuseColor.rgb = mix(undyed, boosted, uColor);`);
     // A two-sine normal wobble, so light ripples across the cloth as it breathes.
     f = swap(f, '#include <normal_fragment_begin>', /* glsl */ `
       #include <normal_fragment_begin>
@@ -67,7 +69,7 @@ function drawWeave(canvas, cw) {
   g.fillStyle = pin;
   for (let x = 0; x < S; x += S / 16) g.fillRect(x, 0, 2, S); // warp pinstripes
   // A 2/2 twill: short diagonal dashes, light and dark, over everything.
-  g.globalAlpha = 0.16;
+  g.globalAlpha = 0.08;
   for (let y = 0; y < S; y += 4) {
     for (let x = (y / 4) % 4; x < S; x += 4) {
       g.fillStyle = (x + y) % 8 < 4 ? '#ffffff' : '#000000';
@@ -173,7 +175,7 @@ export default function mount(root, options, ctx) {
   // Shared uniforms: both layers read the same circle. Each layer owns uColor (0 grey … 1 colour) and uSide.
   const shared = {
     uCenter: { value: new THREE.Vector2() }, uRadius: { value: 0 }, uSoft: { value: 16 }, uMask: { value: 1 },
-    uSat: { value: cfg.saturation }, uTime: { value: 0 }, uWobble: { value: cfg.wobble },
+    uSat: { value: cfg.saturation }, uTime: { value: 0 }, uWobble: { value: cfg.wobble }, uTint: { value: new THREE.Color() },
   };
   const weaveCanvas = document.createElement('canvas');
   weaveCanvas.width = weaveCanvas.height = 512;
@@ -181,7 +183,7 @@ export default function mount(root, options, ctx) {
   map.colorSpace = THREE.SRGBColorSpace;
   map.anisotropy = 4;
   map.wrapS = map.wrapT = THREE.RepeatWrapping;
-  map.repeat.set(3, 2);
+  map.repeat.set(7, 4);
   const geo = clothGeometry(tier.name === 'low' ? 80 : 120);
   const layer = (color, side) => {
     const m = new THREE.MeshStandardMaterial({ map, roughness: 0.82, metalness: 0, side: THREE.DoubleSide });
@@ -250,7 +252,12 @@ export default function mount(root, options, ctx) {
   };
   gl = {
     wake() { dirty = true; if (visible && !off) off = onFrame(ctx, frame); },
-    colourway() { drawWeave(weaveCanvas, COLOURWAYS[cfg.colourway]); map.needsUpdate = true; this.wake(); },
+    colourway() {
+      drawWeave(weaveCanvas, COLOURWAYS[cfg.colourway]);
+      map.needsUpdate = true;
+      shared.uTint.value.set(readToken('--sand') || '#e3d2b1').lerp(new THREE.Color(1, 1, 1), 0.45);
+      this.wake();
+    },
   };
   whileVisible(ctx, stage, () => { visible = true; gl.wake(); }, () => { visible = false; off?.(); off = null; }, { rootMargin: '0px' });
   gl.colourway();

@@ -10,7 +10,7 @@ export default {
   requires: ['webgl'],
   added: '2026-10-28',
   order: 80,
-  preview: { height: 660, scroll: true, hint: 'Scroll to dye the cloth', capture: { scroll: 0.36, wait: 2400 } },
+  preview: { height: 660, scroll: true, hint: 'Scroll to dye the cloth', capture: { scroll: 0.5, wait: 2400 } },
   useCases: [
     'A product colourway launch: the plain version turning into the new one',
     'A before and after told by the scroll, anchored to a counter or a button on the page',
