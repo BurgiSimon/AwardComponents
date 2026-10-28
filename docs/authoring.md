@@ -136,7 +136,7 @@ export default function mount(root, options, ctx) {
 | `content` | `index.js` | The fictional cast |
 | `useGsap(ctx, scope, setup?)` | `gsap.js` | A `gsap.context` reverted on unmount (kills tweens and ScrollTriggers) |
 | `useLenis(ctx, opts)` | `lenis.js` | Lenis on GSAP's ticker, wired to ScrollTrigger; `null` unless motion is full |
-| `useRenderer(ctx, host, opts)` | `three.js` | Sized `WebGLRenderer` with capped DPR, disposed and context-lost on unmount; `webglAvailable()`, `disposeScene(root)` |
+| `useRenderer(ctx, host, opts)` | `three.js` | Sized `WebGLRenderer` with capped DPR, disposed and context-lost on unmount (`detached: true` keeps the canvas off the page); `disposeScene(root)` |
 | `textureFrom(ctx, item, { small, maxSize })` | `three.js` | An sRGB texture from a media item, drawn stand-ins included, disposed on unmount |
 
 **Rules the runtime relies on**
@@ -177,7 +177,7 @@ The prompt names the skill command (`/awards:component` in Claude Code, `$awards
 ## Verification
 
 - `npm run check` — every meta field and vocabulary, controls (valid defaults, units, `when`), declared libraries against the real imports, the prompt for every control at a non-default value, frames, and which awards recipes are not covered yet. Runs before every build; `--strict` turns missing frames and uncovered recipes into errors.
-- `npm run smoke` — headless Chromium with SwiftShader WebGL: mounts each demo, changes every control, runs every action, scrolls, re-mounts, then loads it under reduced motion and on a dark 390 px touch phone. Fails on page errors, console errors, a demo that never becomes ready and sideways scroll on the phone. Report in `.ac/smoke.json`.
+- `npm run smoke` — headless Chromium with SwiftShader WebGL: mounts each demo, changes every control, runs every action, scrolls, re-mounts, then loads it under reduced motion, on a dark 390 px touch phone (coarse pointer) and, for WebGL demos, with WebGL off (`?nogl`, which also works in the browser to look at the fallback). Fails on page errors, console errors, a demo that never becomes ready and sideways scroll on the phone. Report in `.ac/smoke.json`.
 - `npm run frames` — captures `public/frames/<id>-<theme>.webp` (960 × 600) and `-sm.webp` (480 × 300). Re-run when a demo's look changes.
 
 SwiftShader proves a demo correct, not fast: check WebGL work on a real device.

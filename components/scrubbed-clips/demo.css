@@ -41,6 +41,10 @@
 .sc__shop strong { font-size: var(--text-lg); font-weight: 680; }
 .sc__dot { width: 14px; height: 14px; border-radius: 50%; background: var(--glaze); box-shadow: inset 0 0 0 1px var(--line-2); }
 
+@media (max-width: 900px) and (min-width: 761px) {
+  .sc__list { max-width: 19rem; }
+  .sc__beat p { font-size: var(--text-xs); }
+}
 @media (max-width: 760px) {
   .sc { --track: calc(var(--track-base) * 0.875); }
   .sc__bar nav a:not([aria-current]) { display: none; }

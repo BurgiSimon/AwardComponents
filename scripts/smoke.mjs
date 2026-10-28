@@ -54,7 +54,7 @@ async function run(id, meta) {
     const errs = [];
     page.on('pageerror', (e) => errs.push(`pageerror: ${String(e.message).split('\n')[0]}`));
     page.on('console', (m) => { if (m.type() === 'error' && !IGNORE.some((re) => re.test(m.text()))) errs.push(`console: ${m.text().split('\n')[0]}`); });
-    const url = `${server.url}/play.html?c=${id}&embed=1&theme=${opts.theme || 'light'}`;
+    const url = `${server.url}/play.html?c=${id}&embed=1&theme=${opts.theme || 'light'}${opts.nogl ? '&nogl=1' : ''}`;
     await page.goto(url, { waitUntil: 'load', timeout: 45000 });
     const ok = await page.waitForFunction(() => window.__ac && window.__ac.ready, null, { timeout: 30000 }).then(() => page.evaluate(() => Promise.race([window.__ac.ready, new Promise((r) => setTimeout(() => r('timeout'), 25000))]))).catch((e) => `error ${e.message}`);
     return { ctx, page, errs, ok };
@@ -114,6 +114,15 @@ async function run(id, meta) {
     const st = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, w: innerWidth }));
     if (st.sw > st.w + 1) problems.push(`phone: page scrolls sideways (${st.sw}px wide in a ${st.w}px viewport)`);
     problems.push(...errs.map((e) => `phone ${e}`));
+    await ctx.close();
+  }
+  // 4. No WebGL (?nogl): a GL demo must still mount and show something.
+  if ((meta.requires || []).some((f) => f === 'webgl' || f === 'webgl2') || (meta.tags || []).includes('webgl')) {
+    const { ctx, page, errs, ok } = await open({ nogl: true });
+    if (ok !== true) problems.push(`nogl: not ready (${ok})`);
+    const shown = await page.evaluate(() => document.getElementById('ac-root').innerText.trim().length + document.querySelectorAll('#ac-root img, #ac-root svg, #ac-root picture').length);
+    if (!shown) problems.push('nogl: nothing visible without WebGL');
+    problems.push(...errs.map((e) => `nogl ${e}`));
     await ctx.close();
   }
   return { problems: [...new Set(problems)], notes };

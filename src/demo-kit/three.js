@@ -7,8 +7,9 @@ import { observeResize } from './lifecycle.js';
 
 export { webglAvailable, webgl2Available } from './gl.js';
 
-// useRenderer(ctx, host, options) → { renderer, canvas, size, onResize(fn), render(scene, camera) }
-// host: the element the canvas fills (positioned by the demo's CSS). The canvas is appended to it.
+// useRenderer(ctx, host, options) → { renderer, canvas, size, onResize(fn), tier }
+// host: the element the canvas fills (positioned by the demo's CSS). The canvas is appended to it, unless
+// options.detached is true (host may then be null). Other options: alpha, antialias, dprCap, preserveDrawingBuffer.
 export function useRenderer(ctx, host, options = {}) {
   const tier = qualityTier();
   const renderer = new THREE.WebGLRenderer({
@@ -23,11 +24,13 @@ export function useRenderer(ctx, host, options = {}) {
   canvas.style.display = 'block';
   canvas.style.width = '100%';
   canvas.style.height = '100%';
-  host.appendChild(canvas);
+  // detached: the canvas stays off the page (one renderer drawing into many 2D canvases); size it with setSize.
+  if (!options.detached) host.appendChild(canvas);
 
   const size = { width: 1, height: 1 };
   const listeners = new Set();
   const measure = () => {
+    if (options.detached) return;
     const r = host.getBoundingClientRect();
     size.width = Math.max(1, Math.round(r.width));
     size.height = Math.max(1, Math.round(r.height));
@@ -35,7 +38,7 @@ export function useRenderer(ctx, host, options = {}) {
     for (const fn of listeners) fn(size);
   };
   measure();
-  observeResize(ctx, host, measure);
+  if (!options.detached) observeResize(ctx, host, measure);
 
   ctx.onCleanup(() => {
     renderer.setAnimationLoop(null);

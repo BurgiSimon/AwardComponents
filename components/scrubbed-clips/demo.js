@@ -100,29 +100,31 @@ const BUILD = {
     tracks.push(new THREE.VectorKeyframeTrack('heart.scale', [0, D * 0.3, D], [0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 1, 1, 1]));
     return { root, clip: new THREE.AnimationClip('stack-growth', D, tracks) };
   },
-  // Coil: fourteen coils leave the centre for a helix one after another; a rim at the centre swells and turns.
+  // Coil: fourteen coils, each sized to the vase's profile, leave the centre one after another and settle into
+  // their course, so the vase is built turn by turn; the whole piece makes a half turn as it grows.
   coil(segments, mats) {
     const D = 3;
     const root = new THREE.Group();
     const tracks = [];
-    const bead = new THREE.TorusGeometry(0.11, 0.055, 10, 20);
-    for (let k = 0; k < 14; k++) {
-      const m = new THREE.Mesh(bead, k % 3 ? mats.tone : mats.rest);
+    const radii = [0.46, 0.56, 0.65, 0.72, 0.76, 0.77, 0.74, 0.67, 0.57, 0.47, 0.4, 0.37, 0.39, 0.45];
+    radii.forEach((r, k) => {
+      const ring = new THREE.TorusGeometry(r, 0.062, 10, segments);
+      ring.rotateX(Math.PI / 2);
+      const m = new THREE.Mesh(ring, k % 3 ? mats.tone : mats.rest);
       m.name = `bead${k}`;
-      m.position.set(0, 0.95, 0);
       root.add(m);
-      const a = k * 0.9;
-      const from = D * 0.04 * k;
-      tracks.push(new THREE.VectorKeyframeTrack(`bead${k}.position`, ...hold(D, from, from + D * 0.4, [0, 0.95, 0], [0.78 * Math.sin(a), 0.15 + k * 0.125, 0.78 * Math.cos(a)])));
-    }
-    const ring = new THREE.TorusGeometry(0.42, 0.06, segments / 4, segments);
-    ring.rotateX(Math.PI / 2);
-    const heart = new THREE.Mesh(ring, mats.tone);
+      const from = D * 0.045 * k;
+      const to = from + D * 0.36;
+      tracks.push(new THREE.VectorKeyframeTrack(`bead${k}.position`, ...hold(D, from, to, [0, 1.1, 0], [0, 0.07 + k * 0.118, 0])));
+      tracks.push(new THREE.VectorKeyframeTrack(`bead${k}.scale`, ...hold(D, from, to, [0.04, 0.04, 0.04], [1, 1, 1])));
+    });
+    const heart = new THREE.Mesh(new THREE.CircleGeometry(0.44, segments), mats.rest);
     heart.name = 'heart';
-    heart.position.y = 0.95;
+    heart.rotation.x = -Math.PI / 2;
+    heart.position.y = 0.04;
     root.add(heart);
-    tracks.push(new THREE.VectorKeyframeTrack('heart.scale', [0, D * 0.3, D], [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 1, 1, 1]));
-    tracks.push(new THREE.QuaternionKeyframeTrack('heart.quaternion', [0, D], [...quat(0, 0), ...quat(Math.PI, 0.35)]));
+    tracks.push(new THREE.VectorKeyframeTrack('heart.scale', [0, D * 0.12, D], [0.01, 0.01, 0.01, 1, 1, 1, 1, 1, 1]));
+    tracks.push(new THREE.QuaternionKeyframeTrack('.quaternion', [0, D], [...quat(0), ...quat(Math.PI / 2)]));
     return { root, clip: new THREE.AnimationClip('coil-growth', D, tracks) };
   },
 };
@@ -329,7 +331,7 @@ export default function mount(root, options, ctx) {
     camera.fov = portrait ? 40 : 30;
     const z = portrait ? 9.4 : 7.4;
     const halfW = z * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.aspect;
-    const dx = portrait ? 0 : -clamp(halfW - 1.9, 0, 1.6);
+    const dx = portrait ? 0 : -clamp(halfW - 1.55, 0, 1.6);
     camera.position.set(dx, portrait ? 1.7 : 1.8, z);
     camera.lookAt(dx, portrait ? 0.7 : 0.9, 0);
     camera.updateProjectionMatrix();

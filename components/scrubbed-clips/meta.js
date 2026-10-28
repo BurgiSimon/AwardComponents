@@ -10,7 +10,7 @@ export default {
   requires: ['webgl'],
   added: '2026-10-28',
   order: 49,
-  preview: { height: 680, scroll: true, hint: 'Scroll to grow each form', capture: { scroll: 0.17, wait: 3000 } },
+  preview: { height: 680, scroll: true, hint: 'Scroll to grow each form', capture: { scroll: 0.8, wait: 3200 } },
   useCases: [
     'A collection or product page where each piece assembles as the reader scrolls',
     'Scroll-scrubbed playback of clips baked in a 3D tool (glb), retimed into slots',

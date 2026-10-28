@@ -15,7 +15,7 @@
 //           Without one: "{label}: {value} (default {default})". prompt: false keeps a demo-only control (a debug
 //           overlay, a replay speed) out of the prompt.
 
-export const RESERVED_PARAMS = ['c', 'theme', 'motion', 'embed', 'capture', 'tier', 'viewport', 'frame'];
+export const RESERVED_PARAMS = ['c', 'theme', 'motion', 'embed', 'capture', 'tier', 'viewport', 'frame', 'nogl'];
 
 export const SWATCHES = [
   { value: 'accent', label: 'Vermilion', hex: '#f94c16' },
