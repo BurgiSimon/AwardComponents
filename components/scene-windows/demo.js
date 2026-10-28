@@ -340,8 +340,8 @@ export default function mount(root, options, ctx) {
     frame.dist = narrow ? 8.6 : 6.2;
     const halfW = frame.dist * Math.tan((camera.fov * Math.PI) / 360) * aspect;
     frame.shift = narrow ? 0 : 0.4 * halfW;
-    frame.lookDrop = narrow ? 1.5 : 0.1;
-    const scale = narrow ? 0.9 : aspect < 1.5 ? 0.82 : 1;
+    frame.lookDrop = narrow ? 1.5 : 0.35;
+    const scale = narrow ? 0.9 : aspect < 1.5 ? 0.8 : 0.88;
     groups.forEach((g) => { g.scale.setScalar(scale); g.position.y = 0.1; });
     camera.updateProjectionMatrix();
     dirty = true;

@@ -10,7 +10,7 @@ export default {
   requires: ['webgl'],
   added: '2026-10-28',
   order: 48,
-  preview: { height: 680, scroll: true, hint: 'Scroll through the film', capture: { scroll: 0.2, wait: 2600 } },
+  preview: { height: 680, scroll: true, hint: 'Scroll through the film', capture: { scroll: 0.2, wait: 3400 } },
   useCases: [
     'A product’s “what’s inside” told as one continuous film',
     'Any scroll-driven WebGL story with more than two scenes',
