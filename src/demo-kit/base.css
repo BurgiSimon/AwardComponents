@@ -37,7 +37,7 @@ button, input, select, textarea { font: inherit; color: inherit; letter-spacing:
 button { cursor: pointer; }
 a { color: inherit; }
 h1, h2, h3, h4, p, figure, blockquote, ul, ol, dl, dd { margin: 0; }
-ul[role='list'], ol[role='list'] { list-style: none; padding: 0; }
+:where(ul[role='list'], ol[role='list']) { list-style: none; padding: 0; }
 ::selection { background: var(--accent); color: var(--on-accent); }
 
 :focus-visible {
@@ -60,7 +60,7 @@ ul[role='list'], ol[role='list'] { list-style: none; padding: 0; }
   width: min(100% - 2 * var(--gutter), 1320px);
   margin-inline: auto;
 }
-.ac-wrap--narrow { width: min(100% - 2 * var(--gutter), 760px); }
+.ac-wrap--narrow { width: min(100% - 2 * var(--gutter), 760px); margin-inline: auto; }
 
 .ac-section { padding-block: clamp(56px, 9vw, 128px); }
 .ac-fill { min-height: 100svh; }

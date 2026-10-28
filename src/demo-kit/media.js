@@ -1,6 +1,7 @@
 // The shared picture set (CC0 / public domain, credited in CREDITS.md and on each component page).
 // photo('id') → { src, srcSm, alt, width, height, focus, credit, tags } with URLs resolved against the site base.
-// photos({ tags: ['object'], count: 6, seed: 'shop' }) → a deterministic pick by tag.
+// photos({ tags: ['object'], count: 6, seed: 'shop', exclude: ['id', …] }) → a deterministic pick by tag; exclude keeps
+// separate calls from returning the same picture (pass the ids of an earlier pick).
 // image(item, { sizes, eager, className }) → an <img> with srcset, decoding async, lazy unless eager.
 // Unknown ids and empty picks fall back to drawn stand-ins, so a demo never breaks on a missing file.
 import manifest from './media.json';
@@ -49,8 +50,9 @@ export function photo(id) {
   return hit || art(id);
 }
 
-export function photos({ tags = [], not = [], count = 6, seed = 'x', orientation } = {}) {
-  let pool = items.filter((m) => tags.every((t) => m.tags?.includes(t)) && !not.some((t) => m.tags?.includes(t)));
+export function photos({ tags = [], not = [], count = 6, seed = 'x', orientation, exclude = [] } = {}) {
+  const skip = new Set(exclude.map((e) => (typeof e === 'string' ? e : e?.id)));
+  let pool = items.filter((m) => !skip.has(m.id) && tags.every((t) => m.tags?.includes(t)) && !not.some((t) => m.tags?.includes(t)));
   if (orientation === 'portrait') pool = pool.filter((m) => m.height > m.width * 1.05);
   if (orientation === 'landscape') pool = pool.filter((m) => m.width > m.height * 1.05);
   const s = hash(String(seed));
