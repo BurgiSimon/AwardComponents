@@ -254,14 +254,16 @@ export default function mount(root, options, ctx) {
     // Decoded: now the scrub arms.
     const { gsap, ScrollTrigger, context } = useGsap(ctx, root);
     const obj = { f: 0 };
-    context.add(() => gsap.to(obj, {
+    const tween = context.add(() => gsap.to(obj, {
       f: count,
       ease: 'none',
       onUpdate: () => draw(obj.f), // the tween's own update, so the frame keeps easing after the scroll event
       scrollTrigger: { trigger: seq, start: 'top top', end: 'bottom bottom', scrub: cfg.smooth > 0 ? cfg.smooth : true, invalidateOnRefresh: true },
     }));
-    draw(obj.f);
+    // The page may already be scrolled into the section by the time the frames are ready: start from there.
     ScrollTrigger.refresh();
+    tween.progress(tween.scrollTrigger.progress);
+    draw(obj.f);
   }).catch(() => {
     if (ctx.signal.aborted) return;
     root.classList.add('fs--still', 'fs--poster');

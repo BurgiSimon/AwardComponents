@@ -204,6 +204,7 @@ export default function mount(root, options, ctx) {
     colours.accent = new THREE.Color(readToken('--accent') || '#f94c16');
     colours.sand = new THREE.Color(readToken('--sand') || '#e3d2b1');
     colours.clay = new THREE.Color(readToken('--clay') || '#c9744b');
+    colours.night = new THREE.Color(readToken('--night') || '#1b1d24');
     scene.background = colours.bg;
     scene.fog = new THREE.Fog(colours.bg, 9, 24);
     dirty = true;
@@ -232,11 +233,11 @@ export default function mount(root, options, ctx) {
     () => {
       const g = new THREE.Group();
       const cone = new THREE.LatheGeometry([0, 0.15, 0.6, 0.95, 1.05].map((r, i) => new THREE.Vector2(r, [0.25, 0.22, 0.05, -0.12, -0.12][i])), 64);
-      const woofer = new THREE.Mesh(cone, matte(colours.ink, 0.5));
+      const woofer = new THREE.Mesh(cone, matte(colours.night, 0.5));
       woofer.material.side = THREE.DoubleSide;
       const cap = new THREE.Mesh(new THREE.SphereGeometry(0.2, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2), matte(colours.accent, 0.4));
       cap.position.y = 0.2;
-      const surround = new THREE.Mesh(new THREE.TorusGeometry(1.05, 0.07, 12, 72), matte(colours.ink, 0.8));
+      const surround = new THREE.Mesh(new THREE.TorusGeometry(1.05, 0.07, 12, 72), matte(colours.night, 0.8));
       surround.rotation.x = Math.PI / 2;
       surround.position.y = -0.12;
       const woof = new THREE.Group();
@@ -246,7 +247,7 @@ export default function mount(root, options, ctx) {
       for (const x of [-0.7, 0.7]) {
         const t = new THREE.Group();
         const dome = new THREE.Mesh(new THREE.SphereGeometry(0.22, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2), metal());
-        const ring = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.05, 12, 48), matte(colours.ink, 0.7));
+        const ring = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.05, 12, 48), matte(colours.night, 0.7));
         ring.rotation.x = Math.PI / 2;
         t.add(dome, ring);
         t.position.set(x, 0.9, 0);
@@ -256,25 +257,28 @@ export default function mount(root, options, ctx) {
       g.rotation.x = 0.5;
       return g;
     },
-    // Grille: the knitted tube as rows of instanced stitches.
+    // Grille: the knitted tube, every stitch two slanted legs (a V), as one instanced mesh.
     () => {
-      const cols = 40;
-      const rows = 22;
-      const stitch = new THREE.InstancedMesh(new THREE.SphereGeometry(0.075, 8, 6), knitMat, cols * rows);
+      const cols = 36;
+      const rows = 24;
+      const legs = new THREE.InstancedMesh(new THREE.SphereGeometry(0.06, 8, 6), knitMat, cols * rows * 2);
       const o = new THREE.Object3D();
       let n = 0;
       for (let y = 0; y < rows; y++) {
         for (let x = 0; x < cols; x++) {
-          const a = ((x + (y % 2) * 0.5) / cols) * Math.PI * 2;
-          o.position.set(Math.cos(a) * 1.02, -1.4 + y * 0.135, Math.sin(a) * 1.02);
-          o.rotation.set(0, -a, 0.6 * (y % 2 ? 1 : -1));
-          o.scale.set(1.4, 0.8, 0.7);
-          o.updateMatrix();
-          stitch.setMatrixAt(n++, o.matrix);
+          for (const leg of [-1, 1]) {
+            const a = ((x + leg * 0.2) / cols) * Math.PI * 2;
+            o.position.set(Math.cos(a) * 1.02, -1.42 + y * 0.123, Math.sin(a) * 1.02);
+            o.lookAt(o.position.x * 2, o.position.y, o.position.z * 2);
+            o.rotateZ(leg * 0.5);
+            o.scale.set(0.62, 1.45, 0.5);
+            o.updateMatrix();
+            legs.setMatrixAt(n++, o.matrix);
+          }
         }
       }
       const g = new THREE.Group();
-      g.add(stitch);
+      g.add(legs);
       g.rotation.x = 0.16;
       return g;
     },
@@ -325,13 +329,20 @@ export default function mount(root, options, ctx) {
   });
   ctx.onCleanup(() => { disposeScene(scene); env.dispose(); });
 
-  let side = 1.4;
+  // Framing: on wide stages the camera aims left of the scene so it sits about 70% across, beside the HUD; on
+  // narrow ones it backs off and frames the scene above the HUD panel.
+  const frame = { shift: 0, dist: 6.2, lookDrop: 0.1 };
   onResize(({ width, height }) => {
-    camera.aspect = width / height;
+    const aspect = width / height;
     const narrow = width < 760;
-    camera.fov = narrow ? 58 : 40;
-    side = narrow ? 0 : Math.min(1.9, (width / height) * 0.95);
-    groups.forEach((g) => { g.position.x = side; g.position.y = narrow ? 0.9 : 0.1; });
+    camera.aspect = aspect;
+    camera.fov = narrow ? 50 : 40;
+    frame.dist = narrow ? 8.6 : 6.2;
+    const halfW = frame.dist * Math.tan((camera.fov * Math.PI) / 360) * aspect;
+    frame.shift = narrow ? 0 : 0.4 * halfW;
+    frame.lookDrop = narrow ? 1.5 : 0.1;
+    const scale = narrow ? 0.9 : aspect < 1.5 ? 0.82 : 1;
+    groups.forEach((g) => { g.scale.setScalar(scale); g.position.y = 0.1; });
     camera.updateProjectionMatrix();
     dirty = true;
   });
@@ -351,10 +362,15 @@ export default function mount(root, options, ctx) {
       r.material.opacity = 0.7 * (1 - k);
     });
     if (!spin && !dirty) return; // reduced and static: draw only when the beat or the size changed
-    // One value drives the camera: the window centres sit SPACING apart, the camera 6 units in front.
-    const beat = (p - mid(0)) / (mid(1) - mid(0));
-    camera.position.set(side + Math.sin(beat * 1.3) * 0.6, 0.6, 6.2 - beat * SPACING);
-    camera.lookAt(side * 0.55, groups[0].position.y - 0.1, -beat * SPACING - 4);
+    // One value drives the camera: the window centres sit SPACING apart, the camera 6 units in front. It holds on
+    // each scene through the middle of its window and travels between neighbours around the window edges.
+    const b = (p - mid(0)) / (mid(1) - mid(0));
+    const k = Math.round(b);
+    const f = b - k;
+    const travel = Math.min(1, Math.max(0, (Math.abs(f) - 0.18) / 0.32));
+    const beat = k + Math.sign(f) * 0.5 * travel * travel * (3 - 2 * travel);
+    camera.position.set(-frame.shift + Math.sin(beat * 1.3) * 0.6, 0.6, frame.dist - beat * SPACING);
+    camera.lookAt(-frame.shift, 0.1 - frame.lookDrop, -beat * SPACING - 4);
     renderer.render(scene, camera);
     dirty = false;
   };
