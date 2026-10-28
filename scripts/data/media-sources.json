@@ -1,0 +1,1116 @@
+{
+  "$comment": "Curated picture set for the demos. Input to scripts/media.mjs, which downloads, encodes and writes src/demo-kit/media.json. Public domain / CC0 only; `ref` is the search reference (source:id), `url` the file fetched, `page` the source page. `focus` is an object-position hint; `filter` an optional canvas filter applied at encode time; `videos` are short public-domain WebM transcodes copied as-is (each at most 4 MB) with a WebP poster from `poster`. `quality` an optional WebP quality for the large size (default 0.8), used only on grainy pictures to keep public/media/ within its 9 MB budget.",
+  "items": [
+    {
+      "id": "arch-light-shaft",
+      "ref": "commons:62299191",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/c/cc/Modern_architecture_%28Unsplash%29.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Modern_architecture_(Unsplash).jpg",
+      "title": "Modern architecture",
+      "creator": "Mihail Ribkin",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "Unsplash via Wikimedia Commons",
+      "alt": "Looking up through a narrow concrete light well, where angled walls in warm grey and brown catch a diagonal shaft of daylight.",
+      "tags": [
+        "architecture",
+        "editorial",
+        "warm",
+        "portrait-orientation"
+      ],
+      "focus": "50% 40%"
+    },
+    {
+      "id": "arch-bauhaus-facade",
+      "ref": "commons:62140272",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/8/8d/White_Bauhaus_architecture_%28Unsplash%29.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:White_Bauhaus_architecture_(Unsplash).jpg",
+      "title": "White Bauhaus architecture",
+      "creator": "Samuel Zeller",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "Unsplash via Wikimedia Commons",
+      "alt": "Two white, curved shed-roof towers of a modernist building with tall dark windows, rising into a clear blue sky.",
+      "tags": [
+        "architecture",
+        "light",
+        "cool",
+        "portrait-orientation"
+      ],
+      "focus": "50% 35%"
+    },
+    {
+      "id": "arch-concrete-slab",
+      "ref": "commons:61915159",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Concrete_slab_architecture_%28Unsplash%29.jpg/3840px-Concrete_slab_architecture_%28Unsplash%29.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Concrete_slab_architecture_(Unsplash).jpg",
+      "title": "Concrete slab architecture",
+      "creator": "Samuel Zeller",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "Unsplash via Wikimedia Commons",
+      "alt": "A tapering sand-coloured concrete tower with three small round openings near the top, seen from below against a pale blue sky.",
+      "tags": [
+        "architecture",
+        "light",
+        "warm",
+        "landscape-orientation"
+      ],
+      "focus": "50% 45%"
+    },
+    {
+      "id": "arch-spiral-stair",
+      "ref": "commons:62280902",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Spiral_staircase_%28Unsplash%29.jpg/3840px-Spiral_staircase_%28Unsplash%29.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Spiral_staircase_(Unsplash).jpg",
+      "title": "Spiral staircase",
+      "creator": "chuttersnap",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "Unsplash via Wikimedia Commons",
+      "alt": "Looking down a white spiral staircase whose grey concrete steps are edged with thin yellow strips, coiling tightly towards the ground floor.",
+      "tags": [
+        "architecture",
+        "interior",
+        "light",
+        "landscape-orientation"
+      ],
+      "focus": "40% 50%"
+    },
+    {
+      "id": "arch-marble-stair",
+      "ref": "commons:62339025",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Curve_in_white_marble_stairs_%28Unsplash%29.jpg/3840px-Curve_in_white_marble_stairs_%28Unsplash%29.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Curve_in_white_marble_stairs_(Unsplash).jpg",
+      "title": "Curve in white marble stairs",
+      "creator": "Daniel von Appen",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "Unsplash via Wikimedia Commons",
+      "alt": "A white marble staircase sweeps in a long curve across a pale stone wall in soft, even light.",
+      "tags": [
+        "architecture",
+        "interior",
+        "light",
+        "cool",
+        "landscape-orientation"
+      ],
+      "focus": "62% 50%"
+    },
+    {
+      "id": "interior-butterfly-chair",
+      "ref": "commons:61728792",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Breather_Montreal_interior_%28Unsplash%29.jpg/3840px-Breather_Montreal_interior_%28Unsplash%29.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Breather_Montreal_interior_(Unsplash).jpg",
+      "title": "Breather Montreal interior",
+      "creator": "Breather",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "Unsplash via Wikimedia Commons",
+      "alt": "A tan leather butterfly chair with a folded blanket stands in front of tall factory windows hung with sheer white curtains.",
+      "tags": [
+        "interior",
+        "furniture",
+        "light",
+        "warm",
+        "landscape-orientation"
+      ],
+      "focus": "50% 70%"
+    },
+    {
+      "id": "interior-lamp-corner",
+      "ref": "commons:61804803",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/3/3f/Living_room_furniture_%28Unsplash%29.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Living_room_furniture_(Unsplash).jpg",
+      "title": "Living room furniture",
+      "creator": "Atilla Taskiran",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "Unsplash via Wikimedia Commons",
+      "alt": "A white swing-arm wall lamp bends over a small log-slice side table holding an open book, in the corner of a white room.",
+      "tags": [
+        "interior",
+        "lamp",
+        "furniture",
+        "light",
+        "portrait-orientation"
+      ],
+      "focus": "55% 60%"
+    },
+    {
+      "id": "interior-concrete-hall",
+      "ref": "commons:61759918",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/4/43/Building_Interior_Lisbonne_%28Unsplash%29.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Building_Interior_Lisbonne_(Unsplash).jpg",
+      "title": "Building interior, Lisbon",
+      "creator": "Pierrick Le Cunff",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "Unsplash via Wikimedia Commons",
+      "alt": "An empty room of bare concrete with a single round column and a dark, faintly reflective floor in grey daylight.",
+      "tags": [
+        "interior",
+        "architecture",
+        "cool",
+        "landscape-orientation"
+      ],
+      "focus": "50% 50%"
+    },
+    {
+      "id": "obj-celadon-vase",
+      "ref": "met:47633",
+      "url": "https://images.metmuseum.org/CRDImages/as/original/LC-14_40_136_whs-002.jpg",
+      "page": "https://www.metmuseum.org/art/collection/search/47633",
+      "title": "Vase (Jingdezhen ware), early 18th century",
+      "creator": "Unknown maker, China",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "The Metropolitan Museum of Art",
+      "alt": "A pale celadon porcelain bottle vase with a round body and a tall, slender neck, on a mid-grey studio ground.",
+      "tags": [
+        "object",
+        "ceramic",
+        "product",
+        "cool",
+        "portrait-orientation"
+      ],
+      "focus": "50% 50%"
+    },
+    {
+      "id": "obj-jian-tea-bowl",
+      "ref": "met:51074",
+      "url": "https://images.metmuseum.org/CRDImages/as/original/DP-17856-001.jpg",
+      "page": "https://www.metmuseum.org/art/collection/search/51074",
+      "title": "Tea bowl (Jian ware), 11th–12th century",
+      "creator": "Unknown maker, China",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "The Metropolitan Museum of Art",
+      "alt": "A conical stoneware tea bowl with a streaked dark brown glaze and a metal rim, on a light grey ground.",
+      "tags": [
+        "object",
+        "ceramic",
+        "product",
+        "warm",
+        "landscape-orientation"
+      ],
+      "focus": "50% 45%"
+    },
+    {
+      "id": "obj-grueby-vase",
+      "ref": "met:19978",
+      "url": "https://images.metmuseum.org/CRDImages/ad/original/L.2009.22.191.jpg",
+      "page": "https://www.metmuseum.org/art/collection/search/19978",
+      "title": "Vase, ca. 1898–1909",
+      "creator": "Grueby Pottery",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "The Metropolitan Museum of Art",
+      "alt": "A tall cylindrical earthenware vase in matte leaf-green glaze, with raised ribbed leaves running from foot to rim.",
+      "tags": [
+        "object",
+        "ceramic",
+        "product",
+        "cool",
+        "portrait-orientation"
+      ],
+      "focus": "50% 50%"
+    },
+    {
+      "id": "obj-dresser-teapot",
+      "ref": "met:823191",
+      "url": "https://images.metmuseum.org/CRDImages/es/original/DP-18258-025.jpg",
+      "page": "https://www.metmuseum.org/art/collection/search/823191",
+      "title": "Teapot, ca. 1879",
+      "creator": "Christopher Dresser",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "The Metropolitan Museum of Art",
+      "alt": "A low, domed silver-plated teapot on three small feet, with a straight angular spout and a long ebony handle set on a diagonal.",
+      "tags": [
+        "object",
+        "product",
+        "cool",
+        "light",
+        "square"
+      ],
+      "focus": "50% 50%"
+    },
+    {
+      "id": "obj-dresser-decanter",
+      "ref": "met:823192",
+      "url": "https://images.metmuseum.org/CRDImages/es/original/DP-18258-027.jpg",
+      "page": "https://www.metmuseum.org/art/collection/search/823192",
+      "title": "Decanter, 1879",
+      "creator": "Christopher Dresser",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "The Metropolitan Museum of Art",
+      "alt": "A clear glass decanter held in a silver-plated cage with a tall, angular handle and three spiked feet, on a grey ground.",
+      "tags": [
+        "object",
+        "glass",
+        "product",
+        "cool",
+        "portrait-orientation"
+      ],
+      "focus": "50% 50%"
+    },
+    {
+      "id": "obj-roman-glass-bottle",
+      "ref": "met:245220",
+      "url": "https://images.metmuseum.org/CRDImages/gr/original/DP117598.jpg",
+      "page": "https://www.metmuseum.org/art/collection/search/245220",
+      "title": "Glass bottle, 4th century CE",
+      "creator": "Unknown maker, Roman",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "The Metropolitan Museum of Art",
+      "alt": "An ancient Roman glass bottle with a flared funnel neck and a round body clouded by milky, iridescent weathering.",
+      "tags": [
+        "object",
+        "glass",
+        "product",
+        "light",
+        "square"
+      ],
+      "focus": "50% 50%"
+    },
+    {
+      "id": "obj-shaker-revolving-chair",
+      "ref": "met:6861",
+      "url": "https://images.metmuseum.org/CRDImages/ad/original/DP232769.jpg",
+      "page": "https://www.metmuseum.org/art/collection/search/6861",
+      "title": "Revolving Chair, 1840–70",
+      "creator": "United Society of Believers in Christ’s Second Appearing (Shakers)",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "The Metropolitan Museum of Art",
+      "alt": "A Shaker revolving chair with a low spindle back, a round seat on a turned post and four arched feet, in dark red-brown wood.",
+      "tags": [
+        "object",
+        "furniture",
+        "product",
+        "warm",
+        "portrait-orientation"
+      ],
+      "focus": "50% 50%"
+    },
+    {
+      "id": "obj-gragg-side-chair",
+      "ref": "met:1671",
+      "url": "https://images.metmuseum.org/CRDImages/ad/original/DT9087.jpg",
+      "page": "https://www.metmuseum.org/art/collection/search/1671",
+      "title": "Side Chair, ca. 1810",
+      "creator": "Samuel Gragg",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "The Metropolitan Museum of Art",
+      "alt": "A painted bentwood side chair whose back and seat are one continuous run of curved pale slats, on a grey ground.",
+      "tags": [
+        "object",
+        "furniture",
+        "product",
+        "light",
+        "portrait-orientation"
+      ],
+      "focus": "50% 50%"
+    },
+    {
+      "id": "obj-violin",
+      "ref": "met:500905",
+      "url": "https://images.metmuseum.org/CRDImages/mi/original/DP230469.jpg",
+      "page": "https://www.metmuseum.org/art/collection/search/500905",
+      "title": "Violin, 1783",
+      "creator": "Antonio Gragnani",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "The Metropolitan Museum of Art",
+      "alt": "A violin in warm amber varnish seen from the front, standing upright on a pale grey ground.",
+      "tags": [
+        "object",
+        "product",
+        "warm",
+        "light",
+        "portrait-orientation"
+      ],
+      "focus": "50% 50%"
+    },
+    {
+      "id": "obj-pocket-watch",
+      "ref": "met:193401",
+      "url": "https://images.metmuseum.org/CRDImages/es/original/DP-12878-061.jpg",
+      "page": "https://www.metmuseum.org/art/collection/search/193401",
+      "title": "Watch, ca. 1790",
+      "creator": "Wetherell & Janaway",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "The Metropolitan Museum of Art",
+      "alt": "A gold pocket watch with a white enamel dial and black numerals, its bezel set with a ring of small pearls, on a grey ground.",
+      "tags": [
+        "object",
+        "jewellery",
+        "product",
+        "light",
+        "square"
+      ],
+      "focus": "50% 50%"
+    },
+    {
+      "id": "obj-scarab-ring",
+      "ref": "met:557137",
+      "url": "https://images.metmuseum.org/CRDImages/eg/original/15.3.205_EGDP015425.jpg",
+      "page": "https://www.metmuseum.org/art/collection/search/557137",
+      "title": "Ring with Uninscribed Scarab, ca. 1850–1640 B.C.",
+      "creator": "Unknown maker, Egypt",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "The Metropolitan Museum of Art",
+      "alt": "A thin gold wire ring, its ends wound in tight coils around a small turquoise scarab bead, on a white ground.",
+      "tags": [
+        "object",
+        "jewellery",
+        "product",
+        "light",
+        "square"
+      ],
+      "focus": "50% 50%"
+    },
+    {
+      "id": "obj-roman-oil-lamp",
+      "ref": "met:246270",
+      "url": "https://images.metmuseum.org/CRDImages/gr/original/DP109367.jpg",
+      "page": "https://www.metmuseum.org/art/collection/search/246270",
+      "title": "Terracotta oil lamp, 1st century CE",
+      "creator": "Unknown maker, Roman",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "The Metropolitan Museum of Art",
+      "alt": "A worn, earth-brown Roman terracotta oil lamp with an open round bowl, a short nozzle and a ring handle.",
+      "tags": [
+        "object",
+        "lamp",
+        "ceramic",
+        "product",
+        "warm",
+        "square"
+      ],
+      "focus": "50% 50%"
+    },
+    {
+      "id": "obj-wari-tunic",
+      "ref": "met:833953",
+      "url": "https://images.metmuseum.org/CRDImages/ao/original/DP-18736-001.jpg",
+      "page": "https://www.metmuseum.org/art/collection/search/833953",
+      "title": "Tapestry Tunic, 7th–9th century",
+      "creator": "Wari artist",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "The Metropolitan Museum of Art",
+      "alt": "An ochre camelid-wool tapestry tunic with two vertical bands of interlocking scroll motifs in rose, cream, black and blue-green, on a grey ground.",
+      "tags": [
+        "object",
+        "textile",
+        "product",
+        "warm",
+        "square"
+      ],
+      "focus": "50% 45%",
+      "quality": 0.7
+    },
+    {
+      "id": "paint-hammershoi-sunlight",
+      "ref": "smk:KMS3696",
+      "url": "https://iip.smk.dk/iiif/jp2/3197xr831_KMS3696.tif.jp2/full/!2400,2400/0/default.jpg",
+      "page": "https://open.smk.dk/artwork/image/KMS3696",
+      "title": "Interior in Strandgade, Sunlight on the Floor, 1901",
+      "creator": "Vilhelm Hammershøi",
+      "licence": "Public domain",
+      "licenceUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "collection": "SMK – National Gallery of Denmark",
+      "alt": "Painting of a quiet grey-white room: a woman in black sits at a table by a curtained window, and sunlight lays the window’s grid across the floorboards.",
+      "tags": [
+        "art",
+        "painting",
+        "interior",
+        "people",
+        "editorial",
+        "light",
+        "landscape-orientation"
+      ],
+      "focus": "35% 55%",
+      "quality": 0.7
+    },
+    {
+      "id": "paint-homer-cannon-rock",
+      "ref": "met:11113",
+      "url": "https://images.metmuseum.org/CRDImages/ad/original/ap06.1281.jpg",
+      "page": "https://www.metmuseum.org/art/collection/search/11113",
+      "title": "Cannon Rock, 1895",
+      "creator": "Winslow Homer",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "The Metropolitan Museum of Art",
+      "alt": "Painting of grey-green surf breaking white between dark coastal rocks, under a low, overcast sky.",
+      "tags": [
+        "art",
+        "painting",
+        "water",
+        "nature",
+        "cool",
+        "editorial",
+        "square"
+      ],
+      "focus": "50% 40%",
+      "quality": 0.7
+    },
+    {
+      "id": "paint-kensett-sea",
+      "ref": "met:11321",
+      "url": "https://images.metmuseum.org/CRDImages/ad/original/ap74.35.jpg",
+      "page": "https://www.metmuseum.org/art/collection/search/11321",
+      "title": "The Sea, 1872",
+      "creator": "John Frederick Kensett",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "The Metropolitan Museum of Art",
+      "alt": "Painting of a calm grey-green sea meeting a pale, hazy sky, with a strip of rust-red shore along the bottom edge.",
+      "tags": [
+        "art",
+        "painting",
+        "water",
+        "sky",
+        "landscape",
+        "light",
+        "landscape-orientation"
+      ],
+      "focus": "50% 60%"
+    },
+    {
+      "id": "paint-cox-landscape",
+      "ref": "met:10560",
+      "url": "https://images.metmuseum.org/CRDImages/ad/original/ap64.221.jpg",
+      "page": "https://www.metmuseum.org/art/collection/search/10560",
+      "title": "Landscape, 1883",
+      "creator": "Kenyon Cox",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "The Metropolitan Museum of Art",
+      "alt": "Painting of rolling, sun-dried hills in olive and fawn under a soft grey sky, with dark trees along the far slope.",
+      "tags": [
+        "art",
+        "painting",
+        "landscape",
+        "nature",
+        "warm",
+        "landscape-orientation"
+      ],
+      "focus": "50% 55%"
+    },
+    {
+      "id": "paint-de-ring-still-life",
+      "ref": "smk:KMSsp679",
+      "url": "https://iip.smk.dk/iiif/jp2/zp38wh060_KMSsp679.tif.reconstructed.tif.jp2/full/!2400,2400/0/default.jpg",
+      "page": "https://open.smk.dk/artwork/image/KMSsp679",
+      "title": "Pronk Still Life, 1630–1660",
+      "creator": "Pieter de Ring",
+      "licence": "Public domain",
+      "licenceUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "collection": "SMK – National Gallery of Denmark",
+      "alt": "Painting of a dark table set with a pink rose, a blue-and-white bowl of cherries, a wine glass, shrimp and a crab on a draped teal cloth.",
+      "tags": [
+        "art",
+        "painting",
+        "still-life",
+        "dark",
+        "warm",
+        "portrait-orientation"
+      ],
+      "focus": "50% 55%"
+    },
+    {
+      "id": "art-malevich-suprematist",
+      "ref": "commons:115218948",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Malevich_-_Suprematist_Composition%2C_lot.6.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Malevich_-_Suprematist_Composition,_lot.6.jpg",
+      "title": "Suprematist Composition, 1916",
+      "creator": "Kazimir Malevich",
+      "licence": "Public domain",
+      "licenceUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "collection": "Wikimedia Commons",
+      "alt": "Abstract painting of tilted coloured shapes on white: a deep blue square, a green bar, a black band and scattered yellow, orange, red and pink strips.",
+      "tags": [
+        "art",
+        "painting",
+        "abstract",
+        "light",
+        "portrait-orientation"
+      ],
+      "focus": "50% 50%"
+    },
+    {
+      "id": "art-mondrian-composition",
+      "ref": "commons:187458908",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/6/64/Composition_with_Red%2C_Yellow%2C_and_Blue.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Composition_with_Red,_Yellow,_and_Blue.jpg",
+      "title": "Composition with Red, Yellow, and Blue, 1927 (Cleveland Museum of Art)",
+      "creator": "Piet Mondrian",
+      "licence": "Public domain",
+      "licenceUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "collection": "Wikimedia Commons",
+      "alt": "Abstract painting of a large off-white square framed by black lines, with small fields of red at top left, blue at the bottom and pale yellow at the right edge.",
+      "tags": [
+        "art",
+        "painting",
+        "abstract",
+        "light",
+        "square"
+      ],
+      "focus": "50% 50%"
+    },
+    {
+      "id": "art-dove-sea",
+      "ref": "commons:74314466",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/9/90/Arthur_g_dove_sea_ii.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Arthur_g_dove_sea_ii.jpg",
+      "title": "Sea II, 1925",
+      "creator": "Arthur Dove",
+      "licence": "Public domain",
+      "licenceUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "collection": "Wikimedia Commons",
+      "alt": "Abstract work in grey chiffon and sand on metal: dark, wave-like shapes drift across a silvery field.",
+      "tags": [
+        "art",
+        "abstract",
+        "water",
+        "cool",
+        "landscape-orientation"
+      ],
+      "focus": "50% 50%",
+      "quality": 0.7
+    },
+    {
+      "id": "land-fog-forest",
+      "ref": "commons:61697449",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Evergreen_forest_wreathed_in_fog_%28Unsplash%29.jpg/3840px-Evergreen_forest_wreathed_in_fog_%28Unsplash%29.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Evergreen_forest_wreathed_in_fog_(Unsplash).jpg",
+      "title": "Evergreen forest wreathed in fog",
+      "creator": "Milo McDowell",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "Unsplash via Wikimedia Commons",
+      "alt": "The dark tops of a spruce forest rise into low, mauve-grey fog.",
+      "tags": [
+        "landscape",
+        "nature",
+        "sky",
+        "cool",
+        "dark",
+        "landscape-orientation"
+      ],
+      "focus": "50% 70%"
+    },
+    {
+      "id": "land-fog-slope",
+      "ref": "commons:62173058",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Fog_on_a_slope_in_Jesenice_%28Unsplash%29.jpg/3840px-Fog_on_a_slope_in_Jesenice_%28Unsplash%29.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Fog_on_a_slope_in_Jesenice_(Unsplash).jpg",
+      "title": "Fog on a slope in Jesenice",
+      "creator": "Ales Krivec",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "Unsplash via Wikimedia Commons",
+      "alt": "Mist drifts up a steep forested hillside, the dark green trees fading into white.",
+      "tags": [
+        "landscape",
+        "nature",
+        "cool",
+        "light",
+        "landscape-orientation"
+      ],
+      "focus": "35% 55%"
+    },
+    {
+      "id": "land-dunes",
+      "ref": "commons:62308582",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Sandy_Designs_%28Unsplash%29.jpg/3840px-Sandy_Designs_%28Unsplash%29.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Sandy_Designs_(Unsplash).jpg",
+      "title": "Sandy Designs",
+      "creator": "S B (alebrije)",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "Unsplash via Wikimedia Commons",
+      "alt": "Smooth, pale sand dunes with fine wind ripples in the foreground under a soft blue sky.",
+      "tags": [
+        "landscape",
+        "nature",
+        "sky",
+        "warm",
+        "light",
+        "landscape-orientation"
+      ],
+      "focus": "55% 50%"
+    },
+    {
+      "id": "land-overcast-sea",
+      "ref": "commons:61755671",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Ocean_waves_on_overcast_day_%28Unsplash%29.jpg/3840px-Ocean_waves_on_overcast_day_%28Unsplash%29.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Ocean_waves_on_overcast_day_(Unsplash).jpg",
+      "title": "Ocean waves on an overcast day",
+      "creator": "Aleks Dahlberg",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "Unsplash via Wikimedia Commons",
+      "alt": "Dark teal sea with white surf breaking around a low rocky islet under an overcast sky.",
+      "tags": [
+        "landscape",
+        "nature",
+        "water",
+        "sky",
+        "cool",
+        "landscape-orientation"
+      ],
+      "focus": "60% 55%",
+      "quality": 0.7
+    },
+    {
+      "id": "land-above-clouds",
+      "ref": "commons:62064369",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/8/82/Head_above_the_clouds_%28Unsplash%29.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Head_above_the_clouds_(Unsplash).jpg",
+      "title": "Head above the clouds",
+      "creator": "Zach Jiroun",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "Unsplash via Wikimedia Commons",
+      "alt": "A sea of pink-tinted cloud pours into a coastal bay at dawn, above a dark forested ridge in the foreground.",
+      "tags": [
+        "landscape",
+        "nature",
+        "sky",
+        "water",
+        "warm",
+        "portrait-orientation"
+      ],
+      "focus": "50% 40%"
+    },
+    {
+      "id": "land-lake-reflection",
+      "ref": "commons:62218661",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Lake_Oeschinen_%28Unsplash%29.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Lake_Oeschinen_(Unsplash).jpg",
+      "title": "Lake Oeschinen",
+      "creator": "Kimon Maritz",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "Unsplash via Wikimedia Commons",
+      "alt": "Snow-streaked mountains and a band of low cloud mirrored in a still, dark alpine lake.",
+      "tags": [
+        "landscape",
+        "nature",
+        "water",
+        "cool",
+        "dark",
+        "portrait-orientation"
+      ],
+      "focus": "50% 35%"
+    },
+    {
+      "id": "space-namib-fog",
+      "ref": "nasa:s44-79-046",
+      "url": "https://images-assets.nasa.gov/image/s44-79-046/s44-79-046~orig.jpg",
+      "page": "https://images.nasa.gov/details/s44-79-046",
+      "title": "Fog Bank, Namib Desert, Namibia, 1991",
+      "creator": "NASA (STS-44 crew)",
+      "licence": "Public domain",
+      "licenceUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+      "collection": "NASA Image and Video Library",
+      "alt": "Seen from orbit, a bank of white coastal fog rolls in over the rust-red dune ridges of the Namib Desert, below a dark blue ocean flecked with cloud.",
+      "tags": [
+        "space",
+        "earth",
+        "landscape",
+        "warm",
+        "square"
+      ],
+      "focus": "50% 50%",
+      "quality": 0.7
+    },
+    {
+      "id": "space-earth-limb",
+      "ref": "nasa:0301833",
+      "url": "https://images-assets.nasa.gov/image/0301833/0301833~orig.jpg",
+      "page": "https://images.nasa.gov/details/0301833",
+      "title": "Moon over Earth’s limb, Expedition 7, 2003",
+      "creator": "NASA (Expedition 7 crew)",
+      "licence": "Public domain",
+      "licenceUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+      "collection": "NASA Image and Video Library",
+      "alt": "A thin crescent Moon above Earth’s horizon seen from the space station, the atmosphere glowing in bands of orange and blue over the dark planet.",
+      "tags": [
+        "space",
+        "earth",
+        "sky",
+        "dark",
+        "cool",
+        "landscape-orientation"
+      ],
+      "focus": "50% 50%"
+    },
+    {
+      "id": "space-earthset",
+      "ref": "nasa:art002e021278",
+      "url": "https://images-assets.nasa.gov/image/art002e021278/art002e021278~orig.jpg",
+      "page": "https://images.nasa.gov/details/art002e021278",
+      "title": "Earthset from Orion, Artemis II, 2026",
+      "creator": "NASA (Artemis II crew)",
+      "licence": "Public domain",
+      "licenceUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+      "collection": "NASA Image and Video Library",
+      "alt": "A half-lit Earth sinks behind the grey, cratered horizon of the Moon against black space.",
+      "tags": [
+        "space",
+        "earth",
+        "dark",
+        "landscape-orientation"
+      ],
+      "focus": "45% 60%"
+    },
+    {
+      "id": "space-helix-nebula",
+      "ref": "nasa:PIA18164",
+      "url": "https://images-assets.nasa.gov/image/PIA18164/PIA18164~orig.jpg",
+      "page": "https://images.nasa.gov/details/PIA18164",
+      "title": "Helix Nebula (Hubble and Kitt Peak composite)",
+      "creator": "NASA, ESA, C.R. O’Dell, M. Meixner and P. McCullough",
+      "licence": "Public domain",
+      "licenceUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+      "collection": "NASA Image and Video Library",
+      "alt": "The Helix Nebula: a ring of glowing orange and red gas around a blue core, against black space scattered with stars.",
+      "tags": [
+        "space",
+        "dark",
+        "warm",
+        "square"
+      ],
+      "focus": "50% 50%",
+      "filter": "saturate(0.85)"
+    },
+    {
+      "id": "people-kobke-susanne",
+      "ref": "smk:KMS3793",
+      "url": "https://iip.smk.dk/iiif/jp2/zk51vk866_KMS3793.TIF.reconstructed.tif.jp2/full/!2400,2400/0/default.jpg",
+      "page": "https://open.smk.dk/artwork/image/KMS3793",
+      "title": "Portrait of Susanne Cecilie Købke, the Artist’s Wife, 1836",
+      "creator": "Christen Købke",
+      "licence": "Public domain",
+      "licenceUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "collection": "SMK – National Gallery of Denmark",
+      "alt": "Painted portrait of a young woman with fair hair braided and pinned up, in a rose-pink dress with a green scarf knotted at her throat, hands folded.",
+      "tags": [
+        "portrait",
+        "people",
+        "art",
+        "painting",
+        "warm",
+        "portrait-orientation"
+      ],
+      "focus": "50% 25%"
+    },
+    {
+      "id": "people-eckersberg-christine",
+      "ref": "smk:KMS1760",
+      "url": "https://iip.smk.dk/iiif/jp2/dn39x4606_KMS1760.TIF.reconstructed.tif.jp2/full/!2400,2400/0/default.jpg",
+      "page": "https://open.smk.dk/artwork/image/KMS1760",
+      "title": "Christine Rebekka Eckersberg, née Hyssing, the Artist’s First Wife, 1809",
+      "creator": "C.W. Eckersberg",
+      "licence": "Public domain",
+      "licenceUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "collection": "SMK – National Gallery of Denmark",
+      "alt": "Painted portrait of a young woman with short curled brown hair and flushed cheeks, in a white high-waisted dress against a dark green ground.",
+      "tags": [
+        "portrait",
+        "people",
+        "art",
+        "painting",
+        "portrait-orientation"
+      ],
+      "focus": "50% 30%"
+    },
+    {
+      "id": "people-kobke-self-portrait",
+      "ref": "smk:KMS3150",
+      "url": "https://iip.smk.dk/iiif/jp2/db78tg11g_KMSKMS3150-crop.tif.jp2/full/!2400,2400/0/default.jpg",
+      "page": "https://open.smk.dk/artwork/image/KMS3150",
+      "title": "Self-Portrait, 1831–1834",
+      "creator": "Christen Købke",
+      "licence": "Public domain",
+      "licenceUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "collection": "SMK – National Gallery of Denmark",
+      "alt": "Painted self-portrait of a young man with tousled brown hair and a steady gaze, in a high-collared grey-brown coat against a dark ground.",
+      "tags": [
+        "portrait",
+        "people",
+        "art",
+        "painting",
+        "dark",
+        "warm",
+        "portrait-orientation"
+      ],
+      "focus": "50% 40%",
+      "quality": 0.7
+    },
+    {
+      "id": "people-elliott-portrait",
+      "ref": "met:10852",
+      "url": "https://images.metmuseum.org/CRDImages/ad/original/ap87.19.jpg",
+      "page": "https://www.metmuseum.org/art/collection/search/10852",
+      "title": "Portrait of the Artist, ca. 1850",
+      "creator": "Charles Loring Elliott",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "The Metropolitan Museum of Art",
+      "alt": "Painted portrait of a man with dark wavy hair and a full beard, in a black coat and cravat, against a deep dark ground.",
+      "tags": [
+        "portrait",
+        "people",
+        "art",
+        "painting",
+        "dark",
+        "portrait-orientation"
+      ],
+      "focus": "50% 30%",
+      "quality": 0.7
+    },
+    {
+      "id": "tex-paper-sheets",
+      "ref": "commons:61807252",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/2/2a/Scattered_white_paper_%28Unsplash%29.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Scattered_white_paper_(Unsplash).jpg",
+      "title": "Scattered white paper",
+      "creator": "Brandi Redd",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "Unsplash via Wikimedia Commons",
+      "alt": "Overlapping sheets of pale grey-white paper scattered at angles, casting soft shadows on each other.",
+      "tags": [
+        "texture",
+        "light",
+        "cool",
+        "portrait-orientation"
+      ],
+      "focus": "50% 50%"
+    },
+    {
+      "id": "tex-wood-geometric",
+      "ref": "commons:62192410",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Geometric_wood_pattern_%28Unsplash%29.jpg/3840px-Geometric_wood_pattern_%28Unsplash%29.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Geometric_wood_pattern_(Unsplash).jpg",
+      "title": "Geometric wood pattern",
+      "creator": "Teo Duldulao",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "Unsplash via Wikimedia Commons",
+      "alt": "Warm brown wood veneer with fine straight grain, laid in large triangles that meet at angled seams.",
+      "tags": [
+        "texture",
+        "warm",
+        "landscape-orientation"
+      ],
+      "focus": "50% 50%",
+      "quality": 0.7
+    },
+    {
+      "id": "tex-concrete-shadow",
+      "ref": "commons:61907326",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/c/cc/Concrete_wall_in_Kyoto_%28Unsplash%29.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Concrete_wall_in_Kyoto_(Unsplash).jpg",
+      "title": "Concrete wall in Kyoto",
+      "creator": "Lindie Botes",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "Unsplash via Wikimedia Commons",
+      "alt": "Smooth grey concrete panels crossed by a tall, dark diagonal shadow, beside a dark glazed wall on the left.",
+      "tags": [
+        "texture",
+        "architecture",
+        "cool",
+        "landscape-orientation"
+      ],
+      "focus": "60% 50%"
+    },
+    {
+      "id": "tex-curtain-shadow",
+      "ref": "commons:62135369",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Window_frame_shadow_on_a_curtain_%28Unsplash%29.jpg/3840px-Window_frame_shadow_on_a_curtain_%28Unsplash%29.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Window_frame_shadow_on_a_curtain_(Unsplash).jpg",
+      "title": "Window frame shadow on a curtain",
+      "creator": "Steinar Engeland",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "Unsplash via Wikimedia Commons",
+      "alt": "Soft shadows of a window frame and house plants fall across a pale, sheer linen curtain.",
+      "tags": [
+        "texture",
+        "textile",
+        "interior",
+        "light",
+        "landscape-orientation"
+      ],
+      "focus": "50% 50%",
+      "quality": 0.7
+    },
+    {
+      "id": "city-rockefeller-1933",
+      "ref": "commons:6679467",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/3/36/Rockefeller_Center%2C_December_1933.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Rockefeller_Center,_December_1933.jpg",
+      "title": "Rockefeller Center, December 1933",
+      "creator": "Samuel H. Gottscho (restoration by Michel Vuijlsteke)",
+      "licence": "Public domain",
+      "licenceUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "collection": "Library of Congress via Wikimedia Commons",
+      "alt": "Black-and-white night view of the RCA Building towering over lit Manhattan blocks, with dark church spires in the foreground.",
+      "tags": [
+        "city",
+        "night",
+        "architecture",
+        "dark",
+        "editorial",
+        "portrait-orientation"
+      ],
+      "focus": "55% 35%"
+    },
+    {
+      "id": "city-paris-rooftops",
+      "ref": "commons:62212989",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/View_of_rooftops_in_Paris_with_brown_chimneys_%28Unsplash%29.jpg/3840px-View_of_rooftops_in_Paris_with_brown_chimneys_%28Unsplash%29.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:View_of_rooftops_in_Paris_with_brown_chimneys_(Unsplash).jpg",
+      "title": "View of rooftops in Paris with brown chimneys",
+      "creator": "Philippe Dehaye",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "Unsplash via Wikimedia Commons",
+      "alt": "Grey zinc roofs, vents and clay chimney pots across Paris under a pale sky, with the Eiffel Tower faint on the horizon.",
+      "tags": [
+        "city",
+        "architecture",
+        "light",
+        "cool",
+        "portrait-orientation"
+      ],
+      "focus": "50% 60%"
+    },
+    {
+      "id": "city-helsinki-rooftops",
+      "ref": "commons:61907711",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Helsinki_Rooftops_%28Unsplash%29.jpg/3840px-Helsinki_Rooftops_%28Unsplash%29.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Helsinki_Rooftops_(Unsplash).jpg",
+      "title": "Helsinki rooftops",
+      "creator": "Rucksack Magazine",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "Unsplash via Wikimedia Commons",
+      "alt": "White-painted apartment blocks with snow-covered roofs, dormers and chimneys under a pale winter sky in Helsinki.",
+      "tags": [
+        "city",
+        "architecture",
+        "light",
+        "cool",
+        "landscape-orientation"
+      ],
+      "focus": "50% 50%"
+    },
+    {
+      "id": "city-office-night",
+      "ref": "commons:58791098",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/c/c1/City_office_lights_%28Unsplash%29.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:City_office_lights_(Unsplash).jpg",
+      "title": "City office lights",
+      "creator": "Vladimir Kudinov",
+      "licence": "CC0 1.0",
+      "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "collection": "Unsplash via Wikimedia Commons",
+      "alt": "An office tower at night, its grid of windows lit in warm yellow against dark violet surroundings.",
+      "tags": [
+        "city",
+        "night",
+        "architecture",
+        "dark",
+        "landscape-orientation"
+      ],
+      "focus": "50% 50%",
+      "filter": "saturate(0.85)",
+      "quality": 0.7
+    }
+  ],
+  "videos": [
+    {
+      "id": "video-earth-rotation",
+      "ref": "commons:157357249",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/transcoded/9/94/DSCOVR_EPIC_Earth_Rotation.webm/DSCOVR_EPIC_Earth_Rotation.webm.1080p.vp9.webm",
+      "poster": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/94/DSCOVR_EPIC_Earth_Rotation.webm/960px--DSCOVR_EPIC_Earth_Rotation.webm.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:DSCOVR_EPIC_Earth_Rotation.webm",
+      "licence": "Public domain",
+      "licenceUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "collection": "Wikimedia Commons",
+      "title": "DSCOVR EPIC Earth Rotation, 2022",
+      "creator": "NASA Goddard Space Flight Center (DSCOVR EPIC)",
+      "alt": "The full disc of Earth turning slowly against black space, clouds drifting over Africa, Europe and the oceans.",
+      "tags": [
+        "space",
+        "earth",
+        "dark",
+        "square"
+      ],
+      "duration": 4.5,
+      "width": 1080,
+      "height": 1080
+    },
+    {
+      "id": "video-earth-orbit",
+      "ref": "commons:147002353",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/transcoded/3/31/Earth-solar-array-timelapse.webm/Earth-solar-array-timelapse.webm.480p.vp9.webm",
+      "poster": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/31/Earth-solar-array-timelapse.webm/1920px--Earth-solar-array-timelapse.webm.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Earth-solar-array-timelapse.webm",
+      "licence": "Public domain",
+      "licenceUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "collection": "Wikimedia Commons",
+      "title": "Earth and solar array time-lapse from the International Space Station, 2023",
+      "creator": "NASA",
+      "alt": "Time-lapse from the space station: cloud-covered blue Earth glides past beneath a curved horizon, with a solar array wing in the right of the frame.",
+      "tags": [
+        "space",
+        "earth",
+        "cool",
+        "landscape-orientation"
+      ],
+      "duration": 12.1,
+      "width": 854,
+      "height": 481
+    },
+    {
+      "id": "video-desert-clouds",
+      "ref": "commons:105031175",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c7/Timelapse_Joshua_Tree_Clouds_and_Sunset_Near_West_Entrance.webm/Timelapse_Joshua_Tree_Clouds_and_Sunset_Near_West_Entrance.webm.480p.vp9.webm",
+      "poster": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c7/Timelapse_Joshua_Tree_Clouds_and_Sunset_Near_West_Entrance.webm/1920px--Timelapse_Joshua_Tree_Clouds_and_Sunset_Near_West_Entrance.webm.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Timelapse_Joshua_Tree_Clouds_and_Sunset_Near_West_Entrance.webm",
+      "licence": "Public domain",
+      "licenceUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "collection": "Wikimedia Commons",
+      "title": "Timelapse: Joshua Tree clouds and sunset near the West Entrance, 2021",
+      "creator": "NPS / Kristi Rugg (Joshua Tree National Park)",
+      "alt": "Time-lapse of a high, rippled cloud layer sweeping over a Joshua tree and desert scrub towards low mountains.",
+      "tags": [
+        "landscape",
+        "nature",
+        "sky",
+        "warm",
+        "landscape-orientation"
+      ],
+      "duration": 15.1,
+      "width": 854,
+      "height": 481
+    }
+  ]
+}
