@@ -144,6 +144,9 @@ export default function mount(root, options, ctx) {
 - The demo owns the frame: window scroll, the cursor and the viewport are its own. Everything it starts must stop through `ctx` (the runtime also removes nodes appended to `<body>` and restores attributes on `<html>` and `<body>`).
 - Respect every path the recipe has: keyboard, coarse pointer, reduced motion, no WebGL. A WebGL demo must render something without WebGL (a drawn still or a DOM version).
 - Don't burn frames off-screen or at rest: stop the ticker when nothing moves, gate canvas loops with `whileVisible`.
+- Tweens and ScrollTriggers created after `useGsap` returns (in a promise callback, a rebuild after `update()`) are only reverted on unmount when made inside `context.add(() => { … })`.
+- Mount synchronously and arm heavy work afterwards (frames to render, textures to load): the runtime reports ready when `mount()` resolves, and the frame and smoke scripts wait at most 30 s.
+- Make the page's final height known before `useLenis`, or call `ScrollTrigger.refresh()` after changing it; Lenis re-measures on every refresh.
 - Storage access goes inside `try { } catch { }`.
 - Focus moved by script shows a ring only when the visitor is using the keyboard: call `el.focus({ focusVisible: false })` unless the opener was pressed with a key (`event.detail === 0` on a click).
 - Don't move focus from `action(id)`: actions are pressed in the shell's toolbar, and a `focus()` inside the frame pulls the visitor out of it. Move focus only from the demo's own controls (a menu button opening its menu).

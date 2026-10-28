@@ -11,8 +11,13 @@ export function useLenis(ctx, options = {}) {
   gsap.ticker.add(raf);
   gsap.ticker.lagSmoothing(0);
   lenis.on('scroll', ScrollTrigger.update);
+  // Sections that grow after Lenis measured the page (a rail or a tunnel sized in script) would cap the scroll at
+  // the old height: re-measure whenever ScrollTrigger refreshes.
+  const remeasure = () => lenis.resize();
+  ScrollTrigger.addEventListener('refresh', remeasure);
   window.lenis = lenis;
   ctx.onCleanup(() => {
+    ScrollTrigger.removeEventListener('refresh', remeasure);
     gsap.ticker.remove(raf);
     lenis.destroy();
     if (window.lenis === lenis) delete window.lenis;
