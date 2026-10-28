@@ -58,7 +58,7 @@ Plain data with no imports: Node scripts, the shell and the play runtime all rea
 | `order` | no | Sort key inside its category (default 50; lower first). |
 | `status` | no | `'experimental'` adds a label. |
 | `labels` | no | Extra label kinds from `src/registry/labels.js`. `'new'` here marks a component that joined after the launch set on the launch day itself; it still expires with the date rule. |
-| `requires` | no | Browser features from `src/registry/features.js` (`webgl`, `webgl2`, `view-transitions`, `scroll-timeline`, `offscreen-canvas`, `web-audio`, `field-sizing`). The page warns visitors whose browser lacks one. |
+| `requires` | no | Browser features from `src/registry/features.js` (`webgl`, `webgl2`, `view-transitions`, `scroll-timeline`, `offscreen-canvas`, `web-audio`, `field-sizing`, `webcodecs`). The page warns visitors whose browser lacks one. |
 | `theme` | no | `'dark'` or `'light'` locks the demo to one theme (one frame pair, theme toggles ignored). Default follows the site. |
 | `preview` | no | `{ height, scroll, hint, capture, remountOnTheme }`. `height` 320–1200 (default 600). `scroll: true` shows "Scroll inside the preview". `hint` is a short instruction ("Drag the divider"). `capture: { wait, scroll, pointer: [x, y], hover, action, tier }` sets the frame's moment. `remountOnTheme: true` re-mounts on a theme change instead of calling `ctx.onTheme` listeners. |
 | `useCases` | yes (2+) | Where it fits, one line each. |
