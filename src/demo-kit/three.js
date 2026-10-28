@@ -74,4 +74,28 @@ export function disposeScene(root) {
   });
 }
 
+// A texture from a media item (photo() / photos()), drawn stand-ins included: an SVG data URL fed straight to
+// three.js renders black, so every source is drawn into a 2D canvas first. sRGB, mipmapped, disposed on cleanup.
+// textureFrom(ctx, item, { small, maxSize }) → Promise<THREE.Texture>
+export async function textureFrom(ctx, item, { small = false, maxSize = 2048 } = {}) {
+  const img = new Image();
+  img.decoding = 'async';
+  img.crossOrigin = 'anonymous';
+  img.src = small ? item.srcSm || item.src : item.src;
+  await img.decode().catch(() => {});
+  const w0 = img.naturalWidth || item.width || 1200;
+  const h0 = img.naturalHeight || item.height || 1500;
+  const k = Math.min(1, maxSize / Math.max(w0, h0));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.max(1, Math.round(w0 * k));
+  canvas.height = Math.max(1, Math.round(h0 * k));
+  canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = 4;
+  texture.userData.aspect = canvas.width / canvas.height;
+  ctx.onCleanup(() => texture.dispose());
+  return texture;
+}
+
 export { THREE };

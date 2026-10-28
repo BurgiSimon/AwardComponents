@@ -37,6 +37,20 @@ async function run(id, meta) {
   const open = async (opts = {}) => {
     const ctx = await browser.newContext({ viewport: opts.viewport || { width: 1280, height: 800 }, reducedMotion: opts.reduced ? 'reduce' : 'no-preference', colorScheme: opts.theme || 'light', hasTouch: !!opts.touch, isMobile: !!opts.touch });
     const page = await ctx.newPage();
+    // Headless Chromium keeps (pointer: fine) and (hover: hover) even with touch emulation, so the phone pass
+    // answers those queries as a touch screen would; the coarse-pointer paths in demo scripts then really run.
+    if (opts.touch) {
+      await page.addInitScript(() => {
+        const real = window.matchMedia.bind(window);
+        const fake = { '(pointer: fine)': false, '(hover: hover)': false, '(pointer: coarse)': true, '(hover: none)': true, '(any-pointer: fine)': false };
+        window.matchMedia = (q) => {
+          const parts = q.split(/\s+and\s+/).map((x) => x.trim().toLowerCase());
+          if (!parts.some((x) => x in fake)) return real(q);
+          const matches = parts.every((x) => (x in fake ? fake[x] : real(x).matches));
+          return { matches, media: q, onchange: null, addEventListener() {}, removeEventListener() {}, addListener() {}, removeListener() {}, dispatchEvent() { return false; } };
+        };
+      });
+    }
     const errs = [];
     page.on('pageerror', (e) => errs.push(`pageerror: ${String(e.message).split('\n')[0]}`));
     page.on('console', (m) => { if (m.type() === 'error' && !IGNORE.some((re) => re.test(m.text()))) errs.push(`console: ${m.text().split('\n')[0]}`); });

@@ -133,7 +133,7 @@ export default function mount(root, options, ctx) {
       pointer.lastX = pointer.x; pointer.lastY = pointer.y;
     }
     const moved = dx !== 0 || dy !== 0;
-    if (!moved && !active) return;
+    if (!moved && !active) return false;
     const R = clamp(Math.hypot(dx, dy) / n, PUSH.radius, PUSH.maxRadius);
     if (moved) { const rect = svg.getBoundingClientRect(); px = pointer.x - rect.left; py = pointer.y - rect.top; }
     const damping = PUSH.damping ** n; const k = PUSH.spring * n; const cap = PUSH.cap;
@@ -151,6 +151,7 @@ export default function mount(root, options, ctx) {
     }
     active = energy > 0.01;
     if (!active) { cx.fill(0); cy.fill(0); vx.fill(0); vy.fill(0); }
+    return true;
   };
 
   const apply = () => {
@@ -170,10 +171,13 @@ export default function mount(root, options, ctx) {
     };
   }
 
+  // A frozen wave (noise speed 0) with nothing pushed and the intro done skips its paint.
   const tick = (dt) => {
+    const intro = introTime < INTRO.duration + INTRO.spread;
     time += dt * 1000 * cfg.drift;
     introTime += dt;
-    spring(dt);
+    const sprung = spring(dt);
+    if (cfg.drift === 0 && !intro && !sprung) return;
     render();
   };
   let off = null;

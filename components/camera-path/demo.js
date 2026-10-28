@@ -146,9 +146,15 @@ export default function mount(root, options, ctx) {
     update(next) { cfg = { ...next }; applyFog(); render(); },
     action(id) {
       if (id !== 'next') return;
-      goTo(heading() === N - 1 ? 0 : heading() + 1);
+      const to = heading() === N - 1 ? 0 : heading() + 1;
       // The thumbnail: hold the camera just before it arrives at the work, while the path still turns.
-      if (ctx.capture && full() && canGL) { S.snapRequest = undefined; S.snapping = false; S.velocity = 0; S.target = S.mid = S.float = (heading() - 0.2) / (N - 1); render(); }
+      if (ctx.capture && full() && canGL) {
+        Object.assign(S, { snapRequest: undefined, snapping: false, velocity: 0, idle: -1e9 });
+        S.target = S.mid = S.float = (to - 0.22) / (N - 1);
+        render();
+        return;
+      }
+      goTo(to);
     },
   };
   let applyFog = () => {};
@@ -201,6 +207,7 @@ export default function mount(root, options, ctx) {
     mats.panel.color.copy(col('--surface', '#ffffff'));
     mats.frame.color.copy(col('--ink', '#121211'));
     mats.column.color.copy(col('--surface-2', '#f7f7f4'));
+    if (document.documentElement.dataset.theme === 'dark') mats.panel.color.copy(col('--raised', '#202022'));
     mats.shadow.color.copy(col('--night', '#1b1d24'));
   };
   applyFog = () => { scene.fog.far = cfg.fog; scene.fog.near = cfg.fog * 0.22; };
@@ -211,9 +218,10 @@ export default function mount(root, options, ctx) {
   floor.rotation.x = -Math.PI / 2;
   floor.position.z = -18;
   scene.add(floor);
-  scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8a84, 1.5));
-  const key = new THREE.DirectionalLight(0xffffff, 1.6);
-  key.position.set(3, 9, 4);
+  // Gallery light: a bright, even sky with a key from behind the visitor, so the panels read as white walls.
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xb8b8b2, 2.6));
+  const key = new THREE.DirectionalLight(0xffffff, 1.4);
+  key.position.set(2, 8, 12);
   scene.add(key);
   // Columns along both sides of the hall: depth cues that pass the camera as it walks.
   const colGeo = new THREE.CylinderGeometry(0.28, 0.28, 6, 24);
@@ -225,7 +233,7 @@ export default function mount(root, options, ctx) {
     }
   }
 
-  // Stations: free-standing panels on alternating sides, each turned toward the walk. The camera stands 3.4 m in
+  // Stations: free-standing panels on alternating sides, each turned toward the walk. The camera stands 5 m in
   // front of each frame at eye height; the spline threads those camera points, so p = i / (N − 1) is work i.
   const frames = [];
   const camPts = [];
@@ -257,22 +265,26 @@ export default function mount(root, options, ctx) {
     pic.position.set(0, 1.75, 0.145);
     g.add(pic);
     scene.add(g);
+    // The picture is cover-fitted into a canvas of the frame's own proportions (drawn stand-ins included), so the
+    // texture never needs repeat or offset and keeps one size for its whole life.
     loadImage(pics[i], { small: true }).then((img) => {
       if (ctx.signal.aborted || !img.naturalWidth) return;
-      const tex = new THREE.Texture(img);
+      const c = document.createElement('canvas');
+      c.height = 960;
+      c.width = Math.round(960 * aspect);
+      const g2 = c.getContext('2d');
+      const s2 = Math.max(c.width / img.naturalWidth, c.height / img.naturalHeight);
+      g2.drawImage(img, (c.width - img.naturalWidth * s2) / 2, (c.height - img.naturalHeight * s2) / 2, img.naturalWidth * s2, img.naturalHeight * s2);
+      const tex = new THREE.CanvasTexture(c);
       tex.colorSpace = THREE.SRGBColorSpace;
       tex.anisotropy = 4;
-      // Cover-fit the picture into the frame's proportions.
-      const ia = img.naturalWidth / img.naturalHeight;
-      if (ia > aspect) { tex.repeat.set(aspect / ia, 1); tex.offset.set((1 - aspect / ia) / 2, 0); } else { tex.repeat.set(1, ia / aspect); tex.offset.set(0, (1 - ia / aspect) / 2); }
-      tex.needsUpdate = true;
       picMat.map = tex;
       picMat.needsUpdate = true;
       render();
     });
     const centre = pos.clone().add(new THREE.Vector3(0, 1.75, 0)).addScaledVector(normal, 0.15);
     frames.push({ centre, top: centre.clone().add(new THREE.Vector3(0, h / 2 + 0.32, 0)) });
-    camPts.push(pos.clone().addScaledVector(normal, 3.4).setY(EYE));
+    camPts.push(pos.clone().addScaledVector(normal, 5).setY(EYE));
   });
   const path = new THREE.CatmullRomCurve3(camPts, false, 'centripetal', 0.5);
   ctx.onCleanup(() => { disposeScene(scene); shadowTex.dispose(); });
@@ -311,7 +323,9 @@ export default function mount(root, options, ctx) {
   onResize(({ width, height }) => {
     W = width; H = height;
     camera.aspect = W / H;
-    camera.fov = camera.aspect < 1 ? 66 : camera.aspect < 1.3 ? 56 : 48;   // portrait frames widen the lens
+    camera.fov = camera.aspect < 1 ? 60 : camera.aspect < 1.3 ? 52 : 46;   // portrait frames widen the lens
+    // On landscape frames the room shifts right of centre, clear of the title and the wall text on the left.
+    if (camera.aspect > 1.1) camera.setViewOffset(W, H, -W * 0.14, 0, W, H); else camera.clearViewOffset();
     camera.updateProjectionMatrix();
     render();
   });

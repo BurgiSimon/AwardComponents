@@ -31,6 +31,7 @@ body {
 }
 
 img, video, canvas, svg { display: block; max-width: 100%; }
+[hidden] { display: none !important; }
 img, video { height: auto; }
 button, input, select, textarea { font: inherit; color: inherit; letter-spacing: inherit; }
 button { cursor: pointer; }

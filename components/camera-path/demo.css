@@ -1,4 +1,97 @@
-/* Camera path. Tokens and primitives come from src/demo-kit/base.css; use var(--…) for every colour. */
-.cp {
-  min-height: 100svh;
+.cp { background: var(--bg); }
+.cp a { text-decoration: none; }
+
+/* The room owns the first viewport; the list below is the mirror and the way out. */
+.cp__world { position: relative; height: 100svh; overflow: hidden; touch-action: none; isolation: isolate; }
+.cp__gl { position: absolute; inset: 0; }
+.cp__gl canvas { position: absolute; inset: 0; }
+.cp__tags { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
+/* A fade of the ground under the header and the title, so they read over any part of the room. */
+.cp__world::after { content: ''; position: absolute; inset: 0 0 auto; height: min(30%, 230px); z-index: 1; pointer-events: none; background: linear-gradient(var(--bg) 18%, color-mix(in oklab, var(--bg) 60%, transparent) 55%, transparent); }
+.cp__tag {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 5px 10px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in oklab, var(--surface) 86%, transparent);
+  border: 1px solid var(--line-2);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity var(--dur-m) var(--ease-out);
+}
+.cp__tag.is-visible { opacity: 1; }
+
+.cp__bar { position: absolute; inset: 0 0 auto; z-index: 2; }
+.cp__skip { color: var(--ink-2); padding: 8px 0; }
+.cp__skip:hover { color: var(--ink); }
+.cp__hud { position: absolute; top: 64px; left: 0; right: 0; z-index: 2; display: grid; gap: 8px; pointer-events: none; }
+.cp__title { font-size: var(--text-3xl); font-weight: 720; font-stretch: var(--wide); letter-spacing: -0.03em; line-height: 1; max-width: 12ch; text-wrap: balance; }
+
+/* The wall text: the work nearest the camera, set like the label beside a print. */
+.cp__wall {
+  position: absolute;
+  left: var(--gutter);
+  bottom: 28px;
+  z-index: 2;
+  width: min(360px, calc(100% - 2 * var(--gutter) - 112px));
+  display: grid;
+  gap: 6px;
+  padding: 16px 18px;
+  border-radius: var(--radius-md);
+  background: color-mix(in oklab, var(--surface) 90%, transparent);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-2);
+}
+.cp__work { font-size: var(--text-xl); font-weight: 680; font-stretch: var(--wide); letter-spacing: -0.02em; line-height: 1.1; }
+.cp__text { font-size: var(--text-sm); color: var(--ink-2); text-wrap: pretty; }
+.cp__more { font-size: var(--text-sm); margin-top: 2px; justify-self: start; }
+
+.cp__nav { position: absolute; right: var(--gutter); bottom: 28px; z-index: 2; display: flex; align-items: center; gap: 8px; }
+.cp__count { margin-right: 6px; color: var(--ink-2); }
+.cp__key {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line-2);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--ink);
+  transition: background-color var(--dur-s), border-color var(--dur-s), opacity var(--dur-s);
+}
+.cp__key:hover { background: var(--bg-2); border-color: var(--ink); }
+.cp__key svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.cp__key[aria-disabled='true'] { opacity: 0.38; cursor: default; }
+.cp__progress { position: absolute; inset: auto 0 0; height: 2px; z-index: 2; background: var(--line); }
+.cp__progress span { position: absolute; inset: 0; background: var(--ink); transform-origin: left; transform: scaleX(0); }
+
+/* No WebGL: one framed photograph at a time, hung on the ground colour. */
+.cp__still[hidden] { display: none; }
+.cp__still { position: absolute; inset: 0; display: grid; place-items: center; padding: 96px var(--gutter) 96px calc(var(--gutter) + 420px); }
+.cp__frame { width: min(100%, calc((100svh - 192px) * 0.8)); aspect-ratio: 4 / 5; padding: 10px; background: var(--ink); box-shadow: var(--shadow-3); }
+.cp__frame img { width: 100%; height: 100%; object-fit: cover; }
+
+.cp__rooms { display: grid; gap: 28px; padding-block: 72px 96px; }
+.cp__rooms:focus { outline: none; }
+.cp__list { display: grid; margin: 0; }
+.cp__list li { display: grid; grid-template-columns: 3rem minmax(0, 1fr); gap: 16px; padding-block: 22px; border-top: 1px solid var(--line); }
+.cp__list li > .ac-label { padding-top: 6px; }
+.cp__list .ac-small { margin: 2px 0 8px; }
+
+@media (max-width: 760px) {
+  .cp__still { padding: 170px 24px 240px; }
+  .cp__frame { width: min(100%, calc((100svh - 410px) * 0.8)); }
+}
+@media (max-width: 640px) {
+  .cp__title { font-size: var(--text-2xl); }
+  .cp__wall { left: 12px; right: 12px; bottom: 84px; width: auto; padding: 14px 16px; }
+  .cp__text { display: none; }
+  .cp__nav { left: 12px; right: 12px; bottom: 22px; justify-content: flex-end; }
+  .cp__count { margin-right: auto; }
 }

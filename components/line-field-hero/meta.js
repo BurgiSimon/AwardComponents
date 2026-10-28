@@ -8,7 +8,7 @@ export default {
   tags: ['hero', 'svg', 'noise', 'pointer', 'spring', 'lines', 'generative'],
   added: '2026-10-28',
   order: 50,
-  preview: { height: 640, hint: 'Move the pointer through the lines', capture: { wait: 700, pointer: [0.66, 0.4] } },
+  preview: { height: 640, hint: 'Move the pointer through the lines', capture: { wait: 300, pointer: [0.7, 0.36] } },
   useCases: [
     'A hero for a sound, data or weather product, where the field reads as signal',
     'A quiet, living ground behind a studio’s statement',
