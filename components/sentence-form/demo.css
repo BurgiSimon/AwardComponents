@@ -1,6 +1,6 @@
 .sf {
   --sf-stagger: 70ms;
-  --sf-size: clamp(1.55rem, 0.85rem + 2.25vw, 2.9rem);
+  --sf-size: clamp(1.5rem, 0.8rem + 2vw, 2.55rem);
   min-height: 100svh;
   overflow-x: clip;
 }
@@ -8,7 +8,7 @@
 .sf__bar { border-bottom: 1px solid var(--line); }
 .sf__bar nav a[aria-current='page'] { color: var(--ink); }
 
-.sf__page { display: grid; grid-template-columns: minmax(0, 2.1fr) minmax(0, 1fr); align-items: center; gap: clamp(32px, 5vw, 88px); min-height: calc(100svh - 64px); padding-block: clamp(28px, 4vw, 56px); }
+.sf__page { display: grid; grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr); align-items: center; gap: clamp(32px, 5vw, 88px); min-height: calc(100svh - 64px); padding-block: clamp(28px, 4vw, 56px); }
 .sf__title { margin-bottom: clamp(16px, 2vw, 26px); color: var(--accent-ink); }
 
 /* The sentence: display size, the blanks on the baseline, growing with what is typed. */
@@ -60,6 +60,8 @@ label.sf__frag { cursor: text; }
 .sf[data-field='pill'] .sf__select select { padding-right: 1.1em; }
 .sf[data-field='pill'] .sf__select::after { right: 0.62em; }
 .sf[data-field='pill'] .sf__choice { border: 1px solid var(--line-2); border-radius: var(--radius-pill); padding: 0 0.42em; }
+.sf[data-field='pill'] .sf__choice + .sf__choice { margin-left: 0.18em; }
+.sf[data-field='pill'] .sf__choice + .sf__choice::before { content: none; }
 .sf[data-field='pill'] [aria-invalid='true'] .sf__choice { border: 2px solid var(--danger); }
 
 .sf__errors { display: grid; gap: 4px; margin: 22px 0 0; }

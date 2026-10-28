@@ -1,4 +1,86 @@
-/* Flicker text. Tokens and primitives come from src/demo-kit/base.css; use var(--…) for every colour. */
-.ft {
+/* The night band keeps a dark ground in both themes; its light ink is whichever token is light in the theme. */
+.fl {
+  --fl-glow: 0.7;
+  --fl-tube: var(--accent);
+  --on-night: var(--bg);
   min-height: 100svh;
+  padding-bottom: var(--gutter);
+  overflow-x: clip;
+}
+:root[data-theme='dark'] .fl { --on-night: var(--ink); }
+.fl a { text-decoration: none; }
+.fl__bar nav a[aria-current='page'] { color: var(--ink); }
+
+.fl__night {
+  --fl-lit: 0;
+  --fl-core: color-mix(in oklab, var(--fl-tube) 22%, var(--on-night));
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+  align-items: end;
+  gap: clamp(28px, 5vw, 72px);
+  min-height: calc(100svh - 64px - var(--gutter));
+  padding: clamp(28px, 5vw, 64px);
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  background: var(--night);
+  color: var(--on-night);
+}
+/* The bloom behind the sign brightens with how much of it is lit. */
+.fl__bloom {
+  position: absolute;
+  inset: -20% 10% 20% -20%;
+  z-index: -1;
+  background: radial-gradient(closest-side, color-mix(in oklab, var(--fl-tube) 34%, transparent), transparent);
+  opacity: calc(var(--fl-lit) * var(--fl-glow));
+  pointer-events: none;
+}
+
+.fl__head { display: grid; gap: 22px; align-content: end; }
+.fl__label { color: color-mix(in oklab, var(--on-night) 60%, var(--night)); }
+.fl__sign {
+  font-size: clamp(3rem, 0.8rem + 8.4vw, 9rem);
+  font-weight: 460;
+  font-stretch: var(--wider);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--fl-core);
+  text-shadow:
+    0 0 calc(0.04em * var(--fl-glow)) var(--fl-core),
+    0 0 calc(0.16em * var(--fl-glow)) color-mix(in oklab, var(--fl-tube) 75%, transparent),
+    0 0 calc(0.5em * var(--fl-glow)) color-mix(in oklab, var(--fl-tube) 45%, transparent);
+  text-wrap: balance;
+}
+.fl__sub { max-width: 38ch; font-size: var(--text-lg); line-height: 1.5; color: color-mix(in oklab, var(--on-night) 74%, var(--night)); }
+
+.fl__word { display: inline-block; white-space: nowrap; }
+.fl__glyph { display: inline-block; will-change: opacity, transform; }
+
+.fl__acts { margin: 0; border-top: 1px solid color-mix(in oklab, var(--on-night) 16%, transparent); }
+.fl__act {
+  display: grid;
+  grid-template-columns: 4.5ch minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 16px;
+  padding-block: 16px;
+  border-bottom: 1px solid color-mix(in oklab, var(--on-night) 16%, transparent);
+  color: var(--on-night);
+}
+.fl__time { font-family: var(--font-mono); font-size: var(--text-sm); color: color-mix(in oklab, var(--on-night) 60%, var(--night)); }
+.fl__name { font-size: var(--text-xl); font-weight: 560; font-stretch: var(--wide); letter-spacing: -0.01em; transition: color var(--dur-s), text-shadow var(--dur-s); }
+.fl__stage { color: color-mix(in oklab, var(--on-night) 55%, var(--night)); }
+.fl__act:is(:hover, :focus-visible) .fl__name {
+  color: var(--fl-core);
+  text-shadow: 0 0 calc(0.3em * var(--fl-glow)) color-mix(in oklab, var(--fl-tube) 70%, transparent);
+}
+.fl__act:focus-visible { outline-color: var(--fl-core); outline-offset: 4px; }
+
+@media (max-width: 860px) {
+  .fl__night { grid-template-columns: 1fr; align-content: end; }
+}
+@media (max-width: 600px) {
+  .fl__bar nav { gap: 16px; }
+  .fl__night { border-radius: var(--radius-lg); padding: 24px 20px; }
+  .fl__name { font-size: var(--text-lg); }
 }

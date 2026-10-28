@@ -1,0 +1,40 @@
+export default {
+  id: 'line-field-hero',
+  title: 'Line field hero',
+  category: 'heroes',
+  summary: 'A speaker brand’s hero over a field of hairlines that breathe with drifting noise; the pointer pushes the lines it passes and a spring brings them home.',
+  recipe: 'svg-noise-line-field',
+  deps: [],
+  tags: ['hero', 'svg', 'noise', 'pointer', 'spring', 'lines', 'generative'],
+  added: '2026-10-28',
+  order: 50,
+  preview: { height: 640, hint: 'Move the pointer through the lines', capture: { wait: 700, pointer: [0.66, 0.4] } },
+  useCases: [
+    'A hero for a sound, data or weather product, where the field reads as signal',
+    'A quiet, living ground behind a studio’s statement',
+    'A section background that answers the pointer without becoming a toy',
+  ],
+  notes: [
+    'The field is one aria-hidden SVG path that ignores the pointer; the heading and lede are real text, and the small copy sits on page-coloured blocks so its contrast never depends on the lines.',
+    'Touch and coarse pointers get a sparser grid and no push. The loop skips its spring when nothing moves and stops when the hero leaves the screen.',
+    'Under reduced motion and in the static tier the field is drawn complete once and holds still.',
+  ],
+  controls: [
+    { id: 'gap', label: 'Line spacing', type: 'range', min: 10, max: 40, step: 1, default: 18, unit: 'px', group: 'Field', help: 'Distance between lines (points along a line sit slightly closer). Coarse pointers add a third.', prompt: 'Lines {value} apart (default {default})' },
+    { id: 'drift', label: 'Noise speed', type: 'range', min: 0, max: 4, step: 0.1, default: 1, unit: '×', group: 'Field', help: '1 drifts the noise at 0.0125 / 0.005 px per ms; 0 freezes the wave.', prompt: 'Noise drift at {value} the base 0.0125 / 0.005 px per ms (default {default})' },
+    { id: 'force', label: 'Pointer force', type: 'range', min: 0, max: 0.24, step: 0.01, default: 0.08, group: 'Pointer', help: 'Share of the pointer’s travel given to each point inside the push radius, weighted by (1 − d/R)².', prompt: 'Pointer push gain: {value} (default {default})' },
+    { id: 'stroke', label: 'Stroke', type: 'range', min: 0.5, max: 2.5, step: 0.25, default: 1, unit: 'px', group: 'Look', prompt: 'Stroke: {value} hairlines (default {default})' },
+    { id: 'tone', label: 'Line colour', type: 'color', default: 'ink', options: ['ink', 'accent', 'sky', 'plum', 'moss'], group: 'Look', prompt: 'Lines in {value}, mixed into the page colour (default {default})' },
+  ],
+  actions: [{ id: 'replay', label: 'Replay intro', icon: 'refresh' }],
+  prompt: {
+    skill: 'component',
+    ask: 'Put a drifting hairline field behind {target}.',
+    target: 'the hero headline',
+    brief: 'Rows of hairline SVG lines as subpaths of one path. Each point takes its angle from one drifting Perlin sample (angle = noise × 12 rad, offset cos × 32 and sin × 16 px). Points within max(175, pointer speed) px of a fine pointer take an impulse along its travel weighted by (1 − d/R)², and a spring of 0.005 with damping 0.925 per 60 Hz frame (scaled to real frame time) brings them back. On load each line grows in from its end over 3 s, expo-out, outer lines first.',
+    keep: [
+      'the SVG aria-hidden and pointer-transparent; small copy on page-coloured blocks.',
+      'a sparser grid and no push on touch; a still, complete field under reduced motion; no ticker off-screen.',
+    ],
+  },
+};

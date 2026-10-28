@@ -111,12 +111,12 @@ export default function mount(root, options, ctx) {
       <nav aria-label="Magazine"><a href="#top">Issues</a><a href="#top">Stories</a><a href="#top">Subscribe</a></nav>
     </header>
     <main>
-      <section class="gk__block gk__hero ac-wrap" data-anchor="0.72,0.5,0.34" aria-labelledby="gk-title">
+      <section class="gk__block gk__hero ac-wrap" data-anchor="0.76,0.6,0.34" data-anchor-sm="0.72,0.45,0.3" aria-labelledby="gk-title">
         <p class="ac-label" data-paint>Issue 14 · Autumn 2026 · 112 pages</p>
         <h1 class="gk__display" id="gk-title" data-paint>Weather</h1>
         <p class="gk__dek" data-paint>Six stories about the sky over the north: salt boiled from the sea, a library built around one window, and the potters who read a kiln like a forecast.</p>
       </section>
-      <section class="gk__block gk__contents ac-wrap" data-anchor="0.24,0.5,0.24" aria-labelledby="gk-contents">
+      <section class="gk__block gk__contents ac-wrap" data-anchor="0.11,0.52,0.22" data-anchor-sm="0.74,0.2,0.26" aria-labelledby="gk-contents">
         <div class="gk__contents-head">
           <h2 class="gk__h2" id="gk-contents" data-paint>In this issue</h2>
           <p class="gk__count" aria-hidden="true" data-paint>06</p>
@@ -125,14 +125,14 @@ export default function mount(root, options, ctx) {
           ${stories.map((a, i) => html`<li><a href="#${a.slug}"><span class="ac-label" data-paint>${String(i + 1).padStart(2, '0')} · ${a.section}</span><span class="gk__title" data-paint>${a.title}</span><span class="ac-small" data-paint>${a.author} · ${a.read}</span></a></li>`)}
         </ol>
       </section>
-      <section class="gk__block gk__quote ac-wrap" data-anchor="0.78,0.46,0.22" aria-label="From the issue">
+      <section class="gk__block gk__quote ac-wrap" data-anchor="0.66,0.46,0.22" data-anchor-sm="0.76,0.2,0.24" aria-label="From the issue">
         <blockquote>
           <p class="gk__pull" data-paint>“She reads the pan by sound: a low roll means the water is too deep, a hiss means it is nearly done.”</p>
           <footer class="ac-label" data-paint>From “Salt and time”, by Ingrid Vold</footer>
         </blockquote>
       </section>
     </main>
-    <footer class="gk__block gk__foot ac-wrap" data-anchor="0.74,0.36,0.2">
+    <footer class="gk__block gk__foot ac-wrap" data-anchor="0.74,0.36,0.2" data-anchor-sm="0.72,0.24,0.26">
       <p class="gk__display gk__display--sm" data-paint>Four a year.</p>
       <p class="ac-lede" data-paint>Printed in Bergen on uncoated paper, posted in a card sleeve. €48 a year, delivery included.</p>
       <a class="ac-btn ac-btn--lg" href="#subscribe">Subscribe</a>
@@ -250,6 +250,7 @@ export default function mount(root, options, ctx) {
   let lastScroll = scrollY;
   let scrollVel = 0;
   let time = 0;
+  let off = null;
 
   const targetFromAnchors = () => {
     let sw = 0;
@@ -263,7 +264,7 @@ export default function mount(root, options, ctx) {
       const r = s.getBoundingClientRect();
       const wgt = Math.max(0, Math.min(r.bottom, hi) - Math.max(r.top, lo)) / (hi - lo);
       if (wgt <= 0) continue;
-      const [ax, ay, as] = s.dataset.anchor.split(',').map(Number);
+      const [ax, ay, as] = ((W < 760 && s.dataset.anchorSm) || s.dataset.anchor).split(',').map(Number);
       sw += wgt;
       tx += wgt * ax * W;
       ty += wgt * ay * H;
@@ -322,7 +323,6 @@ export default function mount(root, options, ctx) {
   st.y = st.ty;
   st.r = st.tr;
 
-  let off = null;
   function frame(dt, now) {
     time += dt;
     U.uTime.value = full ? time : 0;

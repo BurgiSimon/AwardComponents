@@ -1,0 +1,4 @@
+/* Line field hero. Tokens and primitives come from src/demo-kit/base.css; use var(--…) for every colour. */
+.lfh {
+  min-height: 100svh;
+}

@@ -1,0 +1,51 @@
+.sc { min-height: 100svh; overflow-x: clip; }
+.sc a { text-decoration: none; }
+.sc__bar nav a[aria-current='page'] { color: var(--ink); }
+
+.sc__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.62fr) minmax(0, 1.38fr);
+  align-items: center;
+  gap: clamp(28px, 5vw, 72px);
+  min-height: calc(100svh - 64px);
+  padding-block: 24px 48px;
+}
+.sc__copy { display: grid; gap: 18px; align-content: center; }
+.sc__copy .ac-h1 { max-width: 12ch; }
+
+/* The board: a real table in mono, each value a hidden copy plus a scrambling twin. */
+.sc__board { padding: clamp(18px, 2.4vw, 28px); font-family: var(--font-mono); }
+.sc__top { display: flex; align-items: end; justify-content: space-between; gap: 16px; padding-bottom: 18px; margin-bottom: 6px; border-bottom: 1px solid var(--line-2); }
+.sc__next { display: grid; gap: 6px; min-width: 0; }
+.sc__big { font-size: clamp(2.6rem, 1.2rem + 4vw, 5rem); font-weight: 600; line-height: 1; letter-spacing: -0.04em; }
+.sc__line { font-size: clamp(0.75rem, 0.6rem + 0.4vw, 0.95rem); color: var(--ink-2); }
+.sc__meta { display: grid; justify-items: end; gap: 10px; flex: none; }
+.sc__meta .ac-btn { font-family: var(--font-sans); }
+
+.sc__live { white-space: pre; }
+.sc__table { width: 100%; border-collapse: collapse; font-size: clamp(0.8rem, 0.55rem + 0.65vw, 1.1rem); letter-spacing: 0.02em; font-variant-numeric: tabular-nums; }
+.sc__table th { padding: 12px 10px 10px 0; text-align: left; font-weight: 500; }
+.sc__table td { padding: clamp(11px, 1.4vw, 17px) 10px clamp(11px, 1.4vw, 17px) 0; border-top: 1px solid var(--line); white-space: nowrap; }
+.sc__table :is(th, td):last-child { padding-right: 0; text-align: right; }
+.sc__time { width: 6ch; font-weight: 600; }
+.sc__ferry { width: 6ch; }
+.sc__due { width: 8ch; color: var(--ink-2); }
+.sc__row { transition: background-color var(--dur-s); }
+.sc__row:hover { background: var(--surface-2); }
+.sc__row td.sc__status { font-weight: 600; }
+.sc__row[data-status='boarding'] .sc__status { color: var(--accent-ink); }
+.sc__row[data-status='on'] .sc__status { color: var(--ok); }
+.sc__row[data-status='delayed'] .sc__status { color: var(--warn); }
+.sc__row[data-status='full'] .sc__status { color: var(--danger); }
+.sc__row[data-status='departed'] td { color: var(--faint); }
+
+@media (max-width: 900px) {
+  .sc__layout { grid-template-columns: 1fr; align-content: start; min-height: 0; padding-top: 12px; }
+  .sc__copy .ac-h1 { max-width: none; }
+}
+@media (max-width: 520px) {
+  .sc__bar nav { gap: 16px; }
+  .sc__ferry { display: none; }
+  .sc__big { font-size: 2.4rem; }
+  .sc__line { font-size: var(--text-xs); }
+}

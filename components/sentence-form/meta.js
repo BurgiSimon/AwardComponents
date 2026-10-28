@@ -9,7 +9,7 @@ export default {
   requires: ['field-sizing'],
   added: '2026-10-28',
   order: 20,
-  preview: { height: 700, hint: 'Fill in the blanks, or send it empty', capture: { wait: 1800 } },
+  preview: { height: 700, hint: 'Fill in the blanks, or send it empty', capture: { wait: 900 } },
   actions: [{ id: 'replay', label: 'Replay the entrance' }, { id: 'errors', label: 'Send it empty' }],
   useCases: [
     'The first-contact form of a studio, gallery or agency',

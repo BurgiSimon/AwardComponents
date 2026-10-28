@@ -1,0 +1,4 @@
+/* Camera path. Tokens and primitives come from src/demo-kit/base.css; use var(--…) for every colour. */
+.cp {
+  min-height: 100svh;
+}

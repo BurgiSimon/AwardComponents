@@ -43,9 +43,9 @@ export default function mount(root, options, ctx) {
         <form class="sf__form" novalidate data-form>
           <p class="sf__text" data-text>
             <label class="sf__frag" for="sf-name">Hi, I’m</label>
-            <input class="sf__blank" id="sf-name" name="name" type="text" autocomplete="name" required placeholder="your name" aria-describedby="sf-e-name"><span class="sf__punct">,</span>
+            <input class="sf__blank" id="sf-name" name="name" type="text" autocomplete="name" required placeholder="your name" aria-describedby="sf-e-name">
             <label class="sf__frag" for="sf-org">from</label>
-            <input class="sf__blank" id="sf-org" name="org" type="text" autocomplete="organization" placeholder="a studio or company"><span class="sf__punct">.</span>
+            <input class="sf__blank" id="sf-org" name="org" type="text" autocomplete="organization" placeholder="your studio"><span class="sf__punct">.</span>
             <span class="sf__frag" id="sf-l-kind">We’d like help with</span>
             <span class="sf__choices" role="radiogroup" aria-labelledby="sf-l-kind" aria-describedby="sf-e-kind" aria-required="true" data-group>
               ${KINDS.map(([v, t]) => html`<label class="sf__choice"><input type="radio" name="kind" value="${v}" required><span>${t}</span></label>`)}
@@ -136,7 +136,7 @@ export default function mount(root, options, ctx) {
     root.style.setProperty('--sf-stagger', `${cfg.stagger}ms`);
   };
   apply();
-  play();
+  if (!ctx.capture) play(); // the thumbnail shows the settled sentence
 
   return {
     update(next, changed) {

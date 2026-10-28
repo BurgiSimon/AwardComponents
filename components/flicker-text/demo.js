@@ -119,7 +119,7 @@ export default function mount(root, options, ctx) {
 
     // The thumbnail: the sign on, two tubes caught mid-flicker.
     if (ctx.capture) {
-      gsap.set([sign[1], sign[9]], { opacity: 0.12 });
+      gsap.set([sign[1], sign[8]], { opacity: 0.12 });
       night.style.setProperty('--fl-lit', '0.86');
       return;
     }

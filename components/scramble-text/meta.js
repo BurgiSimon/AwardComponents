@@ -1,0 +1,42 @@
+export default {
+  id: 'scramble-text',
+  title: 'Scramble decode',
+  category: 'text',
+  summary: 'A live ferry departures board whose times and statuses decode through glyphs into their values on arrival, and again whenever a value changes or a row is hovered.',
+  description: 'Each cell resolves from a character set into its text with anime.js’s scrambleText: characters are revealed left to right at a reveal rate, keep shuffling at a settle rate until they land, and a block cursor runs at the frontier. When the board refreshes, only the cells whose value changed decode, from the old value straight into the new one, so the eye goes to what moved.\n\nThe final string is always the source string. Every cell keeps its real value in a visually hidden copy inside a real table, and the scramble plays in an aria-hidden twin, so a screen reader reads the timetable and never the noise.',
+  recipe: 'scramble-decode-text',
+  deps: ['animejs'],
+  tags: ['text', 'scramble', 'decode', 'telemetry', 'table', 'animejs', 'live'],
+  added: '2026-10-28',
+  order: 20,
+  preview: { height: 620, hint: 'Hover a row, or press Update values', capture: { wait: 300 } },
+  useCases: [
+    'Departure boards, live scores and status pages where values change while the page is open',
+    'Telemetry, dashboards and “system” copy for expedition, aviation or hardware brands',
+    'A price or balance that changes after an action, decoding from the old figure into the new one',
+  ],
+  notes: [
+    'The board is a real table; each cell’s value lives in a visually hidden copy and the scrambling twin is aria-hidden.',
+    'Live updates run only while the board is on screen; a manual refresh is announced politely.',
+    'Under reduced motion the values change without scrambling.',
+  ],
+  controls: [
+    { id: 'charset', label: 'Characters', type: 'select', options: [{ value: 'mixed', label: 'Per column' }, { value: 'blocks', label: 'Blocks' }, { value: 'braille', label: 'Braille' }, { value: 'symbols', label: 'Symbols' }], default: 'mixed', group: 'Decode', help: 'Per column: digits for times, letters for names, blocks for statuses.', prompt: (v) => (v === 'mixed' ? 'Scramble through digits for times, letters for names and blocks for statuses' : `Scramble every cell through ${v}`) },
+    { id: 'reveal', label: 'Reveal rate', type: 'range', min: 15, max: 150, step: 5, default: 60, unit: 'chars/s', group: 'Decode', prompt: 'Reveal rate: {value} (default {default})' },
+    { id: 'settle', label: 'Settle rate', type: 'range', min: 10, max: 60, step: 5, default: 30, unit: 'chars/s', group: 'Decode', help: 'How often the unsettled characters reshuffle.', prompt: 'Settle rate: {value} (default {default})' },
+    { id: 'cursor', label: 'Block cursor', type: 'toggle', default: true, group: 'Decode', prompt: { on: 'A ░▒▓█ cursor runs at the reveal frontier', off: 'No cursor at the frontier' } },
+    { id: 'hover', label: 'Decode on hover', type: 'toggle', default: true, group: 'Trigger', prompt: { on: 'Hovering or focusing a row decodes it again', off: 'Rows decode only when their values change' } },
+    { id: 'live', label: 'Live updates', type: 'toggle', default: true, group: 'Trigger', help: 'A new reading every 7 s while the board is on screen.', prompt: { on: 'Values refresh every 7 s while the board is on screen; only changed cells decode', off: 'Values change only on a manual refresh' } },
+  ],
+  actions: [{ id: 'update', label: 'Update values', icon: 'refresh' }],
+  prompt: {
+    skill: 'component',
+    ask: 'Make the values in {target} decode into place.',
+    target: 'the live status table',
+    brief: 'Use anime.js scrambleText on innerHTML: each value resolves from a character set into its text at a reveal rate of 60 characters per second, unsettled characters reshuffle at 30, and a ░▒▓█ cursor runs at the frontier; cells stagger by column and row. On a refresh only changed cells decode, from the old value straight into the new one, and the final string is always the source string.',
+    keep: [
+      'a real table with each value in a visually hidden copy and the scramble in an aria-hidden twin',
+      'no scrambling under reduced motion; live refreshes only while on screen',
+    ],
+  },
+};

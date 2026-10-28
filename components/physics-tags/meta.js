@@ -1,0 +1,36 @@
+export default {
+  id: 'physics-tags',
+  title: 'Physics tags',
+  category: 'closers',
+  summary: 'An architecture studio’s “What we do” as a box of pills that drop, collide and pile up as matter-js bodies while staying real text; drag one, toss it, or press the box to shake it.',
+  recipe: 'physics-pile-matter',
+  deps: ['matter-js'],
+  tags: ['physics', 'matter-js', 'pile', 'drag', 'toy', 'footer', 'pointer'],
+  added: '2026-10-28',
+  order: 30,
+  preview: { height: 720, hint: 'Drag a pill, or press the box to shake it', capture: { wait: 3400 } },
+  actions: [{ id: 'drop', label: 'Drop again' }, { id: 'shake', label: 'Shake the box' }],
+  useCases: [
+    'A studio’s services or disciplines at the close of the page',
+    'A festival’s genres, a shop’s categories or a team’s skills as something to play with',
+    'A playful 404 or about block where the words are the toy',
+  ],
+  notes: [
+    'The pieces are the list items themselves, moved by a transform, so the words stay text in source order for screen readers, selection and find-in-page; each one is a real button only while there is something to operate.',
+    'Tab reaches the pieces in order: Enter or Space tosses one, the arrows push it sideways. A fine pointer drags; a tap tosses; the page still scrolls over the box with a wheel or a finger.',
+    'Under reduced motion no engine is made and the pills sit wrapped along the floor of the box, already at rest; the physics leaves the clock once every body sleeps.',
+  ],
+  controls: [
+    { id: 'gravity', label: 'Gravity', type: 'range', min: 0.6, max: 4, step: 0.2, default: 2.4, group: 'Physics', help: 'In matter-js units (× 0.001): low floats down, high drops hard.', prompt: 'Gravity: y {value} at matter-js’s 0.001 scale (default {default})' },
+    { id: 'bounce', label: 'Bounce', type: 'range', min: 0, max: 0.7, step: 0.05, default: 0.12, group: 'Physics', help: 'Restitution of every piece.', prompt: 'Restitution: {value} (default {default})' },
+    { id: 'shapes', label: 'Shapes', type: 'select', options: [{ value: 'mixed', label: 'Mixed' }, { value: 'pills', label: 'Pills only' }, { value: 'blocks', label: 'Blocks only' }], default: 'mixed', group: 'Look', prompt: 'Pieces: {value} (default {default}); each body is built from the piece’s measured box' },
+    { id: 'palette', label: 'Colours', type: 'select', options: [{ value: 'materials', label: 'Materials' }, { value: 'ink', label: 'Ink and paper' }, { value: 'accent', label: 'Accent' }], default: 'materials', group: 'Look', prompt: 'Colours: {value}, from the page tokens (default {default})' },
+  ],
+  prompt: {
+    skill: 'component',
+    ask: 'Turn {target} into a pile of physics bodies.',
+    target: 'the list of services',
+    brief: 'The list items drop into a walled box when it comes into view and pile up as matter-js bodies with no renderer: each item is moved by translate() and rotate() from its body, so the words stay text in order. A fixed 1/60 s step on the page’s one clock (at most four steps a frame), gravity y 2.4, restitution 0.12, sleeping on; the step leaves the clock once every body sleeps. Drag on fine pointers, tap or Enter to toss, arrows to push, a press on the box to shake.',
+    keep: ['source-order text; buttons with a described hint; the wheel and touch scroll left to the page; a still, wrapped pile under reduced motion.'],
+  },
+};

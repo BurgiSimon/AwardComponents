@@ -54,7 +54,6 @@ function shadowTexture() {
 
 // Render `count` frames of one full turn into ImageBitmaps, reporting progress; returns null if aborted.
 async function renderSequence({ count, size, hex, signal, onProgress, only }) {
-  const T0 = performance.now();
   const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, preserveDrawingBuffer: true });
   renderer.setPixelRatio(1);
   renderer.setSize(size, size, false);
@@ -65,7 +64,6 @@ async function renderSequence({ count, size, hex, signal, onProgress, only }) {
   const env = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
   pmrem.dispose();
   scene.environment = env;
-  console.log('pmrem', Math.round(performance.now() - T0));
   const key = new THREE.DirectionalLight('#ffffff', 0.55);
   key.position.set(-3, 4, 5);
   scene.add(key);
@@ -91,19 +89,15 @@ async function renderSequence({ count, size, hex, signal, onProgress, only }) {
   dial.position.y = 1.7;
   const led = new THREE.Mesh(new THREE.SphereGeometry(0.045, 16, 16), new THREE.MeshBasicMaterial({ color: '#ff5420' }));
   led.position.set(0, 0.95, 1.035);
-  // The back: a dark plate with a port, a socket and four screws, so the turn shows a different side.
-  const plate = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.92, 0.08), dark);
-  plate.position.set(0, -0.55, -1.0);
-  const port = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.07, 0.04), new THREE.MeshBasicMaterial({ color: '#050505' }));
-  port.position.set(0, -0.32, -1.05);
-  const socket = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.05, 32), metal);
+  // The back: a dark plate curved to the body, with a port, a socket and four screws, so the turn shows a new side.
+  const R = 1.062;
+  const onBack = (mesh, y, ang = 0, r = R + 0.012) => { mesh.position.set(Math.sin(Math.PI + ang) * r, y, Math.cos(Math.PI + ang) * r); mesh.rotation.y = ang; return mesh; };
+  const plate = new THREE.Mesh(new THREE.CylinderGeometry(R, R, 0.92, 32, 1, true, Math.PI - 0.31, 0.62), new THREE.MeshStandardMaterial({ color: '#1c1c1e', roughness: 0.55, metalness: 0.2, side: THREE.DoubleSide }));
+  plate.position.y = -0.55;
+  const port = onBack(new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.07, 0.03), new THREE.MeshBasicMaterial({ color: '#050505' })), -0.32);
+  const socket = onBack(new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.04, 32), metal), -0.62);
   socket.rotation.x = Math.PI / 2;
-  socket.position.set(0, -0.62, -1.05);
-  const screws = [[-0.23, -0.15], [0.23, -0.15], [-0.23, -0.95], [0.23, -0.95]].map(([x, y]) => {
-    const s = new THREE.Mesh(new THREE.SphereGeometry(0.025, 12, 12), metal);
-    s.position.set(x, y, -1.045);
-    return s;
-  });
+  const screws = [[-0.23, -0.15], [0.23, -0.15], [-0.23, -0.95], [0.23, -0.95]].map(([a, y]) => onBack(new THREE.Mesh(new THREE.SphereGeometry(0.025, 12, 12), metal), y, a));
   const base = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 0.06, 64), dark);
   base.position.y = -1.62;
   group.add(body, cap, dial, led, plate, port, socket, base, ...screws);
@@ -125,7 +119,6 @@ async function renderSequence({ count, size, hex, signal, onProgress, only }) {
       onProgress?.(frames.filter(Boolean).length, indices.length);
       if (frames.length % 6 === 0) await new Promise((r) => setTimeout(r)); // let the readout paint
     }
-    console.log('frames', Math.round(performance.now() - T0), size);
   } finally {
     scene.traverse((o) => { o.geometry?.dispose(); [].concat(o.material || []).forEach((m) => m.dispose()); });
     [knit, shadowTex, env].forEach((t) => t.dispose());
