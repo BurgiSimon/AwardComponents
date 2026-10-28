@@ -1,0 +1,150 @@
+.ch {
+  /* The open pose: how far the stage lifts and tilts to uncover the colophon. demo.js measures --lift from the
+     colophon's own height plus what the tilt takes back at the corner that drops, and --room from the taller of the
+     stage's content and the colophon. */
+  --rail: 50svh;
+  --tilt: -5deg;
+  --shift: 4%;
+  --lift: 30svh;
+  --lift-dur: 1s;
+  --stage-bg: var(--accent);
+  --stage-ink: var(--on-accent);
+  --stage-line: color-mix(in oklab, var(--stage-ink) 26%, transparent);
+  --panel-bg: color-mix(in oklab, var(--ink) 7%, var(--bg));
+  overflow-x: clip;
+}
+.ch[data-ground='ink'] { --stage-bg: var(--ink); --stage-ink: var(--bg); }
+.ch a:not(.ac-btn) { color: inherit; text-decoration: none; }
+.ch a:not(.ac-btn):hover { text-decoration: underline; text-underline-offset: 0.2em; text-decoration-thickness: 1px; }
+
+/* ---- The issue page ---------------------------------------------------------------------------------------- */
+.ch__bar { display: flex; align-items: center; gap: 28px; height: 68px; border-bottom: 1px solid var(--line); }
+.ch__brand { font-family: var(--font-serif); font-size: 1.6rem; font-style: italic; font-weight: 600; letter-spacing: -0.02em; }
+.ch__bar nav { display: flex; gap: 22px; margin-left: auto; font-size: var(--text-sm); color: var(--ink-2); }
+.ch__bar nav a { display: inline-flex; align-items: center; min-height: 44px; }
+
+.ch__page { position: relative; z-index: 3; background: var(--bg); }
+.ch__head { display: grid; gap: 16px; justify-items: start; padding-block: clamp(36px, 7svh, 80px) clamp(28px, 5svh, 56px); }
+.ch__title { font-family: var(--font-serif); font-size: clamp(3rem, 1.6rem + 5vw, 7rem); font-weight: 500; line-height: 0.9; letter-spacing: -0.03em; text-wrap: balance; }
+.ch__head .ac-lede { max-width: 52ch; }
+
+.ch__stories { display: grid; gap: clamp(40px, 7svh, 72px); padding-bottom: clamp(48px, 9svh, 96px); }
+.ch__lead { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(20px, 3vw, 48px); align-items: end; padding-top: 24px; border-top: 1px solid var(--ink); }
+.ch__lead-pic { --ratio: 3 / 2; border-radius: var(--radius-md); }
+.ch__lead-copy { display: grid; gap: 14px; padding-bottom: 6px; }
+.ch__lead-title { font-family: var(--font-serif); font-size: clamp(2.4rem, 1.4rem + 3.2vw, 4.75rem); font-weight: 500; line-height: 0.92; letter-spacing: -0.03em; }
+.ch__row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2.4vw, 32px); margin: 0; }
+.ch__story { display: grid; gap: 8px; align-content: start; padding-top: 16px; border-top: 1px solid var(--line-2); }
+.ch__story-pic { --ratio: 4 / 3; margin-bottom: 8px; border-radius: var(--radius-sm); }
+.ch__story-title { font-family: var(--font-serif); font-size: clamp(1.5rem, 1.1rem + 1vw, 2rem); font-weight: 500; line-height: 1.04; letter-spacing: -0.015em; text-wrap: balance; }
+.ch__dek { color: var(--ink-2); font-size: var(--text-md); text-wrap: pretty; }
+
+.ch__end { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; padding-block: 22px clamp(32px, 6svh, 56px); border-top: 1px solid var(--line); color: var(--ink-2); font-size: var(--text-sm); }
+
+/* ---- The close ------------------------------------------------------------------------------------------- */
+/* Height: the closing sheet + the room for the stage's content, so the last scroll position shows the sheet's foot
+   over the stage's content. The footer's own ground is the colophon's ground: whatever the lifted stage uncovers
+   reads as one surface with it. It clips on both axes, as the recipe does: the sheet's rising corner is cut at the
+   footer's top (the page above has the same ground) instead of slicing the page's last line and rule, and the stage
+   content's 12 % start offset can never add scroll height below the footer (which would leave 'max' stale). */
+.ch__close { position: relative; overflow: clip; padding-bottom: calc(var(--room, 40svh) + 8px); background: var(--panel-bg); }
+
+/* The closing sheet: the page's ground carrying the issue line and the wordmark. demo.js scrubs it about its
+   top-left corner. The recipe's 16svh of ground above the wordmark keeps its tallest letters clear of the footer's
+   top edge at every tilt the control allows. */
+.ch__sheet { position: relative; z-index: 3; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 10px 32px; margin-left: -8vw; padding: 16svh var(--gutter) 8px calc(8vw + var(--gutter)); background: var(--bg); transform-origin: 0 0; }
+.ch__issue { display: grid; justify-items: end; gap: 6px; padding: 14px 0 0.9em; border-top: 1px solid var(--ink); font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-2); text-align: right; }
+.ch__issue span:first-child { color: var(--ink); }
+.ch__word { margin-left: -0.05em; font-family: var(--font-serif); font-style: italic; font-weight: 500; font-size: clamp(4rem, min(18vw, 28svh), 22rem); line-height: 0.8; letter-spacing: -0.045em; white-space: nowrap; }
+
+/* The rail runs from `--rail` above the footer to its foot; the stage sticks inside it. It is never shorter than the
+   stage (a short rail on a tall window would leave the stage unstuck and its base row, Credits included, below the
+   footer's foot), so it starts at least 100svh above the foot. */
+.ch__rail { position: absolute; top: min(calc(var(--rail) * -1), calc(100% - 100svh)); right: 0; bottom: 0; left: 0; }
+.ch__stage { position: sticky; top: 0; z-index: 2; height: 100svh; color: var(--stage-ink); }
+.ch__ground { position: absolute; inset: 0; background: var(--stage-bg); }
+/* A lip above the stage, so the tilted stage never shows a gap along its top edge. */
+.ch__ground::before { content: ''; position: absolute; left: 0; right: 0; bottom: calc(100% - 1px); height: 14svh; background: var(--stage-bg); }
+.ch__content { position: absolute; left: 0; right: 0; bottom: 0; display: grid; gap: clamp(20px, 3.4svh, 34px); padding-top: clamp(28px, 6svh, 56px); padding-bottom: 8px; }
+.ch__label { margin-bottom: 10px; font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: color-mix(in oklab, var(--stage-ink) 78%, var(--stage-bg)); }
+.ch__letters { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); align-items: end; gap: 6px clamp(20px, 3vw, 44px); padding-bottom: clamp(18px, 3svh, 30px); border-bottom: 1px solid var(--stage-line); }
+.ch__letters .ch__label { grid-column: 1 / -1; margin: 0; }
+.ch__say { max-width: 19ch; font-family: var(--font-serif); font-size: clamp(1.9rem, 0.9rem + 2.6vw, 3.6rem); font-weight: 500; line-height: 0.96; letter-spacing: -0.025em; text-wrap: balance; }
+.ch__mail { justify-self: end; }
+.ch__mail a { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; padding-bottom: 4px; border-bottom: 2px solid currentColor; font-size: clamp(1.05rem, 0.8rem + 0.8vw, 1.5rem); font-weight: 620; letter-spacing: -0.015em; }
+.ch .ch__mail a:hover { text-decoration: none; }
+.ch__mail svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; transition: transform var(--dur-m) var(--ease-out); }
+.ch[data-tier='full'] .ch__mail a:hover svg { transform: translate(3px, -3px); }
+.ch__cols { display: grid; grid-template-columns: minmax(0, 1.5fr) repeat(2, minmax(0, 0.5fr)); gap: 24px clamp(20px, 3vw, 44px); }
+.ch__note { max-width: 34ch; font-size: var(--text-sm); line-height: 1.45; }
+.ch__inline { display: flex; flex-wrap: wrap; gap: 0 18px; margin: 4px 0 0; }
+.ch__inline a, .ch__list a { display: inline-flex; align-items: center; min-height: 34px; font-size: var(--text-sm); }
+.ch__list { display: grid; margin: 0; }
+.ch__base { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 16px; border-top: 1px solid var(--stage-line); font-family: var(--font-mono); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; }
+.ch__base-end { display: inline-flex; align-items: center; gap: 12px; }
+.ch__base i { font-style: normal; opacity: 0.6; }
+.ch__base a, .ch__credits-btn { display: inline-flex; align-items: center; min-height: 44px; }
+.ch__copy { display: inline-flex; align-items: center; min-height: 44px; }
+.ch__credits-btn { padding: 0; border: 0; background: none; color: inherit; font: inherit; letter-spacing: inherit; text-transform: inherit; }
+.ch__credits-btn:hover { text-decoration: underline; text-underline-offset: 0.2em; }
+.ch__credits-btn[aria-expanded='true'] { text-decoration: underline; text-underline-offset: 0.2em; text-decoration-thickness: 2px; }
+/* The stage's own ring: its ink on its ground. The colophon keeps the library's focus ring on its light ground. */
+.ch__stage :focus-visible { outline-color: var(--stage-ink); }
+.ch__stage ::selection { background: var(--stage-ink); color: var(--stage-bg); }
+
+/* The open pose. Only the full tier moves the stage: pose and transition are both scoped to it, so reduced and static
+   never lift or tilt anything. */
+.ch[data-tier='full'] .ch__stage { transition: transform var(--lift-dur) cubic-bezier(0.16, 1, 0.3, 1); }
+.ch[data-tier='full'].is-open .ch__stage { transform: translate(var(--shift), calc(var(--lift) * -1)) rotate(var(--tilt)); }
+
+/* The colophon: under the stage at the footer's foot, as tall as its own content. Hidden from everyone while closed;
+   the hide waits for the stage to land so it never blinks out under a sheet still moving. */
+.ch__credits { position: absolute; right: 0; bottom: 0; left: 0; z-index: 1; padding-block: clamp(20px, 3.4svh, 32px) clamp(18px, 3svh, 28px); background: var(--panel-bg); visibility: hidden; transition: visibility 0s linear var(--lift-dur); }
+.ch.is-open .ch__credits { visibility: visible; transition-delay: 0s; }
+.ch__credits-in { display: grid; grid-template-columns: minmax(0, 0.62fr) minmax(0, 2fr) auto; grid-template-areas: 'title text close' 'title pics close'; gap: 14px clamp(20px, 3vw, 44px); align-items: start; }
+.ch__credits-title { grid-area: title; font-family: var(--font-serif); font-style: italic; font-size: clamp(2.6rem, 1.4rem + 3.4vw, 4.75rem); font-weight: 500; line-height: 0.82; letter-spacing: -0.035em; outline-offset: 6px; }
+.ch__colophon { grid-area: text; max-width: 92ch; }
+.ch__pics { grid-area: pics; }
+.ch__colophon, .ch__pic-list { font-size: var(--text-sm); line-height: 1.5; color: var(--ink-2); text-wrap: pretty; }
+/* The colophon's ground is tinted, so the accent ink is deepened a little toward the ink to keep 4.5:1 on it. */
+.ch__colophon strong, .ch__pic-list strong { margin-right: 0.25em; font-weight: 640; color: color-mix(in oklab, var(--accent-ink) 80%, var(--ink)); }
+.ch__pics-title { margin-bottom: 6px; font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-2); }
+.ch__pic-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px clamp(18px, 2.4vw, 32px); margin: 0; }
+.ch__close-btn { grid-area: close; min-height: 44px; padding: 0 18px; border: 1px solid var(--line-2); border-radius: var(--radius-pill); background: var(--bg); color: var(--ink); font-size: var(--text-sm); font-weight: 600; }
+.ch__close-btn:hover { border-color: var(--ink); }
+
+/* Reduced and static: the stage never moves; the colophon comes up over the stage's foot as a plain sheet (an opacity
+   fade in the reduced tier, a cut in the static tier). */
+.ch:not([data-tier='full']) .ch__credits { z-index: 4; opacity: 0; box-shadow: 0 -1px 0 var(--line-2); transition: opacity 0.2s linear, visibility 0s linear 0.2s; }
+.ch:not([data-tier='full']).is-open .ch__credits { opacity: 1; transition: opacity 0.2s linear, visibility 0s; }
+.ch[data-tier='static'] .ch__credits { transition: none; }
+/* A frame capture shows the open pose settled. */
+.ch--capture .ch__stage, .ch--capture .ch__credits { transition: none !important; }
+
+@media (max-width: 980px) {
+  .ch__credits-in { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'title close' 'text text' 'pics pics'; align-items: end; }
+  /* Narrower colophons keep who made each picture and drop the work's own title. */
+  .ch__work { display: none; }
+}
+@media (max-width: 760px) {
+  .ch__bar nav { display: none; }
+  .ch__bar .ac-btn { margin-left: auto; }
+  .ch__lead { grid-template-columns: minmax(0, 1fr); }
+  .ch__lead-pic { --ratio: 4 / 3; }
+  .ch__row { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .ch__story { grid-template-columns: 112px minmax(0, 1fr); column-gap: 14px; padding-block: 14px; }
+  .ch__story > :not(.ch__story-pic) { grid-column: 2; }
+  .ch__story-pic { grid-row: 1 / span 4; --ratio: 1; margin: 0; }
+  .ch__dek { display: none; }
+  .ch__sheet { grid-template-columns: minmax(0, 1fr); }
+  .ch__issue { display: flex; justify-content: space-between; padding: 10px 0 4px; text-align: left; }
+  .ch__word { font-size: 23vw; }
+  .ch__letters { grid-template-columns: minmax(0, 1fr); }
+  .ch__mail { justify-self: start; }
+  .ch__cols { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 16px; }
+  .ch__col--sub { grid-column: 1 / -1; }
+  .ch__base { gap: 0 12px; }
+  .ch__credits-in { gap: 10px 16px; }
+  .ch__credits-title { font-size: 2.6rem; }
+  .ch__pic-list { grid-template-columns: minmax(0, 1fr); }
+}

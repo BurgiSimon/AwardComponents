@@ -1,0 +1,51 @@
+// Field reference: docs/authoring.md. Plain data, no imports.
+export default {
+  id: 'webcodecs-scrub',
+  title: 'Frame-exact film scrub',
+  category: 'scroll',
+  summary: 'An observatory’s orbit time-lapse on a sticky stage: the scroll names a frame and WebCodecs decodes exactly that one from a single packed file, with captions landing on their moments.',
+  description: 'The film is packed once, offline, by the pack.mjs script in the component folder: ffmpeg encodes the footage as H.264 with a keyframe every ten frames and no B-frames, and the script lays the frames back to back, then a JSON manifest of every frame’s offset, length, timestamp and type, then a four-byte pointer to the manifest. The page fetches that one file (about 780 KB for 360 frames) and needs no demuxer.\n\nThe scroll asks for a frame and a VideoDecoder decodes that frame and no other: from the keyframe at or before it on a jump, straight on from where the decoder already is when the target lies ahead in the same group, one decode for the next frame. Requests made while a run decodes wait, and only the newest runs. Every frame decoded on the way is kept as a bitmap at the drawn width, so scrubbing back costs nothing; every VideoFrame is closed, and a one-second watchdog flushes a run that stalls.\n\nThe four captions land when the frame on screen, not the scroll, reaches their share of the clip. The readout in the film’s corner counts requests, decodes and cached frames.',
+  recipe: 'webcodecs-frame-scrub',
+  deps: ['gsap', 'lenis'],
+  tags: ['scroll', 'scrub', 'video', 'webcodecs', 'sticky', 'canvas', 'scrolltrigger', 'sequence', 'performance', 'fallback'],
+  requires: ['webcodecs'],
+  added: '2026-10-28',
+  labels: ['new'],
+  order: 72,
+  preview: { height: 680, scroll: true, hint: 'Scroll to fly the orbit', capture: { scroll: 0.5, wait: 3000 } },
+  useCases: [
+    'A time-lapse told at the reader’s pace (an orbit, a day, a building going up) with captions on their moments',
+    'A product turning or assembling, where the frame on screen must be the frame the scroll names',
+    'Replacing a folder of stills with one encoded file several times smaller',
+  ],
+  notes: [
+    'The canvas is aria-hidden; the figure caption describes the footage, and the four captions are an ordered list in reading order, so a screen reader hears them all wherever the scroll is.',
+    'Every way of scrolling drives it (wheel, keys, scrollbar, touch); the readout in the film’s corner is decoration and hidden from assistive tech.',
+    'Reduced motion and static fetch and decode nothing: no sticky track, one still of the footage and every caption listed below it.',
+    'Without WebCodecs or an H.264 decoder the same footage is scrubbed through <video>.currentTime from the shared WebM: lighter, not frame-exact (seeks land late under a fast scroll), and the readout says so.',
+  ],
+  controls: [
+    { id: 'track', label: 'Scroll length', type: 'range', min: 240, max: 800, step: 20, default: 420, unit: 'svh', group: 'Scroll', help: 'The film section’s height. The clip runs across all of it but the last screen.', prompt: 'Film track: {value} tall, the clip scrubbed from top top to bottom bottom (default {default})' },
+    { id: 'smoothing', label: 'Scrub catch-up', type: 'range', min: 0, max: 1, step: 0.05, default: 0.3, unit: 's', group: 'Scroll', help: '0 locks the frame to the scrollbar; more lets it trail and ease.', prompt: (v) => (v > 0 ? `Scrub catch-up: ${v} s (scrub: ${v}; default 0.3 s)` : 'No catch-up: scrub: true, the frame locked to the scrollbar (default scrub: 0.3)') },
+    { id: 'engine', label: 'Decoder', type: 'select', options: [{ value: 'webcodecs', label: 'WebCodecs' }, { value: 'video', label: '<video> seek' }], default: 'webcodecs', group: 'Decoding', help: 'WebCodecs decodes the exact frame. <video> seek sets currentTime on the shared WebM: lighter to build, not frame-exact under a fast scroll.', prompt: (v) => (v === 'video' ? 'Scrub a <video> by currentTime instead of WebCodecs: lighter to build, not frame-exact; after each seeked, only the newest request runs' : 'Decode with WebCodecs, frame-exact') },
+    { id: 'cache', label: 'Bitmap cache', type: 'range', min: 0, max: 36, step: 2, default: 12, unit: 'frames', group: 'Decoding', when: { engine: ['webcodecs'] }, help: 'Decoded frames kept as bitmaps so scrubbing back costs no decode; 12 is one keyframe group plus two.', prompt: (v) => (v > 0 ? `Keep the last ${v} decoded frames as bitmaps at the drawn width, oldest out first (default 12: the keyframe interval plus two)` : 'No bitmap cache: every frame shown again is decoded again, from its keyframe on a step back (default 12 bitmaps: the keyframe interval plus two)') },
+    { id: 'readout', label: 'Decoder readout', type: 'toggle', default: true, group: 'Decoding', help: 'Frame, requests against decodes, cached bitmaps.', prompt: false },
+    { id: 'rail', label: 'Caption rail', type: 'toggle', default: true, group: 'Captions', prompt: { on: 'A rail under the film with a tick where each caption lands and a playhead on the frame shown', off: 'No rail: the captions alone mark the clip' } },
+  ],
+  actions: [
+    { id: 'fly', label: 'Fly the orbit' },
+    { id: 'next', label: 'Jump to the next caption' },
+  ],
+  prompt: {
+    skill: 'component',
+    ask: 'Scrub {target} frame by frame with the scroll, decoded with WebCodecs.',
+    target: 'the film on the exhibition page',
+    brief: 'Pack the clip offline into one file: H.264 frames (AVCC, the avcC as the decoder description, a keyframe every 10 frames, no B-frames) back to back, then a JSON manifest of every frame’s offset, length, timestamp and type, then a four-byte little-endian pointer to the manifest. One fetch, no demuxer. A 420 svh track holds a sticky stage; one tween scrubbed from top top to bottom bottom (scrub 0.3) names a frame, and a VideoDecoder decodes exactly that frame: from the keyframe at or before it on a jump, straight on from its own position when the target is ahead in the same group, one decode for the next frame. Requests made while a run decodes wait and only the newest runs. Frames decoded on the way are kept as bitmaps at the drawn width (keyEvery + 2, oldest out), every VideoFrame is closed, and a 1 s watchdog flushes a stalled run. Captions land when the frame on screen reaches their share of the clip.',
+    keep: [
+      'the canvas aria-hidden, the footage described in a figure caption and the captions as an ordered list in reading order',
+      'reduced motion: no sticky track and nothing fetched or decoded, one still with every caption listed',
+      'without WebCodecs or the codec: the same footage as a <video> scrubbed by currentTime, the newest request after each seeked, and say it is not frame-exact',
+      'one decoder per page, closed on teardown with every bitmap; never more pixels on the canvas than the film has',
+    ],
+  },
+};

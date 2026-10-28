@@ -1,0 +1,255 @@
+/* Cell curtain — Kova One's launch site and the woven curtain over it. Every colour is a token. */
+.cc { --cc-curtain: var(--accent); --cc-curtain-ink: var(--on-accent); min-height: 100svh; overflow-x: clip; }
+.cc a { text-decoration: none; }
+
+/* The skip link: off screen until focused. Its #fragment is an in-page target, never a route. */
+.cc__skip {
+  position: absolute;
+  left: var(--gutter);
+  top: 10px;
+  z-index: 20;
+  padding: 10px 16px;
+  border-radius: var(--radius-pill);
+  background: var(--ink);
+  color: var(--bg);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  translate: 0 -200%;
+}
+.cc__skip:focus-visible { translate: 0 0; }
+/* The skip link's target lands below the 64 px sticky bar, not under it. */
+.cc__main { outline: none; scroll-margin-top: 64px; }
+
+/* Chrome outside the swapped page: it stays put across routes; aria-current moves. */
+.cc__bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: color-mix(in oklab, var(--bg) 88%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+.cc__brand { font-size: var(--text-lg); }
+.cc__brand svg { width: 20px; height: 20px; fill: var(--ink); }
+.cc__nav { display: flex; align-items: center; gap: 6px; }
+.cc__nav a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: var(--radius-pill);
+  color: var(--ink-2);
+  font-size: var(--text-sm);
+  font-weight: 560;
+  transition: color var(--dur-s) var(--ease-out), background-color var(--dur-s) var(--ease-out);
+}
+/* Hover fills only where hover exists: a tap would leave them stuck on the link just used. */
+@media (hover: hover) { .cc__nav a:hover { color: var(--ink); background: var(--bg-2); } }
+.cc__nav a[aria-current='page'] { color: var(--ink); }
+.cc__nav a[aria-current='page']::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 4px;
+  width: 5px;
+  height: 5px;
+  margin-left: -2.5px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.cc__nav .cc__buy-link { margin-left: 6px; background: var(--ink); color: var(--bg); }
+@media (hover: hover) { .cc__nav .cc__buy-link:hover { background: color-mix(in oklab, var(--ink) 86%, var(--bg)); color: var(--bg); } }
+.cc__nav .cc__buy-link[aria-current='page'] { background: var(--accent); color: var(--on-accent); }
+.cc__nav .cc__buy-link[aria-current='page']::after { display: none; }
+.cc__buy-link .ac-num { opacity: 0.72; font-weight: 500; }
+
+/* Pages */
+.cc__view { min-height: calc(100svh - 64px); display: flex; flex-direction: column; }
+.cc__h1 { font-size: clamp(2.5rem, 1.1rem + 5.2vw, 6.25rem); }
+.cc__h1:focus-visible { outline: 2px solid var(--focus); outline-offset: 8px; }
+
+/* The product, drawn on a soft ground. The speaker reads its finish from data-finish. */
+.cc__frame { display: grid; gap: 10px; margin: 0; }
+.cc__stage {
+  --ratio: 4 / 5;
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(70% 52% at 50% 44%, color-mix(in oklab, var(--surface) 92%, transparent), transparent 72%),
+    linear-gradient(180deg, var(--bg-2), color-mix(in oklab, var(--bg-2), var(--ink) 6%));
+}
+.cc__stage svg { position: absolute; inset: 6% 4% 2%; width: 92%; height: 92%; }
+.cc__frame-cap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.cc__speaker { --cc-finish: color-mix(in oklab, var(--sand) 28%, white); }
+.cc__speaker[data-finish='graphite'] { --cc-finish: color-mix(in oklab, var(--night) 86%, var(--sky)); }
+.cc__speaker[data-finish='clay'] { --cc-finish: var(--clay); }
+.cc__speaker * { transition: fill var(--dur-m) var(--ease-out); }
+.cc__top { fill: color-mix(in oklab, var(--cc-finish) 82%, white); }
+.cc__body { fill: var(--cc-finish); }
+.cc__grille { fill: color-mix(in oklab, var(--cc-finish) 86%, black); }
+.cc__knit { fill: color-mix(in oklab, var(--cc-finish) 70%, black); }
+.cc__speaker[data-finish='graphite'] .cc__knit { fill: color-mix(in oklab, var(--cc-finish) 78%, white); }
+.cc__strip { fill: color-mix(in oklab, var(--cc-finish) 78%, black); }
+.cc__led { fill: var(--accent); }
+.cc__sheen { fill: none; stroke: color-mix(in oklab, white 22%, transparent); stroke-width: 1.5; }
+
+/* Overview */
+.cc__hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  align-items: center;
+  gap: clamp(24px, 5vw, 80px);
+  min-height: calc(100svh - 64px);
+  padding-block: clamp(20px, 5vh, 56px);
+}
+.cc__hero-copy { display: grid; gap: 22px; align-content: center; }
+.cc__cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 4px; }
+.cc__frame--hero .cc__stage { max-height: calc(100svh - 140px); }
+.cc__frame--hero { max-width: 520px; justify-self: end; width: 100%; }
+
+.cc__features { display: grid; gap: 20px; padding-block: 28px clamp(56px, 9vh, 96px); border-top: 1px solid var(--line); }
+.cc__feature-list { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; margin: 0; }
+.cc__feature { display: grid; gap: 8px; align-content: start; }
+.cc__feature .ac-label { color: var(--accent-ink); }
+
+.cc__kept { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); align-items: end; gap: clamp(24px, 5vw, 72px); padding-bottom: clamp(48px, 8vh, 96px); }
+.cc__kept-copy { display: grid; gap: 16px; }
+.cc__kept-pics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 0; }
+.cc__kept-pics figure { display: grid; gap: 8px; }
+.cc__kept-pics .ac-media { --ratio: 4 / 5; border-radius: var(--radius-md); }
+
+/* Sound */
+.cc__head { display: grid; gap: 20px; padding-block: clamp(32px, 8vh, 88px) clamp(28px, 5vh, 56px); }
+.cc__head .cc__h1 { max-width: 14ch; }
+.cc__listen { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr); gap: clamp(24px, 5vw, 72px); align-items: start; padding-bottom: clamp(48px, 8vh, 96px); }
+.cc__violin { display: grid; gap: 10px; margin: 0; }
+.cc__violin .ac-media { --ratio: 4 / 5; border-radius: var(--radius-lg); }
+.cc__listen-copy { display: grid; gap: 32px; }
+.cc__specs { display: grid; margin: 0; border-top: 1px solid var(--line); }
+.cc__specs > div { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 16px; padding-block: 14px; border-bottom: 1px solid var(--line); }
+.cc__specs dt { padding-top: 0.2em; }
+.cc__specs dd { margin: 0; font-size: var(--text-md); font-weight: 560; }
+.cc__note { display: grid; gap: 8px; }
+
+/* Buy */
+.cc__buy { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 5vw, 72px); align-items: start; padding-block: clamp(24px, 6vh, 64px) clamp(48px, 8vh, 96px); }
+.cc__frame--buy { position: sticky; top: 88px; }
+.cc__buy-panel { display: grid; gap: 22px; align-content: start; }
+.cc__h1--buy { font-size: clamp(2.5rem, 1.2rem + 4vw, 5.25rem); }
+.cc__price { display: grid; gap: 4px; }
+.cc__price .ac-num { font-size: var(--text-2xl); font-weight: 680; font-stretch: var(--wide); letter-spacing: -0.02em; }
+.cc__finishes { display: grid; gap: 8px; margin: 0; padding: 0; border: 0; min-width: 0; }
+.cc__finishes legend { padding: 0; margin-bottom: 8px; }
+.cc__finish {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 10px 14px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color var(--dur-s) var(--ease-out), background-color var(--dur-s) var(--ease-out);
+}
+@media (hover: hover) { .cc__finish:hover { background: var(--bg-2); } }
+.cc__finish:has(input:checked) { border-color: var(--ink); background: var(--surface); }
+.cc__finish input { width: 18px; height: 18px; margin: 0; accent-color: var(--accent); }
+.cc__finish:has(input:focus-visible) { outline: 2px solid var(--focus); outline-offset: 2px; }
+.cc__finish input:focus-visible { outline: none; }
+.cc__swatch { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--line-2); background: color-mix(in oklab, var(--sand) 28%, white); }
+.cc__swatch[data-finish='graphite'] { background: color-mix(in oklab, var(--night) 86%, var(--sky)); }
+.cc__swatch[data-finish='clay'] { background: var(--clay); }
+.cc__finish-t { display: grid; gap: 2px; min-width: 0; }
+.cc__finish-t strong { font-size: var(--text-sm); font-weight: 640; }
+.cc__bag { justify-self: start; }
+.cc__bag-note { margin-top: -10px; }
+.cc__box { display: grid; gap: 10px; }
+.cc__box ul { display: grid; gap: 6px; margin: 0; font-size: var(--text-sm); color: var(--ink-2); }
+.cc__box li::before { content: '—'; margin-right: 0.6em; color: var(--faint); }
+
+/* The link to the next page closes every view. */
+.cc__next { display: grid; gap: 10px; margin-top: auto; padding-block: clamp(40px, 8vh, 88px); border-top: 1px solid var(--line); }
+/* The arrow sits in the text flow, so on a phone it follows the last word instead of the far edge. */
+.cc__next-t { display: block; font-size: var(--text-3xl); font-weight: 720; font-stretch: var(--wide); letter-spacing: -0.03em; line-height: 1; }
+.cc__nowrap { white-space: nowrap; }
+.cc__next-t svg { display: inline-block; width: 0.8em; height: 0.8em; vertical-align: -0.06em; transition: translate var(--dur-m) var(--ease-out); }
+.cc__next:focus-visible svg { translate: 0.15em 0; }
+@media (hover: hover) { .cc__next:hover svg { translate: 0.15em 0; } }
+:root:not([data-motion='full']) .cc__next svg { translate: none; transition: none; }
+
+.cc__foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; padding-block: 24px 32px; border-top: 1px solid var(--line); }
+
+/* The curtain: a fixed grid of cells over everything, each a bar that scales on X about its centre. A cell overlaps
+   its neighbours by half a pixel, so fractional widths never leave a seam when it is shut. While shown it takes the
+   clicks, and the script makes the page behind it inert: nothing routes mid-sweep. */
+.cc__curtain { position: fixed; inset: 0; z-index: 50; overflow: hidden; cursor: progress; }
+.cc__curtain[hidden] { display: none; }
+/* Shut from first paint until the script has built the cells. The script's 4 s ceiling only starts once it runs, so
+   a curtain never marked ready hides itself 5 s after first paint (visibility also drops its clicks). The failsafe
+   is a safety net, not motion, so it keeps its delay under static motion too. */
+.cc__curtain:not([data-ready]) { background: var(--cc-curtain); animation: cc-failsafe 0s linear 5s forwards; }
+:root[data-motion] .cc .cc__curtain:not([data-ready]) { animation-delay: 5s !important; }
+@keyframes cc-failsafe { to { visibility: hidden; } }
+.cc__cells { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(var(--cols), 1fr); grid-template-rows: repeat(var(--rows), 1fr); }
+.cc__cells > i { display: block; margin: -0.5px; background: var(--cc-curtain); transform: scaleX(0); will-change: transform; }
+:root:not([data-motion='full']) .cc__cells > i { transform: none; will-change: auto; }
+
+/* The arrival readout, on the shut grid only. */
+.cc__gate {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: 64px 1fr auto auto;
+  align-items: end;
+  gap: 8px 24px;
+  padding: 0 var(--gutter) clamp(20px, 5vh, 48px);
+  color: var(--cc-curtain-ink);
+  pointer-events: none;
+}
+.cc__gate[hidden] { display: none; }
+/* The brand where the bar's brand sits, so the page arrives under its own mark. */
+.cc__gate-brand { grid-column: 1 / -1; align-self: center; display: inline-flex; align-items: center; gap: 0.5em; font-size: var(--text-lg); font-weight: 760; font-stretch: var(--wide); letter-spacing: -0.03em; }
+.cc__gate-brand svg { width: 20px; height: 20px; fill: currentColor; }
+.cc__gate-top { grid-row: 3; }
+.cc__gate-name, .cc__gate-pct { grid-row: 4; }
+.cc__gate-top {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid color-mix(in oklab, var(--cc-curtain-ink) 28%, transparent);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.cc__gate-name { font-size: clamp(3rem, 1rem + 8vw, 9rem); font-weight: 760; font-stretch: var(--wide); letter-spacing: -0.05em; line-height: 0.86; margin-left: -0.04em; }
+.cc__gate-pct { font-family: var(--font-mono); font-size: var(--text-3xl); font-weight: 500; letter-spacing: -0.03em; line-height: 1; }
+
+@media (max-width: 900px) {
+  .cc__feature-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cc__kept { grid-template-columns: 1fr; align-items: start; }
+}
+@media (max-width: 760px) {
+  .cc__hero { grid-template-columns: 1fr; min-height: 0; align-items: start; padding-block: 28px 40px; }
+  .cc__frame--hero { max-width: none; justify-self: stretch; }
+  .cc__frame--hero .cc__stage { --ratio: 1; max-height: none; }
+  .cc__listen, .cc__buy { grid-template-columns: 1fr; }
+  .cc__frame--buy { position: static; }
+  .cc__frame--buy .cc__stage { --ratio: 1; }
+  .cc__violin .ac-media { --ratio: 1; }
+}
+@media (max-width: 520px) {
+  .cc__nav { gap: 0; }
+  .cc__nav a { padding: 0 10px; }
+  .cc__buy-link .ac-num { display: none; }
+  .cc__feature-list { grid-template-columns: 1fr; gap: 18px; }
+  .cc__kept-pics { gap: 8px; }
+  .cc__specs > div { grid-template-columns: 1fr; gap: 4px; }
+  .cc__gate-top span:first-child { display: none; }
+}

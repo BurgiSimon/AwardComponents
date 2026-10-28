@@ -1,0 +1,48 @@
+export default {
+  id: 'credits-hinge',
+  title: 'Credits under the footer',
+  category: 'closers',
+  summary: 'A magazine issue ends on a sheet that tips off a held footer; Credits lifts and tilts the footer like a sheet on a press bed to show the colophon beneath.',
+  description: 'The end of a Fieldnote issue page. The last sheet, the page’s ground carrying the issue line and the wordmark, slides off a footer that is already there: a sticky stage held in a rail that starts half a viewport above it. The sheet tips on its top-left corner as it goes, and the footer’s content rises the last few percent as the sheet’s foot clears.\n\nCredits scrolls to the end while one transition lifts and tilts the whole stage, so the colophon shows in the gap: the editor and writers, the typefaces, and the real credit of every picture the page shows. Escape, Close credits, Credits again or a scroll once the stage has landed put it back.',
+  recipe: 'footer-credits-hinge',
+  deps: ['gsap', 'lenis'],
+  tags: ['footer', 'sticky', 'scrub', 'gsap', 'scrolltrigger', 'lenis', 'credits', 'colophon', 'editorial', 'keyboard', 'reduced-motion'],
+  added: '2026-10-28',
+  labels: ['new'],
+  order: 30,
+  preview: { height: 720, scroll: true, hint: 'Scroll to the end, then press Credits', capture: { action: 'open', wait: 1400 } },
+  actions: [
+    { id: 'open', label: 'Open credits' },
+    { id: 'close', label: 'Close credits' },
+    { id: 'end', label: 'Scroll to the end' },
+  ],
+  useCases: [
+    'The close of a magazine, studio or portfolio site whose colophon names the writers, the type and where each picture came from',
+    'A launch or campaign page that credits its makers in place instead of on a separate route',
+    'A footer with one thing a visitor checks once, such as a newsletter or contact form, under the same lifting stage',
+  ],
+  notes: [
+    'Credits is a <button> with aria-expanded and aria-controls; the colophon is a labelled <section>, inert and visibility: hidden while closed (the hide waits for the stage to land). Focus moves to its heading on open and back to Credits on Escape, Close credits or Credits again.',
+    'Keyboard focus never lands under the sheet: tabbing into the footer jumps the page to the end first, and Shift+Tab out of the open colophon into the stage puts the credits away before the link takes focus.',
+    'Reduced motion: native scroll, the sheet never tips and the stage never lifts; the colophon fades up over the stage’s foot in 0.2 s and nothing blinks. Static: the colophon appears and goes at once.',
+    'The blink is two hard opacity steps on small link text, for mouse hover and keyboard focus only, well under the flash-area threshold. Footer targets are at least 34 px tall, the base row 44 px.',
+  ],
+  controls: [
+    { id: 'tilt', label: 'Tilt', type: 'range', min: 2, max: 10, step: 0.5, default: 5, unit: '°', group: 'Hinge', help: 'How far the sheet tips on its top-left corner; the open stage tilts as far (60 % of it under 760 px).', prompt: 'The sheet tips by {value} on its top-left corner and the open stage tilts by the same, 60 % of it under 760 px (default {default})' },
+    { id: 'rail', label: 'Rail', type: 'range', min: 10, max: 90, step: 5, default: 50, unit: 'svh', group: 'Hinge', help: 'How far above the footer the stage’s rail starts. The stage holds still, and the sheet starts to tip, once the footer’s top passes this line.', prompt: 'The rail starts {value} above the footer, so the stage sticks and the tip starts when the footer’s top is that far down the viewport (default {default})' },
+    { id: 'liftDuration', label: 'Lift duration', type: 'range', min: 0.4, max: 2, step: 0.1, default: 1, unit: 's', group: 'Credits', help: 'One expo-out transition lifts and tilts the stage; the scroll to the end runs 0.8 s beside it.', prompt: 'The stage lifts and tilts on one {value} cubic-bezier(.16, 1, .3, 1) transition (default {default})' },
+    { id: 'stage', label: 'Stage', type: 'select', options: [{ value: 'accent', label: 'Vermilion' }, { value: 'ink', label: 'Ink' }], default: 'accent', group: 'Look', prompt: (v) => (v === 'ink' ? 'The footer stage is the ink colour with text in the page’s ground, so it flips with the theme' : 'The footer stage is the accent colour with on-accent text') },
+    { id: 'blink', label: 'Link blink', type: 'toggle', default: true, group: 'Look', prompt: { on: 'Footer links blink by a registered GSAP effect: one 0.06 s opacity step on mouse hover and keyboard focus, the 0 / 1 / 0 / 1 ladder on press', off: 'Footer links do not blink' } },
+  ],
+  prompt: {
+    skill: 'component',
+    ask: 'Close {target} on a sheet that tips off a held footer, with the credits under a lifting stage.',
+    target: 'the last page section and its footer',
+    brief: 'The page’s last sheet (the ground and the wordmark) slides off a footer stage that is position: sticky (top 0, 100svh) inside a rail starting 50svh above the footer and running to its foot; the footer is the sheet plus the taller of the stage’s measured content and the colophon, clipped on both axes, with no pin and no spacer. A linear scrub from the moment the stage sticks (the sheet’s top at 50 % of the viewport) to max tips the sheet −5° on its top-left corner; the sheet’s box runs 8vw past the left edge, so a −2 % slide (−4 % with yPercent −24 under 760 px) keeps its foot covered and the wordmark whole. The stage’s content rises 12 % → 0 as the sheet’s foot clears. Credits scrolls to the end over 0.8 s (expo out) while one 1 s cubic-bezier(.16, 1, .3, 1) transition moves the stage translate(4 %, −lift) rotate(−5°) (−3° on a phone), lift being the colophon’s own height + 24 px + (stage width / 2) × sin |tilt|, so the corner that drops still clears it. Escape, a close button, Credits again or a scroll of more than 24 px after a 0.85 s arming delay put it back. Footer links blink by a registered GSAP effect: hard opacity steps at 0.06 s.',
+    keep: [
+      'Credits is a button with aria-expanded and aria-controls; the colophon is a labelled section, inert and visibility: hidden while closed (the hide waits for the stage to land); focus goes to its heading on open and back to Credits on close; keyboard focus inside the stage jumps the page to the end first, or puts the credits away when they are open, so it never lands under the sheet.',
+      'Reduced motion: native scroll, nothing tips or lifts, the colophon fades up over the stage’s foot in 0.2 s; static is a cut; nothing blinks outside the full tier, and only mouse hover, keyboard focus and a press set it off.',
+      'Lift and footer height re-measured with a ResizeObserver; the scrubs stay ease: none, so the scroll is the only curve.',
+    ],
+  },
+};

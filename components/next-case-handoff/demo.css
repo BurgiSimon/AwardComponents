@@ -1,0 +1,223 @@
+/* Next case hand-off. The hero and the close's frame share one geometry (100svh, the card at --card-top), so the
+   frame, lifted to the top and unwound, is exactly where the next page's hero will be. */
+.nc {
+  --bar-h: 64px;
+  --card-top: 24svh;
+  --nc-close: 72svh;
+  --nc-close-sm: 64svh;
+  position: relative;
+  min-height: 100svh;
+  overflow-x: clip;
+}
+.nc a { text-decoration: none; }
+
+/* ---- The bar: over the hero's moving picture, so its type stays light in both themes. ---- */
+.nc-bar {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 6;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+  height: var(--bar-h);
+  padding-inline: var(--gutter);
+  color: var(--on-media);
+}
+.nc-bar__brand { justify-self: start; font-size: 1.125rem; min-height: 44px; }
+.nc-bar__crumb {
+  display: flex;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--on-media);
+  font-variant-numeric: tabular-nums;
+}
+.nc-bar__work::after { content: '/'; margin-left: 12px; opacity: 0.6; }
+.nc-bar__contact { justify-self: end; display: inline-flex; align-items: center; min-height: 44px; font-size: var(--text-sm); font-weight: 600; }
+.nc-bar :focus-visible { outline-color: var(--on-media); }
+
+/* ---- Hero and frame: one geometry. ---- */
+.nc-hero,
+.nc-next__frame {
+  position: relative;
+  display: block;
+  height: 100svh;
+  overflow: hidden;
+  background: var(--night);
+}
+.nc-film { position: absolute; inset: 0; display: block; }
+.nc-film__plate { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* A scrim at the top for the bar and the timecode, and at the foot for the credit; it travels with the film. Dense
+   enough under the bar's small type for 4.5:1 over the brightest frame (Kiln House's white curtains). */
+.nc-film::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, color-mix(in oklab, var(--night) 78%, transparent) 0, color-mix(in oklab, var(--night) 40%, transparent) calc(var(--bar-h) + 48px), transparent 34%),
+    linear-gradient(0deg, color-mix(in oklab, var(--night) 72%, transparent) 0, transparent 24%);
+  pointer-events: none;
+}
+.nc-film__tc {
+  position: absolute;
+  z-index: 1;
+  top: calc(var(--bar-h) + 6px);
+  right: var(--gutter);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: var(--radius-xs);
+  background: color-mix(in oklab, var(--night) 52%, transparent);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--on-media-2);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.nc-film__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+.nc-film__time { color: var(--on-media); }
+:root[data-motion='reduced'] .nc-film__dot,
+:root[data-motion='static'] .nc-film__dot { background: var(--on-media-2); }
+.nc--no-tc .nc-film__tc { display: none; }
+
+/* The title card, hinged on its top-right corner. */
+.nc-card {
+  position: absolute;
+  z-index: 2;
+  left: var(--gutter);
+  top: var(--card-top);
+  display: block;
+  width: min(56vw, 48rem);
+  padding: clamp(18px, 2.4vw, 32px) clamp(20px, 3vw, 44px) clamp(24px, 3.4vw, 48px);
+  background: var(--raised);
+  color: var(--ink);
+  box-shadow: var(--shadow-3);
+  transform-origin: 100% 0;
+}
+.nc-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 22px;
+  margin-bottom: clamp(16px, 2.6vw, 36px);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.nc-card__meta > span:first-child { color: var(--accent-ink); }
+.nc-card__title {
+  display: block;
+  font-size: clamp(2.4rem, 0.9rem + 6.2vw, 7.25rem);
+  font-weight: 760;
+  font-stretch: var(--wide);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+h1.nc-card__title:focus { outline: none; }
+h1.nc-card__title:focus-visible { outline: 2px solid var(--focus); outline-offset: 8px; }
+.nc-hero__credit {
+  position: absolute;
+  z-index: 2;
+  left: var(--gutter);
+  right: var(--gutter);
+  bottom: 18px;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  color: var(--on-media);
+}
+
+/* ---- The case body: calm, well-set content between two heroes. ---- */
+.nc-body {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: clamp(32px, 5vw, 64px) clamp(16px, 2vw, 28px);
+  padding-block: clamp(56px, 11vh, 128px) clamp(64px, 14vh, 160px);
+}
+.nc-lede {
+  grid-column: 1 / span 7;
+  font-size: var(--text-2xl);
+  font-weight: 620;
+  font-stretch: 104%;
+  line-height: 1.16;
+  letter-spacing: -0.02em;
+  text-wrap: pretty;
+}
+.nc-facts { grid-column: 9 / -1; margin: 0; border-top: 1px solid var(--line-2); align-self: start; }
+.nc-facts div { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); gap: 12px; padding-block: 10px; border-bottom: 1px solid var(--line); font-size: var(--text-sm); }
+.nc-facts dt { font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding-top: 0.2em; }
+.nc-facts dd { margin: 0; color: var(--ink); }
+.nc-fig { grid-column: 1 / span 5; }
+.nc-fig__media { --ratio: 4 / 5; border-radius: var(--radius-sm); }
+.nc-fig figcaption { display: grid; gap: 6px; margin-top: 12px; font-size: var(--text-sm); color: var(--ink-2); max-width: 46ch; text-wrap: pretty; }
+.nc-fig__credit { font-size: var(--text-xs); color: var(--muted); }
+.nc-text { grid-column: 7 / -1; align-self: end; display: grid; gap: 18px; padding-bottom: clamp(0px, 4vw, 48px); }
+.nc-team { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px clamp(16px, 2vw, 28px); margin: 0; padding-top: 16px; border-top: 1px solid var(--line); }
+.nc-team div { display: grid; gap: 4px; }
+.nc-team dt { font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.nc-team dd { margin: 0; font-size: var(--text-sm); color: var(--ink-2); }
+
+/* ---- The close: the label, then the next case's hero clipped to what fits under it. ---- */
+.nc-next { position: relative; height: var(--nc-close); overflow: clip; border-top: 1px solid var(--line-2); }
+.nc-next__link { display: block; color: inherit; }
+.nc-next__label { display: flex; align-items: baseline; gap: clamp(12px, 2vw, 24px); padding-block: clamp(18px, 3.4vh, 36px); }
+.nc-next__word {
+  font-size: clamp(2.3rem, 0.8rem + 5.6vw, 6.25rem);
+  font-weight: 760;
+  font-stretch: var(--wide);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  transition: color var(--dur-s) var(--ease-out);
+}
+.nc-next__count { margin-left: auto; font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.06em; color: var(--muted); font-variant-numeric: tabular-nums; }
+.nc-next__arrow { font-size: clamp(1.6rem, 1rem + 2.4vw, 3.25rem); line-height: 0.9; color: var(--accent); transition: translate var(--dur-m) var(--ease-out); }
+/* Hover only where there is a hovering pointer: on touch a tap navigates, and a stuck hover would linger. */
+@media (hover: hover) and (pointer: fine) {
+  .nc-bar__contact:hover { text-decoration: underline; text-underline-offset: 0.25em; }
+  .nc-next__link:hover .nc-next__word { color: var(--accent-ink); }
+  .nc-next__link:hover .nc-next__arrow { translate: 0 6px; }
+}
+.nc-next__link:focus-visible { outline: none; }
+/* The ring clears the type: inside the label's padding top and bottom, out into the gutter left and right. */
+.nc-next__label { position: relative; }
+.nc-next__link:focus-visible .nc-next__label::before { content: ''; position: absolute; inset: 6px -12px; border: 2px solid var(--focus); border-radius: var(--radius-xs); pointer-events: none; }
+:root[data-motion='reduced'] .nc-next__link:hover .nc-next__arrow,
+:root[data-motion='static'] .nc-next__link:hover .nc-next__arrow { translate: none; }
+/* During the hand-off the frame is lifted out of the clip (fixed at its own rect) and above everything. */
+.nc-next__frame.is-lifting { z-index: 20; }
+
+@media (max-width: 1080px) {
+  .nc-lede { grid-column: 1 / span 10; }
+  .nc-facts { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0 clamp(16px, 2vw, 28px); border-top: 0; }
+  .nc-facts div { grid-template-columns: minmax(0, 1fr); gap: 6px; padding-block: 12px 14px; border-top: 1px solid var(--line-2); border-bottom: 0; }
+  .nc-fig { grid-column: 1 / span 6; }
+  .nc-text { grid-column: 8 / -1; align-self: start; padding-bottom: 0; }
+}
+
+@media (max-width: 760px) {
+  .nc { --card-top: 20svh; }
+  .nc-next { height: var(--nc-close-sm); }
+  .nc-bar { grid-template-columns: 1fr auto; }
+  .nc-bar__crumb { display: none; }
+  .nc-card { right: var(--gutter); width: auto; }
+  .nc-card__meta { gap: 2px 14px; }
+  .nc-body { grid-template-columns: minmax(0, 1fr); }
+  .nc-lede, .nc-facts, .nc-fig, .nc-text, .nc-team { grid-column: 1; }
+  .nc-team { grid-template-columns: minmax(0, 1fr); }
+  .nc-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .nc-text { padding-bottom: 0; }
+}

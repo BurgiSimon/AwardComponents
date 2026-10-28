@@ -1,0 +1,160 @@
+/* Overprint index. One marker for the whole line-up, laid between the plates and the words and blended like ink. */
+.oi {
+  --oi-size: clamp(1.25rem, 0.55rem + 2.3vw, 2.25rem);   /* the rows' type size; plates and columns follow it */
+  --oi-paper: var(--bg);                                   /* the index's ground, and the marked row's words */
+  --oi-ink: var(--accent-ink);                             /* light ground: the accent's deep shade keeps 4.5:1 */
+  --oi-blend: multiply;
+  --oi-plate-w: calc(var(--oi-size) * 2.4);
+  --oi-cols: var(--oi-plate-w) minmax(0, 1fr) minmax(0, 8.5rem) minmax(0, 7.5rem) 3.6rem calc(var(--oi-size) * 1.1);
+  min-height: 100svh;
+  overflow-x: clip;
+}
+.oi a { color: inherit; text-decoration: none; }
+
+/* Inks. Light ground: multiply, a shade deep enough for paper-coloured words. Dark ground: multiply would turn the
+   night black on black, so the bar blends with screen (multiply's inverse) in a shade light enough for dark words. */
+.oi[data-ink='plum'] { --oi-ink: var(--plum); }
+.oi[data-ink='moss'] { --oi-ink: color-mix(in oklab, var(--moss) 78%, var(--night)); }
+.oi[data-ink='sky'] { --oi-ink: color-mix(in oklab, var(--sky) 48%, var(--night)); }
+:root[data-theme='dark'] .oi { --oi-blend: screen; --oi-ink: var(--accent); }
+:root[data-theme='dark'] .oi[data-ink='plum'] { --oi-ink: color-mix(in oklab, var(--plum) 88%, var(--ink)); }
+:root[data-theme='dark'] .oi[data-ink='moss'] { --oi-ink: var(--moss); }
+:root[data-theme='dark'] .oi[data-ink='sky'] { --oi-ink: var(--sky); }
+
+/* ---- Bar and intro ---- */
+.oi__bar nav a[aria-current] { color: var(--ink); }
+.oi__ed { margin-left: 0.45em; font-family: var(--font-mono); font-size: 0.68em; font-weight: 500; font-stretch: 100%; letter-spacing: 0.02em; color: var(--muted); }
+
+.oi__intro { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 25rem); align-items: end; gap: 18px clamp(24px, 4vw, 48px); padding-block: clamp(8px, 2.5vh, 28px) clamp(20px, 4vh, 40px); }
+.oi__heading { display: grid; gap: 14px; }
+.oi__heading .ac-display { font-size: clamp(2.6rem, 1.4rem + 5vw, 6rem); }
+.oi__about { display: grid; gap: 10px; padding-bottom: 0.35em; }
+.oi__dates { font-size: var(--text-lg); font-weight: 680; font-stretch: var(--wide); letter-spacing: -0.015em; }
+.oi__lede { max-width: 46ch; font-size: var(--text-sm); line-height: 1.55; color: var(--ink-2); text-wrap: pretty; }
+.oi__legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 4px; font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-2); }
+.oi__legend li { display: inline-flex; align-items: center; gap: 7px; }
+.oi__swatch { width: 16px; height: 10px; border-radius: 1px; background: var(--m); }
+
+/* ---- The index ----
+   Its own stacking context with its own ground, so the blend meets the paper and the plates inside it and nothing
+   else on the page. Order inside: ground (-1) < plates (1) < marker (2) < words (3). The ground bleeds as far as the
+   marker does, so the bar's ends are blended too. */
+.oi__index { position: relative; isolation: isolate; padding-bottom: clamp(40px, 7vw, 88px); }
+.oi__index::before { content: ''; position: absolute; z-index: -1; inset: 0 -12px; background: var(--oi-paper); pointer-events: none; }
+
+.oi__meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 24px; padding-bottom: 6px; }
+.oi__status { color: var(--ink-2); }
+
+.oi__head,
+.oi__link { display: grid; grid-template-columns: var(--oi-cols); column-gap: clamp(14px, 2vw, 28px); align-items: center; }
+.oi__head { border-bottom: 1px solid var(--ink); font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.oi__h { justify-self: start; display: inline-flex; align-items: center; gap: 0.45em; min-height: 44px; padding: 0; border: 0; background: none; color: inherit; text-transform: inherit; }
+button.oi__h { text-decoration: underline 1px transparent; text-underline-offset: 0.35em; transition: color var(--dur-s) var(--ease-out), text-decoration-color var(--dur-s) var(--ease-out); }
+button.oi__h:hover { color: var(--ink); text-decoration-color: currentColor; }
+.oi__h[aria-pressed='true'] { color: var(--ink); font-weight: 700; }
+.oi__dir { display: inline-block; min-width: 1ch; }
+
+.oi__list { margin: 0; font-size: var(--oi-size); }
+.oi__row { position: relative; border-bottom: 1px solid var(--line-2); }
+/* The link opens no stacking context of its own (no z-index), so its plate can sit under the marker while its words
+   sit over it. */
+.oi__link { position: relative; min-height: max(44px, 1.5em); padding-block: 0.16em; line-height: 1.05; color: var(--ink); }
+.oi__name, .oi__stage, .oi__day, .oi__time, .oi__go { position: relative; z-index: 3; }
+.oi__name { min-width: 0; font-weight: 700; font-stretch: var(--wide); letter-spacing: -0.035em; overflow-wrap: break-word; }
+.oi__stage, .oi__day, .oi__time { font-family: var(--font-mono); font-size: var(--text-sm); letter-spacing: 0.02em; line-height: 1.3; color: var(--ink-2); }
+.oi__day { text-transform: uppercase; }
+.oi__go { justify-self: end; font-size: 0.62em; visibility: hidden; }
+
+/* Plates: a small two-tone print per act in its stage's material, under the marker so the marker overprints it. */
+.oi__plate {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 0.9em;
+  border-radius: 1px;
+  background-color: color-mix(in oklab, var(--m) 34%, var(--oi-paper));
+}
+.oi__plate[data-pattern='dots'] { background-image: radial-gradient(circle, var(--m) 0 40%, transparent 44%); background-size: 0.3em 0.3em; }
+.oi__plate[data-pattern='stripes'] { background-image: repeating-linear-gradient(135deg, var(--m) 0 0.08em, transparent 0.08em 0.2em); }
+.oi__plate[data-pattern='disc'] { background-image: radial-gradient(circle at 28% 50%, var(--m) 0 0.32em, transparent 0.335em), linear-gradient(90deg, transparent 62%, var(--m) 62% 72%, transparent 72%); }
+.oi__plate[data-pattern='half'] { background-image: radial-gradient(circle at 76% 50%, var(--m) 0 0.17em, transparent 0.185em), linear-gradient(90deg, var(--m) 0 50%, transparent 50%); }
+.oi__plate[data-pattern='lines'] { background-image: repeating-linear-gradient(0deg, var(--m) 0 0.07em, transparent 0.07em 0.18em); }
+.oi__plate[data-pattern='check'] { background-image: conic-gradient(var(--m) 25%, transparent 0 50%, var(--m) 0 75%, transparent 0); background-size: 0.3em 0.3em; }
+
+/* The marked row: its words turn to the paper colour above the marker; its plate stays under it and takes the ink. */
+.oi__row[data-active] :is(.oi__link, .oi__stage, .oi__day, .oi__time) { color: var(--oi-paper); }
+.oi__row[data-active] .oi__go { visibility: visible; }
+
+/* The focus ring is drawn on the text layer (an outline painted with the link would be overprinted with it): in ink,
+   and in the paper colour while the marker sits under the focused row. The mouse can move the marker to another row
+   while focus stays put, so the ring never assumes the marker. */
+.oi__link:focus-visible { outline: none; }
+.oi__link:focus-visible::after { content: ''; position: absolute; z-index: 3; inset: 4px -6px; border: 2px solid var(--ink); border-radius: 2px; pointer-events: none; }
+.oi__row[data-active] .oi__link:focus-visible::after { border-color: var(--oi-paper); }
+
+/* The marker: one element, moved by a written offset and never transitioned. */
+.oi__marker {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: -10px;
+  right: -10px;
+  height: 0;
+  background: var(--oi-ink);
+  mix-blend-mode: var(--oi-blend);
+  opacity: 0;
+  pointer-events: none;
+  transition: none;
+}
+.oi__marker.is-on { opacity: 1; }
+.oi[data-overprint='off'] .oi__marker { mix-blend-mode: normal; }
+
+/* ---- Tickets and footer ---- */
+.oi__tickets { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr); gap: 20px 48px; padding-block: clamp(40px, 6vw, 72px); border-top: 1px solid var(--line-2); }
+.oi__tickets-head { display: grid; align-content: start; gap: 10px; }
+.oi__passes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.oi__pass { display: grid; grid-template-rows: auto 1fr auto; gap: 6px; height: 100%; padding: 18px 18px 16px; border: 1px solid var(--line-2); border-radius: var(--radius-md); background: var(--surface); transition: border-color var(--dur-s) var(--ease-out); }
+.oi__pass:hover { border-color: var(--ink); }
+.oi__pass-name { font-weight: 680; font-stretch: 108%; }
+.oi__pass-note { font-size: var(--text-sm); color: var(--muted); }
+.oi__pass-price { margin-top: 10px; font-family: var(--font-mono); font-size: var(--text-lg); }
+.oi__foot { display: flex; flex-wrap: wrap; gap: 6px 28px; padding-block: 22px 40px; border-top: 1px solid var(--line); }
+
+/* ---- Narrower screens ---- */
+@media (max-width: 1100px) {
+  .oi { --oi-cols: var(--oi-plate-w) minmax(0, 1fr) minmax(0, 6.6rem) minmax(0, 6.4rem) 3.2rem calc(var(--oi-size) * 0.9); }
+  .oi__stage, .oi__day, .oi__time { font-size: var(--text-xs); }
+}
+@media (max-width: 960px) {
+  .oi__intro { grid-template-columns: minmax(0, 1fr) minmax(0, 21rem); }
+  .oi__about { gap: 8px; }
+  .oi__dates { font-size: var(--text-md); }
+  .oi__tickets { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 680px) {
+  .oi__intro { grid-template-columns: minmax(0, 1fr); align-items: start; }
+}
+/* Phones: the plate as a block beside two lines, the name over stage, day and time. */
+@media (max-width: 640px) {
+  .oi { --oi-plate-w: calc(var(--oi-size) * 2.3); }
+  .oi__bar nav a:not([aria-current]) { display: none; }
+  .oi__head { display: flex; flex-wrap: wrap; column-gap: 18px; }
+  .oi__h--time { display: none; }
+  .oi__link { grid-template-columns: var(--oi-plate-w) auto auto minmax(0, 1fr); grid-template-areas: 'plate name name name' 'plate stage day time'; column-gap: 12px; row-gap: 4px; padding-block: 10px; }
+  .oi__plate { grid-area: plate; align-self: stretch; height: auto; min-height: 40px; }
+  .oi__name { grid-area: name; }
+  .oi__stage { grid-area: stage; }
+  .oi__day { grid-area: day; margin-left: 0.6em; }
+  .oi__time { grid-area: time; justify-self: end; }
+  .oi__go { display: none; }
+  .oi__link:focus-visible::after { inset: 3px -4px; }
+  .oi__passes { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Forced colours drop blends and backgrounds: the marker would vanish or paint over the words, so the marked row
+   carries an outline instead. */
+@media (forced-colors: active) {
+  .oi__marker { display: none; }
+  .oi__row[data-active] .oi__link { outline: 2px solid CanvasText; outline-offset: -2px; }
+}
