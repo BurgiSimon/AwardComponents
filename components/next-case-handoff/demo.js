@@ -1,4 +1,4 @@
-// Next case hand-off — Halden's case-study pages, built from the awards recipe `next-case-handoff`. Each case closes
+// Next case hand-off — Halden's case pages cut to a hero (title card over its film) and a credits row. Each case closes
 // on the next case's hero in the hero's own geometry (100svh, one card position), clipped under a Next case label,
 // its title card hinged on its top-right corner by a scrub (−10° → −5°). Following the link (full tier) lifts the
 // frame out of the clip (position: fixed at its own rect), raises it to the top of the viewport while the card
@@ -7,63 +7,30 @@
 // its own entrance, the scroll is at 0, focus is on the new h1 and ?case= records the page; Back swaps without the
 // lift. Reduced and static motion swap at once with nothing moving; every link is a real URL.
 import './demo.css';
-import { on, onFrame, html, raw, photo, imageHTML, loadImage, readToken, content } from '../../src/demo-kit/index.js';
+import { on, onFrame, html, photo, loadImage, readToken, content } from '../../src/demo-kit/index.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
 
 const TAU = Math.PI * 2;
 const FPS = 25; // the timecode's frame rate
 const pad = (n) => String(n).padStart(2, '0');
 
-// The three cases: Halden's project data plus what a case page says about it. Pictures are media ids.
+// The three cases: Halden's project data plus the case's film (a media id) and its credits.
 const CASES = [
-  {
-    slug: 'fjordhus',
-    film: 'land-fog-forest',
-    lede: 'A timber house on a granite shelf forty metres above the Hardanger fjord, framed, closed and clad between the thaw and the first snow.',
-    facts: [['Client', 'The Aasen family'], ['Site', 'Granite shelf above Ulvik'], ['Area', '310 m²'], ['Completed', 'June 2026']],
-    text: [
-      'The shelf is the only level ground on the plot, so the house is one long volume laid along it, with the living room reaching six metres out over the drop. The road side is closed; every window faces the water.',
-      'The frame is spruce from the valley, felled in the winter of 2024 and left to dry on site for a year. The cladding is untreated and will be silver by the third winter.',
-    ],
-    team: [['Lead architect', 'Ingrid Vold'], ['Team', 'Sigrid Haug, Jonas Mehl'], ['Structure', 'Nordvik Engineering']],
-    figure: { id: 'land-lake-reflection', caption: 'The view the living room is drawn around: mountain, cloud and still water, nothing built.' },
-  },
-  {
-    slug: 'tern-library',
-    film: 'arch-concrete-slab',
-    lede: 'A public reading room on the sound at Tromsø, with one window to the water at desk height and the stacks kept in the dark behind the readers.',
-    facts: [['Client', 'Tromsø library board'], ['Site', 'Storgata quay'], ['Area', '2,400 m²'], ['Completed', 'September 2025']],
-    text: [
-      'The old library sat on the third floor of the town hall. The city asked for a room at street level, open until ten, that would still feel like a place to read through seven weeks of polar night.',
-      'The tower holds the stair and the book lift, cast in sand-coloured concrete with three round lights at the top. Readers sit facing the water; the books stand behind them, out of the sun.',
-    ],
-    team: [['Lead architect', 'Sigrid Haug'], ['Team', 'Ingrid Vold, Oda Lien, Jonas Mehl'], ['Structure', 'Nordvik Engineering']],
-    figure: { id: 'interior-concrete-hall', caption: 'The reading room in October, before the tables went in: bare concrete, one column, the floor still drying.' },
-  },
-  {
-    slug: 'kiln-house',
-    film: 'interior-butterfly-chair',
-    lede: 'A brick kiln from 1911, kept whole, with a timber house built inside its walls for a ceramicist and her studio.',
-    facts: [['Client', 'Mai Okafor, ceramicist'], ['Site', 'Former brickworks, Hundvåg'], ['Area', '140 m²'], ['Completed', 'March 2024']],
-    text: [
-      'We kept the vault, the chimney and the soot on the bricks. The new house stands inside them on its own timber frame and touches the old walls only at the floor.',
-      'The firing chamber is now the studio and the drying loft above it is where she sleeps. Tall factory windows on the yard side light the wheel from the north.',
-    ],
-    team: [['Lead designer', 'Tomas Reyes'], ['Team', 'Oda Lien, Halden Workshop'], ['Kiln', 'Vestland Kiln Works']],
-    figure: { id: 'obj-jian-tea-bowl', caption: 'The glaze she set out to match in the new kiln: a Jian ware tea bowl, iron brown with hare’s-fur streaks.', full: true },
-  },
+  { slug: 'fjordhus', film: 'land-fog-forest', team: [['Lead architect', 'Ingrid Vold'], ['Team', 'Sigrid Haug, Jonas Mehl'], ['Structure', 'Nordvik Engineering']] },
+  { slug: 'tern-library', film: 'arch-concrete-slab', team: [['Lead architect', 'Sigrid Haug'], ['Team', 'Ingrid Vold, Oda Lien, Jonas Mehl'], ['Structure', 'Nordvik Engineering']] },
+  { slug: 'kiln-house', film: 'interior-butterfly-chair', team: [['Lead designer', 'Tomas Reyes'], ['Team', 'Oda Lien, Halden Workshop'], ['Kiln', 'Vestland Kiln Works']] },
 ];
 
-// "Title — Author, Source (Licence)": a photograph credits the photographer; a museum object keeps its full line.
-const creditOf = (item, full = false) => {
+// "Title — Author, Source (Licence)": the film credits the photographer.
+const creditOf = (item) => {
   if (!item.credit) return 'Drawn stand-in';
   const [title, rest] = item.credit.split(' — ');
-  return full || !rest ? item.credit : rest || title;
+  return rest || title;
 };
 
 export default function mount(root, options, ctx) {
   const { studio } = content;
-  const cases = CASES.map((c) => ({ ...studio.projects.find((p) => p.slug === c.slug), ...c, pic: photo(c.film), fig: photo(c.figure.id) }));
+  const cases = CASES.map((c) => ({ ...studio.projects.find((p) => p.slug === c.slug), ...c, pic: photo(c.film) }));
   const N = cases.length;
   const full = ctx.motion === 'full';
   let cfg = { ...options };
@@ -101,16 +68,7 @@ export default function mount(root, options, ctx) {
           ${card(i, true)}
           <p class="nc-hero__credit" data-credit>Site film, reel ${pad(i + 1)} · Photograph: ${creditOf(c.pic)}</p>
         </header>
-        <div class="nc-body ac-wrap">
-          <p class="nc-lede">${c.lede}</p>
-          <dl class="nc-facts">${c.facts.map(([k, v]) => html`<div><dt>${k}</dt><dd>${v}</dd></div>`)}</dl>
-          <figure class="nc-fig">
-            <span class="ac-media nc-fig__media" style="--focus-point:${c.fig.focus || '50% 50%'}">${raw(imageHTML(c.fig, { sizes: '(max-width: 760px) 100vw, 40vw' }))}</span>
-            <figcaption><span>${c.figure.caption}</span><span class="nc-fig__credit">${c.figure.full ? creditOf(c.fig, true) : `Photograph: ${creditOf(c.fig)}`}</span></figcaption>
-          </figure>
-          <div class="nc-text">${c.text.map((p) => html`<p class="ac-body">${p}</p>`)}</div>
-          <dl class="nc-team">${c.team.map(([k, v]) => html`<div><dt>${k}</dt><dd>${v}</dd></div>`)}</dl>
-        </div>
+        <dl class="nc-team ac-wrap">${c.team.map(([k, v]) => html`<div><dt>${k}</dt><dd>${v}</dd></div>`)}</dl>
       </article>
       <nav class="nc-next" aria-label="Next case">
         <a class="nc-next__link" href="${urlFor(cases[j].slug)}" data-next aria-label="Next case: ${cases[j].title}">
@@ -133,18 +91,9 @@ export default function mount(root, options, ctx) {
 
   let current = indexOf(location.href);
   root.className = 'nc';
-  root.innerHTML = html`
-    <header class="nc-bar" data-bar>
-      <a class="ac-brand nc-bar__brand" href="${urlFor(cases[0].slug)}" data-home>${studio.name}</a>
-      <p class="nc-bar__crumb"><span class="nc-bar__work">Selected work</span><span data-crumb></span></p>
-      <a class="nc-bar__contact" href="mailto:${studio.email}">Contact</a>
-    </header>
-    <p class="sr-only" role="status" data-status></p>`;
-  const bar = root.querySelector('[data-bar]');
-  const crumb = root.querySelector('[data-crumb]');
+  root.innerHTML = html`<p class="sr-only" role="status" data-status></p>`;
   const status = root.querySelector('[data-status]');
-  root.querySelector('[data-bar]').after(buildMain(current));
-  on(ctx, root.querySelector('.nc-bar__contact'), 'click', (e) => e.preventDefault());
+  root.prepend(buildMain(current));
 
   const { gsap, ScrollTrigger } = useGsap(ctx, root);
 
@@ -234,13 +183,11 @@ export default function mount(root, options, ctx) {
   let fromAction = false;
   const prefetched = new Map();
 
-  // Prefetch on intent: build the next page and decode its pictures before the click. Nothing visible changes.
+  // Prefetch on intent: build the next page and start the picture of its own close before the click. Nothing
+  // visible changes.
   const prefetch = (i) => {
     if (!prefetched.has(i)) {
-      const main = buildMain(i);
-      prefetched.set(i, main);
-      // A detached lazy <img> waits for the viewport; eager starts the request the browser would make on arrival.
-      main.querySelectorAll('img').forEach((img) => { img.loading = 'eager'; });
+      prefetched.set(i, buildMain(i));
       imageFor(cases[(i + 1) % N].pic);
     }
     return prefetched.get(i);
@@ -276,7 +223,6 @@ export default function mount(root, options, ctx) {
     link.addEventListener('pointerenter', intent, { signal: signal.signal });
     link.addEventListener('focus', intent, { signal: signal.signal });
     link.addEventListener('click', onNext, { signal: signal.signal });
-    crumb.textContent = `Case ${pad(current + 1)} of ${pad(N)}`;
     ScrollTrigger.refresh();
   };
   const destroyPage = () => {
@@ -300,8 +246,8 @@ export default function mount(root, options, ctx) {
     document.title = titleFor(i);
     if (push) history.pushState({ ncDepth: depth() + 1 }, '', urlFor(cases[i].slug));
     initPage({ seamless: !!live });
-    // The bar was scrolled away at the close; after a hand-off it fades back in over the arrived hero.
-    if (live && full) page.ctx.add(() => gsap.fromTo([bar, next.querySelector('[data-credit]')], { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.45, delay: 0.05, ease: 'power1.out', clearProps: 'opacity,visibility' }));
+    // The frame carried no credit line; after a hand-off it fades in over the arrived hero.
+    if (live && full) page.ctx.add(() => gsap.fromTo(next.querySelector('[data-credit]'), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.45, delay: 0.05, ease: 'power1.out', clearProps: 'opacity,visibility' }));
     const h1 = next.querySelector('h1');
     if (focus === 'h1' || (focus === 'auto' && document.hasFocus())) h1.focus({ preventScroll: true, focusVisible: keyNav });
     else status.textContent = `${cases[i].title}, case ${i + 1} of ${N}`;
@@ -365,15 +311,6 @@ export default function mount(root, options, ctx) {
     if (!full) { if (!busy) swap(to, { focus: 'h1', keyNav }); return; }
     handOff(to, { focus: 'h1', keyNav });
   }
-
-  // The brand goes to the first case with a plain swap.
-  on(ctx, root.querySelector('[data-home]'), 'click', (e) => {
-    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-    e.preventDefault();
-    if (busy) return;
-    if (current === 0) { window.scrollTo(0, 0); return; }
-    swap(0, { focus: 'h1', keyNav: e.detail === 0 });
-  });
 
   // Back and Forward: the plain swap, no lift. A traversal that keeps the case (a fragment) is left to the browser;
   // one during a lift cancels the hand-off, so the newest navigation wins.

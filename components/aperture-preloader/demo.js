@@ -1,10 +1,10 @@
-// Aperture preloader — Halden's home page, opening on one project. A curtain waits on real signals (the type and the
-// hero photograph's decode, raced against a 4 s ceiling, no minimum hold), then lifts while the hero frame opens from
-// a rounded clip-path inset to full bleed and the photograph scales in; the copy follows. Scroll is locked and the
-// page inert for the gate and hand-off only. A sessionStorage flag skips it on repeat visits. Reduced: the curtain
-// fades. Static: one cut once the signals land.
+// Aperture preloader — Halden's first visit: one full-bleed project photograph and its title under a curtain. The
+// curtain waits on real signals (the type and the photograph's decode, raced against a 4 s ceiling, no minimum hold),
+// then lifts while the hero frame opens from a rounded clip-path inset to full bleed and the photograph scales in;
+// the title follows. Scroll is locked and the hero inert for the gate and hand-off only. A sessionStorage flag skips
+// it on repeat visits. Reduced: the curtain fades. Static: one cut once the signals land.
 import './demo.css';
-import { on, html, raw, photos, image, imageHTML, content } from '../../src/demo-kit/index.js';
+import { on, html, photos, image, content } from '../../src/demo-kit/index.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
 
 const KEY = 'halden:aperture';
@@ -15,56 +15,31 @@ const remember = (on) => { try { if (on) sessionStorage.setItem(KEY, '1'); else 
 
 export default function mount(root, options, ctx) {
   const { studio } = content;
-  const [project, ...others] = studio.projects;
+  const [project] = studio.projects;
   const [hero] = photos({ tags: ['architecture'], count: 1, seed: 'ap-hero', orientation: 'landscape' });
-  const thumbs = photos({ tags: ['interior'], count: 3, seed: 'ap-more' });
   let cfg = { ...options };
   root.className = 'ap';
   root.innerHTML = html`
-    <div class="ap__page" data-page>
-      <section class="ap__hero" aria-labelledby="ap-title">
-        <header class="ac-bar ap__bar">
-          <a class="ac-brand" href="#top">${studio.name}</a>
-          <nav aria-label="Studio">${studio.nav.map((n) => html`<a href="#top">${n}</a>`)}</nav>
-        </header>
-        <div class="ap__frame" data-frame>
-          <div class="ap__media" data-media></div>
-          <div class="ap__copy ac-wrap">
-            <p class="ac-label ap__in">Selected work · 01 of ${String(studio.projects.length).padStart(2, '0')}</p>
-            <h1 class="ac-display ap__in" id="ap-title" tabindex="-1">${project.title}</h1>
-            <div class="ap__row ap__in">
-              <p class="ap__lede">${project.summary}</p>
-              <p class="ap__meta ac-label">${project.place} · ${project.year} · ${project.size}</p>
-              <a class="ac-btn ap__cta" href="#project">See the project</a>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section class="ap__next ac-wrap" aria-labelledby="ap-next">
-        <p class="ac-label">${studio.full} · ${studio.city}</p>
-        <h2 class="ac-h2" id="ap-next">${studio.tagline} Six projects a year, most of them within a day’s drive of the studio.</h2>
-        <ul class="ap__list" role="list">
-          ${others.slice(0, 3).map((p, i) => html`<li><a href="#project" class="ap__item"><span class="ac-media ap__thumb">${raw(imageHTML(thumbs[i], { sizes: '(max-width: 700px) 100vw, 30vw', alt: '' }))}</span><span class="ap__item-t"><strong>${p.title}</strong><span>${p.place}</span></span></a></li>`)}
-        </ul>
-      </section>
-    </div>
+    <section class="ap__hero" aria-labelledby="ap-title" data-page>
+      <div class="ap__frame" data-frame>
+        <div class="ap__media" data-media></div>
+        <h1 class="ac-display ap__title ap__in" id="ap-title" tabindex="-1">${project.title}</h1>
+      </div>
+      <p class="ac-stage__note ac-stage__note--media"><span>${studio.name} · first visit</span></p>
+    </section>
     <div class="ap__curtain" data-curtain hidden>
       <div class="ap__curtain-top">
         <span class="ac-brand">${studio.name}</span>
         <button class="ap__skip" type="button" data-skip>Skip intro</button>
       </div>
       <p class="ap__mark" aria-hidden="true">${studio.name}<br><span>Arkitekter</span></p>
-      <div class="ap__curtain-foot">
-        <p class="ac-label">${studio.city} · ${studio.disciplines.slice(0, 3).join(', ')}</p>
-        <ul class="ap__signals" role="list" aria-hidden="true"><li data-signal="type">Type</li><li data-signal="photo">Photograph</li></ul>
-      </div>
+      <ul class="ap__signals" role="list" aria-hidden="true"><li data-signal="type">Type</li><li data-signal="photo">Photograph</li></ul>
       <p class="sr-only" role="status" aria-live="polite" data-status></p>
     </div>
     <div class="ap__toast ac-card" data-toast hidden>
       <span>Seen this session, so the curtain stays down.</span>
       <button class="ac-btn ac-btn--sm" type="button" data-again>Play it again</button>
     </div>`;
-  root.querySelectorAll('a[href^="#"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const page = root.querySelector('[data-page]');
   const curtain = root.querySelector('[data-curtain]');

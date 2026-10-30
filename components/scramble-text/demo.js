@@ -1,4 +1,4 @@
-// Scramble decode — Signal's ferry departures board. Every value sits in a real table cell as a visually hidden copy
+// Scramble decode — Signal's ferry departures board, alone on the stage. Every value sits in a real table cell as a visually hidden copy
 // plus an aria-hidden twin that anime.js's scrambleText animates through a character set into the text (reveal rate,
 // settle rate, a block cursor at the frontier). A refresh decodes only the cells whose value changed, from the old
 // value into the new one; hovering a row decodes it again. Live refreshes run only on screen. Reduced: no scramble.
@@ -40,16 +40,7 @@ export default function mount(root, options, ctx) {
   const cell = (kind) => html`<span class="sc__cell" data-cell="${kind}"><span class="sr-only"></span><span class="sc__live" aria-hidden="true"></span></span>`;
   root.className = 'sc';
   root.innerHTML = html`
-    <header class="ac-bar sc__bar">
-      <a class="ac-brand" href="#top">${festival.name}</a>
-      <nav aria-label="Festival"><a href="#top">Line-up</a><a href="#top" aria-current="page">Getting there</a><a href="#top">Tickets</a></nav>
-    </header>
-    <section class="sc__layout ac-wrap" aria-labelledby="sc-title">
-      <div class="sc__copy">
-        <p class="ac-label">Getting there · ${festival.place}</p>
-        <h1 class="ac-h1" id="sc-title">Ferries to the festival</h1>
-        <p class="ac-lede">Harbour buses and two festival shuttles leave every few minutes until half past three. Show your wristband at the gangway and the ride is free.</p>
-      </div>
+    <section class="ac-stage sc__stage" aria-label="Departures">
       <div class="sc__board ac-card">
         <div class="sc__top">
           <div class="sc__next">
@@ -69,8 +60,8 @@ export default function mount(root, options, ctx) {
         </table>
         <p class="sr-only" role="status" aria-live="polite" data-status></p>
       </div>
+      <p class="ac-stage__note"><span>${festival.name} · getting there</span></p>
     </section>`;
-  root.querySelectorAll('a[href="#top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const wrap = (el) => ({ el, kind: el.dataset.cell, mirror: el.firstElementChild, live: el.lastElementChild, text: '', anim: null });
   const rows = [...root.querySelectorAll('.sc__row')].map((tr) => ({ tr, cells: Object.fromEntries([...tr.querySelectorAll('[data-cell]')].map((el) => [el.dataset.cell, wrap(el)])) }));

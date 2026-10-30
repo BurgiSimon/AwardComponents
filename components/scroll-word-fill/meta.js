@@ -15,7 +15,7 @@ export default {
     'A chapter opener in a long read or an annual report',
   ],
   notes: [
-    'The statement is a paragraph under a short visible heading; SplitText’s word spans are hidden and a visually hidden copy reads the sentence whole.',
+    'The statement is a paragraph under a visually hidden heading; SplitText’s word spans are hidden and a visually hidden copy reads the sentence whole.',
     'Unread words rest at half ink by default, about 3.3:1 at display size, so the statement is readable before it is scrolled.',
     'Under reduced motion and in the static tier nothing is split: the sentence sits at full ink from the first frame.',
   ],

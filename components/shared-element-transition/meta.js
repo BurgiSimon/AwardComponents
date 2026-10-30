@@ -34,7 +34,7 @@ export default {
     skill: 'component',
     ask: 'Make {target} promote the chosen item on navigation.',
     target: 'the project index and its project pages',
-    brief: 'On a row click the intro fades (0.45 s), the other rows fade and drop 18 px with a delay of 0.09 s per step of distance from the chosen row (rows off-screen leave at once), and the chosen row rises into the slot under the fixed bar (1.15 s, power2.inOut; 0.8 s on phones). The route is pushed only after the rise, and the next page puts its heading in that same slot, read from the view’s padding-top, then builds the page beneath it. Back reverses it: the page folds away and the row drops back into its place while its neighbours return by distance.',
+    brief: 'On a row click the other rows fade and drop 18 px with a delay of 0.09 s per step of distance from the chosen row (rows off-screen leave at once), and the chosen row rises into the slot under the fixed bar (1.15 s, power2.inOut; 0.8 s on phones). The route is pushed only after the rise, and the next page puts its heading in that same slot, read from the view’s padding-top, then builds the page (its picture and facts) beneath it. Back reverses it: the page folds away and the row drops back into its place while its neighbours return by distance.',
     keep: [
       'one real link per item; modified clicks open a new tab; focus moves to the new heading and the title updates',
       'reduced and static motion change the route at once; a second click during the exit is ignored',

@@ -1,10 +1,11 @@
-// Counter preloader — Signal festival's first visit. A fixed panel counts real promises (the type, each hero
-// picture's decode, the programme data): every `tick` ms the shown number jumps 3–14 toward done ÷ total and never
-// past it, holds at 100, then lifts out of its mask while the panel leaves (whole, or as six strips) and the hero
-// headline rises by lines. A sessionStorage flag skips it on repeat visits. Reduced: the count and a 300 ms hold,
-// then a fade with the lines in place. Static: no panel at all.
+// Counter preloader — Signal festival's first visit: the counting panel, and after it one headline that rises. A
+// fixed panel counts real promises (the type, the decode of each of the site's first pictures, the programme data):
+// every `tick` ms the shown number jumps 3–14 toward done ÷ total and never past it, holds at 100, then lifts out of
+// its mask while the panel leaves (whole, or as six strips) and the headline rises by lines. A sessionStorage flag
+// skips it on repeat visits. Reduced: the count and a 300 ms hold, then a fade with the lines in place. Static: no
+// panel at all.
 import './demo.css';
-import { on, html, raw, photos, imageHTML, content, formatPrice, colour } from '../../src/demo-kit/index.js';
+import { on, html, raw, photos, image, content, colour } from '../../src/demo-kit/index.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
 
 const KEY = 'signal:preloaded';
@@ -16,47 +17,19 @@ const MARK = raw('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" str
 export default function mount(root, options, ctx) {
   const { festival } = content;
   let cfg = { ...options };
+  // The site's first pictures, decoded off the page: what a real first visit would wait for before the hero shows.
   const pics = photos({ tags: ['night'], count: 1, seed: 'cp-hero' }).concat(photos({ tags: ['people'], count: 3, seed: 'cp-days' }));
-  const days = [
-    { day: 'Thu 12 Aug', acts: festival.lineup.slice(0, 3) },
-    { day: 'Fri 13 Aug', acts: festival.lineup.slice(3, 6) },
-    { day: 'Sat 14 Aug', acts: festival.lineup.slice(6, 9) },
-  ];
   root.className = 'cp';
   root.innerHTML = html`
-    <div class="cp__page" data-page>
-      <header class="ac-bar cp__bar">
-        <a class="ac-brand cp__brand" href="#top">${MARK}${festival.name}</a>
-        <nav aria-label="Festival"><a href="#lineup">Line-up</a><a href="#lineup">Programme</a><a href="#lineup">Getting there</a></nav>
-        <a class="ac-btn ac-btn--sm" href="#tickets">Tickets</a>
-      </header>
-      <main>
-        <section class="cp__hero ac-wrap" aria-labelledby="cp-title">
-          <div class="cp__copy">
-            <p class="ac-label cp__fade">${festival.dates} · ${festival.place}</p>
-            <h1 class="ac-display cp__title" id="cp-title"><span class="cp__mask"><span class="cp__line">Three days,</span></span><span class="cp__mask"><span class="cp__line">four stages.</span></span></h1>
-            <p class="ac-lede cp__fade">Sixty acts on the harbour at Refshaleøen, from the Crane at dusk to Hall 4 until three in the morning.</p>
-            <div class="cp__cta cp__fade">
-              <a class="ac-btn ac-btn--lg ac-btn--accent" href="#tickets">Weekend pass — ${formatPrice(festival.tickets[1].price)}</a>
-              <a class="ac-btn ac-btn--lg ac-btn--ghost" href="#lineup">See the line-up</a>
-            </div>
-          </div>
-          <figure class="cp__fig">
-            <div class="ac-media cp__pic">${raw(imageHTML(pics[0], { eager: true, sizes: '(max-width: 760px) 100vw, 36vw', alt: 'The harbour stage at night' }))}</div>
-            <figcaption class="ac-label">Harbour stage, 2026</figcaption>
-          </figure>
-        </section>
-        <section class="cp__days ac-wrap" id="lineup" aria-label="Headliners by day">
-          ${days.map((d, i) => html`<article class="cp__day"><span class="ac-media cp__thumb">${raw(imageHTML(pics[i + 1], { eager: true, sizes: '64px', alt: '' }))}</span><div><p class="ac-label">${d.day}</p><p class="cp__acts">${d.acts.join(' · ')}</p></div></article>`)}
-        </section>
-      </main>
-    </div>
+    <main class="ac-stage cp__stage" data-page>
+      <h1 class="ac-display cp__title"><span class="cp__mask"><span class="cp__line">Three days,</span></span><span class="cp__mask"><span class="cp__line">four stages.</span></span></h1>
+      <p class="ac-stage__note"><span>${festival.name} · first visit</span></p>
+    </main>
     <div class="cp__pre" data-pre hidden>
       <div class="cp__strips" aria-hidden="true">${Array.from({ length: STRIPS }, () => raw('<span></span>'))}</div>
       <div class="cp__pre-in">
         <div class="cp__pre-top" data-fadeout>
           <span class="ac-brand cp__brand">${MARK}${festival.name}</span>
-          <span class="ac-label cp__pre-meta">${festival.dates}</span>
           <button class="cp__skip" type="button" data-skip>Skip intro</button>
         </div>
         <div class="cp__pre-main">
@@ -65,7 +38,7 @@ export default function mount(root, options, ctx) {
           <p class="cp__word" aria-hidden="true"><span class="cp__mask"><span class="cp__line" data-word>${festival.name}</span></span></p>
           <ul class="cp__signals" role="list" aria-hidden="true">
             <li data-signal="type"><span>Type</span><span data-state>Waiting</span></li>
-            <li data-signal="pictures"><span>Pictures</span><span data-state>0 of 4</span></li>
+            <li data-signal="pictures"><span>Pictures</span><span data-state>0 of ${pics.length}</span></li>
             <li data-signal="programme"><span>Programme</span><span data-state>Waiting</span></li>
           </ul>
         </div>
@@ -77,7 +50,6 @@ export default function mount(root, options, ctx) {
       <span>Seen this session, so the intro stays out of the way.</span>
       <button class="ac-btn ac-btn--sm" type="button" data-again>Play it again</button>
     </div>`;
-  root.querySelectorAll('a[href^="#"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const page = root.querySelector('[data-page]');
   const pre = root.querySelector('[data-pre]');
@@ -88,8 +60,7 @@ export default function mount(root, options, ctx) {
   const toast = root.querySelector('[data-toast]');
   const strips = [...root.querySelectorAll('.cp__strips span')];
   const signals = [...root.querySelectorAll('[data-signal]')];
-  const lines = [...root.querySelectorAll('.cp__hero .cp__line')];
-  const fades = [...root.querySelectorAll('.cp__fade')];
+  const lines = [...root.querySelectorAll('.cp__title .cp__line')];
   const fadeouts = [...root.querySelectorAll('[data-fadeout]')];
   const { gsap } = useGsap(ctx, root);
   const full = ctx.motion === 'full';
@@ -125,13 +96,11 @@ export default function mount(root, options, ctx) {
     li.classList.toggle('is-done', done);
   };
 
-  // The hero's arrival: the headline rises by lines, the rest fades up after it.
+  // The arrival: the headline rises by lines.
   const rise = () => {
     risen = true;
-    if (!full) { gsap.set(lines, { yPercent: 0 }); gsap.set(fades, { autoAlpha: 1, y: 0 }); return null; }
-    return gsap.timeline()
-      .fromTo(lines, { yPercent: 120 }, { yPercent: 0, duration: 1.4, ease: 'expo.out', stagger: 0.09 })
-      .fromTo(fades, { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, duration: 1, ease: 'expo.out', stagger: 0.07 }, 0.3);
+    if (!full) { gsap.set(lines, { yPercent: 0 }); return null; }
+    return gsap.fromTo(lines, { yPercent: 120 }, { yPercent: 0, duration: 1.4, ease: 'expo.out', stagger: 0.09 });
   };
 
   // The panel leaves the page and the accessibility tree; the flag marks this session as seen.
@@ -145,7 +114,7 @@ export default function mount(root, options, ctx) {
     const rising = risen;
     stop();
     release();
-    if (rising) { gsap.set(lines, { yPercent: 0 }); gsap.set(fades, { autoAlpha: 1, y: 0 }); } else rise();
+    if (rising) gsap.set(lines, { yPercent: 0 }); else rise();
   };
 
   const start = () => {
@@ -155,10 +124,9 @@ export default function mount(root, options, ctx) {
     toast.hidden = true;
     gsap.set([pre, count, word, ...strips, ...signals, ...fadeouts], { clearProps: 'all' });
     gsap.set(lines, { yPercent: full ? 120 : 0 });
-    gsap.set(fades, { autoAlpha: 0 });
     signals.forEach((s) => s.classList.remove('is-done'));
     mark('type', 'Waiting', false);
-    mark('pictures', '0 of 4', false);
+    mark('pictures', `0 of ${pics.length}`, false);
     mark('programme', 'Waiting', false);
     show(0);
     pre.hidden = false;
@@ -175,7 +143,7 @@ export default function mount(root, options, ctx) {
     }
 
     // 1. Real signals: the type, each picture's decode, and the programme (a stand-in for the page's data request).
-    const imgs = [...page.querySelectorAll('img')];
+    const imgs = pics.map((p) => image(p, { eager: true }));
     let decoded = 0;
     const live = (fn) => () => { if (id === runId) fn(); };
     const tasks = [

@@ -3,7 +3,7 @@ export default {
   id: 'cell-curtain',
   title: 'Cell curtain',
   category: 'loaders-transitions',
-  summary: 'Kova One’s launch site behind one curtain of cells: the bars weave shut from a corner on arrival and on every route, the page swaps behind them, and they weave open again.',
+  summary: 'Kova One’s three-page site behind one curtain of cells: the bars weave shut from a corner on arrival and on every route, the page swaps behind them, and they weave open again.',
   description: 'One curtain does the arrival and every route change. A fixed grid of cells, rebuilt to the viewport at about 72 × 75 px each, grows from hairlines into solid bars, swept by grid distance from the bottom-right cell, so the page seems to weave shut, change behind the weave and weave open again.\n\nThe curtain is shut from the first paint. The arrival waits for the type and the decode of every picture on the page, holds at least 0.9 s on a first visit (0.25 s on a repeat visit in this session) and never more than 4 s; turn on the stalled request and press Replay arrival to see the ceiling open the page. Overview, Sound and Buy are hash routes: a route asked for while the curtain is still shut waits for it, the page swaps only once every cell is shut, and back and forward bring the scroll back to where the page was left.',
   recipe: 'dither-cell-transition',
   deps: ['gsap'],
@@ -11,7 +11,7 @@ export default {
   added: '2026-10-28',
   labels: ['new'], // added on the launch day after the launch set; expires like any New label
   order: 40,
-  preview: { height: 640, scroll: true, hint: 'Click Sound or Buy, then press back', capture: { wait: 500 } },
+  preview: { height: 640, hint: 'Click Sound or Buy, then press back', capture: { wait: 500 } },
   useCases: [
     'A product launch site with three or four routes that should feel like one object',
     'A studio or label site whose pictures are woven or dithered, so the transition speaks the same language',

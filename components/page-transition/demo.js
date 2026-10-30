@@ -1,9 +1,9 @@
-// Page transition — Halden's site as three routes (Home, Work, Studio) run by @unseenco/taxi. A link click runs one
-// lifecycle: the wipe covers the old view (its label, the next page's name, held still while the wipe slides over
-// it), the renderer reverts the old view's gsap.context, taxi swaps the view, the scroll resets through Lenis, the
-// wipe leaves and the new headline rises. In this preview the pages are put in taxi's cache up front instead of
-// fetched; each mount's links carry its own id, so a stale router from an earlier mount never matches them.
-// Reduced: the wipe fades. Static: an instant swap.
+// Page transition — Halden's site as three routes (Home, Work, Studio; a big name and one picture each) run by
+// @unseenco/taxi, with the small nav that routes between them. A link click runs one lifecycle: the wipe covers the
+// old view (its label, the next page's name, held still while the wipe slides over it), the renderer reverts the old
+// view's gsap.context, taxi swaps the view, the scroll resets through Lenis, the wipe leaves and the new headline
+// rises. In this preview the pages are put in taxi's cache up front instead of fetched; each mount's links carry its
+// own id, so a stale router from an earlier mount never matches them. Reduced: the wipe fades. Static: an instant swap.
 import './demo.css';
 import { Core, Renderer, Transition } from '@unseenco/taxi';
 import { on, html, raw, photos, imageHTML, content, colour } from '../../src/demo-kit/index.js';
@@ -13,12 +13,6 @@ import { useLenis } from '../../src/demo-kit/lenis.js';
 const ORDER = ['home', 'work', 'studio'];
 const TITLES = { home: 'Home', work: 'Work', studio: 'Studio' };
 const AXES = { up: ['yPercent', 1], down: ['yPercent', -1], left: ['xPercent', 1], right: ['xPercent', -1] };
-const TEAM = [
-  { name: 'Ingrid Vold', role: 'Founding partner' },
-  { name: 'Tomas Reyes', role: 'Head of interiors' },
-  { name: 'Sigrid Aasen', role: 'Architect, landscape' },
-  { name: 'Jonas Mehl', role: 'Workshop and furniture' },
-];
 // The wipe's label colour for each swatch; a custom colour gets a dark or light label by its luminance.
 const ON = { ink: 'var(--bg)', accent: 'var(--on-accent)', sky: 'var(--night)', sand: 'var(--night)' };
 function labelColour(value) {
@@ -37,57 +31,27 @@ export default function mount(root, options, ctx) {
   const urlFor = (page) => { const u = new URL(location.href); u.searchParams.set('page', page); u.hash = ''; return u.href; };
   const pageOf = (url) => new URL(url, location.href).searchParams.get('page');
   const first = ORDER.includes(pageOf(location.href)) ? pageOf(location.href) : 'home';
-  const pics = photos({ tags: ['architecture'], count: 6, seed: 'pt-work' }).concat(photos({ tags: ['interior'], count: 3, seed: 'pt-int' }));
+  const pics = photos({ tags: ['architecture'], count: 2, seed: 'pt-work' }).concat(photos({ tags: ['interior'], count: 1, seed: 'pt-int' }));
   const link = (page, label, cls = '') => html`<a href="${urlFor(page)}" data-pt="${uid}" class="${cls}">${label}</a>`;
   const lines = (...ls) => ls.map((l) => html`<span class="pt__mask"><span class="pt__line">${l}</span></span>`);
-  const next = (page, note) => html`<a href="${urlFor(page)}" data-pt="${uid}" class="pt__next ac-wrap"><span class="ac-label">${note}</span><span class="pt__next-t">${TITLES[page]} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>`;
+  const picture = (item) => html`<span class="ac-media pt__pic">${raw(imageHTML(item, { sizes: '(max-width: 760px) 100vw, 40vw' }))}</span>`;
 
-  // The three views. Each is complete markup, as a fetched page would be.
+  // The three views, a big name and one picture each. Each is complete markup, as a fetched page would be.
   const VIEWS = {
     home: html`
-      <div data-taxi-view data-view="home" class="pt__view">
-        <section class="pt__hero ac-wrap" aria-labelledby="pt-h-home">
-          <p class="ac-label">${studio.full} · ${studio.city}</p>
-          <h1 class="ac-display" id="pt-h-home" tabindex="-1">${lines('Buildings for', 'long winters,', 'short summers.')}</h1>
-          <div class="pt__hero-foot">
-            <p class="ac-lede">An architecture and interiors studio of fourteen. Houses, libraries and a few chairs, most of them within a day’s drive of Bergen.</p>
-            ${link('work', 'See the work', 'ac-btn ac-btn--lg')}
-          </div>
-        </section>
-        <section class="pt__feature ac-wrap" aria-label="Recent projects">
-          ${studio.projects.slice(0, 2).map((p, i) => html`<a href="${urlFor('work')}" data-pt="${uid}" class="pt__card"><span class="ac-media pt__card-m"><span class="pt__par" data-parallax>${raw(imageHTML(pics[i], { sizes: '(max-width: 760px) 100vw, 50vw', alt: '' }))}</span></span><span class="pt__card-t"><strong>${p.title}</strong><span>${p.place} · ${p.year}</span></span></a>`)}
-        </section>
-        ${next('work', 'Next page')}
+      <div data-taxi-view data-view="home" class="pt__view ac-wrap">
+        <h1 class="ac-display pt__h1" id="pt-h-home" tabindex="-1">${lines('Buildings for', 'long winters.')}</h1>
+        <span class="ac-media pt__pic pt__pic--wide"><span class="pt__par" data-parallax>${raw(imageHTML(pics[0], { sizes: '100vw' }))}</span></span>
       </div>`,
     work: html`
-      <div data-taxi-view data-view="work" class="pt__view">
-        <section class="pt__head ac-wrap" aria-labelledby="pt-h-work">
-          <h1 class="ac-display" id="pt-h-work" tabindex="-1">${lines('Work')}</h1>
-          <p class="ac-lede">Eight projects from the last five years: four houses, two public buildings, a bar and a chair.</p>
-        </section>
-        <ol class="pt__index ac-wrap" role="list">
-          ${studio.projects.map((p, i) => html`<li class="pt__row"><span class="ac-label">${String(i + 1).padStart(2, '0')}</span><span class="ac-media pt__thumb">${raw(imageHTML(pics[i % pics.length], { sizes: '72px', alt: '' }))}</span><strong>${p.title}</strong><span class="pt__place">${p.place}</span><span class="pt__disc">${p.discipline}</span><span class="ac-num">${p.year}</span></li>`)}
-        </ol>
-        ${next('studio', 'Next page')}
+      <div data-taxi-view data-view="work" class="pt__view pt__view--split ac-wrap">
+        <h1 class="ac-display pt__h1 pt__h1--name" id="pt-h-work" tabindex="-1">${lines('Work')}</h1>
+        ${picture(pics[1])}
       </div>`,
     studio: html`
-      <div data-taxi-view data-view="studio" class="pt__view">
-        <section class="pt__head ac-wrap" aria-labelledby="pt-h-studio">
-          <h1 class="ac-display" id="pt-h-studio" tabindex="-1">${lines('Studio')}</h1>
-        </section>
-        <section class="pt__about ac-wrap">
-          <span class="ac-media pt__about-m">${raw(imageHTML(pics[6], { sizes: '(max-width: 760px) 100vw, 45vw', alt: 'The drawing room at Strandkaien 14' }))}</span>
-          <div class="pt__about-t">
-            <p class="ac-h3">We are fourteen people in an old net loft on the quay. We draw by hand first, build models for every project and visit every site in winter.</p>
-            <dl class="pt__facts">
-              <div><dt class="ac-label">Founded</dt><dd>2009</dd></div>
-              <div><dt class="ac-label">Studio</dt><dd>${studio.address[0]}, ${studio.city}</dd></div>
-              <div><dt class="ac-label">Write to</dt><dd>${studio.email}</dd></div>
-            </dl>
-            <ul class="pt__team" role="list">${TEAM.map((t) => html`<li><strong>${t.name}</strong><span>${t.role}</span></li>`)}</ul>
-          </div>
-        </section>
-        ${next('home', 'Back to the start')}
+      <div data-taxi-view data-view="studio" class="pt__view pt__view--split pt__view--flip ac-wrap">
+        <h1 class="ac-display pt__h1 pt__h1--name" id="pt-h-studio" tabindex="-1">${lines('Studio')}</h1>
+        ${picture(pics[2])}
       </div>`,
   };
 
@@ -96,11 +60,9 @@ export default function mount(root, options, ctx) {
     <header class="ac-bar pt__bar">
       ${link('home', studio.name, 'ac-brand')}
       <nav aria-label="Main">${ORDER.map((p) => html`<a href="${urlFor(p)}" data-pt="${uid}" data-nav="${p}">${TITLES[p]}</a>`)}</nav>
-      <a class="ac-btn ac-btn--sm ac-btn--ghost pt__contact" href="mailto:${studio.email}" data-taxi-ignore>Contact</a>
     </header>
     <main class="pt__main" data-taxi>${VIEWS[first]}</main>
     <div class="pt__wipe" aria-hidden="true"><div class="pt__wipe-in"><span class="pt__wipe-label" data-label></span></div></div>`;
-  on(ctx, root.querySelector('.pt__contact'), 'click', (e) => e.preventDefault());
 
   const wipe = root.querySelector('.pt__wipe');
   const inner = root.querySelector('.pt__wipe-in');

@@ -1,6 +1,6 @@
-.tw { min-height: 100svh; overflow-x: clip; }
-.tw a { text-decoration: none; }
-.tw__brand { font-family: var(--font-serif); font-stretch: normal; font-style: italic; font-weight: 600; font-size: 1.35rem; letter-spacing: -0.01em; }
+.tw { overflow-x: clip; }
+/* The switch sits at the top right of the card, where a header's switch would be. */
+.tw__unit { display: grid; justify-items: end; gap: 16px; width: min(100%, 340px); }
 
 /* The switch: a real button; aria-pressed is the state, the knob and filled track are its picture. */
 .tw__switch {
@@ -22,32 +22,13 @@
 .tw__switch[aria-pressed='true'] .tw__track { background: var(--accent); box-shadow: none; }
 .tw__switch[aria-pressed='true'] .tw__knob { translate: 14px 0; background: var(--on-accent); }
 
-/* The article. */
-.tw__hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-  align-items: end;
-  gap: clamp(24px, 5vw, 80px);
-  padding-block: clamp(24px, 6vh, 64px) clamp(40px, 7vh, 72px);
-}
-.tw__titles { display: grid; gap: 20px; align-content: end; }
-.tw__title { font-family: var(--font-serif); font-size: clamp(3.4rem, 1.2rem + 8vw, 9rem); font-weight: 500; line-height: 0.9; letter-spacing: -0.035em; text-wrap: balance; }
-.tw__dek { max-width: 24ch; font-family: var(--font-serif); font-style: italic; font-size: clamp(1.35rem, 1rem + 1.2vw, 2rem); line-height: 1.2; color: var(--ink-2); }
-.tw__by { padding-top: 18px; border-top: 1px solid var(--line); }
-.tw__fig { display: grid; gap: 10px; }
-.tw__pic { --ratio: 4 / 5; border-radius: var(--radius-lg); }
-.tw__body { padding-bottom: clamp(64px, 12vh, 140px); }
-.tw__body p { margin-bottom: 1.1em; font-family: var(--font-serif); font-size: clamp(1.125rem, 1rem + 0.4vw, 1.3rem); line-height: 1.6; color: var(--ink-2); text-wrap: pretty; }
-.tw__body p:first-child::first-letter { float: left; margin: 0.06em 0.08em 0 0; font-size: 3.6em; line-height: 0.8; color: var(--ink); }
+/* The card the flip is seen on: a picture and a title. */
+.tw__card { width: 100%; margin: 0; padding: 10px 10px 16px; display: grid; gap: 14px; }
+.tw__pic { --ratio: 4 / 3; border-radius: var(--radius-md); }
+.tw__title { padding-inline: 6px; font-size: var(--text-xl); font-weight: 700; font-stretch: var(--wide); letter-spacing: -0.02em; line-height: 1.1; }
 
 /* The cover: fixed over everything, click-through, drawn only while a swap runs. */
 .tw__cover { position: fixed; inset: 0; z-index: 100; pointer-events: none; visibility: hidden; }
 .tw__cover.is-on { visibility: visible; }
 .tw__cover--css { visibility: visible; clip-path: circle(0 at 50% 50%); }
 .tw__cover--css[hidden] { display: none; }
-
-@media (max-width: 760px) {
-  .tw__bar nav { display: none; }
-  .tw__hero { grid-template-columns: 1fr; }
-  .tw__pic { --ratio: 4 / 3; }
-}

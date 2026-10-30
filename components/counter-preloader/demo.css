@@ -1,29 +1,10 @@
-.cp { --cp-accent: var(--accent); min-height: 100svh; overflow-x: clip; }
-.cp a { text-decoration: none; }
+.cp { --cp-accent: var(--accent); overflow-x: clip; }
 .cp__brand svg { width: 22px; height: 22px; color: var(--cp-accent); }
 
-/* The festival page under the panel. */
-.cp__page { min-height: 100svh; display: grid; grid-template-rows: auto 1fr; }
-.cp__hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr);
-  align-items: end;
-  gap: clamp(24px, 5vw, 80px);
-  padding-block: clamp(20px, 5vh, 56px) 36px;
-}
-.cp__copy { display: grid; gap: 22px; align-content: end; }
-.cp__title { font-size: clamp(2.75rem, 1rem + 6.4vw, 7.2rem); }
+/* The stage under the panel: one headline that rises by lines once the panel lifts. */
+.cp__title { text-align: center; font-size: clamp(2.75rem, 1rem + 6.4vw, 7.2rem); }
 .cp__mask { display: block; overflow: hidden; padding-bottom: 0.08em; margin-bottom: -0.08em; }
 .cp__line { display: block; will-change: transform; }
-.cp__cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
-.cp__fig { display: grid; gap: 10px; }
-.cp__pic { --ratio: 4 / 5; max-height: 62svh; border-radius: var(--radius-lg); }
-
-.cp__days { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; padding-block: 24px 56px; border-top: 1px solid var(--line); }
-.cp__day { display: flex; align-items: center; gap: 14px; min-width: 0; }
-.cp__day > div { display: grid; gap: 4px; min-width: 0; }
-.cp__thumb { --ratio: 1; flex: none; width: 56px; border-radius: var(--radius-sm); }
-.cp__acts { font-size: var(--text-sm); font-weight: 600; }
 
 /* The panel: the page's inverse. Six strips paint its ground so the curtain exit can lift them one by one. */
 .cp__pre { --p: 0; position: fixed; inset: 0; z-index: 20; color: var(--bg); }
@@ -37,10 +18,8 @@
   grid-template-rows: auto 1fr auto;
   padding: 0 var(--gutter) clamp(20px, 5vh, 48px);
 }
-.cp__pre-top { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 64px; }
-.cp__pre-meta { color: color-mix(in oklab, var(--bg) 62%, var(--ink)); }
+.cp__pre-top { display: flex; align-items: center; justify-content: space-between; height: 64px; }
 .cp__skip {
-  justify-self: end;
   height: 36px;
   padding: 0 16px;
   border: 1px solid color-mix(in oklab, var(--bg) 32%, transparent);
@@ -118,15 +97,7 @@
 .cp__toast[hidden] { display: none; }
 :root[data-capture] .cp__toast { display: none; }
 
-@media (max-width: 860px) {
-  .cp__bar nav { display: none; }
-  .cp__hero { grid-template-columns: 1fr; align-items: start; }
-  .cp__pic { --ratio: 16 / 10; }
-  .cp__days { grid-template-columns: 1fr; gap: 14px; }
-}
 @media (max-width: 600px) {
-  .cp__pre-top { grid-template-columns: 1fr auto; }
-  .cp__pre-meta { display: none; }
   .cp__pre-main { grid-template-columns: 1fr; grid-template-rows: 1fr auto auto; row-gap: 20px; }
   .cp__pre-label { margin-bottom: 0; }
   .cp__readout { font-size: var(--text-lg); }

@@ -1,12 +1,12 @@
-// WebGL headline — a festival hero whose headline is drawn by three.js from a signed-distance atlas built in the
-// page: the glyphs this string uses are rasterised from the heading's own font, a Felzenszwalb distance transform
-// measures every pixel, and the shader reads median(r,g,b) with an fwidth edge (floored at 1e-5). Each glyph quad
-// sits on the rect the browser gave that character (Range rects), so the GL text lands on the DOM text at any
-// width. The pointer leaves expanding rings that displace the atlas lookup inside each glyph cell; frames render
+// WebGL headline — Signal's festival headline, alone on the stage, drawn by three.js from a signed-distance atlas
+// built in the page: the glyphs this string uses are rasterised from the heading's own font, a Felzenszwalb distance
+// transform measures every pixel, and the shader reads median(r,g,b) with an fwidth edge (floored at 1e-5). Each
+// glyph quad sits on the rect the browser gave that character (Range rects), so the GL text lands on the DOM text at
+// any width. The pointer leaves expanding rings that displace the atlas lookup inside each glyph cell; frames render
 // only while the reveal runs or a ring is alive. No WebGL or static tier: the DOM heading. Reduced: drawn settled.
 import './demo.css';
 import * as THREE from 'three';
-import { on, onFrame, html, finePointer, readToken, clamp, content, formatPrice } from '../../src/demo-kit/index.js';
+import { on, onFrame, html, finePointer, readToken, clamp, content } from '../../src/demo-kit/index.js';
 import { useRenderer, webglAvailable } from '../../src/demo-kit/three.js';
 
 const SIZE = 96;   // the glyph em box inside the atlas, in px
@@ -212,27 +212,11 @@ export default async function mount(root, options, ctx) {
   let cfg = { ...options };
   root.className = 'gt';
   root.innerHTML = html`
-    <header class="ac-bar gt__bar">
-      <a class="ac-brand gt__brand" href="#top"><span class="gt__mark" aria-hidden="true"></span>${festival.name}</a>
-      <nav aria-label="Festival">${['Line-up', 'Programme', 'Venue', 'Info'].map((n) => html`<a href="#top">${n}</a>`)}</nav>
-      <a class="ac-btn ac-btn--sm" href="#top">Tickets</a>
-    </header>
-    <section class="gt__hero" aria-labelledby="gt-title">
+    <section class="ac-stage gt__hero" aria-labelledby="gt-title">
       <div class="gt__gl" data-gl></div>
-      <div class="gt__inner ac-wrap">
-        <p class="gt__meta ac-label"><span>${festival.dates}</span><span>${festival.place}</span><span>Edition 06</span></p>
-        <h1 class="gt__title" id="gt-title">Sound carries over water.</h1>
-        <div class="gt__foot">
-          <p class="ac-lede">Three days, four stages and twelve acts on the old shipyard at the mouth of the harbour.</p>
-          <div class="gt__cta">
-            <a class="ac-btn ac-btn--accent ac-btn--lg" href="#top">Tickets from ${formatPrice(festival.tickets[0].price)}</a>
-            <a class="ac-btn ac-btn--ghost ac-btn--lg" href="#top">See the line-up</a>
-          </div>
-        </div>
-        <ul class="gt__lineup ac-label" role="list" aria-label="Line-up">${festival.lineup.slice(0, 8).map((n) => html`<li>${n}</li>`)}</ul>
-      </div>
+      <h1 class="gt__title" id="gt-title">Sound carries over water.</h1>
+      <p class="ac-stage__note"><span>${festival.name} · festival hero</span></p>
     </section>`;
-  root.querySelectorAll('a[href="#top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const title = root.querySelector('#gt-title');
   const host = root.querySelector('[data-gl]');

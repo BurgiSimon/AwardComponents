@@ -1,26 +1,16 @@
-// Chosen-item transition — Halden's project index and project pages under @unseenco/taxi. A row click runs one exit:
-// the intro fades, the other rows fade and drop by their distance from the chosen one, and the chosen row rises into
-// the slot under the fixed bar (the view's padding-top). The route is pushed only after the rise; the project page
-// has the same row in that slot and builds beneath it. Back reverses it: the page folds, the row drops back into its
-// place and its neighbours return by distance. The pages sit in taxi's cache up front, and each mount's links carry
-// its own id so a stale router never matches them. Reduced and static motion change the route at once.
+// Chosen-item transition — Halden's project index and project pages under @unseenco/taxi, with no copy around them. A
+// row click runs one exit: the other rows fade and drop by their distance from the chosen one, and the chosen row
+// rises into the slot under the fixed bar (the view's padding-top). The route is pushed only after the rise; the
+// project page has the same row in that slot and builds its picture and two facts beneath it. Back reverses it: the
+// page folds, the row drops back into its place and its neighbours return by distance. The pages sit in taxi's cache
+// up front, and each mount's links carry its own id so a stale router never matches them. Reduced and static motion
+// change the route at once.
 import './demo.css';
 import { Core, Renderer, Transition } from '@unseenco/taxi';
 import { on, html, raw, photo, allPhotos, imageHTML, content } from '../../src/demo-kit/index.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
 
 const PHONE = '(max-width: 48rem)';
-const BODY = {
-  fjordhus: 'The house is one timber volume laid along the rock, its living room reaching six metres out over the fjord. Every window frames the water; none faces the road.',
-  'tern-library': 'One window, sixty metres long, runs the length of the reading room at desk height. The stacks stand behind it in the dark, so the books stay out of the sun and the readers do not.',
-  stillwater: 'Changing rooms, a sauna and a long bench under one roof of larch slats. The sauna’s flue warms the concrete floor, so the bench stays dry in November.',
-  'kiln-house': 'We kept the brick vault and the chimney and built a timber house inside them. The kiln room is now the studio; the drying loft is where she sleeps.',
-  'granite-court': 'Forty-two flats step down the hill around one planted court. The rock cut out to make room became the court’s walls and its paving.',
-  'low-light': 'A listening bar lit only by a strip in the floor and the glow of the amplifiers. Oak, wool and a ceiling of acoustic felt.',
-  saltworks: 'Half buried in the dune, so the sand keeps blowing across it. One slot window follows the horizon and lights the reading tables.',
-  'arc-chair': 'One length of ash, steam-bent into the back and both arms, made with a workshop in Os in an edition of two hundred.',
-};
-
 // One different picture per item: its own tag first, then the fallbacks, then a drawn stand-in. photo(id) marks only
 // the pictures actually shown, so the component page credits exactly those.
 function uniquePictures(keys, tagsOf, fallbacks) {
@@ -55,46 +45,30 @@ export default function mount(root, options, ctx) {
 
   const indexView = html`
     <div data-taxi-view data-view="index" class="se__view ac-wrap">
-      <header class="se__intro" data-chrome>
-        <p class="ac-label">${studio.full} · Selected work 2022–2026</p>
-        <h1 class="ac-h1" tabindex="-1">Six buildings, a bar and a chair.</h1>
-      </header>
+      <h1 class="sr-only" tabindex="-1">${studio.name}, selected work</h1>
       <ol class="se__rows" role="list">
         ${projects.map((p, i) => html`<li><a class="se__row" data-row href="${urlFor(p.slug)}" data-pt="${uid}">${rowInner(p, i)}</a></li>`)}
       </ol>
     </div>`;
-  const caseView = (p, i) => {
-    const next = projects[(i + 1) % projects.length];
-    return html`
-      <div data-taxi-view data-view="case" data-slug="${p.slug}" class="se__view ac-wrap">
-        <div class="se__row se__row--head">${rowInner(p, i, true)}</div>
-        <figure class="ac-media se__hero" data-build-media>${raw(imageHTML(pics[p.slug], { sizes: '(max-width: 1320px) 100vw, 1320px', alt: `${p.title}, ${p.place}` }))}</figure>
-        <div class="se__body">
-          <p class="ac-h3 se__summary" data-build>${p.summary}</p>
-          <div class="se__text" data-build>
-            <p class="ac-body">${BODY[p.slug]}</p>
-            <dl class="se__facts">
-              <div><dt class="ac-label">Place</dt><dd>${p.place}</dd></div>
-              <div><dt class="ac-label">Completed</dt><dd>${p.year}</dd></div>
-              <div><dt class="ac-label">Size</dt><dd>${p.size}</dd></div>
-            </dl>
-          </div>
-        </div>
-        <a class="se__next" href="${urlFor(next.slug)}" data-pt="${uid}" data-build><span class="ac-label">Next project</span><span>${next.title} →</span></a>
-      </div>`;
-  };
+  const caseView = (p, i) => html`
+    <div data-taxi-view data-view="case" data-slug="${p.slug}" class="se__view ac-wrap">
+      <div class="se__row se__row--head">${rowInner(p, i, true)}</div>
+      <figure class="ac-media se__hero" data-build-media>${raw(imageHTML(pics[p.slug], { sizes: '(max-width: 1320px) 100vw, 1320px', alt: `${p.title}, ${p.place}` }))}</figure>
+      <dl class="se__facts" data-build>
+        <div><dt class="ac-label">Completed</dt><dd>${p.year}</dd></div>
+        <div><dt class="ac-label">Size</dt><dd>${p.size}</dd></div>
+      </dl>
+    </div>`;
 
   const firstSlug = projects.some((p) => p.slug === slugOf(location.href)) ? slugOf(location.href) : null;
   root.className = 'se';
   root.innerHTML = html`
     <header class="se__bar">
       <a class="ac-brand" href="${urlFor(null)}" data-pt="${uid}">${studio.name}</a>
-      <span class="se__crumb ac-label" data-crumb></span>
       <a class="se__back" href="${urlFor(null)}" data-pt="${uid}" data-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>All work</a>
     </header>
     <main data-taxi>${firstSlug ? caseView(projects.find((p) => p.slug === firstSlug), projects.findIndex((p) => p.slug === firstSlug)) : indexView}</main>`;
 
-  const crumb = root.querySelector('[data-crumb]');
   const back = root.querySelector('[data-back]');
   const full = ctx.motion === 'full';
   const { gsap, context: g } = useGsap(ctx, root);
@@ -110,7 +84,7 @@ export default function mount(root, options, ctx) {
 
   const timing = () => {
     const phone = matchMedia(PHONE).matches;
-    return { rise: cfg.rise * (phone ? 0.7 : 1), stagger: cfg.stagger * (phone ? 0.67 : 1), fade: 0.65, chrome: 0.45 };
+    return { rise: cfg.rise * (phone ? 0.7 : 1), stagger: cfg.stagger * (phone ? 0.67 : 1), fade: 0.65 };
   };
   const steps = (i, chosen) => (cfg.order === 'distance' ? Math.abs(i - chosen) : i);
   const visible = (el) => { const b = el.getBoundingClientRect(); return b.bottom > 0 && b.top < innerHeight; };
@@ -123,7 +97,6 @@ export default function mount(root, options, ctx) {
     const slot = parseFloat(getComputedStyle(view).paddingTop);
     row.setAttribute('data-chosen', '');
     const tl = gsap.timeline();
-    tl.to(view.querySelectorAll('[data-chrome]'), { autoAlpha: 0, duration: t.chrome, ease: 'power2.in' }, 0);
     rows.forEach((r, i) => {
       if (i === chosen) return;
       if (!visible(r)) { gsap.set(r, { autoAlpha: 0 }); return; }
@@ -132,7 +105,7 @@ export default function mount(root, options, ctx) {
     return tl.to(row, { y: slot - row.getBoundingClientRect().top, duration: t.rise, ease: 'power2.inOut' }, 0);
   };
 
-  // The project page builds under its heading row: the picture opens downward, then the text rises in.
+  // The project page builds under its heading row: the picture opens downward, then the facts rise in.
   const build = (view, withHead) => {
     const media = view.querySelector('[data-build-media]');
     const tl = gsap.timeline();
@@ -158,16 +131,14 @@ export default function mount(root, options, ctx) {
     const t = timing();
     const rows = [...view.querySelectorAll('[data-row]')];
     const chosen = projects.findIndex((p) => p.slug === leaving?.slug);
-    const chrome = view.querySelectorAll('[data-chrome]');
     window.scrollTo(0, indexScroll);
-    if (chosen < 0 || !cfg.reverse) return gsap.timeline().from([...chrome, ...rows], { autoAlpha: 0, duration: 0.45, ease: 'power1.out', clearProps: 'all' });
+    if (chosen < 0 || !cfg.reverse) return gsap.timeline().from(rows, { autoAlpha: 0, duration: 0.45, ease: 'power1.out', clearProps: 'all' });
     const row = rows[chosen];
     if (!visible(row)) window.scrollTo(0, window.scrollY + row.getBoundingClientRect().top - innerHeight * 0.45);
     const from = leaving.headTop - row.getBoundingClientRect().top;
     row.setAttribute('data-chosen', '');
     const tl = gsap.timeline({ onComplete: () => row.removeAttribute('data-chosen') });
-    tl.fromTo(row, { y: from }, { y: 0, duration: t.rise, ease: 'power2.inOut', clearProps: 'transform' }, 0)
-      .fromTo(chrome, { autoAlpha: 0 }, { autoAlpha: 1, duration: t.chrome, ease: 'power1.out', clearProps: 'all' }, t.rise * 0.5);
+    tl.fromTo(row, { y: from }, { y: 0, duration: t.rise, ease: 'power2.inOut', clearProps: 'transform' }, 0);
     rows.forEach((r, i) => {
       if (i === chosen) return;
       tl.fromTo(r, { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, duration: t.fade, ease: 'power2.out', clearProps: 'all' }, t.rise * 0.65 + t.stagger * steps(i, chosen));
@@ -178,8 +149,6 @@ export default function mount(root, options, ctx) {
   class Page extends Renderer {
     onEnter() {
       const isCase = this.content.dataset.view === 'case';
-      const i = projects.findIndex((p) => p.slug === this.content.dataset.slug);
-      crumb.textContent = isCase ? `Project ${num(i)} of ${String(projects.length).padStart(2, '0')}` : `Index · ${projects.length} projects`;
       back.hidden = !isCase;
     }
   }

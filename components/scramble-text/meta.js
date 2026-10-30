@@ -9,7 +9,7 @@ export default {
   tags: ['text', 'scramble', 'decode', 'telemetry', 'table', 'animejs', 'live'],
   added: '2026-10-28',
   order: 20,
-  preview: { height: 620, hint: 'Hover a row, or press Update values', capture: { wait: 300 } },
+  preview: { height: 600, hint: 'Hover a row, or press Update values', capture: { wait: 300 } },
   useCases: [
     'Departure boards, live scores and status pages where values change while the page is open',
     'Telemetry, dashboards and “system” copy for expedition, aviation or hardware brands',

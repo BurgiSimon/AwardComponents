@@ -1,11 +1,11 @@
-// Cell curtain — Kova One's launch site as three hash routes (Overview, Sound, Buy) behind one woven curtain. A fixed
-// grid of cells rebuilt to the viewport (about 72 × 75 CSS px each) scales on X from a hairline to a solid bar, swept
-// from a corner by grid distance. It is shut from first paint; the arrival gate races the fonts and every picture's
-// decode against a 4 s ceiling after a minimum hold (0.9 s, 0.25 s on a repeat visit in this session). Routes queue
-// behind the arrival on one promise chain and swap only behind a fully shut curtain; the page behind it is inert.
-// Leaving saves the scroll, back and forward restore it (manual scroll restoration), a link opens at the top; focus
-// moves to the new h1, the title names the page and a polite live region announces it. Reduced: a 0.2 s fade of the
-// shut grid. Static: an instant cut. The routes live in the hash, so play.html's own query stays as it was.
+// Cell curtain — Kova One's three-page site (Overview, Sound, Buy; a title and one picture each) behind one woven
+// curtain. A fixed grid of cells rebuilt to the viewport (about 72 × 75 CSS px each) scales on X from a hairline to a
+// solid bar, swept from a corner by grid distance. It is shut from first paint; the arrival gate races the fonts and
+// every picture's decode against a 4 s ceiling after a minimum hold (0.9 s, 0.25 s on a repeat visit in this
+// session). Routes queue behind the arrival on one promise chain and swap only behind a fully shut curtain; the page
+// behind it is inert. Leaving saves the scroll, back and forward restore it (manual scroll restoration), a link opens
+// at the top; focus moves to the new h1, the title names the page and a polite live region announces it. Reduced: a
+// 0.2 s fade of the shut grid. Static: an instant cut. The routes live in the hash, so play.html's own query stays.
 import './demo.css';
 import { on, html, raw, photo, image, imageHTML, content, formatPrice, colour } from '../../src/demo-kit/index.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
@@ -34,12 +34,6 @@ function inkFor(value, rendered) {
   return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.19 ? 'var(--night)' : 'var(--on-media)';
 }
 
-const FINISHES = {
-  chalk: 'A warm white for plaster walls, pale oak and linen.',
-  graphite: 'Anodised near-black with a charcoal grille, for dark shelves.',
-  clay: 'Fired-earth orange, the colour of the first prototype’s foam.',
-};
-const ARROW = raw('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>');
 const MARK = raw('<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5" opacity="0.45"/><rect x="3" y="13" width="8" height="8" rx="1.5" opacity="0.45"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>');
 
 export default function mount(root, options, ctx) {
@@ -48,22 +42,13 @@ export default function mount(root, options, ctx) {
   const full = ctx.motion === 'full';
   const uid = Math.random().toString(36).slice(2, 7);
   const startTitle = document.title;
-  const finishName = (id) => product.colours.find((c) => c.id === id)?.name || id;
-  const spec = (name) => product.specs.find(([k]) => k === name)?.[1] || '';
   const price = formatPrice(product.price);
-  const pics = {
-    chair: photo('obj-gragg-side-chair'),
-    vase: photo('obj-celadon-vase'),
-    decanter: photo('obj-dresser-decanter'),
-    violin: photo('obj-violin'),
-  };
-  const SIZES = { kept: '(max-width: 760px) 33vw, 22vw', violin: '(max-width: 760px) 100vw, 42vw' };
+  const violin = photo('obj-violin');
+  const VIOLIN_SIZES = '(max-width: 760px) 100vw, 40vw';
 
-  let finish = 'chalk';
-  let bagged = false;
   let knit = 0;
   // The product, drawn: one speaker whose grille is a weave of the same short bars as the curtain.
-  const speaker = () => {
+  const speaker = (finish) => {
     const id = `cc-knit-${uid}-${knit++}`;
     return raw(`<svg class="cc__speaker" data-finish="${finish}" viewBox="0 0 320 400" aria-hidden="true">
       <defs><pattern id="${id}" width="10" height="7" patternUnits="userSpaceOnUse"><rect class="cc__knit" width="7" height="2.6" rx="1.3"/><rect class="cc__knit" x="5" y="3.5" width="7" height="2.6" rx="1.3"/><rect class="cc__knit" x="-5" y="3.5" width="7" height="2.6" rx="1.3"/></pattern>
@@ -78,98 +63,29 @@ export default function mount(root, options, ctx) {
       <rect class="cc__sheen" x="76" y="106" width="168" height="232" rx="30"/>
     </svg>`);
   };
-  const routeLink = (route, label, cls = '') => html`<a href="#/${route}" data-route="${route}" class="${cls}">${label}</a>`;
-  // The last word and the arrow never part, so a wrapped label never leaves the arrow alone on a line.
-  const next = (route, note) => {
-    const words = (route === 'overview' ? 'Back to the overview' : TITLES[route]).split(' ');
-    const last = words.pop();
-    return html`<a href="#/${route}" data-route="${route}" class="cc__next ac-wrap"><span class="ac-label">${note}</span><span class="cc__next-t">${words.length ? `${words.join(' ')} ` : ''}<span class="cc__nowrap">${last} ${ARROW}</span></span></a>`;
-  };
-  const productFrame = (cls) => html`
-    <figure class="cc__frame ${cls}">
-      <div class="ac-media cc__stage">${speaker()}</div>
-      <figcaption class="cc__frame-cap"><span class="ac-label" data-finish-name>${product.name} in ${finishName(finish)}</span><span class="ac-label">${spec('Dimensions')}</span></figcaption>
-    </figure>`;
+  const routeLink = (route, label) => html`<a href="#/${route}" data-route="${route}">${label}</a>`;
+  const h1 = (text) => html`<h1 class="ac-display cc__h1" id="cc-h1-${uid}" tabindex="-1">${text}</h1>`;
 
-  // The three pages. Only the current one is in the document; the next replaces it behind the shut curtain.
+  // The three pages, a title and one picture each. Only the current one is in the document; the next replaces it
+  // behind the shut curtain.
   const VIEWS = {
     overview: () => html`
-      <article class="cc__view" data-view="overview">
-        <section class="cc__hero ac-wrap" aria-labelledby="cc-h1-${uid}">
-          <div class="cc__hero-copy">
-            <p class="ac-label">${product.name} · ${product.kind}</p>
-            <h1 class="ac-display cc__h1" id="cc-h1-${uid}" tabindex="-1">${product.tagline}</h1>
-            <p class="ac-lede">A ${spec('Weight')} room speaker that measures the room in eight seconds, shapes its bass to it and then stays out of the way.</p>
-            <div class="cc__cta">
-              ${routeLink('buy', `Buy — ${price}`, 'ac-btn ac-btn--lg ac-btn--accent')}
-              ${routeLink('sound', 'How it sounds', 'ac-btn ac-btn--lg ac-btn--ghost')}
-            </div>
-          </div>
-          ${productFrame('cc__frame--hero')}
-        </section>
-        <section class="cc__features ac-wrap" aria-labelledby="cc-feat-${uid}">
-          <h2 class="ac-label" id="cc-feat-${uid}">What it does</h2>
-          <ul class="cc__feature-list" role="list">
-            ${product.features.map((f, i) => html`<li class="cc__feature"><span class="ac-label">${String(i + 1).padStart(2, '0')}</span><h3 class="ac-h3">${f.title}</h3><p class="ac-small">${f.body}</p></li>`)}
-          </ul>
-        </section>
-        <section class="cc__kept ac-wrap" aria-labelledby="cc-kept-${uid}">
-          <div class="cc__kept-copy">
-            <p class="ac-label">The brief, pinned above the drawing table</p>
-            <h2 class="ac-h2" id="cc-kept-${uid}">Built like the things people keep.</h2>
-            <p class="ac-body">We drew it next to a bentwood chair, a celadon vase and a caged decanter, objects that outlived the people who made them, and held it to the same test: would it still be worth repairing in twenty years?</p>
-          </div>
-          <ul class="cc__kept-pics" role="list">
-            ${[['chair', 'Bentwood side chair'], ['vase', 'Celadon bottle vase'], ['decanter', 'Caged glass decanter']].map(([k, cap]) => html`<li><figure><span class="ac-media">${raw(imageHTML(pics[k], { eager: true, sizes: SIZES.kept }))}</span><figcaption class="ac-label">${cap}</figcaption></figure></li>`)}
-          </ul>
-        </section>
-        ${next('sound', 'Next page · 2 of 3')}
+      <article class="cc__view ac-wrap" data-view="overview">
+        ${h1(product.tagline)}
+        <div class="ac-media cc__pic cc__stage">${speaker('chalk')}</div>
       </article>`,
     sound: () => html`
-      <article class="cc__view" data-view="sound">
-        <section class="cc__head ac-wrap" aria-labelledby="cc-h1-${uid}">
-          <p class="ac-label">Sound · 2 of 3</p>
-          <h1 class="ac-display cc__h1" id="cc-h1-${uid}" tabindex="-1">Voiced on a violin, then on your room.</h1>
-          <p class="ac-lede">Every ${product.name} is voiced against acoustic instruments before it meets a test signal, so strings sound like wood and voices sound like people.</p>
-        </section>
-        <section class="cc__listen ac-wrap" aria-label="How it is tuned">
-          <figure class="cc__violin">
-            <span class="ac-media">${raw(imageHTML(pics.violin, { eager: true, sizes: SIZES.violin }))}</span>
-            <figcaption class="ac-label">The reference in the listening room</figcaption>
-          </figure>
-          <div class="cc__listen-copy">
-            <dl class="cc__specs">
-              ${['Drivers', 'Frequency response', 'Amplification'].map((k) => html`<div><dt class="ac-label">${k}</dt><dd>${spec(k)}</dd></div>`)}
-            </dl>
-            ${product.features.slice(0, 3).map((f) => html`<div class="cc__note"><h2 class="ac-h3">${f.title}</h2><p class="ac-body">${f.body}</p></div>`)}
-          </div>
-        </section>
-        ${next('buy', 'Next page · 3 of 3')}
+      <article class="cc__view ac-wrap" data-view="sound">
+        ${h1('Voiced on a violin, then on your room.')}
+        <span class="ac-media cc__pic">${raw(imageHTML(violin, { eager: true, sizes: VIOLIN_SIZES }))}</span>
       </article>`,
     buy: () => html`
-      <article class="cc__view" data-view="buy">
-        <section class="cc__buy ac-wrap" aria-labelledby="cc-h1-${uid}">
-          ${productFrame('cc__frame--buy')}
-          <div class="cc__buy-panel">
-            <p class="ac-label">Buy · 3 of 3</p>
-            <h1 class="ac-display cc__h1 cc__h1--buy" id="cc-h1-${uid}" tabindex="-1">${product.name}</h1>
-            <p class="cc__price"><span class="ac-num">${price}</span><span class="ac-small">VAT included. Free delivery in the EU in three to five days.</span></p>
-            <fieldset class="cc__finishes">
-              <legend class="ac-label">Finish</legend>
-              ${product.colours.map((c) => html`<label class="cc__finish"><input type="radio" name="cc-finish-${uid}" value="${c.id}" ${raw(c.id === finish ? 'checked' : '')}><span class="cc__swatch" data-finish="${c.id}" aria-hidden="true"></span><span class="cc__finish-t"><strong>${c.name}</strong><span class="ac-small">${FINISHES[c.id]}</span></span></label>`)}
-            </fieldset>
-            <button class="ac-btn ac-btn--lg ac-btn--accent cc__bag" type="button" data-bag>${bagged ? 'In your bag' : `Add to bag — ${price}`}</button>
-            <p class="ac-small cc__bag-note" role="status" data-bag-note>${bagged ? `${product.name} in ${finishName(finish)} is in your bag.` : 'Thirty nights to listen at home; it goes back in the box it came in.'}</p>
-            <dl class="cc__specs cc__specs--buy">
-              ${['Connectivity', 'Dimensions', 'Weight', 'Enclosure'].map((k) => html`<div><dt class="ac-label">${k}</dt><dd>${spec(k)}</dd></div>`)}
-            </dl>
-            <div class="cc__box">
-              <h2 class="ac-label">In the box</h2>
-              <ul role="list"><li>${product.name}</li><li>1.5 m braided power cable</li><li>USB-C to USB-C cable, 1 m</li><li>A printed card with the eight screw positions</li></ul>
-            </div>
-          </div>
-        </section>
-        ${next('overview', 'Start again · 1 of 3')}
+      <article class="cc__view cc__view--flip ac-wrap" data-view="buy">
+        <div class="cc__title">
+          ${h1(product.name)}
+          <p class="ac-label cc__price">${product.kind} · <span class="ac-num">${price}</span></p>
+        </div>
+        <div class="ac-media cc__pic cc__stage">${speaker('clay')}</div>
       </article>`,
   };
 
@@ -182,14 +98,10 @@ export default function mount(root, options, ctx) {
         <nav class="cc__nav" aria-label="${product.name}">
           ${routeLink('overview', 'Overview')}
           ${routeLink('sound', 'Sound')}
-          <a href="#/buy" data-route="buy" class="cc__buy-link">Buy<span class="ac-num"> ${price}</span></a>
+          ${routeLink('buy', 'Buy')}
         </nav>
       </header>
       <main class="cc__main" id="cc-main-${uid}" tabindex="-1" data-main></main>
-      <footer class="cc__foot ac-wrap">
-        <p class="ac-small">${product.name} ships in ${product.colours.map((c) => c.name).join(', ').replace(/, ([^,]+)$/, ' and $1')}. Parts are sold separately for ten years.</p>
-        <p class="ac-label">${product.maker} · ${product.kind}</p>
-      </footer>
     </div>
     <p class="sr-only" aria-live="polite" data-status></p>
     <div class="cc__curtain" aria-hidden="true" data-curtain>
@@ -387,28 +299,8 @@ export default function mount(root, options, ctx) {
   });
   on(ctx, window, 'resize', rebuild);
 
-  // The Buy page's own controls, delegated so they survive the swap.
-  on(ctx, root, 'change', (e) => {
-    if (!e.target.matches?.(`input[name="cc-finish-${uid}"]`)) return;
-    finish = e.target.value;
-    root.querySelectorAll('.cc__speaker').forEach((s) => { s.dataset.finish = finish; });
-    root.querySelectorAll('[data-finish-name]').forEach((s) => { s.textContent = `${product.name} in ${finishName(finish)}`; });
-    if (bagged) root.querySelector('[data-bag-note]').textContent = `${product.name} in ${finishName(finish)} is in your bag.`;
-  });
-  on(ctx, root, 'click', (e) => {
-    const btn = e.target.closest('[data-bag]');
-    if (!btn) return;
-    bagged = true;
-    btn.textContent = 'In your bag';
-    root.querySelector('[data-bag-note]').textContent = `${product.name} in ${finishName(finish)} is in your bag.`;
-  });
-
-  // Warm the other pages' pictures once the arrival is done, so a route never opens on an empty frame.
-  const warm = () => {
-    for (const [k, sizes] of [['chair', SIZES.kept], ['vase', SIZES.kept], ['decanter', SIZES.kept], ['violin', SIZES.violin]]) {
-      image(pics[k], { eager: true, sizes }).decode?.().catch(() => {});
-    }
-  };
+  // Warm the Sound page's picture once the arrival is done, so a route never opens on an empty frame.
+  const warm = () => { image(violin, { eager: true, sizes: VIOLIN_SIZES }).decode?.().catch(() => {}); };
 
   ctx.onCleanup(() => {
     dead = true;
