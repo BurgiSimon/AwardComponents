@@ -141,8 +141,6 @@
 .cs-next__link:is(:hover, :focus-visible) .cs-next__title { color: var(--accent-ink); }
 .cs-next__link:is(:hover, :focus-visible) .cs-next__media img { transform: scale(1.02); }
 
-.cs-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 24px; padding: 20px var(--cs-edge) 28px; border-top: 1px solid var(--line); font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.04em; color: var(--muted); }
-.cs-foot a { display: inline-flex; align-items: center; min-height: 32px; color: var(--ink-2); }
 
 /* ---------- Reveal: below-the-fold rows only. Full rises and fades; reduced fades; static never holds back. ---------- */
 .cs--reveal [data-reveal] { transition: opacity 0.9s var(--cs-ease), transform 0.9s var(--cs-ease); }

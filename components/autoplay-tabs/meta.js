@@ -8,7 +8,7 @@ export default {
   tags: ['tabs', 'autoplay', 'progress', 'timer', 'features', 'product', 'gsap'],
   added: '2026-10-28',
   order: 20,
-  preview: { height: 700, hint: 'Point at the tabs to hold them', capture: { wait: 2600 } },
+  preview: { height: 600, hint: 'Point at the tabs to hold them', capture: { wait: 2600 } },
   actions: [{ id: 'toggle', label: 'Pause / play' }, { id: 'next', label: 'Next tab' }],
   useCases: [
     'A product’s three to five features, each with its own screen',

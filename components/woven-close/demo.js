@@ -1,12 +1,12 @@
-// Woven footage close — the last screen of Meridian Observatory's site: tonight's shows, the visit facts and a
-// ticket link beside footage woven into the section's own ink. Two clips graded on black (the whole Earth from a
-// million miles out, an orbit horizon from the space station) and a generated star field are layers on one raw-WebGL
-// canvas, one quad per layer sized to its slot. In every cell the layer's clip is read once at the centre; near-black
-// is the key and drops the cell, so each clip lands as a cut-out. Every other cell becomes a vertical bar as wide as
-// the cell is dark, or a glyph from an ASCII ramp sorted by measured ink. Each layer is a plain object (grid, levels,
-// bar range, ground and ink opacity, develop) that GSAP tweens: the scroll develops every layer from blank while its
-// slot enters. Clips upload once per decoded frame; the canvas renders on change at 30 fps at most and never off
-// screen. Reduced motion and static: one developed still from the posters. No WebGL: the posters, masked and striped.
+// Woven footage close — the last screen of Meridian Observatory's site: tonight's shows and a ticket link beside
+// footage woven into the section's own ink. Two clips graded on black (the whole Earth from a million miles out, an
+// orbit horizon from the space station) and a generated star field are layers on one raw-WebGL canvas, one quad per
+// layer sized to its slot. In every cell the layer's clip is read once at the centre; near-black is the key and drops
+// the cell, so each clip lands as a cut-out. Every other cell becomes a vertical bar as wide as the cell is dark, or a
+// glyph from an ASCII ramp sorted by measured ink. Each layer is a plain object (grid, levels, bar range, ground and
+// ink opacity, develop) that GSAP tweens: the scroll develops every layer from blank while its slot enters. Clips
+// upload once per decoded frame; the canvas renders on change at 30 fps at most and never off screen. Reduced motion
+// and static: one developed still from the posters. No WebGL: the posters, masked and striped.
 import './demo.css';
 import { on, onFrame, observeIntersection, observeResize, whileVisible, html, videos, credit as creditMedia, content, webglAvailable, qualityTier, clamp, colour } from '../../src/demo-kit/index.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
@@ -49,55 +49,29 @@ export default function mount(root, options, ctx) {
   const orbitMedia = videos.find((v) => v.id === CLIPS.orbit.media);
   creditMedia(earthMedia, orbitMedia);   // the folder's re-encoded clips are cut from these
   const shows = [...obs.shows].sort((a, b) => a.time.localeCompare(b.time));
-  const [open, travel, tickets] = obs.visit;
 
   root.className = 'wc';
   root.innerHTML = html`
-    <section class="wc__lead ac-wrap" id="wc-lead" aria-labelledby="wc-show">
-      <p class="ac-label">${obs.full} · In the east gallery</p>
-      <h2 class="wc__lead-title" id="wc-show" tabindex="-1">${obs.exhibition.title}</h2>
-      <p class="ac-lede">${obs.exhibition.dek} Sixteen screens run the station’s orbit in real time, from daylight over the Pacific to the night side and back.</p>
-      <div class="wc__lead-foot">
-        <p class="ac-small">${obs.exhibition.dates} · Included with every show ticket</p>
-        <a class="ac-link wc__down" href="#wc-visit">Today’s shows <span aria-hidden="true">↓</span></a>
-      </div>
-    </section>
-    <footer class="wc__close" id="wc-visit" aria-labelledby="wc-title" data-close>
+    <footer class="wc__close" aria-labelledby="wc-title" data-close>
       <canvas class="wc__gl" data-gl aria-hidden="true" hidden></canvas>
       <div class="wc__main ac-wrap">
         <div class="wc__copy">
-          <p class="ac-label">Today · Wednesday 28 October</p>
-          <h2 class="wc__title" id="wc-title" tabindex="-1">Four shows today, three after dark.</h2>
+          <h2 class="sr-only" id="wc-title">Today’s shows</h2>
           <ol class="wc__shows" role="list">
-            ${shows.map((s) => html`<li><time class="wc__time" datetime="2026-10-28T${s.time}">${s.time}</time><span class="wc__show">${s.title}</span><span class="wc__meta">${s.room} · ${s.length}</span></li>`)}
+            ${shows.map((s) => html`<li><time class="wc__time" datetime="2026-10-28T${s.time}">${s.time}</time><span class="wc__show">${s.title}</span></li>`)}
           </ol>
-          <div class="wc__act">
-            <a class="ac-btn ac-btn--accent ac-btn--lg" href="#tickets" data-book>Book seats for tonight</a>
-            <p class="ac-small">${tickets.value}</p>
-          </div>
+          <a class="ac-btn ac-btn--accent ac-btn--lg wc__book" href="#tickets" data-book>Book seats for tonight</a>
         </div>
         <figure class="wc__stage">
           <div class="wc__pic" data-pic></div>
           <figcaption class="wc__cap">
-            <p>The whole Earth from a million miles out, one day in eleven minutes. Tonight at 20:00 in the dome.</p>
+            <p>The whole Earth from a million miles out, one day in eleven minutes.</p>
             <button class="ac-btn ac-btn--ghost ac-btn--sm wc__pause" type="button" aria-pressed="false" data-pause hidden>Pause footage</button>
           </figcaption>
         </figure>
       </div>
       <div class="wc__band" data-band></div>
-      <div class="wc__base ac-wrap">
-        <dl class="wc__facts">
-          <div><dt class="ac-label">${open.label}</dt><dd>${open.value}</dd></div>
-          <div><dt class="ac-label">${travel.label}</dt><dd>${travel.value}</dd></div>
-          <div><dt class="ac-label">Find us</dt><dd>${obs.place}</dd></div>
-          <div><dt class="ac-label">Write</dt><dd><a class="ac-link" href="mailto:${obs.email}">${obs.email}</a></dd></div>
-        </dl>
-        <div class="wc__colophon">
-          <p><span class="wc__mark">${obs.name}</span> ${obs.tagline}</p>
-          <a class="wc__top" href="#wc-lead">Back to the top <span aria-hidden="true">↑</span></a>
-        </div>
-        <p class="wc__credit" data-credit></p>
-      </div>
+      <p class="ac-stage__note"><span>${obs.name} · site footer</span></p>
     </footer>`;
 
   const close = root.querySelector('[data-close]');
@@ -105,30 +79,13 @@ export default function mount(root, options, ctx) {
   const pic = root.querySelector('[data-pic]');
   const band = root.querySelector('[data-band]');
   const pauseBtn = root.querySelector('[data-pause]');
-  const credit = root.querySelector('[data-credit]');
 
-  // In-page links: the demo owns window scroll, so it scrolls itself (smoothly only under full motion) and moves focus
-  // to the heading it lands on, as a followed anchor would; the ring shows only when the link was pressed with a key.
-  const scrollToY = (y) => window.scrollTo({ top: y, behavior: full ? 'smooth' : 'auto' });
-  const jump = (e, y, heading) => {
-    e.preventDefault();
-    scrollToY(y);
-    heading.focus(e.detail === 0 ? { preventScroll: true } : { preventScroll: true, focusVisible: false });
-  };
-  on(ctx, root.querySelector('.wc__down'), 'click', (e) => jump(e, close.getBoundingClientRect().top + window.scrollY, root.querySelector('#wc-title')));
-  on(ctx, root.querySelector('.wc__top'), 'click', (e) => jump(e, 0, root.querySelector('#wc-show')));
   on(ctx, root.querySelector('[data-book]'), 'click', (e) => e.preventDefault());
 
-  // The credit line names exactly the footage on screen, in the words of the media manifest.
-  const writeCredit = () => {
-    const items = [earthMedia, cfg.band ? orbitMedia : null].filter(Boolean);
-    credit.textContent = items.length ? `Footage: ${items.map((m) => m.credit).join(' · ')}` : '';
-  };
   const applyLook = () => {
     // A token name or a custom hex from the panel's colour picker.
     close.style.setProperty('--wc-ink', colour(cfg.ink, 'var(--ink)'));
     root.classList.toggle('wc--no-band', !cfg.band);
-    writeCredit();
   };
   applyLook();
 

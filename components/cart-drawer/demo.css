@@ -1,10 +1,13 @@
-.cd { min-height: 100svh; overflow-x: clip; }
+.cd { overflow-x: clip; }
 .cd a { text-decoration: none; }
 :root.cd-locked { overflow: hidden; } /* a modal dialog does not stop the page behind it from scrolling */
 
-.cd__bar { border-bottom: 1px solid var(--line); }
-.cd__bar nav a[aria-current='page'] { color: var(--ink); }
+.cd__stage { --stage-gap: 14px; }
+/* The Bag (n) button sits where a shop header would put it: the stage's top right. */
 .cd__bag-btn {
+  position: absolute;
+  top: clamp(14px, 3vh, 24px);
+  right: var(--gutter);
   min-height: 40px;
   padding: 0 18px;
   border: 1px solid var(--line-2);
@@ -18,20 +21,14 @@
 .cd__bag-btn:hover { background: var(--ink); border-color: var(--ink); color: var(--bg); }
 .cd__bag-btn.is-bumped { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 
-.cd__main { padding-block: clamp(24px, 3.6vw, 44px) clamp(48px, 7vw, 96px); }
-.cd__intro { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); align-items: end; gap: 16px 48px; }
-.cd__intro > div { display: grid; gap: 12px; }
-.cd__intro .ac-h1 { max-width: 18ch; }
-.cd__intro .ac-body { max-width: 36ch; }
-
-/* The page's polite answer to an add: words, beside the count in the header. */
-.cd__status { display: flex; align-items: center; gap: 10px; min-height: 22px; margin-block: 18px 16px; font-size: var(--text-sm); color: var(--ink-2); }
+/* The page's polite answer to an add: words, under the row. */
+.cd__status { display: flex; align-items: center; gap: 10px; width: min(100%, 680px); min-height: 22px; font-size: var(--text-sm); color: var(--ink-2); }
 .cd__status:not(:empty)::before { content: ''; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--ok); }
 
-.cd__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px clamp(16px, 2vw, 28px); margin: 0; }
+.cd__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px clamp(16px, 2.4vw, 32px); width: min(100%, 680px); margin: 0; }
 .cd__card { display: grid; align-content: start; gap: 14px; }
 .cd__link { display: grid; gap: 10px; }
-.cd__media { --ratio: 6 / 5; border-radius: var(--radius-md); }
+.cd__media { --ratio: 1; border-radius: var(--radius-md); }
 .cd__media img { transition: transform var(--dur-l) var(--ease-out); }
 .cd__link:hover .cd__media img, .cd__link:focus-visible .cd__media img { transform: scale(1.03); }
 .cd__link:focus-visible { outline-offset: 4px; border-radius: var(--radius-md); }
@@ -39,7 +36,6 @@
 .cd__name { font-size: var(--text-lg); font-weight: 650; letter-spacing: -0.015em; text-underline-offset: 0.2em; }
 .cd__link:hover .cd__name { text-decoration: underline; text-decoration-thickness: 1px; }
 .cd__price { font-variant-numeric: tabular-nums; }
-.cd__glaze { margin-top: -6px; font-size: var(--text-sm); color: var(--muted); }
 
 .cd__buy { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .cd__sizes { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; margin: 0; padding: 0; border: 0; }
@@ -119,25 +115,15 @@
 :root[data-motion='reduced'] :is(.cd__add-done, .cd__add[data-added] .cd__add-label) { transform: none; }
 :root[data-motion='reduced'] :is(.cd__add-label, .cd__add-done) { transition: opacity 120ms linear; }
 
-@media (max-width: 980px) {
-  .cd__intro { grid-template-columns: minmax(0, 1fr); }
-  .cd__intro .ac-body { display: none; }
-  .cd__buy { flex-direction: column; align-items: stretch; }
-  .cd__add { flex: none; }
-}
-
 /* Phone: each piece is a compact row (picture beside its name and price, the choice under it); the bag a bottom sheet. */
 @media (max-width: 767.98px) {
-  .cd__bar nav { display: none; }
-  .cd__intro .ac-body { display: block; }
+  .cd__stage { padding-top: 72px; }
   .cd__grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .cd__card { gap: 12px; padding: 18px 0; border-bottom: 1px solid var(--line); }
   .cd__card:first-child { padding-top: 4px; }
-  .cd__link { grid-template-columns: 104px minmax(0, 1fr); grid-template-rows: auto auto 1fr; column-gap: 16px; row-gap: 4px; }
-  .cd__media { grid-row: 1 / span 3; --ratio: 4 / 5; }
-  .cd__meta { flex-direction: column; gap: 2px; align-self: end; }
-  .cd__glaze { margin: 0; }
-  .cd__buy { flex-direction: row; flex-wrap: wrap; }
+  .cd__link { grid-template-columns: 104px minmax(0, 1fr); align-items: center; column-gap: 16px; }
+  .cd__media { --ratio: 4 / 5; }
+  .cd__meta { flex-direction: column; gap: 2px; }
   .cd__add { flex: 1 1 100%; }
   .cd__bag[open], .cd[data-side='start'] .cd__bag[open] { justify-items: stretch; align-items: end; }
   .cd__panel, .cd[data-side='start'] .cd__panel { width: 100%; height: auto; max-height: 88dvh; border: 0; border-top: 1px solid var(--line); border-radius: var(--radius-lg) var(--radius-lg) 0 0; }

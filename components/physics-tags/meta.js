@@ -8,7 +8,7 @@ export default {
   tags: ['physics', 'matter-js', 'pile', 'drag', 'toy', 'footer', 'pointer'],
   added: '2026-10-28',
   order: 30,
-  preview: { height: 720, hint: 'Drag a pill, or press the box to shake it', capture: { wait: 900 } },
+  preview: { height: 540, hint: 'Drag a pill, or press the box to shake it', capture: { wait: 900 } },
   actions: [{ id: 'drop', label: 'Drop again' }, { id: 'shake', label: 'Shake the box' }],
   useCases: [
     'A studio’s services or disciplines at the close of the page',

@@ -1,15 +1,9 @@
 .sf {
   --sf-stagger: 70ms;
   --sf-size: clamp(1.5rem, 0.8rem + 2vw, 2.55rem);
-  min-height: 100svh;
   overflow-x: clip;
 }
-.sf a { text-decoration: none; }
-.sf__bar { border-bottom: 1px solid var(--line); }
-.sf__bar nav a[aria-current='page'] { color: var(--ink); }
-
-.sf__page { display: grid; grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr); align-items: center; gap: clamp(32px, 5vw, 88px); min-height: calc(100svh - 64px); padding-block: clamp(28px, 4vw, 56px); }
-.sf__title { margin-bottom: clamp(16px, 2vw, 26px); color: var(--accent-ink); }
+.sf__main { width: min(100%, 21em); font-size: var(--sf-size); }
 
 /* The sentence: display size, the blanks on the baseline, growing with what is typed. */
 .sf__text { max-width: 30em; font-family: var(--font-serif); font-size: var(--sf-size); font-weight: 400; line-height: 1.62; letter-spacing: -0.01em; overflow-wrap: anywhere; text-wrap: pretty; }
@@ -68,18 +62,13 @@ label.sf__frag { cursor: text; }
 .sf__error { color: var(--danger); font-size: var(--text-sm); font-weight: 600; }
 .sf__error::before { content: '— ' / ''; }
 .sf__error[hidden] { display: none; }
-.sf__send { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; margin-top: clamp(22px, 3vw, 36px); }
-.sf__send .ac-small { max-width: 32ch; }
+.sf__send { margin-top: clamp(22px, 3vw, 36px); }
 .is-sent .sf__send, .is-sent .sf__errors { display: none; }
 .sf__sent { max-width: 34ch; margin-top: clamp(22px, 3vw, 36px); font-family: var(--font-serif); font-size: clamp(1.3rem, 0.95rem + 1vw, 1.85rem); line-height: 1.35; }
 .sf--sans .sf__sent { font-family: var(--font-sans); font-weight: 560; letter-spacing: -0.015em; }
 .sf__sent:focus { outline: none; }
 .sf__sent::before { content: ''; display: block; width: 36px; height: 2px; margin-bottom: 14px; background: var(--accent); }
 
-.sf__aside { display: grid; gap: 22px; align-content: center; }
-.sf__fig { display: grid; gap: 8px; margin: 0; }
-.sf__pic { --ratio: 4 / 3.2; border-radius: var(--radius-md); }
-.sf__next { display: grid; gap: 8px; padding-top: 18px; border-top: 1px solid var(--line); }
 
 /* Entrances. Rise: each piece lifts 0.45em as it fades in, staggered in reading order. Fade: opacity only. */
 @keyframes sf-rise { from { opacity: 0; transform: translateY(0.45em); } }
@@ -90,12 +79,8 @@ label.sf__frag { cursor: text; }
 .sf[data-entrance='fade'] :is(.sf__error:not([hidden]), .sf__sent:not([hidden])) { animation: sf-fade 400ms linear both; }
 
 /* Phone: the sentence stacks into phrase-over-field rows; the choices wrap as pills. */
-@media (max-width: 860px) {
-  .sf__page { grid-template-columns: minmax(0, 1fr); align-items: start; min-height: 0; }
-  .sf__aside { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); align-items: start; }
-}
 @media (max-width: 767px) {
-  .sf__bar nav { display: none; }
+  .sf__main { width: 100%; }
   .sf__text { font-size: 1.5rem; line-height: 1.35; }
   .sf__frag { display: block; margin-top: 20px; }
   .sf__frag:first-child { margin-top: 0; }
@@ -108,5 +93,4 @@ label.sf__frag { cursor: text; }
   .sf__choice + .sf__choice { margin-left: 0; }
   .sf__choice + .sf__choice::before { content: none; }
   [aria-invalid='true'] .sf__choice { border: 2px solid var(--danger); }
-  .sf__aside { grid-template-columns: minmax(0, 1fr); }
 }

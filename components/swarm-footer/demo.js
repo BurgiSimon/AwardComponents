@@ -1,4 +1,4 @@
-// Lit swarm footer — the close of a ceramics shop's page. Behind the footer's copy a swarm of small glazed pebbles
+// Lit swarm footer — a ceramics shop's footer, on its own. Behind the footer's copy a swarm of small glazed pebbles
 // drifts along a spiral path, lit by a point light that rides the pointer and shaded by a coarse voxel grid of
 // where the swarm is: every pebble splats one pixel into a 32 × 16 × 16 grid (a sliced 2D atlas, MAX blending),
 // one pass blurs and eases it, and the pebble shader reads AO one voxel along its normal and shadow one and two
@@ -26,7 +26,6 @@ const LIGHT_LIFT = 0.3; // the light floats this far in front of the swarm plane
 
 const SHOP = {
   Shop: ['Vases', 'Bowls', 'Cups', 'Lamps', 'Textiles'],
-  Studio: ['About', 'Visit the kiln', 'Stockists', 'Journal'],
   Help: ['Delivery', 'Returns', 'Care guide', 'Contact'],
 };
 
@@ -57,18 +56,10 @@ export default function mount(root, options, ctx) {
   let cfg = { ...options };
   root.className = 'sf';
   root.innerHTML = html`
-    <section class="sf__lead ac-wrap" aria-labelledby="sf-visit">
-      <p class="ac-label">Visit</p>
-      <h2 class="ac-h2" id="sf-visit">The kiln room is open on Saturdays, eleven to four.</h2>
-      <p class="ac-body">Sandviksveien 21, Bergen. Seconds are half price, and there is usually coffee.</p>
-    </section>
     <footer class="sf__foot" data-footer>
       <div class="sf__gl" data-gl aria-hidden="true"><canvas class="sf__still" data-still hidden></canvas></div>
       <div class="sf__grid ac-wrap">
-        <div class="sf__intro">
-          <p class="sf__head">The next kiln opens on 6&nbsp;November.</p>
-          <p class="ac-lede">Forty-two pieces, mostly vases and the last of the iron-glaze cups. Letters go out a day before the shop.</p>
-        </div>
+        <p class="sf__head">The next kiln opens on 6&nbsp;November.</p>
         <div class="sf__band" data-band aria-hidden="true"></div>
         <form class="sf__form" data-form novalidate>
           <label class="ac-label" for="sf-email">Kiln letters · one a month</label>
@@ -78,21 +69,12 @@ export default function mount(root, options, ctx) {
           </div>
           <p class="ac-small sf__msg" data-msg aria-live="polite"></p>
         </form>
-        <nav class="sf__cols" aria-label="Footer">
+        <nav class="sf__cols" aria-label="${shop.name}">
           ${Object.entries(SHOP).map(([title, links]) => html`<div><p class="ac-label">${title}</p><ul role="list">${links.map((l) => html`<li><a href="#top">${l}</a></li>`)}</ul></div>`)}
         </nav>
-        <div class="sf__base">
-          <span class="sf__mark">${shop.name}</span>
-          <span class="ac-small">${shop.tagline}</span>
-          <span class="ac-small">© 2026 Ostra Keramikk AS · Bergen</span>
-          <a class="ac-small sf__top" href="#top">Back to the top ↑</a>
-        </div>
       </div>
     </footer>`;
-  root.querySelectorAll('a[href="#top"]').forEach((a) => on(ctx, a, 'click', (e) => {
-    e.preventDefault();
-    if (a.classList.contains('sf__top')) window.scrollTo({ top: 0, behavior: ctx.motion === 'full' ? 'smooth' : 'auto' });
-  }));
+  root.querySelectorAll('a[href="#top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   // The newsletter: native validity, the page's own words.
   const form = root.querySelector('[data-form]');

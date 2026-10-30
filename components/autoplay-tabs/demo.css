@@ -1,27 +1,22 @@
-.at { --at-bar: var(--accent); min-height: 100svh; overflow-x: clip; }
-.at a { text-decoration: none; }
+.at { --at-bar: var(--accent); overflow-x: clip; }
 
-.at__bar { border-bottom: 1px solid var(--line); }
-.at__mark { width: 15px; height: 15px; background: linear-gradient(90deg, currentColor 0 34%, transparent 34% 66%, currentColor 66%); transform: skewX(-14deg); }
-
-/* Vertical: heading and tab list on the left, the open panel on the right. */
-.at__section {
+/* Vertical: the tab list (and its pause button) on the left, the open panel on the right. */
+.at__set {
+  width: min(100%, 1080px);
   display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-  grid-template-areas: 'head panels' 'tabs panels';
-  grid-template-rows: auto 1fr;
-  gap: clamp(28px, 3.6vw, 48px) clamp(32px, 5vw, 80px);
-  padding-block: clamp(28px, 4.4vw, 56px) clamp(48px, 7vw, 96px);
+  grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+  grid-template-areas: 'side panels';
+  align-items: center;
+  gap: clamp(28px, 3.6vw, 48px) clamp(32px, 5vw, 72px);
 }
-.at__head { grid-area: head; display: grid; gap: 14px; justify-items: start; align-content: start; }
-.at__head .ac-h1 { font-size: clamp(1.9rem, 1.1rem + 2vw, 2.9rem); max-width: 15ch; }
+.at__side { grid-area: side; display: grid; gap: 22px; justify-items: start; }
+.at__side .at__tabs { justify-self: stretch; }
 
 .at__pause {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   height: 36px;
-  margin-top: 6px;
   padding: 0 14px 0 12px;
   border: 1px solid var(--line-2);
   border-radius: var(--radius-pill);
@@ -39,7 +34,7 @@
 .at__pause[aria-pressed='true'] .at__i-pause { display: none; }
 .at__pause[aria-pressed='true'] .at__i-play { display: block; }
 
-.at__tabs { grid-area: tabs; display: grid; align-content: start; border-top: 1px solid var(--line); }
+.at__tabs { display: grid; align-content: start; border-top: 1px solid var(--line); }
 .at__tab {
   display: grid;
   grid-template-columns: 2.6em minmax(0, 1fr);
@@ -62,11 +57,11 @@
 .at[data-autoplay='off'] .at__tab[aria-selected='true'] .at__rule { background: var(--ink); }
 
 .at__panels { grid-area: panels; min-width: 0; }
-.at__panel { display: grid; gap: 22px; }
+.at__panel { display: grid; gap: 16px; }
 .at__panel[hidden] { display: none; }
 .at__panel:focus-visible { outline-offset: 6px; border-radius: var(--radius-lg); }
-.at__media { --ratio: 16 / 11; border-radius: var(--radius-lg); }
-.at__copy { display: grid; gap: 8px; max-width: 46ch; }
+.at__media { --ratio: 16 / 10.5; border-radius: var(--radius-lg); }
+.at__line { font-size: var(--text-md); font-weight: 600; letter-spacing: -0.01em; }
 
 /* The app screen floats on its own surface, never as text on the picture. */
 .at__screen { position: absolute; left: 6%; bottom: 8%; width: min(76%, 392px); }
@@ -121,30 +116,22 @@
 .at__chips { display: flex; flex-wrap: wrap; gap: 6px; padding-top: 4px; }
 .at__chips span { padding: 3px 9px; border: 1px solid var(--line-2); border-radius: var(--radius-pill); font-family: var(--font-mono); font-size: 11px; color: var(--ink-2); }
 
-.at__after { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; padding-block: clamp(48px, 7vw, 96px); border-top: 1px solid var(--line); }
-.at__after .ac-h2 { max-width: 22ch; }
-
-/* Horizontal: heading row, the tabs in a row with the clock on top, then the panel with copy beside it. */
-.at[data-orientation='horizontal'] .at__section { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'head' 'tabs' 'panels'; grid-template-rows: auto; }
-.at[data-orientation='horizontal'] .at__head { grid-template-columns: minmax(0, 1fr) auto; align-items: end; }
-.at[data-orientation='horizontal'] .at__head .ac-label { grid-column: 1 / -1; }
-.at[data-orientation='horizontal'] .at__head .ac-h1 { max-width: 24ch; }
+/* Horizontal: the tabs in a row with the clock on top and the pause button at the end, then the panel. */
+.at[data-orientation='horizontal'] .at__set { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'side' 'panels'; width: min(100%, 920px); gap: 32px; }
+.at[data-orientation='horizontal'] .at__side { grid-template-columns: minmax(0, 1fr) auto; align-items: center; justify-items: stretch; gap: 24px; }
 .at[data-orientation='horizontal'] .at__tabs { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; border-top: 0; }
 .at[data-orientation='horizontal'] .at__tab { padding: 0 0 4px; grid-template-columns: 2.2em minmax(0, 1fr); }
 .at[data-orientation='horizontal'] .at__name { font-size: clamp(1rem, 0.7rem + 0.9vw, 1.45rem); }
 .at[data-orientation='horizontal'] .at__rule { order: -1; margin: 0 0 14px; height: 2px; }
-.at[data-orientation='horizontal'] .at__panel { grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); align-items: center; gap: clamp(24px, 4vw, 64px); }
-.at[data-orientation='horizontal'] .at__media { --ratio: 16 / 9; }
+.at[data-orientation='horizontal'] .at__media { --ratio: 21 / 8; }
 
 @media (max-width: 760px) {
-  .at__bar nav { display: none; }
-  .at__section, .at[data-orientation='horizontal'] .at__section { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'head' 'tabs' 'panels'; grid-template-rows: auto; gap: 24px; }
-  .at[data-orientation='horizontal'] .at__head { grid-template-columns: 1fr; align-items: start; }
+  .at__set, .at[data-orientation='horizontal'] .at__set { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'side' 'panels'; gap: 24px; }
+  .at[data-orientation='horizontal'] .at__side { grid-template-columns: minmax(0, 1fr); justify-items: start; }
   .at__tabs, .at[data-orientation='horizontal'] .at__tabs { grid-template-columns: 1fr 1fr; gap: 6px 16px; border-top: 0; }
   .at__tab, .at[data-orientation='horizontal'] .at__tab { padding: 0 0 10px; grid-template-columns: 2.2em minmax(0, 1fr); }
   .at__rule, .at[data-orientation='horizontal'] .at__rule { order: -1; margin: 0 0 12px; height: 2px; }
   .at__name { font-size: 1.05rem; }
-  .at__panel, .at[data-orientation='horizontal'] .at__panel { grid-template-columns: minmax(0, 1fr); gap: 18px; }
   .at__media, .at[data-orientation='horizontal'] .at__media { --ratio: 4 / 3.4; }
   .at__screen { left: 5%; right: 5%; bottom: 6%; width: auto; }
   .at__ui { padding: 12px 14px 14px; gap: 10px; }

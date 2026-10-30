@@ -18,12 +18,6 @@ export default function mount(root, options, ctx) {
   const [inset] = photos({ tags: ['texture'], count: 1, seed: 'ef-salt' });
   root.className = 'ef';
   root.innerHTML = html`
-    <header class="ef-bar">
-      <a class="ef-bar__mark" href="#ef-top" aria-label="${magazine.name}, front page">${magazine.name}</a>
-      <nav aria-label="Sections"><a href="#ef-top" aria-current="page">Places</a><a href="#ef-top">Architecture</a><a href="#ef-top">Craft</a><a href="#ef-top">Culture</a></nav>
-      <p class="ef-bar__issue ac-label">${magazine.issue}</p>
-    </header>
-
     <main id="ef-top">
       <article class="ef-art ac-wrap" aria-labelledby="ef-title">
         <div class="ef-col">
@@ -63,7 +57,7 @@ export default function mount(root, options, ctx) {
         </div>
       </article>
     </main>`;
-  root.querySelectorAll('a[href="#ef-top"]:not(.ef-bar__mark)').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
+  root.querySelectorAll('a[href="#ef-top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   let cfg = { ...options };
   const apply = () => {

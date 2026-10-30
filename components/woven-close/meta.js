@@ -12,14 +12,14 @@ export default {
   added: '2026-10-28',
   labels: ['new'], // added on the launch day after the launch set; expires like any New label
   order: 60,
-  preview: { height: 760, scroll: true, hint: 'Scroll to the close', capture: { scroll: 1, wait: 2600 } },
+  preview: { height: 640, capture: { wait: 2600 } },
   useCases: [
     'The close of a museum, planetarium or festival site, where the last screen carries tonight’s programme and one ticket action',
     'A footer that turns mixed footage (drone, archive, product renders) into one texture in the brand’s own ink',
     'A campaign end screen where a film shot on black is woven beside the call to action',
   ],
   notes: [
-    'The canvas is aria-hidden and a visible caption names the footage; the show list, visit facts, ticket link and credits are DOM beside the weave, never under it.',
+    'The canvas is aria-hidden and a visible caption names the footage; the show list and the ticket link are DOM beside the weave, never under it.',
     'Pause footage is a real button whose label stays put while aria-pressed carries the state; the clips also stop whenever the close leaves the screen.',
     'Under reduced motion and static the weave is one developed still from the clips’ posters: no clock, no video, no pause button.',
     'Without WebGL, or after a lost context, the posters sit in the same slots as a striped, masked still and the copy does not move.',

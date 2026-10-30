@@ -2,32 +2,15 @@
   --ba-hi: var(--surface);   /* the divider and grip read light on any picture, in both themes */
   --ba-lo: var(--ink);
   --ba-glide: 200ms;
-  min-height: 100svh;
   overflow-x: clip;
 }
 :root[data-theme='dark'] .ba { --ba-hi: var(--ink); --ba-lo: var(--bg); }
-.ba a { text-decoration: none; }
-
-.ba__bar { border-bottom: 1px solid var(--line); }
-.ba__brand { font-family: var(--font-serif); font-style: italic; font-weight: 600; font-stretch: normal; font-size: 1.35rem; letter-spacing: -0.01em; }
-.ba__bar nav a[aria-current='page'] { color: var(--ink); }
-
-.ba__page {
-  display: grid;
-  grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
-  align-items: center;
-  gap: clamp(28px, 4.4vw, 72px);
-  min-height: calc(100svh - 64px);
-  padding-block: clamp(20px, 3vw, 36px) clamp(32px, 5vw, 64px);
-}
-.ba__fig { display: grid; gap: 12px; margin: 0; }
-
 /* The frame: two aligned copies; the graded one is clipped at --split. */
 .ba__compare {
   --split: 50%;
   position: relative;
-  aspect-ratio: 4 / 3;
-  max-height: calc(100svh - 64px - 96px);
+  width: min(100%, 880px, calc((100svh - 150px) * 1.5));
+  aspect-ratio: 3 / 2;
   overflow: hidden;
   border-radius: var(--radius-lg);
   background: var(--bg-2);
@@ -136,32 +119,7 @@
 .ba[data-orientation='vertical'] .ba__tag--b { top: auto; bottom: 14px; left: 14px; right: auto; }
 .ba[data-orientation='vertical'] .ba__hint { left: auto; right: 16px; bottom: auto; top: var(--split); translate: 0 -50%; margin-top: 34px; }
 
-.ba__fig figcaption { padding-inline: 2px; }
-
-.ba__notes { display: grid; gap: 16px; align-content: center; }
-.ba__title { font-family: var(--font-serif); font-size: clamp(2.2rem, 1.3rem + 2.4vw, 3.6rem); font-weight: 500; line-height: 1; letter-spacing: -0.015em; text-wrap: balance; }
-.ba__dl { display: grid; grid-template-columns: minmax(7.5rem, auto) minmax(0, 1fr); margin: 6px 0 0; border-top: 1px solid var(--ink); font-size: var(--text-sm); }
-.ba__dl dt, .ba__dl dd { margin: 0; padding-block: 9px; border-bottom: 1px solid var(--line); }
-.ba__dl dt { color: var(--muted); padding-right: 16px; }
-.ba__keys { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
-.ba__keys .ac-kbd { margin-right: 2px; }
-
-/* Narrower: a wide frame first, then the notes in two columns under it. */
-@media (max-width: 1000px) {
-  .ba__page { grid-template-columns: minmax(0, 1fr); min-height: 0; align-items: start; gap: 28px; }
-  .ba__compare { aspect-ratio: 16 / 9; max-height: none; }
-  .ba__notes { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); column-gap: 40px; align-items: start; }
-  .ba__notes > :not(.ba__dl, .ba__keys) { grid-column: 1; }
-  .ba__dl { grid-column: 2; grid-row: 1 / span 4; margin: 0; }
-  .ba__keys { grid-column: 1; }
-}
+/* A phone: a portrait frame. */
 @media (max-width: 720px) {
-  .ba__bar nav { display: none; }
-  .ba__compare { aspect-ratio: 4 / 5; }
-  .ba__notes { grid-template-columns: minmax(0, 1fr); }
-  .ba__dl { grid-column: 1; grid-row: auto; margin-top: 6px; }
-  .ba__keys { display: none; }
-}
-@media (pointer: coarse) {
-  .ba__keys { display: none; }
+  .ba__compare { width: min(100%, calc((100svh - 150px) * 0.8)); aspect-ratio: 4 / 5; }
 }

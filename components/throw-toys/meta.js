@@ -9,7 +9,7 @@ export default {
   tags: ['pointer', 'drag', 'inertia', 'draggable', 'css-3d', 'toy', 'keyboard', 'gsap'],
   added: '2026-10-28',
   order: 40,
-  preview: { height: 660, hint: 'Grab a block and throw it into the tray', capture: { action: 'throw', wait: 1600 } },
+  preview: { height: 620, hint: 'Grab a block and throw it into the tray', capture: { action: 'throw', wait: 1600 } },
   useCases: [
     'An enquiry or “start a project” close where choosing is part of the fun',
     'A playful about or 404 block that rewards poking around',

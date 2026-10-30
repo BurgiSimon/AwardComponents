@@ -1,16 +1,8 @@
 /* Woven footage close. The close keeps its own ground and ink tokens; the canvas reads them, so the weave is always
    in the section's colours. Copy never sits on the weave: the picture has its own column and band. */
 .wc { overflow-x: clip; background: var(--bg); }
-.wc a { text-decoration: none; }
 
-/* The end of the page above the close: the current exhibition. */
-.wc__lead { min-height: 78svh; display: grid; align-content: center; gap: 18px; padding-block: clamp(48px, 10vh, 112px); }
-.wc__lead-title { font-size: var(--text-display); font-weight: 780; font-stretch: var(--wider); line-height: 0.9; letter-spacing: -0.045em; }
-.wc__lead .ac-lede { max-width: 50ch; }
-.wc__lead-foot { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 28px; margin-top: 10px; padding-top: 16px; border-top: 1px solid var(--line-2); }
-.wc__down { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-weight: 600; }
-
-/* The close. */
+/* The close: the shows beside the Earth, the horizon band under them, the plate line in the foot. */
 .wc__close {
   --wc-ground: var(--bg-2);
   --wc-ink: var(--ink);
@@ -18,8 +10,8 @@
   display: flex;
   flex-direction: column;
   min-height: 100svh;
+  padding-bottom: clamp(44px, 8vh, 64px);
   background: var(--wc-ground);
-  border-top: 1px solid var(--line);
   overflow: hidden;
 }
 .wc__gl { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
@@ -29,19 +21,15 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr);
   gap: 28px clamp(28px, 5vw, 80px);
-  padding-top: clamp(28px, 4vh, 56px);
+  padding-top: clamp(32px, 6vh, 64px);
   flex: 1;
 }
-.wc__copy { display: flex; flex-direction: column; gap: 16px; }
-.wc__title { max-width: 13ch; font-size: clamp(2rem, 1.15rem + 2.5vw, 3.3rem); font-weight: 740; font-stretch: var(--wide); line-height: 0.98; letter-spacing: -0.035em; text-wrap: balance; }
+.wc__copy { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 24px; }
 
-.wc__shows { display: grid; margin-top: 6px; border-bottom: 1px solid var(--line-2); }
-.wc__shows li { display: grid; grid-template-columns: 4.25rem minmax(0, 1fr) auto; align-items: baseline; gap: 2px 14px; padding-block: 10px; border-top: 1px solid var(--line-2); }
+.wc__shows { display: grid; align-self: stretch; border-bottom: 1px solid var(--line-2); }
+.wc__shows li { display: grid; grid-template-columns: 4.25rem minmax(0, 1fr); align-items: baseline; gap: 2px 14px; padding-block: 12px; border-top: 1px solid var(--line-2); }
 .wc__time { font-family: var(--font-mono); font-size: var(--text-sm); font-weight: 500; font-variant-numeric: tabular-nums; color: var(--ink); }
 .wc__show { font-size: var(--text-lg); font-weight: 620; letter-spacing: -0.01em; }
-.wc__meta { font-size: var(--text-sm); color: var(--muted); white-space: nowrap; }
-
-.wc__act { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; margin-top: 8px; }
 
 /* The picture's slot: the Earth and the stars are woven into this box; the caption sits under it. */
 .wc__stage { display: flex; flex-direction: column; min-height: clamp(320px, 50vh, 560px); }
@@ -57,15 +45,6 @@
 .wc__band { position: relative; height: clamp(96px, 17vh, 168px); margin-top: clamp(16px, 2.6vh, 32px); }
 .wc--no-band .wc__band { display: none; }
 
-.wc__base { position: relative; display: grid; gap: 10px; padding-block: 18px 20px; border-top: 1px solid var(--line-2); }
-.wc__facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px 24px; margin: 0; }
-.wc__facts dd { margin-top: 4px; font-size: var(--text-sm); color: var(--ink); }
-.wc__facts .ac-link { display: inline-flex; align-items: center; min-height: 24px; }
-.wc__colophon { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 24px; font-size: var(--text-sm); color: var(--muted); }
-.wc__mark { margin-right: 6px; font-weight: 780; font-stretch: var(--wider); letter-spacing: -0.03em; font-size: var(--text-lg); color: var(--ink); }
-.wc__top { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: var(--ink-2); font-weight: 600; }
-.wc__top:hover { color: var(--ink); }
-.wc__credit { max-width: 110ch; font-size: var(--text-xs); line-height: 1.5; color: var(--muted); }
 
 /* Without WebGL: the posters in the same slots, masked to the subject and striped like the weave. Multiply prints them
    into a light ground; screen lifts them out of a dark one. */
@@ -94,15 +73,10 @@
 /* On a light ground the orbit's blue-black sky would print as heavy stripes: inverted, the sky becomes paper. */
 :root:not([data-theme='dark']) .wc__still--orbit { filter: grayscale(1) invert(1) contrast(1.2); }
 
-@media (max-width: 900px) {
-  .wc__facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
 @media (max-width: 720px) {
   .wc__main { grid-template-columns: minmax(0, 1fr); }
   .wc__stage { min-height: 0; }
   .wc__pic { flex: none; aspect-ratio: 1; min-height: 0; }
   .wc__show { font-size: var(--text-md); }
   .wc__shows li { grid-template-columns: 3.6rem minmax(0, 1fr); }
-  .wc__meta { grid-column: 2; }
-  .wc__colophon { flex-direction: column; }
 }

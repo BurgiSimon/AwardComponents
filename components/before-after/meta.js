@@ -8,7 +8,7 @@ export default {
   tags: ['compare', 'before-after', 'slider', 'drag', 'hold', 'clip-path', 'pointer', 'keyboard'],
   added: '2026-10-28',
   order: 40,
-  preview: { height: 700, hint: 'Drag the divider, or hold the picture', capture: { wait: 900 } },
+  preview: { height: 520, hint: 'Drag the divider, or hold the picture', capture: { wait: 900 } },
   actions: [{ id: 'peek', label: 'Peek at the other side' }],
   useCases: [
     'A retoucher’s or colourist’s portfolio: the scan against the grade',

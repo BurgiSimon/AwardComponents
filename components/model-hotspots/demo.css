@@ -1,19 +1,20 @@
-.mh { --mh-accent: var(--accent); min-height: 100svh; overflow-x: clip; }
-.mh a { text-decoration: none; }
-.mh__bar { border-bottom: 1px solid var(--line); }
-.mh__bar nav a[aria-current='page'] { color: var(--ink); }
+.mh { --mh-accent: var(--accent); --mh-pad: clamp(48px, 9vh, 80px); overflow-x: clip; }
 
+/* The model and its story card fill the stage between the padding; the plate line sits in the foot. */
+.mh__wrap { padding-block: var(--mh-pad); }
 .mh__page {
   display: grid;
   grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr);
+  align-items: center;
   gap: clamp(20px, 3.4vw, 56px);
-  height: max(560px, calc(100svh - 64px));
-  padding-block: clamp(16px, 2.4vw, 28px);
+  width: min(100%, 1280px);
+  height: max(400px, calc(100svh - 2 * var(--mh-pad)));
 }
 
 /* The stage: the canvas, the pinned buttons and a few tools; focusable for the keyboard orbit. */
 .mh__stage {
   position: relative;
+  align-self: stretch;
   min-height: 0;
   overflow: clip;
   border-radius: var(--radius-lg);
@@ -98,14 +99,9 @@
 .mh__toast .ac-kbd { color: var(--bg); border-color: color-mix(in oklab, var(--bg) 40%, transparent); }
 .mh__toast.is-on { opacity: 1; }
 
-/* The panel: the project, the chosen zone (spoken politely when it changes) and three facts. */
-.mh__panel { display: grid; align-content: center; gap: 20px; min-width: 0; }
-.mh__detail { display: grid; gap: 8px; min-height: 196px; align-content: start; padding: 20px 22px; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); }
+/* The story card: the chosen zone, spoken politely when it changes. */
+.mh__detail { display: grid; gap: 8px; min-width: 0; min-height: 196px; align-content: start; padding: 20px 22px; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); }
 .mh__figure { font-size: clamp(2.2rem, 1.5rem + 2vw, 3.4rem); font-weight: 720; font-stretch: var(--wide); letter-spacing: -0.035em; line-height: 1; font-variant-numeric: tabular-nums; }
-.mh__facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 0; padding-top: 16px; border-top: 1px solid var(--line); }
-.mh__facts div { display: grid; gap: 4px; }
-.mh__facts dd { margin: 0; font-size: var(--text-lg); font-weight: 650; letter-spacing: -0.01em; }
-.mh__hint { max-width: 44ch; }
 
 /* Static tier or no WebGL: the drawn plan with the buttons as a plain list. */
 .mh[data-mode='plan'] .mh__stage { display: grid; grid-template-rows: minmax(0, 1fr) auto; }
@@ -124,10 +120,8 @@
 .mh__p-tree { fill: var(--moss); opacity: 0.75; }
 
 @media (max-width: 760px) {
-  .mh__bar nav { display: none; }
-  .mh__page { grid-template-columns: minmax(0, 1fr); height: auto; gap: 24px; }
+  .mh__page { grid-template-columns: minmax(0, 1fr); height: auto; gap: 20px; }
   .mh__stage { height: min(60svh, 480px); min-height: 360px; }
   .mh[data-mode='plan'] .mh__stage { height: auto; }
   .mh__detail { min-height: 0; }
-  .mh__hint { display: none; }
 }

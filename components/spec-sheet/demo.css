@@ -1,31 +1,20 @@
-.ss { --ss-gap: clamp(28px, 4.4vw, 72px); min-height: 100svh; overflow-x: clip; }
-.ss a { text-decoration: none; }
+.ss { overflow-x: clip; }
 .ss abbr[title] { text-decoration: none; }
 
-.ss__bar { border-bottom: 1px solid var(--line); }
-.ss__bar nav a[aria-current='page'] { color: var(--ink); }
-.ss__bag { display: inline-flex; align-items: center; gap: 8px; font-size: var(--text-sm); font-weight: 600; }
-.ss__count { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: var(--radius-pill); background: var(--ink); color: var(--bg); font-family: var(--font-mono); font-size: 11px; }
+/* The drawing and its size switch beside the sheet. */
+.ss__spec { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr); align-items: center; gap: clamp(28px, 4.4vw, 64px); width: min(100%, 920px); }
+.ss__side { display: grid; justify-items: center; gap: 16px; }
 
-.ss__page { padding-block: clamp(16px, 2.6vw, 32px) clamp(48px, 8vw, 96px); }
-
-/* Two columns: the picture holds the first screen while the facts scroll beside it. */
-.ss__spec { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); gap: var(--ss-gap); align-items: start; }
-.ss__fig { position: sticky; top: clamp(16px, 2.6vw, 32px); margin: 0; height: clamp(420px, calc(100svh - 64px - 2 * clamp(16px, 2.6vw, 32px)), 860px); }
-.ss__photo { --ratio: auto; height: 100%; border-radius: var(--radius-lg); }
-
-/* The drawing sits on its own card, never on the picture itself. */
+/* The drawing sits on its own card. */
 .ss__draw {
-  position: absolute;
-  left: 16px;
-  bottom: 16px;
-  width: min(212px, calc(100% - 32px));
+  width: min(100%, 340px);
   display: grid;
-  gap: 4px;
-  padding: 10px 12px 12px;
-  border-radius: var(--radius-md);
+  gap: 6px;
+  margin: 0;
+  padding: 14px 18px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
   background: var(--surface);
-  box-shadow: var(--shadow-2);
 }
 .ss__draw[hidden] { display: none; }
 .ss__draw svg { width: 100%; height: auto; overflow: visible; }
@@ -43,17 +32,6 @@
     y var(--dur-l) var(--ease-out), width var(--dur-l) var(--ease-out), height var(--dur-l) var(--ease-out), transform var(--dur-l) var(--ease-out);
 }
 :root[data-motion='reduced'] .ss__draw :is(path, rect, text) { transition: none; }
-
-.ss__facts { display: grid; gap: clamp(22px, 3vw, 34px); padding-top: clamp(4px, 1.4vw, 20px); }
-.ss__lead { display: grid; gap: 22px; }
-.ss__intro { display: grid; gap: 12px; }
-.ss__intro .ac-body { max-width: 42ch; }
-
-.ss__buy { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; }
-.ss__add { flex: 1 1 auto; max-width: 300px; }
-.ss__dot { opacity: 0.5; }
-.ss__status { flex-basis: 100%; min-height: 1.5em; color: var(--ink-2); }
-.ss__status:empty { display: none; }
 
 /* Segmented radio groups: native inputs over the pills, so arrows, Space and the screen reader work as usual. */
 .ss__seg { display: inline-flex; gap: 2px; margin: 0; padding: 3px; border: 1px solid var(--line-2); border-radius: var(--radius-pill); background: var(--surface); }
@@ -73,34 +51,9 @@
 .ss__dl dd { color: var(--ink); font-variant-numeric: tabular-nums; }
 .ss__val { display: inline-block; }
 
-.ss__more details { border-bottom: 1px solid var(--line); }
-.ss__more summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 52px; font-size: var(--text-sm); font-weight: 600; cursor: pointer; list-style: none; }
-.ss__more summary::-webkit-details-marker { display: none; }
-.ss__more summary:hover .ss__plus { color: var(--ink); }
-.ss__more summary:focus-visible { outline-offset: -2px; }
-.ss__plus { position: relative; width: 12px; height: 12px; color: var(--muted); }
-.ss__plus::before, .ss__plus::after { content: ''; position: absolute; left: 0; top: 50%; width: 12px; height: 1.5px; margin-top: -0.75px; background: currentColor; transition: transform var(--dur-m) var(--ease-out); }
-.ss__plus::after { transform: rotate(90deg); }
-.ss__more details[open] .ss__plus::after { transform: rotate(0deg); }
-.ss__more details p { padding-bottom: 18px; font-size: var(--text-sm); max-width: 54ch; }
-
-/* Stacked: a wide band of picture, then the lead and the sheet side by side. */
-.ss[data-layout='stacked'] .ss__spec { grid-template-columns: 1fr; gap: clamp(24px, 3vw, 40px); }
-.ss[data-layout='stacked'] .ss__fig { position: relative; top: 0; height: clamp(300px, 54svh, 560px); }
-.ss[data-layout='stacked'] .ss__facts { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr); gap: var(--ss-gap); align-items: start; padding-top: 0; }
-.ss[data-layout='stacked'] .ss__lead { position: sticky; top: 24px; }
-.ss[data-layout='stacked'] .ss__draw { left: auto; right: 16px; }
-
+/* A phone: one column, the drawing first. */
 @media (max-width: 760px) {
-  .ss__bar nav { display: none; }
-  .ss__spec, .ss[data-layout='stacked'] .ss__spec { grid-template-columns: 1fr; gap: 24px; }
-  .ss__fig, .ss[data-layout='stacked'] .ss__fig { position: relative; top: 0; height: auto; }
-  .ss__photo, .ss[data-layout='stacked'] .ss__photo { --ratio: 4 / 5; height: auto; }
-  .ss[data-layout='stacked'] .ss__photo { --ratio: 4 / 3; }
-  .ss[data-layout='stacked'] .ss__facts { grid-template-columns: 1fr; }
-  .ss[data-layout='stacked'] .ss__lead { position: static; }
-  .ss__draw { width: 168px; left: 12px; bottom: 12px; padding: 8px 10px 10px; }
-  .ss[data-layout='stacked'] .ss__draw { right: 12px; }
-  .ss__add { max-width: none; }
+  .ss__spec { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .ss__draw { width: min(100%, 280px); }
   .ss__dl { grid-template-columns: minmax(7.5rem, 0.8fr) minmax(0, 1.6fr); }
 }

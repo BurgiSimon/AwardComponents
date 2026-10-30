@@ -1,29 +1,20 @@
-// Before / after — Fieldnote's photo desk: the Issue 14 cover's raw scan against its final grade. Two aligned
-// copies of one photograph; the graded copy is clipped with clip-path: inset() at --split. The handle is a real
-// slider (arrows 5 %, Shift 20 %, Home/End, Space peeks); a drag captures the pointer and always lets go; holding
-// anywhere else on the picture peeks at the other side in full until release. The before side is CSS filters.
-// Reduced/static: the divider jumps straight to its value instead of gliding.
+// Before / after — Fieldnote's photo desk: the Issue 14 cover's raw scan against its final grade, on its own. Two
+// aligned copies of one photograph; the graded copy is clipped with clip-path: inset() at --split. The handle is a
+// real slider (arrows 5 %, Shift 20 %, Home/End, Space peeks); a drag captures the pointer and always lets go;
+// holding anywhere else on the picture peeks at the other side in full until release. The before side is CSS
+// filters. Reduced/static: the divider jumps straight to its value instead of gliding.
 import './demo.css';
-import '../../src/demo-kit/serif.css';
 import { on, later, html, raw, photo, photos, imageHTML, content } from '../../src/demo-kit/index.js';
 
-// What the before side is called, and the notes on the grade that turned it into the cover.
+// What the before side is called.
 const BEFORE = {
-  raw: { label: 'Raw scan', short: 'raw scan' },
-  contact: { label: 'Contact print', short: 'contact print' },
-  faded: { label: 'Faded print', short: 'faded print' },
+  raw: { label: 'Raw scan' },
+  contact: { label: 'Contact print' },
+  faded: { label: 'Faded print' },
 };
-const NOTES = [
-  ['Film', 'Portra 400, scanned flat at 4,000 dpi'],
-  ['White balance', '5,600 K → 5,150 K'],
-  ['Exposure', '+0.3 EV, shadows lifted'],
-  ['Contrast', '+18, a soft S curve'],
-  ['Colour', 'Sky held, greens pulled toward moss'],
-  ['Retouch', 'Two dust spots, nothing moved'],
-];
 
 export default function mount(root, options, ctx) {
-  const { magazine, people } = content;
+  const { magazine } = content;
   let cfg = { ...options };
   // A weather picture from the shared set (the overcast sea), else any landscape; the drawn stand-in last.
   const chosen = photo('land-overcast-sea');
@@ -32,41 +23,25 @@ export default function mount(root, options, ctx) {
 
   root.className = 'ba';
   root.innerHTML = html`
-    <header class="ac-bar ba__bar">
-      <a class="ac-brand ba__brand" href="#top">${magazine.name}</a>
-      <nav aria-label="Magazine"><a href="#top">Issues</a><a href="#top">Stories</a><a href="#top" aria-current="page">Photo desk</a><a href="#top">Shop</a></nav>
-    </header>
-    <main class="ba__page ac-wrap">
-      <figure class="ba__fig">
-        <div class="ba__compare" data-compare>
-          <div class="ba__layer ba__before" data-before>${raw(imageHTML(pic, { sizes: '(min-width: 900px) 62vw, 100vw', eager: true, alt: alt && `${alt} (before the grade)` }))}</div>
-          <div class="ba__layer ba__after" data-after>${raw(imageHTML(pic, { sizes: '(min-width: 900px) 62vw, 100vw', eager: true, alt: alt && `${alt} (final grade)` }))}</div>
-          <span class="ba__tag ba__tag--a" aria-hidden="true" data-tag-a></span>
-          <span class="ba__tag ba__tag--b" aria-hidden="true">Final grade</span>
-          <div class="ba__handle" role="slider" tabindex="0" aria-label="Grade divider" aria-valuemin="0" aria-valuemax="100" data-handle>
-            <span class="ba__grip" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M9.5 7 5 12l4.5 5M14.5 7l4.5 5-4.5 5"/></svg>
-            </span>
-          </div>
-          <p class="ba__hint ac-label" aria-hidden="true"><span>Drag</span> or hold</p>
+    <section class="ac-stage ba__stage" aria-label="${magazine.name} photo desk">
+      <div class="ba__compare" data-compare>
+        <div class="ba__layer ba__before" data-before>${raw(imageHTML(pic, { sizes: '(min-width: 900px) 70vw, 100vw', eager: true, alt: alt && `${alt} (before the grade)` }))}</div>
+        <div class="ba__layer ba__after" data-after>${raw(imageHTML(pic, { sizes: '(min-width: 900px) 70vw, 100vw', eager: true, alt: alt && `${alt} (final grade)` }))}</div>
+        <span class="ba__tag ba__tag--a" aria-hidden="true" data-tag-a></span>
+        <span class="ba__tag ba__tag--b" aria-hidden="true">Final grade</span>
+        <div class="ba__handle" role="slider" tabindex="0" aria-label="Grade divider" aria-valuemin="0" aria-valuemax="100" data-handle>
+          <span class="ba__grip" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M9.5 7 5 12l4.5 5M14.5 7l4.5 5-4.5 5"/></svg>
+          </span>
         </div>
-        <figcaption class="ac-small">Cover, ${magazine.issue}. Grade signed off by ${people[3].name}, editor.</figcaption>
-      </figure>
-
-      <section class="ba__notes" aria-labelledby="ba-title">
-        <p class="ac-label">Photo desk · ${magazine.issue}</p>
-        <h1 class="ba__title" id="ba-title">How the cover was graded</h1>
-        <p class="ac-body">The scan that came back from the lab was flat on purpose. Six small moves later it was the cover: compare them on the picture itself.</p>
-        <dl class="ba__dl">${NOTES.map(([k, v]) => html`<dt>${k}</dt><dd>${v}</dd>`)}</dl>
-        <p class="ba__keys ac-small"><span class="ac-kbd">←</span><span class="ac-kbd">→</span> move the divider · hold <span class="ac-kbd">Space</span> to see the other side</p>
-      </section>
-    </main>`;
-  root.querySelectorAll('a[href="#top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
+        <p class="ba__hint ac-label" aria-hidden="true"><span>Drag</span> or hold</p>
+      </div>
+      <p class="ac-stage__note"><span>${magazine.name} · photo desk</span></p>
+    </section>`;
 
   const box = root.querySelector('[data-compare]');
   const handle = root.querySelector('[data-handle]');
   const tagA = root.querySelector('[data-tag-a]');
-  const keys = root.querySelector('.ba__keys');
   const state = { split: cfg.start, dragging: false, holding: false, rest: cfg.start };
   const vertical = () => cfg.orientation === 'vertical';
 
@@ -130,9 +105,6 @@ export default function mount(root, options, ctx) {
     root.dataset.before = cfg.before;
     handle.setAttribute('aria-orientation', cfg.orientation);
     tagA.textContent = BEFORE[cfg.before].label;
-    keys.innerHTML = vertical()
-      ? '<span class="ac-kbd">↑</span><span class="ac-kbd">↓</span> move the divider · hold <span class="ac-kbd">Space</span> to see the other side'
-      : '<span class="ac-kbd">←</span><span class="ac-kbd">→</span> move the divider · hold <span class="ac-kbd">Space</span> to see the other side';
   };
   apply();
   setSplit(state.split);

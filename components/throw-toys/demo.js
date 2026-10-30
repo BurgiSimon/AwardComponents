@@ -1,4 +1,4 @@
-// Throw toys — Halden's "start a project" close, played as a toy. Four extruded CSS-3D blocks, one per discipline,
+// Throw toys — Halden's enquiry as a toy: the tray of blocks and the brief it fills. Four extruded CSS-3D blocks, one per discipline,
 // sit on a shelf above a tray tipped back in perspective. Grab one and let go mid-swing: Draggable + InertiaPlugin
 // keep the hand's velocity, the inner body tilts into the travel (0.018° per px/s, capped) and a landing inside the
 // tray snaps it to its slot, decided once on the clamped end point. Each discipline also has a toggle button that
@@ -32,44 +32,34 @@ export default function mount(root, options, ctx) {
 
   root.className = 'tt';
   root.innerHTML = html`
-    <header class="ac-bar tt__bar">
-      <a class="ac-brand" href="#top">${studio.name}</a>
-      <nav aria-label="Studio">${studio.nav.map((n) => html`<a href="#top">${n}</a>`)}</nav>
-    </header>
-    <section class="tt__play ac-wrap" aria-labelledby="tt-title">
-      <div class="tt__copy">
-        <p class="ac-label">New project · ${studio.city}</p>
-        <h1 class="ac-h1" id="tt-title">What are we building?</h1>
-        <p class="ac-lede">Throw what you need into the brief, or press the names below. We answer every brief within two working days.</p>
-      </div>
-      <div class="tt__stage" data-stage>
-        <ul class="tt__shelf" role="list" aria-label="Shelf">
-          ${blocks.map((b, i) => html`<li class="tt__spot"><div class="tt__obj" data-obj="${i}" style="--w:${b.w};--h:${b.h};--d:${b.d};--m:var(--${b.m})" role="img" aria-label="${b.name} block">
-            <div class="tt__body" data-body aria-hidden="true">${FACES.map((f) => (f === 'front'
-              ? html`<span class="tt__face tt__f-front"><b>${b.key}</b><small>${String(i + 1).padStart(2, '0')}</small></span>`
-              : html`<span class="tt__face tt__f-${f}"></span>`))}</div>
-          </div></li>`)}
-        </ul>
-        <div class="tt__tray" data-catcher aria-hidden="true">
-          <div class="tt__floor"></div>
-          <ol class="tt__slots">${blocks.map((b) => html`<li class="tt__slot" data-slot><span>${b.key}</span></li>`)}</ol>
-          <p class="tt__tray-label ac-label">Your brief</p>
+    <section class="ac-stage tt__wrap" aria-label="Start a project">
+      <div class="tt__play">
+        <div class="tt__stage" data-stage>
+          <ul class="tt__shelf" role="list" aria-label="Shelf">
+            ${blocks.map((b, i) => html`<li class="tt__spot"><div class="tt__obj" data-obj="${i}" style="--w:${b.w};--h:${b.h};--d:${b.d};--m:var(--${b.m})" role="img" aria-label="${b.name} block">
+              <div class="tt__body" data-body aria-hidden="true">${FACES.map((f) => (f === 'front'
+                ? html`<span class="tt__face tt__f-front"><b>${b.key}</b><small>${String(i + 1).padStart(2, '0')}</small></span>`
+                : html`<span class="tt__face tt__f-${f}"></span>`))}</div>
+            </div></li>`)}
+          </ul>
+          <div class="tt__tray" data-catcher aria-hidden="true">
+            <div class="tt__floor"></div>
+            <ol class="tt__slots">${blocks.map((b) => html`<li class="tt__slot" data-slot><span>${b.key}</span></li>`)}</ol>
+            <p class="tt__tray-label ac-label">Your brief</p>
+          </div>
+          <p class="tt__hint ac-label" data-hint>${finePointer() ? 'Drag a block, let go mid-swing' : 'Drag a block'}</p>
+          <button type="button" class="ac-btn ac-btn--ghost ac-btn--sm tt__reset" data-reset>Back on the shelf</button>
         </div>
-        <p class="tt__hint ac-label" data-hint>${finePointer() ? 'Drag a block, let go mid-swing' : 'Drag a block'}</p>
-        <button type="button" class="ac-btn ac-btn--ghost ac-btn--sm tt__reset" data-reset>Back on the shelf</button>
-      </div>
-      <div class="tt__picks">
-        <div class="tt__chips" role="group" aria-label="Disciplines in your brief">
-          ${blocks.map((b, i) => html`<button type="button" class="tt__chip" aria-pressed="false" data-pick="${i}" style="--m:var(--${b.m})"><span class="tt__dot" aria-hidden="true"></span>${b.name}</button>`)}
+        <div class="tt__picks">
+          <div class="tt__chips" role="group" aria-label="Disciplines in your brief">
+            ${blocks.map((b, i) => html`<button type="button" class="tt__chip" aria-pressed="false" data-pick="${i}" style="--m:var(--${b.m})"><span class="tt__dot" aria-hidden="true"></span>${b.name}</button>`)}
+          </div>
+          <a class="ac-btn ac-btn--lg tt__send" href="mailto:${studio.email}" data-send>Send the brief <span class="tt__count ac-num" data-count>0</span></a>
+          <p class="ac-small tt__status" data-status aria-live="polite">The brief is empty.</p>
         </div>
-        <div class="tt__send">
-          <a class="ac-btn ac-btn--lg" href="mailto:${studio.email}" data-send>Send the brief <span class="tt__count ac-num" data-count>0</span></a>
-          <a class="ac-link ac-small" href="mailto:${studio.email}" data-mail>${studio.email}</a>
-        </div>
-        <p class="ac-small tt__status" data-status aria-live="polite">The brief is empty.</p>
       </div>
+      <p class="ac-stage__note"><span>${studio.name} · enquiry</span></p>
     </section>`;
-  root.querySelectorAll('a[href="#top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const stage = root.querySelector('[data-stage]');
   const catcher = root.querySelector('[data-catcher]');
@@ -190,7 +180,7 @@ export default function mount(root, options, ctx) {
 
   picks.forEach((b, i) => on(ctx, b, 'click', () => (caught.has(i) ? toShelf(i) : throwToSlot(i))));
   on(ctx, root.querySelector('[data-reset]'), 'click', reset);
-  [send, root.querySelector('[data-mail]')].forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
+  on(ctx, send, 'click', (e) => e.preventDefault());
 
   // Layout changes move the slots: caught blocks follow them, loose blocks go back to the shelf.
   let resizeTimer = 0;

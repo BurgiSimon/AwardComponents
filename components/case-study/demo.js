@@ -70,7 +70,6 @@ export default function mount(root, options, ctx) {
       <a class="cs-bar__contact" href="mailto:${studio.email}">Contact</a>
     </header>
     <main id="cs-main" class="cs-main" data-view></main>
-    <footer class="cs-foot"><p>${studio.full} · ${studio.address.slice(0, 2).join(', ')}</p><a href="mailto:${studio.email}">${studio.email}</a></footer>
     <p class="sr-only" role="status" data-status></p>`;
 
   const main = root.querySelector('[data-view]');
