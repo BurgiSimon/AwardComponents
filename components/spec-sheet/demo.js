@@ -1,16 +1,16 @@
-// Specification sheet — Ostra's Tide Vase product page. The facts are one <dl> of term/description pairs with the
-// units as real text; a size choice (S / M / L) and a units switch (metric / imperial) are native radio groups that
-// rewrite the values in place. A value that changed rises ~0.45 em into place (30 ms stagger) through WAAPI; a
-// dimensioned profile drawing, at one shared scale, follows both switches. Care and delivery are native <details>.
-// No script library. Reduced motion: values fade, the drawing changes without moving. Static: everything swaps.
+// Specification sheet — the facts block of Ostra's Tide Vase: a dimensioned drawing beside one <dl> of term/
+// description pairs with the units as real text. A size choice (S / M / L) and a units switch (metric / imperial)
+// are native radio groups that rewrite the values in place. A value that changed rises ~0.45 em into place (30 ms
+// stagger) through WAAPI; the profile drawing, at one shared scale, follows both switches. No script library.
+// Reduced motion: values fade, the drawing changes without moving. Static: everything swaps.
 import './demo.css';
-import { on, html, raw, photo, photos, imageHTML, content, formatPrice } from '../../src/demo-kit/index.js';
+import { on, html, content } from '../../src/demo-kit/index.js';
 
 // The vase in three sizes, in centimetres, litres and kilograms. Imperial is derived, never stored.
 const SIZES = {
-  s: { label: 'S', name: 'small', price: 118, height: 24, diameter: 11, opening: 3, capacity: 0.8, weight: 0.9 },
-  m: { label: 'M', name: 'medium', price: 148, height: 32, diameter: 14, opening: 3.5, capacity: 1.6, weight: 1.4 },
-  l: { label: 'L', name: 'large', price: 178, height: 40, diameter: 17, opening: 4, capacity: 2.9, weight: 2.3 },
+  s: { label: 'S', height: 24, diameter: 11, opening: 3, capacity: 0.8, weight: 0.9 },
+  m: { label: 'M', height: 32, diameter: 14, opening: 3.5, capacity: 1.6, weight: 1.4 },
+  l: { label: 'L', height: 40, diameter: 17, opening: 4, capacity: 2.9, weight: 2.3 },
 };
 const TALLEST = 40;
 const UNIT = {
@@ -61,22 +61,12 @@ export default function mount(root, options, ctx) {
   let cfg = { ...options };
   const state = { size: 'm', units: cfg.units };
 
-  // The celadon bottle vase from the shared set when it is there, else another ceramic; the drawn stand-in last.
-  const pick = [photo('obj-celadon-vase'), ...[['ceramic'], ['object', 'product']].map((tags) => photos({ tags, count: 1, seed: 'ss-vase' })[0])];
-  const pic = pick.find((p) => !p.drawn) || pick[0];
-
   root.className = 'ss';
   root.innerHTML = html`
-    <header class="ac-bar ss__bar">
-      <a class="ac-brand" href="#top">${shop.name}</a>
-      <nav aria-label="Shop"><a href="#top" aria-current="page">Ceramics</a><a href="#top">Lighting</a><a href="#top">Textiles</a><a href="#top">Journal</a></nav>
-      <a class="ss__bag" href="#top">Bag <span class="ss__count" data-bag>0</span></a>
-    </header>
-    <main class="ss__page ac-wrap">
-      <section class="ss__spec" aria-labelledby="ss-title">
-        <figure class="ss__fig">
-          <div class="ac-media ss__photo">${raw(imageHTML(pic, { sizes: '(min-width: 760px) 50vw, 100vw', eager: true, alt: pic.drawn ? '' : pic.alt }))}</div>
-          <figcaption class="ss__draw" data-draw>
+    <section class="ac-stage ss__stage" aria-label="${vase.name} specification">
+      <div class="ss__spec">
+        <div class="ss__side">
+          <figure class="ss__draw" data-draw>
             <svg viewBox="0 0 220 250" aria-hidden="true">
               <defs><linearGradient id="ss-glaze" x1="0" x2="1"><stop offset="0" class="ss__glaze-lo"/><stop offset="0.38" class="ss__glaze-hi"/><stop offset="1" class="ss__glaze-lo"/></linearGradient></defs>
               <rect class="ss__ground" x="12" y="226" width="196" height="1"/>
@@ -90,67 +80,36 @@ export default function mount(root, options, ctx) {
               <text class="ss__dim-label" data-g="vlabel" text-anchor="middle"></text>
               <text class="ss__dim-label" data-g="hlabel" text-anchor="middle"></text>
             </svg>
-            <span class="ac-label" data-draw-caption></span>
-          </figcaption>
-        </figure>
-
-        <div class="ss__facts">
-          <div class="ss__lead">
-            <div class="ss__intro">
-              <p class="ac-label">Ceramics · Celadon glaze</p>
-              <h1 class="ac-h1" id="ss-title">${vase.name}</h1>
-              <p class="ac-body">A bottle vase thrown in one piece, with a narrow neck that holds a single stem upright. The celadon pools pale green where the glaze runs thick.</p>
-            </div>
-
-            <form class="ss__buy" data-buy>
-              <fieldset class="ss__seg ss__seg--size">
-                <legend class="sr-only">Size</legend>
-                ${Object.entries(SIZES).map(([id, s]) => html`<label><input type="radio" name="ss-size" value="${id}"><span>${s.label}</span></label>`)}
-              </fieldset>
-              <button class="ac-btn ac-btn--lg ss__add" type="submit">Add to bag <span class="ss__dot" aria-hidden="true">·</span> <span data-price></span></button>
-              <p class="ac-small ss__status" role="status" data-status></p>
-            </form>
-          </div>
-
-          <div class="ss__sheet">
-            <div class="ss__head">
-              <h2 class="ac-h3" id="ss-spec">Specification</h2>
-              <fieldset class="ss__seg ss__seg--units">
-                <legend class="sr-only">Units</legend>
-                <label><input type="radio" name="ss-units" value="metric"><span>cm · kg</span></label>
-                <label><input type="radio" name="ss-units" value="imperial"><span>in · lb</span></label>
-              </fieldset>
-            </div>
-            <dl class="ss__dl">
-              ${ROWS.map(([term], i) => html`<dt>${term}</dt><dd><span class="ss__val" data-row="${i}"></span></dd>`)}
-            </dl>
-
-            <div class="ss__more" data-more>
-              <details>
-                <summary><span>Care</span><span class="ss__plus" aria-hidden="true"></span></summary>
-                <p class="ac-body">Watertight and food-safe, so it can hold water for weeks. Wash it by hand with a bottle brush; the dishwasher will not hurt the glaze, but the felt under the foot will not survive it. Change the water every few days and the celadon stays clear.</p>
-              </details>
-              <details>
-                <summary><span>Delivery and returns</span><span class="ss__plus" aria-hidden="true"></span></summary>
-                <p class="ac-body">Thrown and fired in Os, then sent in a moulded pulp cradle within 3–5 working days. Delivery is free in the EU on orders over ${formatPrice(shop.freeShippingFrom)}. Return it unused within 30 days, in the cradle it came in.</p>
-              </details>
-            </div>
-          </div>
+            <figcaption class="ac-label" data-draw-caption></figcaption>
+          </figure>
+          <fieldset class="ss__seg ss__seg--size">
+            <legend class="sr-only">Size</legend>
+            ${Object.entries(SIZES).map(([id, s]) => html`<label><input type="radio" name="ss-size" value="${id}"><span>${s.label}</span></label>`)}
+          </fieldset>
         </div>
-      </section>
-    </main>`;
 
-  root.querySelectorAll('a[href="#top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
+        <div class="ss__sheet">
+          <div class="ss__head">
+            <h2 class="ac-h3" id="ss-spec">${vase.name}</h2>
+            <fieldset class="ss__seg ss__seg--units">
+              <legend class="sr-only">Units</legend>
+              <label><input type="radio" name="ss-units" value="metric"><span>cm · kg</span></label>
+              <label><input type="radio" name="ss-units" value="imperial"><span>in · lb</span></label>
+            </fieldset>
+          </div>
+          <dl class="ss__dl" aria-labelledby="ss-spec">
+            ${ROWS.map(([term], i) => html`<dt>${term}</dt><dd><span class="ss__val" data-row="${i}"></span></dd>`)}
+          </dl>
+        </div>
+      </div>
+      <p class="ac-stage__note"><span>${shop.name} · product page</span></p>
+    </section>`;
 
   const vals = [...root.querySelectorAll('[data-row]')];
   const g = Object.fromEntries([...root.querySelectorAll('[data-g]')].map((el) => [el.dataset.g, el]));
   const drawCaption = root.querySelector('[data-draw-caption]');
-  const price = root.querySelector('[data-price]');
-  const status = root.querySelector('[data-status]');
-  const bag = root.querySelector('[data-bag]');
   const sizeRadios = [...root.querySelectorAll('input[name="ss-size"]')];
   const unitRadios = [...root.querySelectorAll('input[name="ss-units"]')];
-  let count = 0;
 
   // A changed value rises into place (or fades); the first render and static motion just write the text.
   const write = (el, markup, i, animate) => {
@@ -198,7 +157,6 @@ export default function mount(root, options, ctx) {
     const s = SIZES[state.size];
     let n = 0;
     ROWS.forEach(([, fn], i) => { if (write(vals[i], fn(s, state.units), n, animate)) n++; });
-    price.textContent = formatPrice(s.price);
     sizeRadios.forEach((r) => { r.checked = r.value === state.size; });
     unitRadios.forEach((r) => { r.checked = r.value === state.units; });
     draw();
@@ -206,17 +164,9 @@ export default function mount(root, options, ctx) {
 
   sizeRadios.forEach((r) => on(ctx, r, 'change', () => { state.size = r.value; render(true); }));
   unitRadios.forEach((r) => on(ctx, r, 'change', () => { state.units = r.value; render(true); }));
-  on(ctx, root.querySelector('[data-buy]'), 'submit', (e) => {
-    e.preventDefault();
-    count++;
-    bag.textContent = String(count);
-    status.textContent = `Added: ${vase.name}, ${SIZES[state.size].name}, ${formatPrice(SIZES[state.size].price)}.`;
-  });
 
   const apply = () => {
-    root.dataset.layout = cfg.layout;
     root.querySelector('[data-draw]').hidden = !cfg.drawing;
-    root.querySelector('[data-more]').hidden = !cfg.care;
   };
   apply();
   render(false);

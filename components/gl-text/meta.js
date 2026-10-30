@@ -9,7 +9,7 @@ export default {
   requires: ['webgl'],
   added: '2026-10-28',
   order: 40,
-  preview: { height: 640, hint: 'Move over the headline, or tap it', capture: { wait: 1200 } },
+  preview: { height: 520, hint: 'Move over the headline, or tap it', capture: { wait: 1200 } },
   useCases: [
     'A launch or festival hero where the headline itself is the image',
     'A section title that answers the pointer while staying selectable text',

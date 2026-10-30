@@ -1,12 +1,13 @@
-// Drawn scrollbar — a banking app's long help guide with a themed thumb on the right edge. The thumb only mirrors the
-// scroll: it reads scrollY / (scrollHeight − innerHeight) once a frame (on GSAP's ticker, right after Lenis, so it
-// reads the position Lenis wrote that frame) and moves by transform, so keys, anchors, find-in-page and the native
-// bar (which stays) move it too. Dragging writes the scroll; pressing the track centres the thumb on the pointer and
-// drags from there. Ticks mark where each section starts, and a bubble names the section under the pointer or the
-// thumb. The track is aria-hidden and pointer-only; it is hidden on coarse pointers. Reduced motion: no Lenis and
-// no easing, the thumb sits exactly on the scroll position, updated on scroll events instead of a loop.
+// Drawn scrollbar — a banking app's long help guide (a title and seven short sections) with a themed thumb on the
+// right edge. The thumb only mirrors the scroll: it reads scrollY / (scrollHeight − innerHeight) once a frame (on
+// GSAP's ticker, right after Lenis, so it reads the position Lenis wrote that frame) and moves by transform, so keys,
+// anchors, find-in-page and the native bar (which stays) move it too. Dragging writes the scroll; pressing the track
+// centres the thumb on the pointer and drags from there. Ticks mark where each section starts, and a bubble names the
+// section under the pointer or the thumb. The track is aria-hidden and pointer-only; it is hidden on coarse pointers.
+// Reduced motion: no Lenis and no easing, the thumb sits exactly on the scroll position, updated on scroll events
+// instead of a loop.
 import './demo.css';
-import { on, html, clamp, damp, colour, observeResize, later, content } from '../../src/demo-kit/index.js';
+import { on, html, clamp, damp, colour, observeResize, later } from '../../src/demo-kit/index.js';
 import { gsap } from '../../src/demo-kit/gsap.js';
 import { useLenis } from '../../src/demo-kit/lenis.js';
 
@@ -19,7 +20,6 @@ const SECTIONS = [
       'Three details go on every invoice, so it is worth setting them once: the account you want paying into, your VAT number if you have one, and the payment terms you agree with most clients.',
       'Open Settings, then Invoicing. Anything you leave blank here can still be filled in per invoice; nothing is sent until you press Send.',
     ],
-    list: ['Payout account: any Parallel account, or an external one by IBAN', 'Terms: 14, 30 or 45 days, or a date you type', 'Logo: SVG or PNG, shown at 120 px wide'],
   },
   {
     id: 'create', title: 'Create and send an invoice',
@@ -27,7 +27,6 @@ const SECTIONS = [
       'Press N anywhere in the app, or choose New invoice from a client’s page. Lines can be typed, pasted from a spreadsheet or pulled from tracked time, and the total updates as you go.',
       'Send emails a link and a PDF. The link shows the invoice in the client’s language and lets them pay by card or bank transfer; the PDF is the same document, for clients whose systems want a file.',
     ],
-    table: [['Field', 'What it does'], ['Reference', 'Printed on the invoice and used to match the payment'], ['Due date', 'Starts the reminder schedule'], ['Currency', 'Any of 32; the pot and your books see euros'], ['Notes', 'One line under the total, for bank details or thanks']],
   },
   {
     id: 'reminders', title: 'Reminders that send themselves',
@@ -35,7 +34,6 @@ const SECTIONS = [
       'Late payers get a polite nudge on day three after the due date, a firmer one on day ten and, on day twenty-one, a note to you suggesting a call. Each email is short and written in your name.',
       'Reminders stop the moment a payment arrives, and pause for a week if the client replies to one. You can edit the wording, or switch the schedule off for a client who always pays on the last day.',
     ],
-    note: 'Reminders never go to a client on a weekend or a public holiday in their country.',
   },
   {
     id: 'matching', title: 'Matching payments',
@@ -50,7 +48,6 @@ const SECTIONS = [
       'A share of every payment you receive moves to a locked pot the moment it lands, so the money for your tax bill is never in the account you spend from. Most studios set it between 20 and 30 per cent.',
       'The pot can be opened twice a year, in the weeks your returns are due, or at any time with a two-day wait. It earns the same interest as a savings account and shows on your statements as its own line.',
     ],
-    table: [['Payment received', 'Share', 'To the pot', 'Spendable'], ['€4,000', '25 %', '€1,000', '€3,000'], ['€850', '25 %', '€212.50', '€637.50'], ['€12,400', '25 %', '€3,100', '€9,300']],
   },
   {
     id: 'exports', title: 'Exports for your accountant',
@@ -69,57 +66,25 @@ const SECTIONS = [
 ];
 
 export default function mount(root, options, ctx) {
-  const { app } = content;
   let cfg = { ...options };
   root.className = 'csb';
   root.innerHTML = html`
-    <a class="csb-skip" href="#csb-article">Skip to the guide</a>
     <div class="csb-track" data-track aria-hidden="true">
       <span class="csb-rail"></span>
       <span class="csb-ticks" data-ticks>${SECTIONS.map((s, i) => html`<span class="csb-tick" data-tick="${i}"></span>`)}</span>
       <span class="csb-thumb" data-thumb></span>
       <span class="csb-bubble" data-bubble><span data-bubble-n></span><span data-bubble-t></span></span>
     </div>
-    <header class="csb-bar">
-      <a class="ac-brand csb-brand" href="#csb-top"><span class="csb-brand__mark" aria-hidden="true"></span>${app.name}<span class="csb-brand__sub">Help</span></a>
-      <form class="csb-search" role="search" data-search><label class="sr-only" for="csb-q">Search the help centre</label><input class="ac-input" id="csb-q" type="search" placeholder="Search the help centre" autocomplete="off"></form>
-      <a class="ac-btn ac-btn--ghost ac-btn--sm csb-contact" href="#csb-top">Contact support</a>
-    </header>
-    <div class="csb-layout" id="csb-top">
-      <nav class="csb-toc" aria-label="On this page">
-        <details class="csb-toc__box" open data-toc>
-          <summary class="ac-label">On this page</summary>
-          <ol role="list">${SECTIONS.map((s, i) => html`<li><a href="#csb-${s.id}" data-toc-link="${i}"><span class="csb-toc__n">${String(i + 1).padStart(2, '0')}</span>${s.title}</a></li>`)}</ol>
-        </details>
-      </nav>
-      <main class="csb-main">
-        <article class="csb-article" id="csb-article" aria-labelledby="csb-title">
-          <header class="csb-head">
-            <p class="csb-crumbs ac-label">Help <span aria-hidden="true">/</span> Guides <span aria-hidden="true">/</span> Getting paid</p>
-            <h1 class="ac-h1" id="csb-title">Getting paid: invoices, reminders and the tax pot</h1>
-            <p class="ac-lede">Everything between finishing a job and the money landing in the right place. Written for studios of two to twenty; most of it is one setting, once.</p>
-            <p class="ac-small">Updated 14 October 2026 · 9 min read</p>
-          </header>
-          ${SECTIONS.map((s, i) => html`
-            <section class="csb-sec" id="csb-${s.id}" data-section="${i}" aria-labelledby="csb-${s.id}-h">
-              <h2 class="ac-h2" id="csb-${s.id}-h"><span class="csb-sec__n" aria-hidden="true">${String(i + 1).padStart(2, '0')}</span>${s.title}</h2>
-              ${s.body.map((p) => html`<p class="ac-body">${p}</p>`)}
-              ${s.list ? html`<ul class="csb-list">${s.list.map((li) => html`<li>${li}</li>`)}</ul>` : ''}
-              ${s.table ? html`<div class="csb-table-wrap"><table class="csb-table"><thead><tr>${s.table[0].map((c) => html`<th scope="col">${c}</th>`)}</tr></thead><tbody>${s.table.slice(1).map((r) => html`<tr>${r.map((c, j) => (j ? html`<td>${c}</td>` : html`<th scope="row">${c}</th>`))}</tr>`)}</tbody></table></div>` : ''}
-              ${s.note ? html`<p class="csb-note"><strong>Good to know</strong> ${s.note}</p>` : ''}
-            </section>`)}
-          <footer class="csb-end">
-            <p class="ac-h3">Was this guide useful?</p>
-            <div class="csb-end__actions"><button class="ac-btn ac-btn--sm" type="button" data-vote>Yes</button><button class="ac-btn ac-btn--ghost ac-btn--sm" type="button" data-vote>Not quite</button></div>
-            <p class="ac-small" role="status" data-vote-status></p>
-          </footer>
-        </article>
-      </main>
-    </div>`;
-  on(ctx, root.querySelector('[data-search]'), 'submit', (e) => e.preventDefault());
-  root.querySelectorAll('a[href="#csb-top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
-  const voteStatus = root.querySelector('[data-vote-status]');
-  root.querySelectorAll('[data-vote]').forEach((b) => on(ctx, b, 'click', () => { voteStatus.textContent = 'Thanks. Your answer goes to the team that writes these guides.'; }));
+    <main>
+      <article class="csb-article" aria-labelledby="csb-title">
+        <h1 class="ac-h1 csb-title" id="csb-title">Getting paid: invoices, reminders and the tax pot</h1>
+        ${SECTIONS.map((s, i) => html`
+          <section class="csb-sec" data-section="${i}" aria-labelledby="csb-${s.id}-h">
+            <h2 class="ac-h2" id="csb-${s.id}-h"><span class="csb-sec__n" aria-hidden="true">${String(i + 1).padStart(2, '0')}</span>${s.title}</h2>
+            ${s.body.map((p) => html`<p class="ac-body">${p}</p>`)}
+          </section>`)}
+      </article>
+    </main>`;
 
   const html_ = document.documentElement;
   const track = root.querySelector('[data-track]');
@@ -129,8 +94,6 @@ export default function mount(root, options, ctx) {
   const bubbleT = root.querySelector('[data-bubble-t]');
   const ticks = [...root.querySelectorAll('[data-tick]')];
   const sections = [...root.querySelectorAll('[data-section]')];
-  const tocLinks = [...root.querySelectorAll('[data-toc-link]')];
-  const toc = root.querySelector('[data-toc]');
 
   const lenis = useLenis(ctx);
   const s = { shown: 0, target: 0, dragging: false, grab: 0, written: -1, active: -1, lastY: -1 };
@@ -160,7 +123,7 @@ export default function mount(root, options, ctx) {
     bubble.classList.add('is-on');
   };
 
-  // The thumb and the page's own scroll-spy, from one reading of the scroll position.
+  // The thumb and the ticks' scroll-spy, from one reading of the scroll position.
   const render = (dt) => {
     s.target = clamp(scrollY / maxScroll, 0, 1);
     const ease = ctx.motion === 'full' && !s.dragging && cfg.ease > 0;
@@ -175,7 +138,6 @@ export default function mount(root, options, ctx) {
     const active = sectionAt(s.target);
     if (active !== s.active) {
       s.active = active;
-      tocLinks.forEach((a, i) => (i === active ? a.setAttribute('aria-current', 'true') : a.removeAttribute('aria-current')));
       ticks.forEach((t, i) => t.classList.toggle('is-past', i <= active));
     }
     if (scrollY !== s.lastY) { s.lastY = scrollY; wake(); }
@@ -252,8 +214,6 @@ export default function mount(root, options, ctx) {
   observeResize(ctx, root, () => { measure(); render(0); });
   on(ctx, window, 'resize', () => { measure(); render(0); });
   document.fonts?.ready.then(() => { measure(); render(0); });
-  // The page's own "On this page" box folds away on a phone, where it would push the guide down.
-  if (matchMedia('(max-width: 759px)').matches) toc.open = false;
   later(ctx, () => { measure(); render(0); }, 300);
 
   return {

@@ -1,13 +1,14 @@
-// Paint smear — a magazine's weather issue, its cover smeared by the pointer like a hand across wet glass. No fluid
-// solver: the pointer paints a capsule stroke into a quarter-resolution field (velocity around 0.5 in xy, a slow and
-// a fast weight in zw), the field advects itself along a blurred sixteenth-resolution copy of its own velocity and
-// curls through gradient noise, and one post pass smears the cover along it with an oil-film fringe where the stroke
-// thins out. Everything is scaled per second; the loop sleeps once the field has decayed to exactly zero.
-// Coarse pointers paint only while a finger is down. Reduced motion and no WebGL: the cover as a still picture.
+// Paint smear — a magazine's weather issue cover, alone on the stage, smeared by the pointer like a hand across wet
+// glass. No fluid solver: the pointer paints a capsule stroke into a quarter-resolution field (velocity around 0.5
+// in xy, a slow and a fast weight in zw), the field advects itself along a blurred sixteenth-resolution copy of its
+// own velocity and curls through gradient noise, and one post pass smears the cover along it with an oil-film
+// fringe where the stroke thins out. Everything is scaled per second; the loop sleeps once the field has decayed to
+// exactly zero. Coarse pointers paint only while a finger is down. Reduced motion and no WebGL: the cover as a
+// still picture.
 import './demo.css';
 import '../../src/demo-kit/serif.css';
 import * as THREE from 'three';
-import { on, ticker, whileVisible, later, html, readToken, photos, loadImage, content } from '../../src/demo-kit/index.js';
+import { on, ticker, whileVisible, later, html, readToken, photo, loadImage, content } from '../../src/demo-kit/index.js';
 import { useRenderer, webglAvailable } from '../../src/demo-kit/three.js';
 
 // The recipe's field constants; brush, trail, curl and fringe come from the controls.
@@ -195,52 +196,41 @@ export default function mount(root, options, ctx) {
   let cfg = { ...options };
   const stories = magazine.articles.filter((a) => ['salt-and-time', 'night-swimming', 'map-of-light'].includes(a.slug));
   const issue = { name: magazine.name, line: `${magazine.issue.replace(' — ', ' · ')} · Autumn 2026`, lines: [`${stories[0].title} — ${stories[0].author}`, `${stories[1].title}, after dark`, 'Charting December light'] };
-  const pic = photos({ tags: ['sky'], count: 1, seed: 'ps-cover' })[0];
+  const pic = photo('land-overcast-sea', { fallbackTags: ['sky'] });   // a weather issue: sea under an overcast sky
   root.className = 'pz';
   root.innerHTML = html`
-    <header class="ac-bar pz__bar">
-      <a class="ac-brand pz__brand" href="#top">${magazine.name}</a>
-      <nav aria-label="Magazine"><a href="#top" aria-current="page">Issues</a><a href="#top">Stories</a><a href="#top">Stockists</a></nav>
-    </header>
-    <main class="pz__main ac-wrap">
-      <section class="pz__copy" aria-labelledby="pz-title">
-        <p class="ac-label">${magazine.issue} · Out 6 November</p>
-        <h1 class="pz__title" id="pz-title">The weather issue</h1>
-        <p class="ac-lede">164 pages on the places that live by the forecast: salt boiled on a stormy island, a city charting its December light, swimmers who wait for the dark.</p>
-        <div class="pz__buy">
-          <a class="ac-btn ac-btn--lg" href="#subscribe">Subscribe — 4 issues €48</a>
-          <a class="ac-link pz__single" href="#buy">Buy this issue, €14</a>
-        </div>
-        <ol class="pz__contents" role="list" aria-label="In this issue">
-          ${stories.map((s, i) => html`<li><span class="ac-label">p. ${[12, 58, 104][i]}</span><a href="#${s.slug}">${s.title}</a><span class="pz__by">${s.author}</span></li>`)}
-        </ol>
-      </section>
+    <section class="ac-stage" aria-label="${magazine.name} cover">
       <figure class="pz__cover" data-cover>
         <div class="pz__stage" data-stage></div>
-        <figcaption class="sr-only">Cover of ${magazine.name}, ${magazine.issue}: a weather map with isobars around a low, over a rainy sky. Cover lines: ${issue.lines.join('; ')}.</figcaption>
+        <figcaption class="sr-only">Cover of ${magazine.name}, ${magazine.issue}: a weather map with isobars around a low, over a dark sea under an overcast sky. Cover lines: ${issue.lines.join('; ')}.</figcaption>
       </figure>
-    </main>`;
-  root.querySelectorAll('a[href^="#"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
+      <p class="ac-stage__note"><span>${magazine.name} · cover</span></p>
+    </section>`;
 
   const cover = root.querySelector('[data-cover]');
   const stage = root.querySelector('[data-stage]');
   const coverCanvas = document.createElement('canvas');
-  let photo = null;
+  let picture = null;
   const coverSize = () => {
     const r = stage.getBoundingClientRect();
     return { w: Math.max(1, Math.round(r.width)), h: Math.max(1, Math.round(r.height)) };
   };
   const scale = Math.min(window.devicePixelRatio || 1, 2);
+  // The masthead is drawn in Bodoni Moda, which no DOM text on the stage uses, so the browser would never fetch it:
+  // ask for both faces, then redraw once they (and the rest of the type) are in.
+  const fontsReady = document.fonts
+    ? Promise.all([document.fonts.ready, ...['600 1em', 'italic 500 1em'].map((f) => document.fonts.load(`${f} "Bodoni Moda Variable"`))]).catch(() => {})
+    : Promise.resolve();
 
   // The still: the cover canvas itself, shown in place of the field.
   if (!webglAvailable() || ctx.motion !== 'full') {
     coverCanvas.setAttribute('aria-hidden', 'true');
     coverCanvas.className = 'pz__still';
     stage.append(coverCanvas);
-    const redraw = () => { const { w, h } = coverSize(); drawCover(coverCanvas, w, h, scale, photo, issue); };
+    const redraw = () => { const { w, h } = coverSize(); drawCover(coverCanvas, w, h, scale, picture, issue); };
     redraw();
-    loadImage(pic).then((img) => { photo = img; if (!ctx.signal.aborted) redraw(); });
-    document.fonts?.ready.then(() => { if (!ctx.signal.aborted) redraw(); });
+    loadImage(pic).then((img) => { picture = img; if (!ctx.signal.aborted) redraw(); });
+    fontsReady.then(() => { if (!ctx.signal.aborted) redraw(); });
     ctx.onTheme(redraw);
     let t = 0;
     on(ctx, window, 'resize', () => { clearTimeout(t); t = setTimeout(redraw, 150); });
@@ -280,7 +270,7 @@ export default function mount(root, options, ctx) {
   let running = false;
   let visible = false;
   const paintCover = () => {
-    drawCover(coverCanvas, w, h, scale, photo, issue);
+    drawCover(coverCanvas, w, h, scale, picture, issue);
     if (!coverTex) {
       coverTex = new THREE.CanvasTexture(coverCanvas);
       coverTex.colorSpace = THREE.SRGBColorSpace;
@@ -307,8 +297,8 @@ export default function mount(root, options, ctx) {
     smearMat.uniforms.uSize.value.set(w, h);
     paintCover();
   });
-  loadImage(pic).then((img) => { photo = img; if (!ctx.signal.aborted) paintCover(); });
-  document.fonts?.ready.then(() => { if (!ctx.signal.aborted) paintCover(); });
+  loadImage(pic).then((img) => { picture = img; if (!ctx.signal.aborted) paintCover(); });
+  fontsReady.then(() => { if (!ctx.signal.aborted) paintCover(); });
   ctx.onTheme(paintCover);
 
   // Pointer, in cover-local CSS px. `moved` resets each frame so a resting pointer paints nothing.

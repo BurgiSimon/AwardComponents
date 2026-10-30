@@ -1,8 +1,4 @@
 .ps { --length: 100vh; --ps-gap: clamp(32px, 6vw, 96px); overflow-x: clip; }
-.ps__intro { min-height: 82svh; display: grid; align-content: center; gap: 22px; padding-block: 64px; }
-.ps__cue { display: inline-flex; align-items: center; gap: 10px; margin-top: 18px; }
-.ps__cue::before { content: ''; width: 1px; height: 36px; background: linear-gradient(var(--ink), transparent); }
-
 /* The chapter is as tall as its steps ask; the stage sticks for all of it. */
 .ps__chapter { position: relative; height: calc(var(--length) * 4 + 100svh); }
 .ps__stage {
@@ -21,7 +17,7 @@
 .ps__step {
   grid-area: 1 / 1;
   display: grid;
-  gap: 14px;
+  gap: 12px;
   align-content: center;
   opacity: 0;
   transform: translateY(18px);
@@ -30,6 +26,7 @@
 }
 .ps__step.is-active { opacity: 1; transform: none; pointer-events: auto; }
 .ps__k { color: var(--accent-ink); }
+.ps__step .ac-h2 { max-width: 14ch; }
 
 .ps__fig { grid-area: fig; display: grid; gap: 18px; margin: 0; }
 .ps__room { width: 100%; max-height: 58svh; aspect-ratio: 1; }
@@ -57,14 +54,13 @@
 .ps__tick { position: absolute; left: 50%; top: calc(var(--at) * 100%); width: 10px; height: 10px; translate: -50% -50%; border-radius: 50%; background: var(--bg); border: 2px solid var(--line-2); transition: border-color var(--dur-s), background-color var(--dur-s); }
 .ps__tick.is-done { border-color: var(--ink); background: var(--ink); }
 .ps--no-rail .ps__rail { display: none; }
-
-.ps__outro { min-height: 70svh; display: grid; place-items: center; text-align: center; }
-.ps__outro p { max-width: 20ch; }
+/* The plate line sits on the steps' left edge: the stage is already inset by .ac-wrap. */
+.ps__stage > .ac-stage__note { left: 0; right: 0; }
 
 /* Reduced motion: no stage; every step in order with its settled diagram once. */
 .ps--still .ps__chapter { height: auto; }
-.ps--still .ps__stage { position: static; height: auto; grid-template-areas: 'steps fig'; padding-block: 64px; align-items: start; }
-.ps--still .ps__steps { gap: 40px; }
+.ps--still .ps__stage { position: relative; height: auto; grid-template-areas: 'steps fig'; padding-block: 64px; align-items: start; }
+.ps--still .ps__steps { gap: 32px; }
 .ps--still .ps__step { grid-area: auto; opacity: 1; transform: none; }
 .ps--still .ps__rail { display: none; }
 
@@ -73,4 +69,5 @@
   .ps__room { max-height: 38svh; }
   .ps__eq { display: none; }
   .ps__rail { right: 6px; }
+  .ps--still .ps__stage { grid-template-areas: 'fig' 'steps'; }
 }

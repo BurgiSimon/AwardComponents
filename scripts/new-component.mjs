@@ -72,10 +72,11 @@ import { on, html, content } from '../../src/demo-kit/index.js';
 
 export default function mount(root, options, ctx) {
   root.className = '${id.split('-').map((w) => w[0]).join('')}';
+  // Stage the move, not a site (authoring rule 4): the component alone on the stage, a plate line for context.
   root.innerHTML = html\`
-    <section class="ac-section ac-wrap">
-      <p class="ac-label">\${content.studio.name}</p>
+    <section class="ac-stage">
       <h1 class="ac-h1">${title}</h1>
+      <p class="ac-stage__note"><span>\${content.studio.name} · where it lives</span></p>
     </section>\`;
 
   // ctx.motion is 'full' | 'reduced' | 'static'. Under reduced: no spatial movement; under static: settled at once.
@@ -90,7 +91,7 @@ export default function mount(root, options, ctx) {
 `);
 fs.writeFileSync(path.join(dir, 'demo.css'), `/* ${title}. Tokens and primitives come from src/demo-kit/base.css; use var(--…) for every colour. */
 .${id.split('-').map((w) => w[0]).join('')} {
-  min-height: 100svh;
+  overflow: clip;
 }
 `);
 console.log(`created components/${id}/ (meta.js, demo.js, demo.css) from recipe ${recipeId}, category ${category}.

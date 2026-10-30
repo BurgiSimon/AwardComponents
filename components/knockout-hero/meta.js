@@ -8,7 +8,7 @@ export default {
   tags: ['hero', 'svg', 'mask', 'wordmark', 'canvas', 'knockout', 'scroll'],
   added: '2026-10-28',
   order: 20,
-  preview: { height: 640, scroll: true, hint: 'Scroll — the letters slide over a ground that stays put', capture: { wait: 1200 } },
+  preview: { height: 520, scroll: true, hint: 'Scroll — the letters slide over a ground that stays put', capture: { wait: 1200 } },
   useCases: [
     'A festival, gallery or studio name as the whole first screen',
     'A campaign hero where the brand colour lives only inside the logotype',

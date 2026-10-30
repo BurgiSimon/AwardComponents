@@ -6,10 +6,9 @@
   overflow-x: clip;
 }
 :root[data-theme='dark'] .adh { --on-photo: var(--ink); }
-.adh a { text-decoration: none; }
 
 .adh__hero { position: relative; }
-.adh__copy { display: grid; justify-items: start; gap: clamp(16px, 2.4vh, 24px); }
+.adh__copy { display: grid; justify-items: start; }
 .adh__title {
   font-size: clamp(2.5rem, 1.1rem + 4.2vw, 5.6rem);
   font-weight: 740;
@@ -19,13 +18,12 @@
   max-width: 13ch;
   text-wrap: balance;
 }
-.adh__lede { max-width: 38ch; font-size: var(--text-lg); line-height: 1.5; color: var(--ink-2); text-wrap: pretty; }
-.adh__actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
 
 .adh__media { position: relative; margin: 0; overflow: hidden; background: var(--bg-2); }
 .adh__frame, .adh__frame picture { position: absolute; inset: 0; display: block; }
 .adh__frame img { width: 100%; height: 100%; object-fit: cover; object-position: var(--fx) var(--fy); }
-.adh__cap { position: absolute; z-index: 2; right: 16px; bottom: 14px; padding: 6px 10px; border-radius: var(--radius-pill); background: color-mix(in oklab, var(--night) 55%, transparent); color: var(--on-photo); backdrop-filter: blur(8px); }
+
+.adh__note { z-index: 2; }
 
 /* The tuning aid: object-position maps the picture's x %/y % onto the frame's x %/y %, so the mark is exact. */
 .adh__focus { position: absolute; z-index: 2; left: var(--fx); top: var(--fy); width: 44px; height: 44px; translate: -50% -50%; border: 2px solid var(--accent); border-radius: 50%; box-shadow: 0 0 0 1px color-mix(in oklab, var(--night) 40%, transparent); opacity: 0; transition: opacity var(--dur-s); pointer-events: none; }
@@ -34,12 +32,12 @@
 .adh__focus::after { width: 1px; height: 64px; }
 .adh--marks .adh__focus { opacity: 1; }
 
-/* Overlay: the wide composition full-bleed, the copy on the quiet side behind a scrim. */
+/* Overlay: the wide composition full-bleed, the headline on the quiet side behind a scrim. */
 .adh[data-layout='overlay'] .adh__hero {
-  min-height: calc(100svh - 64px);
+  min-height: 100svh;
   display: grid;
   align-items: center;
-  padding: clamp(28px, 5vw, 72px) var(--gutter);
+  padding: clamp(56px, 8vw, 88px) var(--gutter);
 }
 .adh[data-layout='overlay'] .adh__media { position: absolute; inset: 0; }
 .adh[data-layout='overlay'] .adh__media::after {
@@ -49,64 +47,39 @@
   z-index: 1;
   --c: color-mix(in oklab, var(--night) calc(var(--scrim) * 100%), transparent);
   --c2: color-mix(in oklab, var(--night) calc(var(--scrim) * 45%), transparent);
-  /* The peak holds under the whole copy column (it ends 45–56 % across), so a light picture never shows through
-     the headline's last words or the ghost button. */
+  /* The peak holds under the whole headline column (it ends 45–56 % across), so a light picture never shows
+     through the headline's last words. */
   background: linear-gradient(var(--dir, 90deg), var(--c) 0%, var(--c) 42%, var(--c2) 64%, transparent 86%);
 }
 .adh[data-layout='overlay'][data-side='right'] .adh__media::after { --dir: 270deg; }
 .adh[data-layout='overlay'][data-side='bottom'] .adh__media::after { --dir: 0deg; }
 .adh[data-layout='overlay'] .adh__copy { position: relative; z-index: 2; max-width: 38rem; color: var(--on-photo); }
-.adh[data-layout='overlay'] .adh__lede { color: color-mix(in oklab, var(--on-photo) 86%, transparent); }
-.adh[data-layout='overlay'] .adh__kicker { color: color-mix(in oklab, var(--on-photo) 80%, transparent); }
-.adh[data-layout='overlay'] .adh__ghost { --btn-fg: var(--on-photo); border-color: color-mix(in oklab, var(--on-photo) 50%, transparent); }
-.adh[data-layout='overlay'] .adh__ghost:hover { --btn-bg: color-mix(in oklab, var(--on-photo) 14%, transparent); }
-.adh[data-layout='overlay'] .adh__cap { right: var(--gutter); bottom: 22px; }
 .adh[data-layout='overlay'][data-side='right'] .adh__copy { justify-self: end; }
-.adh[data-layout='overlay'][data-side='right'] .adh__cap { right: auto; left: var(--gutter); }
+.adh[data-layout='overlay'][data-side='right'] .adh__note { justify-content: flex-end; }
 .adh[data-layout='overlay'][data-side='bottom'] .adh__copy { align-self: end; }
-.adh[data-layout='overlay'][data-side='bottom'] .adh__cap { bottom: auto; top: 22px; }
 
-/* Split: copy and a portrait frame side by side. */
+/* Split: the headline and a portrait frame side by side. */
 .adh[data-layout='split'] .adh__hero {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: clamp(24px, 5vw, 80px);
-  min-height: calc(100svh - 64px);
-  padding: clamp(16px, 3vh, 32px) var(--gutter) clamp(24px, 4vh, 40px);
+  min-height: 100svh;
+  padding: clamp(24px, 4vh, 40px) var(--gutter) clamp(52px, 9vh, 72px);
 }
-.adh[data-layout='split'] .adh__media { height: min(calc(100svh - 112px), 820px); aspect-ratio: 4 / 5; border-radius: var(--radius-lg); }
+.adh[data-layout='split'] .adh__media { height: min(calc(100svh - 120px), 820px); aspect-ratio: 4 / 5; border-radius: var(--radius-lg); }
 
-/* Stacked: copy over a wide banner; two columns of copy once there is room. */
-.adh[data-layout='stacked'] .adh__hero { display: grid; gap: clamp(24px, 4vh, 40px); padding: clamp(24px, 5vh, 56px) var(--gutter) 0; }
+/* Stacked: the headline over a wide banner. */
+.adh[data-layout='stacked'] .adh__hero { display: grid; gap: clamp(24px, 4vh, 40px); padding: clamp(32px, 6vh, 64px) var(--gutter) clamp(52px, 9vh, 72px); }
 .adh[data-layout='stacked'] .adh__media { aspect-ratio: 21 / 9; border-radius: var(--radius-lg); }
-@media (min-width: 1000px) {
-  .adh[data-layout='stacked'] .adh__copy { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: end; column-gap: clamp(24px, 5vw, 80px); }
-  .adh[data-layout='stacked'] .adh__kicker, .adh[data-layout='stacked'] .adh__title { grid-column: 1; }
-  .adh[data-layout='stacked'] .adh__lede { grid-column: 2; grid-row: 2; align-self: end; }
-  .adh[data-layout='stacked'] .adh__actions { grid-column: 2; }
-}
 
-.adh__index { display: grid; padding-block: clamp(40px, 8vh, 80px) clamp(64px, 12vh, 120px); }
-.adh__row { display: grid; grid-template-columns: 4ch minmax(0, 1.4fr) minmax(0, 1fr) auto; gap: 16px; align-items: baseline; padding-block: 18px; border-bottom: 1px solid var(--line); }
-.adh__row:first-child { border-top: 1px solid var(--line); }
-.adh__row strong { font-size: var(--text-xl); font-weight: 650; font-stretch: 108%; letter-spacing: -0.015em; }
-.adh__row span:not(.ac-label) { color: var(--muted); font-size: var(--text-sm); }
-.adh__row:hover strong, .adh__row:focus-visible strong { color: var(--accent-ink); }
-
-/* Phones: every layout takes the portrait composition, the copy first, then the picture (or the copy low on it). */
+/* Phones: every layout takes the portrait composition, the headline first, then the picture (or low on it). */
 @media (max-width: 47.999rem) {
-  .adh__bar nav { display: none; }
-  .adh[data-layout] .adh__hero { display: grid; grid-template-columns: 1fr; min-height: 0; gap: 24px; padding: 20px var(--gutter) 0; }
-  .adh[data-layout] .adh__copy { grid-template-columns: 1fr; }
-  .adh[data-layout] .adh__copy > * { grid-column: auto; grid-row: auto; }
+  .adh[data-layout] .adh__hero { display: grid; grid-template-columns: 1fr; min-height: 0; gap: 24px; padding: 32px var(--gutter) 56px; }
   .adh[data-layout] .adh__media { position: relative; inset: auto; height: auto; width: 100%; aspect-ratio: 4 / 5; border-radius: var(--radius-lg); }
-  .adh[data-layout='overlay'] .adh__hero { min-height: calc(100svh - 64px); padding: 0; align-items: end; }
+  .adh[data-layout='overlay'] .adh__hero { min-height: 100svh; padding: 0; align-items: end; }
   .adh[data-layout='overlay'] .adh__media { position: absolute; inset: 0; aspect-ratio: auto; border-radius: 0; }
   .adh[data-layout='overlay'] .adh__media::after { --dir: 0deg; background: linear-gradient(0deg, var(--c) 0%, var(--c) 44%, var(--c2) 64%, transparent 86%); }
-  .adh[data-layout='overlay'] .adh__copy { align-self: end; justify-self: stretch; padding: 24px var(--gutter) 32px; }
-  .adh[data-layout='overlay'] .adh__cap { top: 14px; bottom: auto; right: 14px; left: auto; }
-  .adh__actions .ac-btn { flex: 1 1 auto; }
-  .adh__row { grid-template-columns: 4ch minmax(0, 1fr) auto; }
-  .adh__row span:nth-of-type(2) { display: none; }
+  .adh[data-layout='overlay'] .adh__copy { align-self: end; justify-self: stretch; padding: 24px var(--gutter) 64px; }
+  .adh[data-layout='overlay'][data-side='right'] .adh__note { justify-content: flex-start; }
 }

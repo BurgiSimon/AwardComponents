@@ -1,76 +1,41 @@
 .pcm { overflow-x: clip; }
-.pcm a { text-decoration: none; }
-.pcm__bar { position: relative; z-index: 2; border-bottom: 1px solid var(--line); }
-.pcm__bar nav { margin-left: auto; margin-right: 8px; }
 
 /* One viewport of travel per morph; the stage is sticky, so no pin spacer is injected. */
 .pcm__morph { position: relative; height: calc(var(--shapes) * 100svh); }
 .pcm__stage { position: sticky; top: 0; height: 100svh; overflow: hidden; }
 .pcm__canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: pan-y; }
 
-.pcm__copy {
-  position: relative;
+/* The feature names under the cloud: one row of buttons, the active one marked by its rule, clear of the plate line. */
+.pcm__ui {
+  position: absolute;
+  inset: auto 0 clamp(48px, 9vh, 80px);
   z-index: 1;
-  height: 100%;
   display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-  grid-template-rows: auto 1fr auto;
-  padding-block: clamp(28px, 6vh, 64px) clamp(24px, 5vh, 48px);
+  justify-items: center;
   pointer-events: none;
 }
-.pcm__head { grid-column: 1; display: grid; gap: 14px; }
-.pcm__title { font-size: var(--text-3xl); font-weight: 720; font-stretch: var(--wide); line-height: 1; letter-spacing: -0.03em; max-width: 13ch; text-wrap: balance; }
-
-.pcm__list { grid-column: 1; grid-row: 3; align-self: end; display: grid; margin: 0; max-width: 30rem; border-top: 1px solid var(--line); }
-.pcm__li { border-bottom: 1px solid var(--line); }
+.pcm__list { display: grid; grid-template-columns: repeat(4, minmax(0, 11rem)); gap: 0 clamp(12px, 2vw, 24px); margin: 0; }
 .pcm__item {
   pointer-events: auto;
-  display: flex;
-  align-items: baseline;
-  gap: 14px;
+  display: grid;
+  justify-items: start;
+  gap: 4px;
   width: 100%;
-  padding: 13px 0;
+  padding: 12px 0 0;
   border: 0;
+  border-top: 2px solid var(--line);
   background: none;
   text-align: left;
   color: var(--muted);
-  transition: color var(--dur-s);
+  transition: color var(--dur-s), border-color var(--dur-s);
 }
 .pcm__item:hover, .pcm__item[aria-current] { color: var(--ink); }
+.pcm__item[aria-current] { border-top-color: var(--ink); }
 .pcm__item[aria-current] .ac-label { color: var(--accent-ink); }
-.pcm__t { font-size: var(--text-xl); font-weight: 640; font-stretch: 108%; letter-spacing: -0.015em; }
-/* Every body stays in the DOM for assistive tech; only the active one takes room on screen. */
-.pcm__b {
-  display: grid;
-  max-width: 40ch;
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  margin-left: calc(2ch + 14px);
-  color: var(--ink-2);
-  font-size: var(--text-sm);
-  line-height: 1.55;
-  transition: max-height var(--dur-m) var(--ease-out), opacity var(--dur-m), padding var(--dur-m);
-}
-.pcm__li.is-active .pcm__b { max-height: 6em; opacity: 1; padding-bottom: 14px; }
-.pcm__count { grid-column: 2; grid-row: 3; justify-self: end; align-self: end; }
-.pcm__count span { color: var(--ink); }
+.pcm__t { font-size: var(--text-lg); font-weight: 640; font-stretch: 108%; letter-spacing: -0.015em; line-height: 1.2; }
 
-.pcm__outro { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 24px; padding-block: clamp(72px, 14vh, 140px); border-top: 1px solid var(--line); }
-.pcm__outro p { max-width: 20ch; }
-
-@media (max-width: 1000px) {
-  .pcm__title { font-size: clamp(1.8rem, 0.9rem + 2.6vw, 2.6rem); }
-  .pcm__t { font-size: var(--text-lg); }
-  .pcm__item { padding: 10px 0; }
-}
 @media (max-width: 699px) {
-  .pcm__copy { grid-template-columns: 1fr; }
-  .pcm__list { max-width: none; }
-  .pcm__count { display: none; }
+  .pcm__list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 16px; width: 100%; }
+  .pcm__item { padding-top: 8px; }
+  .pcm__t { font-size: var(--text-md); }
 }
-@media (max-width: 760px) {
-  .pcm__bar nav { display: none; }
-  .pcm__bar .ac-btn { margin-left: auto; }
-}
-:root[data-motion='reduced'] .pcm__b, :root[data-motion='static'] .pcm__b { transition: opacity var(--dur-m); }

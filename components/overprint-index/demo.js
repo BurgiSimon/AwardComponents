@@ -1,13 +1,13 @@
-// Overprint index — Signal Festival's line-up as a sortable index with one marker for the whole list. The marker is
-// a single aria-hidden bar inside the index's isolated stacking context, blended multiply between the rows' plates
-// (z 1) and their words (z 3): the stage-coloured plate under it is overprinted while the marked act's words turn to
+// Overprint index — Signal Festival's line-up as a sortable index, alone, with one marker for the whole list. The
+// marker is a single aria-hidden bar inside the index's isolated stacking context, blended multiply between the rows'
+// plates (z 1) and their words (z 3): the stage-coloured plate under it is overprinted while the marked act's words turn to
 // the paper colour. It cuts to the row under the mouse, the row holding keyboard focus or, on touch screens, the row
 // crossing a reading line, by writing that row's own offsetTop and offsetHeight; it is never transitioned, so every
 // frame sits exactly on a row. Sorting re-appends the rows, says the order in a status line and steps them back in by
 // hard sets. On the dark ground the bar blends with screen, multiply's inverse, so the night takes the ink.
 // Reduced and static: the same cut, no blink, no stepped re-entry.
 import './demo.css';
-import { on, html, observeResize, content, formatPrice } from '../../src/demo-kit/index.js';
+import { on, html, observeResize, content } from '../../src/demo-kit/index.js';
 import { gsap, useGsap } from '../../src/demo-kit/gsap.js';
 
 // Set times for the line-up in content.festival (content.js keeps names only). 12–14 August 2027 is Thursday to
@@ -68,30 +68,10 @@ export default function mount(root, options, ctx) {
 
   root.className = 'oi';
   root.innerHTML = html`
-    <header class="ac-bar oi__bar">
-      <a class="ac-brand" href="#top">${festival.name}<span class="oi__ed">2027</span></a>
-      <nav aria-label="Festival"><a href="#line-up" aria-current="page">Line-up</a><a href="#programme">Programme</a><a href="#site-map">Site map</a><a href="#tickets">Tickets</a></nav>
-    </header>
-    <main>
-      <section class="oi__intro ac-wrap" aria-labelledby="oi-title">
-        <div class="oi__heading">
-          <p class="ac-label">${festival.edition} · ${festival.place}</p>
-          <h1 class="ac-display" id="oi-title">Line-up</h1>
-        </div>
-        <div class="oi__about">
-          <p class="oi__dates">${festival.dates}</p>
-          <p class="oi__lede">Four stages on the old shipyard over three days. Sort by day to plan the weekend, by stage to stay in one place, or by name to find someone.</p>
-          <ul class="oi__legend" role="list" aria-label="Stage colours">
-            ${festival.stages.map((s) => html`<li><span class="oi__swatch" style="--m: var(--${STAGE_TONE[s] || 'sand'})" aria-hidden="true"></span>${s}</li>`)}
-          </ul>
-        </div>
-      </section>
-      <section class="oi__index ac-wrap" aria-labelledby="oi-acts" data-index>
-        <h2 class="sr-only" id="oi-acts">Acts</h2>
-        <div class="oi__meta">
-          <p class="ac-label">${acts.length} acts · ${festival.stages.length} stages · ${DAYS.length} days</p>
-          <p class="ac-label oi__status" role="status" data-status>Sorted by day and time, Thursday first.</p>
-        </div>
+    <section class="ac-stage oi__frame" aria-labelledby="oi-acts">
+      <div class="oi__index" data-index>
+        <h2 class="sr-only" id="oi-acts">${festival.edition} line-up</h2>
+        <p class="sr-only" role="status" data-status>Sorted by day and time, Thursday first.</p>
         <div class="oi__head" role="group" aria-label="Sort the line-up">
           <span class="oi__h oi__h--lead" aria-hidden="true">Sort</span>
           <button type="button" class="oi__h oi__h--name" data-sort="name" aria-pressed="false">Artist<span class="oi__dir" aria-hidden="true"></span></button>
@@ -113,23 +93,9 @@ export default function mount(root, options, ctx) {
             </li>`)}
         </ol>
         <span class="oi__marker" aria-hidden="true" data-marker></span>
-      </section>
-      <section class="oi__tickets ac-wrap" aria-labelledby="oi-tickets">
-        <div class="oi__tickets-head">
-          <h2 class="ac-h2" id="oi-tickets">Tickets</h2>
-          <p class="ac-small">Every pass covers all four stages. Wristbands are posted in July.</p>
-        </div>
-        <ul class="oi__passes" role="list">
-          ${festival.tickets.map((t, i) => html`
-            <li><a class="oi__pass" href="#tickets">
-              <span class="oi__pass-name">${t.name}</span>
-              <span class="oi__pass-note">${['Any one day, 14:00 to 02:00', 'Thursday to Saturday', 'Three nights on the island, showers included'][i] || ''}</span>
-              <span class="oi__pass-price ac-num">${formatPrice(t.price)}</span>
-            </a></li>`)}
-        </ul>
-      </section>
-    </main>
-    <footer class="oi__foot ac-wrap ac-small"><span>${festival.edition}</span><span>${festival.place}</span><span>Bus 9A and the harbour ferry stop at the gate</span></footer>`;
+      </div>
+      <p class="ac-stage__note"><span>${festival.name} · line-up page</span></p>
+    </section>`;
   root.querySelectorAll('a[href^="#"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const list = root.querySelector('[data-list]');

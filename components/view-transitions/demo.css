@@ -1,8 +1,8 @@
 /* ---- The transition. These pseudo-elements belong to the document, so they are not scoped under .vt.
    --vt-morph and --vt-shift live on <html>; data-vt-dir there mirrors the slide for the way back. */
-::view-transition-group(ostra-bar),
-::view-transition-new(ostra-bar) { animation: none; }
-::view-transition-old(ostra-bar) { animation: none; opacity: 0; }
+::view-transition-group(ostra-note),
+::view-transition-new(ostra-note) { animation: none; }
+::view-transition-old(ostra-note) { animation: none; opacity: 0; }
 
 ::view-transition-old(root) { animation: ostra-leave calc(var(--vt-morph, 0.7s) * 0.57) cubic-bezier(0.87, 0, 0.13, 1) both; }
 ::view-transition-new(root) { animation: ostra-enter calc(var(--vt-morph, 0.7s) * 0.86) cubic-bezier(0.16, 1, 0.3, 1) calc(var(--vt-morph, 0.7s) * 0.17) both; }
@@ -20,24 +20,20 @@
 @keyframes ostra-leave-back { to { opacity: 0; transform: translateX(var(--vt-shift, 6%)); } }
 @keyframes ostra-enter-back { from { opacity: 0; transform: translateX(calc(var(--vt-shift, 6%) * -1)); } }
 
-/* ---- The shop. */
-.vt { min-height: 100svh; overflow-x: clip; }
+/* ---- The shop: the grid and the product page, alone on the stage. */
+.vt { overflow-x: clip; }
 .vt a { text-decoration: none; }
-.vt__bar { view-transition-name: ostra-bar; background: var(--bg); }
-.vt__bag { font-size: var(--text-sm); font-weight: 600; font-variant-numeric: tabular-nums; }
-.vt__page { padding-block: clamp(16px, 4vh, 40px) clamp(56px, 10vh, 112px); }
+.vt__main { width: min(100%, 1080px); }
+.vt__note { view-transition-name: ostra-note; }
 .vt [tabindex='-1']:focus { outline: none; }
 
-.vt__intro { display: grid; gap: 14px; margin-bottom: clamp(24px, 5vh, 44px); }
-.vt__intro .ac-h1 { max-width: 20ch; }
-.vt__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 36px 18px; margin: 0; }
+.vt__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px 18px; margin: 0; }
 .vt__tile { display: grid; gap: 10px; color: var(--ink); }
 .vt__tmedia { --ratio: 4 / 5; border-radius: var(--radius-md); }
 .vt__tmedia img { transition: scale var(--dur-l) var(--ease-out); }
 .vt__tile:is(:hover, :focus-visible) .vt__tmedia img { scale: 1.04; }
 .vt__tname { width: fit-content; font-size: var(--text-md); font-weight: 640; letter-spacing: -0.01em; }
-.vt__tmeta { display: flex; justify-content: space-between; gap: 12px; margin-top: -6px; font-size: var(--text-sm); color: var(--muted); }
-.vt__tmeta .ac-num { color: var(--ink); }
+.vt__tprice { margin-top: -6px; font-size: var(--text-sm); color: var(--ink-2); }
 .vt__tile:focus-visible { outline-offset: 6px; border-radius: var(--radius-md); }
 
 .vt__back { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 18px; font-size: var(--text-sm); font-weight: 600; color: var(--ink-2); }
@@ -47,28 +43,15 @@
 
 /* The product page: the hero carries the two names for good; there is only one per page. The picture sits to the
    right of the name (above it on a phone), so the name never crosses the picture in flight. */
-.vt__product { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); align-items: start; gap: clamp(24px, 5vw, 72px); }
-.vt__hero { --ratio: 4 / 5; max-height: calc(100svh - 150px); width: 100%; border-radius: var(--radius-lg); view-transition-name: ostra-media; }
-.vt__info { display: grid; gap: 18px; align-content: start; padding-top: 8px; }
+.vt__product { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); align-items: center; gap: clamp(24px, 5vw, 72px); }
+.vt__hero { --ratio: 4 / 5; max-height: calc(100svh - 200px); width: 100%; border-radius: var(--radius-lg); view-transition-name: ostra-media; }
+.vt__info { display: grid; gap: 14px; align-content: start; }
 .vt__name { width: fit-content; font-size: var(--text-3xl); font-weight: 720; font-stretch: var(--wide); line-height: 1; letter-spacing: -0.03em; view-transition-name: ostra-title; }
-.vt__price { margin-top: -6px; font-size: var(--text-xl); }
-.vt__opts { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; border: 0; }
-.vt__opts legend { width: 100%; margin-bottom: 8px; padding: 0; }
-.vt__chip { position: relative; }
-.vt__chip input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
-.vt__chip span { display: inline-flex; align-items: center; height: 38px; padding: 0 14px; border: 1px solid var(--line-2); border-radius: var(--radius-pill); font-size: var(--text-sm); transition: border-color var(--dur-s), background-color var(--dur-s); }
-.vt__chip input:checked + span { border-color: var(--ink); background: var(--ink); color: var(--bg); }
-.vt__chip input:focus-visible + span { outline: 2px solid var(--focus); outline-offset: 2px; }
-.vt__chip input:disabled + span { color: var(--faint); text-decoration: line-through; cursor: not-allowed; }
-.vt__add { width: 100%; margin-top: 4px; }
-.vt__specs { display: grid; gap: 12px; margin: 6px 0 0; padding-top: 18px; border-top: 1px solid var(--line); }
-.vt__specs div { display: grid; grid-template-columns: minmax(5.5rem, 0.36fr) minmax(0, 1fr); gap: 12px; }
-.vt__specs dd { margin: 0; font-size: var(--text-sm); color: var(--ink-2); }
+.vt__price { font-size: var(--text-xl); }
+.vt__line { max-width: 30ch; font-size: var(--text-sm); color: var(--ink-2); }
 
 @media (max-width: 760px) {
-  .vt__bar nav { display: none; }
-  .vt__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 12px; }
+  .vt__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 12px; }
   .vt__product { grid-template-columns: 1fr; }
   .vt__hero { --ratio: 1; max-height: none; order: -1; }
-  .vt__specs div { grid-template-columns: 6.5rem minmax(0, 1fr); }
 }

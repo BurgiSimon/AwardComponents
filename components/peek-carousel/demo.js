@@ -1,4 +1,4 @@
-// Peek carousel — Fieldnote's "In this issue": six stories in a centred carousel. Every card is the same size; the
+// Peek carousel — six Fieldnote stories in a centred carousel, alone on the stage. Every card is the same size; the
 // centred one is sharp and its neighbours dim and blur. The gap is computed so a fixed slice of each neighbour
 // always shows (peek 10 % of the width, 14 % at 920 px and below). A drag snaps to the next card and the release
 // speed sets the snap's duration and curve; past either end the drag resists like a rubber band and a critically
@@ -58,23 +58,7 @@ export default function mount(root, options, ctx) {
 
   root.className = 'pc';
   root.innerHTML = html`
-    <header class="ac-bar pc__bar">
-      <a class="ac-brand pc__brand" href="#top">${magazine.name}</a>
-      <nav aria-label="Magazine"><a href="#issues">Issues</a><a href="#places">Places</a><a href="#craft">Craft</a></nav>
-      <a class="ac-btn ac-btn--sm ac-btn--ghost" href="#subscribe">Subscribe</a>
-    </header>
-    <section class="pc__carousel" aria-roledescription="carousel" aria-labelledby="pc-title" data-carousel>
-      <div class="ac-wrap pc__head">
-        <div class="pc__heading">
-          <p class="ac-label">${magazine.issue}</p>
-          <h1 class="pc__title" id="pc-title">In this issue</h1>
-        </div>
-        <div class="pc__controls">
-          <p class="pc__count ac-label ac-num" aria-live="polite" data-count>2 of ${N}</p>
-          <button type="button" class="pc__btn" data-prev aria-label="Previous story"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg></button>
-          <button type="button" class="pc__btn" data-next aria-label="Next story"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
-        </div>
-      </div>
+    <section class="ac-stage pc__carousel" aria-roledescription="carousel" aria-label="${magazine.name} stories" data-carousel>
       <div class="pc__viewport" data-viewport>
         <ul class="pc__track" role="list" data-track>
           ${stories.map((s, i) => html`
@@ -89,8 +73,13 @@ export default function mount(root, options, ctx) {
             </li>`)}
         </ul>
       </div>
+      <div class="pc__controls">
+        <button type="button" class="pc__btn" data-prev aria-label="Previous story"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg></button>
+        <p class="pc__count ac-label ac-num" aria-live="polite" data-count>2 of ${N}</p>
+        <button type="button" class="pc__btn" data-next aria-label="Next story"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+      </div>
+      <p class="ac-stage__note"><span>${magazine.name} · stories</span></p>
     </section>`;
-  root.querySelectorAll('.pc__bar a').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const viewport = root.querySelector('[data-viewport]');
   const track = root.querySelector('[data-track]');

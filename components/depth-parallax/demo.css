@@ -1,9 +1,13 @@
 .dp { --on-photo: var(--bg); overflow-x: clip; }
 :root[data-theme='dark'] .dp { --on-photo: var(--ink); }
-.dp a { text-decoration: none; }
 
-/* The photograph (and the canvas that draws it with depth), a scrim, then the cover lines. */
-.dp__hero { position: relative; min-height: 100svh; display: grid; grid-template-rows: auto auto 1fr; overflow: hidden; color: var(--on-photo); background: var(--night); }
+/* The cover holds still while the page scrolls under it, so the scroll drift has room to show. The flat photograph
+   (reduced motion, static, no WebGL) has no drift, so its track is just the cover. */
+.dp__track { height: 170svh; }
+.dp:not(.dp--gl) .dp__track { height: auto; }
+
+/* The photograph (and the canvas that draws it with depth), a scrim, then the masthead. */
+.dp__hero { position: sticky; top: 0; height: 100svh; display: grid; align-content: start; overflow: hidden; color: var(--on-photo); background: var(--night); }
 .dp__frame { position: absolute; inset: 0; }
 .dp__frame img, .dp__frame canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 .dp__still { object-fit: cover; }
@@ -14,18 +18,13 @@
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(180deg, color-mix(in oklab, var(--night) 55%, transparent) 0%, transparent 34%),
-    linear-gradient(0deg, color-mix(in oklab, var(--night) 82%, transparent) 0%, color-mix(in oklab, var(--night) 40%, transparent) 30%, transparent 58%);
+    linear-gradient(180deg, color-mix(in oklab, var(--night) 55%, transparent) 0%, transparent 38%),
+    linear-gradient(0deg, color-mix(in oklab, var(--night) 45%, transparent) 0%, transparent 22%);
 }
-
-.dp__top { position: relative; display: flex; justify-content: space-between; align-items: center; gap: 16px; height: 64px; }
-.dp__top .ac-label { color: color-mix(in oklab, var(--on-photo) 85%, transparent); }
-.dp__top nav { display: flex; gap: var(--space-5); font-size: var(--text-sm); }
-.dp__top nav a { color: color-mix(in oklab, var(--on-photo) 88%, transparent); }
-.dp__top nav a:hover { color: var(--on-photo); }
 
 .dp__mast {
   position: relative;
+  padding-top: clamp(20px, 5vh, 48px);
   font-family: var(--font-serif);
   font-style: italic;
   font-weight: 600;
@@ -37,31 +36,6 @@
   pointer-events: none;
 }
 
-.dp__cover { position: relative; align-self: end; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 20rem); align-items: end; gap: 24px clamp(24px, 6vw, 96px); padding-block: 32px clamp(28px, 5vh, 48px); }
-.dp__lead { display: grid; justify-items: start; gap: 14px; }
-.dp__lead .ac-label { color: color-mix(in oklab, var(--on-photo) 80%, transparent); }
-.dp__title { font-family: var(--font-serif); font-weight: 500; font-size: clamp(2.6rem, 1.4rem + 3.6vw, 5rem); line-height: 0.95; letter-spacing: -0.02em; }
-.dp__dek { max-width: 40ch; font-size: var(--text-lg); line-height: 1.45; color: color-mix(in oklab, var(--on-photo) 88%, transparent); margin-bottom: 6px; }
-.dp__also { display: grid; margin: 0; border-top: 1px solid color-mix(in oklab, var(--on-photo) 30%, transparent); }
-.dp__also a { display: grid; gap: 3px; padding-block: 12px; border-bottom: 1px solid color-mix(in oklab, var(--on-photo) 30%, transparent); }
-.dp__also .ac-label { color: color-mix(in oklab, var(--on-photo) 72%, transparent); }
-.dp__also strong { font-family: var(--font-serif); font-weight: 500; font-size: var(--text-xl); line-height: 1.15; }
-.dp__also a:hover strong, .dp__also a:focus-visible strong { text-decoration: underline; text-underline-offset: 0.15em; text-decoration-thickness: 1px; }
-
-.dp__issue { display: grid; gap: clamp(24px, 4vw, 40px); padding-block: clamp(64px, 12vh, 120px); }
-.dp__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 32px; margin: 0; }
-.dp__grid a { display: grid; gap: 6px; padding-block: 20px; border-top: 1px solid var(--line); }
-.dp__grid strong { font-family: var(--font-serif); font-weight: 500; font-size: var(--text-2xl); line-height: 1.05; }
-.dp__grid span:last-child { color: var(--muted); font-size: var(--text-sm); }
-.dp__grid a:hover strong { color: var(--accent-ink); }
-
-@media (max-width: 860px) {
-  .dp__cover { grid-template-columns: 1fr; }
-  .dp__also { display: none; }
-  .dp__grid { grid-template-columns: 1fr 1fr; }
-}
 @media (max-width: 560px) {
-  .dp__top nav a:not(:last-child) { display: none; }
   .dp__mast { font-size: 23vw; }
-  .dp__grid { grid-template-columns: 1fr; }
 }

@@ -1,11 +1,10 @@
-// Theme wipe — Fieldnote's article page with a Night reading switch. Pressing it shows a fixed, full-screen
+// Theme wipe — Halden's theme switch and one project card under it. Pressing the switch shows a fixed, full-screen
 // orthographic quad that grows the next theme's ground (its --bg, read once for both themes) from the press point,
 // its rim roughened by two octaves of value noise. data-theme on <html> flips in the tween's onComplete, under full
 // cover; then the cover fades and is hidden. One proxy drives either the GL quad or, without WebGL, a CSS
 // clip-path circle. A press mid-cover reverses the same tween. Reduced and static: an instant swap, no GL context.
 import './demo.css';
-import '../../src/demo-kit/serif.css';
-import { on, later, html, raw, photos, imageHTML, content } from '../../src/demo-kit/index.js';
+import { on, later, html, raw, photo, imageHTML, content } from '../../src/demo-kit/index.js';
 import { gsap } from '../../src/demo-kit/gsap.js';
 import { THREE, useRenderer, webglAvailable } from '../../src/demo-kit/three.js';
 
@@ -51,44 +50,27 @@ const fragmentShader = /* glsl */ `
   }
 `;
 
-const BODY = [
-  'The sea at Tromsø is four degrees in January and the sun does not rise for seven weeks. The sauna on the quay opens at six in the evening and is full by seven.',
-  'Nobody swims far. You walk down the ladder, count to ten in the black water and climb back out into the steam, where someone has already put another log on the stove.',
-  'The regulars say the dark is the point. Without a view there is nothing to look at but the cold, and after a winter of it you stop dreading the ladder.',
-  'The town’s third floating sauna opened in November. Its windows face north, towards the open sea, so that on a clear night the bench becomes the best seat for the aurora.',
-];
-
 export default function mount(root, options, ctx) {
-  const { magazine } = content;
-  const article = magazine.articles.find((a) => a.slug === 'night-swimming');
-  const [pic] = photos({ tags: ['water'], count: 1, seed: 'tw-night', orientation: 'portrait' });
+  const { studio } = content;
+  // The card pairs the light well with the half-buried archive it could light; the picture keeps its own alt.
+  const project = studio.projects.find((p) => p.slug === 'saltworks');
+  const pic = photo('arch-light-shaft', { fallbackTags: ['architecture'] });
   const doc = document.documentElement;
   let cfg = { ...options };
   root.className = 'tw';
   root.innerHTML = html`
-    <header class="ac-bar tw__bar">
-      <a class="ac-brand tw__brand" href="#top">${magazine.name}</a>
-      <nav aria-label="Sections"><a href="#top">${magazine.issue.split(' — ')[0]}</a><a href="#top">Places</a><a href="#top">Craft</a><a href="#top">Culture</a></nav>
-      <button class="tw__switch" type="button" aria-pressed="false" data-switch><span class="tw__track" aria-hidden="true"><span class="tw__knob"></span></span>Night reading</button>
-    </header>
-    <article class="tw__article">
-      <header class="tw__hero ac-wrap">
-        <div class="tw__titles">
-          <p class="ac-label">${article.section} · ${magazine.issue}</p>
-          <h1 class="tw__title">${article.title}</h1>
-          <p class="tw__dek">${article.dek}</p>
-          <p class="tw__by ac-label">Words by ${article.author} · ${article.read} read</p>
-        </div>
-        <figure class="tw__fig">
-          <div class="ac-media tw__pic">${raw(imageHTML(pic, { eager: true, sizes: '(max-width: 760px) 100vw, 40vw', alt: 'Swimmers on the ladder of a floating sauna at night' }))}</div>
-          <figcaption class="ac-small">The floating sauna at Telegrafbukta, January.</figcaption>
+    <section class="ac-stage tw__stage" aria-label="Theme">
+      <div class="tw__unit">
+        <button class="tw__switch" type="button" aria-pressed="false" data-switch><span class="tw__track" aria-hidden="true"><span class="tw__knob"></span></span>Dark theme</button>
+        <figure class="tw__card ac-card">
+          <div class="ac-media tw__pic">${raw(imageHTML(pic, { eager: true, sizes: '360px' }))}</div>
+          <figcaption class="tw__title">${project.title}</figcaption>
         </figure>
-      </header>
-      <div class="tw__body ac-wrap ac-wrap--narrow">${BODY.map((p) => html`<p>${p}</p>`)}</div>
-    </article>
+      </div>
+      <p class="ac-stage__note"><span>${studio.name} · site header</span></p>
+    </section>
     <div class="tw__cover" aria-hidden="true" data-cover></div>
     <div class="tw__cover tw__cover--css" aria-hidden="true" data-css hidden></div>`;
-  root.querySelectorAll('a[href="#top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const toggle = root.querySelector('[data-switch]');
   const host = root.querySelector('[data-cover]');
@@ -225,13 +207,15 @@ export default function mount(root, options, ctx) {
 
   if (ctx.motion === 'full') later(ctx, ensureGL, 300);
 
-  // The thumbnail: a wipe from the switch held a little under halfway across the page.
+  // The thumbnail: a wipe pressed at the switch's lower left end, held early with a fixed seed, so its ragged edge
+  // dips into the card while the "Dark theme" label stays clear of it.
   if (ctx.capture && ctx.motion === 'full') {
     document.fonts.ready.then(() => {
       const r = toggle.getBoundingClientRect();
       S.requested = S.theme === 'dark' ? 'light' : 'dark';
-      start(S.requested, { x: Math.round(r.left + r.width * 0.2), y: Math.round(r.top + r.height / 2) }).pause();
-      proxy.p = 0.42;
+      start(S.requested, { x: Math.round(r.left + r.width * 0.04), y: Math.round(r.top + r.height * 0.8) }).pause();
+      if (S.surface === 'gl') gl.uniforms.uSeed.value = 10;
+      proxy.p = 0.12;
       paint();
     });
   }

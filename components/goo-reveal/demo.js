@@ -1,11 +1,12 @@
-// Goo line reveal — a Fieldnote feature whose headings condense out of a pool of ink. Each heading is split into lines
-// (SplitText, aria auto) and every line gets its own SVG filter: feGaussianBlur tweened to 0, then an feColorMatrix
-// alpha row that starts as a hard threshold and relaxes to identity in the blur's tail. Each filter comes off as its
-// line lands and the split is reverted once the heading has landed. Once per heading at top 85 %. Reduced: a fade.
+// Goo line reveal — four Fieldnote headings, each with one paragraph, condensing out of a pool of ink as they scroll
+// in. Each heading is split into lines (SplitText, aria auto) and every line gets its own SVG filter: feGaussianBlur
+// tweened to 0, then an feColorMatrix alpha row that starts as a hard threshold and relaxes to identity in the blur's
+// tail. Each filter comes off as its line lands and the split is reverted once the heading has landed. Once per
+// heading at top 85 %. Reduced: a fade.
 import './demo.css';
 import '../../src/demo-kit/serif.css';
 import { SplitText } from 'gsap/SplitText';
-import { later, html, raw, photos, imageHTML, content } from '../../src/demo-kit/index.js';
+import { later, html, content } from '../../src/demo-kit/index.js';
 import { gsap, useGsap } from '../../src/demo-kit/gsap.js';
 
 gsap.registerPlugin(SplitText);
@@ -20,41 +21,24 @@ const matrix = (amp, off) => `1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ${amp.toFix
 export default function mount(root, options, ctx) {
   const { magazine } = content;
   const article = magazine.articles.find((a) => a.slug === 'salt-and-time');
-  const [pic] = photos({ tags: ['landscape'], count: 1, seed: 'gr-salt', orientation: 'landscape' });
-  const [p0, p1, p2, p3, p4] = magazine.longRead;
+  const [, , p2, p3, p4] = magazine.longRead;
+  const sections = [
+    ['She reads the pan by sound, and has never used a thermometer.', p2],
+    ['Every summer since 1788 is written down above the boiling house.', p3],
+    ['The archive gets a building of its own.', p4],
+  ];
   let cfg = { ...options };
   root.className = 'gr gr--wait';
   root.innerHTML = html`
-    <header class="ac-bar gr__bar">
-      <a class="ac-brand gr__brand" href="#top">${magazine.name}</a>
-      <nav aria-label="Sections"><a href="#top">${magazine.issue.split(' — ')[0]}</a><a href="#top" aria-current="page">Places</a><a href="#top">Craft</a></nav>
-      <a class="ac-btn ac-btn--sm" href="#top">Subscribe</a>
-    </header>
-    <article class="gr__article">
-      <header class="gr__open ac-wrap">
-        <p class="ac-label">${article.section} · ${magazine.issue}</p>
+    <article class="gr__article ac-wrap ac-wrap--narrow">
+      <header class="gr__open">
         <h1 class="gr__title" id="gr-title" data-goo>${article.title}</h1>
-        <div class="gr__meta">
-          <p class="gr__dek">${article.dek}</p>
-          <p class="ac-label gr__by">Words by ${article.author}<br>Photographs by Jens Holt · ${article.read} read</p>
-        </div>
+        <p class="gr__dek">${article.dek}</p>
+        <p class="ac-stage__note"><span>${magazine.name} · feature</span></p>
       </header>
-      <figure class="gr__fig ac-wrap">
-        <div class="ac-media gr__pic">${raw(imageHTML(pic, { eager: true, sizes: '(max-width: 1320px) 100vw, 1320px', alt: 'Salt pans on Læsø under a low grey sky' }))}</div>
-        <figcaption class="ac-small">The boiling house at Hals Mose, the last one still worked by hand.</figcaption>
-      </figure>
-      <div class="gr__body ac-wrap ac-wrap--narrow">
-        <p>${p0}</p>
-        <p>${p1}</p>
-        <h2 class="gr__h2" id="gr-h1" data-goo>She reads the pan by sound, and has never used a thermometer.</h2>
-        <p>${p2}</p>
-        <h2 class="gr__h2" id="gr-h2" data-goo>Every summer since 1788 is written down above the boiling house.</h2>
-        <p>${p3}</p>
-        <p>${p4}</p>
-      </div>
+      ${sections.map(([h, p], i) => html`<section class="gr__sec" aria-labelledby="gr-h${i}"><h2 class="gr__h2" id="gr-h${i}" data-goo>${h}</h2><p>${p}</p></section>`)}
     </article>
     <svg class="gr__defs" aria-hidden="true" focusable="false" width="0" height="0"><defs data-defs></defs></svg>`;
-  root.querySelectorAll('a[href="#top"]').forEach((a) => a.addEventListener('click', (e) => e.preventDefault(), { signal: ctx.signal }));
 
   const defs = root.querySelector('[data-defs]');
   const { ScrollTrigger } = useGsap(ctx, root);

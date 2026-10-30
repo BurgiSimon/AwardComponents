@@ -1,7 +1,8 @@
-// Autoplay tabs — Parallel's feature tabs. The bar under the open tab IS the timer: one linear GSAP tween scales it
-// 0 → 1 over the delay and its onComplete opens the next tab, so what the bar shows and when the set moves never
-// drift. A `holds` set (hover, keyboard focus, off-screen, the pause button) pauses that one tween; any choice
-// restarts it from 0. Real tabs with a roving tabindex. Reduced/static: no autoplay, no bar, no pause control.
+// Autoplay tabs — Parallel's feature tabs and their panel, on their own. The bar under the open tab IS the timer:
+// one linear GSAP tween scales it 0 → 1 over the delay and its onComplete opens the next tab, so what the bar shows
+// and when the set moves never drift. A `holds` set (hover, keyboard focus, off-screen, the pause button) pauses that
+// one tween; any choice restarts it from 0. Real tabs with a roving tabindex. Reduced/static: no autoplay, no bar, no
+// pause control.
 import './demo.css';
 import { on, observeIntersection, html, raw, photo, photos, imageHTML, colour, content } from '../../src/demo-kit/index.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
@@ -61,47 +62,36 @@ export default function mount(root, options, ctx) {
 
   root.className = 'at';
   root.innerHTML = html`
-    <header class="ac-bar at__bar">
-      <a class="ac-brand" href="#top"><span class="at__mark" aria-hidden="true"></span>${app.name}</a>
-      <nav aria-label="Main"><a href="#top">Features</a><a href="#top">Pricing</a><a href="#top">Customers</a></nav>
-      <a class="ac-btn ac-btn--sm" href="#top">Open an account</a>
-    </header>
-    <section class="at__section ac-wrap" aria-labelledby="at-title" data-set>
-      <div class="at__head">
-        <p class="ac-label">${app.name} · for studios of two to twenty</p>
-        <h1 class="ac-h1" id="at-title">The money side of the studio, on one screen.</h1>
-        <button class="at__pause" type="button" aria-pressed="false" data-pause>
-          <svg viewBox="0 0 16 16" aria-hidden="true"><path class="at__i-pause" d="M5 3.5v9M11 3.5v9"/><path class="at__i-play" d="M5 3.2v9.6L12.6 8Z"/></svg>
-          <span data-pause-label>Pause</span>
-        </button>
+    <section class="ac-stage at__stage" aria-labelledby="at-title">
+      <h2 class="sr-only" id="at-title">${app.name} features</h2>
+      <div class="at__set" data-set>
+        <div class="at__side">
+          <div class="at__tabs" role="tablist" aria-label="${app.name} features" data-list>
+            ${TABS.map((t, i) => html`
+              <button class="at__tab" type="button" role="tab" id="at-tab-${i}" aria-controls="at-panel-${i}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}">
+                <span class="at__num ac-label">${String(i + 1).padStart(2, '0')}</span>
+                <span class="at__name">${t}</span>
+                <span class="at__rule" aria-hidden="true"><span class="at__fill" data-bar></span></span>
+              </button>`)}
+          </div>
+          <button class="at__pause" type="button" aria-pressed="false" data-pause>
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path class="at__i-pause" d="M5 3.5v9M11 3.5v9"/><path class="at__i-play" d="M5 3.2v9.6L12.6 8Z"/></svg>
+            <span data-pause-label>Pause</span>
+          </button>
+        </div>
+        <div class="at__panels">
+          ${app.features.map((f, i) => html`
+            <div class="at__panel" role="tabpanel" id="at-panel-${i}" aria-labelledby="at-tab-${i}" tabindex="0" ${i ? raw('hidden') : ''}>
+              <div class="at__media ac-media" aria-hidden="true">
+                ${raw(imageHTML(shots[i], { sizes: '(min-width: 760px) 56vw, 100vw', eager: i === 0, alt: '' }))}
+                <div class="at__screen">${SCREENS[i]()}</div>
+              </div>
+              <p class="at__line">${f.title}</p>
+            </div>`)}
+        </div>
       </div>
-      <div class="at__tabs" role="tablist" aria-label="${app.name} features" data-list>
-        ${TABS.map((t, i) => html`
-          <button class="at__tab" type="button" role="tab" id="at-tab-${i}" aria-controls="at-panel-${i}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}">
-            <span class="at__num ac-label">${String(i + 1).padStart(2, '0')}</span>
-            <span class="at__name">${t}</span>
-            <span class="at__rule" aria-hidden="true"><span class="at__fill" data-bar></span></span>
-          </button>`)}
-      </div>
-      <div class="at__panels">
-        ${app.features.map((f, i) => html`
-          <div class="at__panel" role="tabpanel" id="at-panel-${i}" aria-labelledby="at-tab-${i}" tabindex="0" ${i ? raw('hidden') : ''}>
-            <div class="at__media ac-media" aria-hidden="true">
-              ${raw(imageHTML(shots[i], { sizes: '(min-width: 760px) 56vw, 100vw', eager: i === 0, alt: '' }))}
-              <div class="at__screen">${SCREENS[i]()}</div>
-            </div>
-            <div class="at__copy">
-              <h2 class="ac-h3">${f.title}</h2>
-              <p class="ac-body">${f.body}</p>
-            </div>
-          </div>`)}
-      </div>
-    </section>
-    <section class="at__after ac-wrap" aria-label="Opening an account">
-      <p class="ac-h2">Open an account in eleven minutes, ID included.</p>
-      <a class="ac-btn ac-btn--accent ac-btn--lg" href="#top">Open an account</a>
+      <p class="ac-stage__note"><span>${app.name} · features</span></p>
     </section>`;
-  root.querySelectorAll('a[href="#top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const set = root.querySelector('[data-set]');
   const list = root.querySelector('[data-list]');

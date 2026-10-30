@@ -1,25 +1,8 @@
 .it { --pic-w: 120px; overflow-x: clip; }
-.it a { text-decoration: none; }
-.it__bar nav { margin-left: auto; }
-.it__status { gap: 8px; }
-.it__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 3px color-mix(in oklab, var(--ok) 22%, transparent); }
 
-/* The hero: copy at the foot, open ground above it where the trail plays. */
-.it__hero {
-  position: relative;
-  min-height: calc(100svh - 64px);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding-block: 32px clamp(32px, 7vh, 72px);
-  overflow: clip;
-}
-.it__copy { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 23rem); align-items: end; gap: 28px clamp(32px, 5vw, 80px); }
-.it__head { display: grid; gap: 18px; justify-items: start; }
-.it__title { font-size: clamp(2.8rem, 1rem + 6.4vw, 7.5rem); max-width: 9ch; }
-.it__aside { display: grid; gap: 22px; justify-items: start; padding-bottom: 6px; }
-.it__aside .ac-lede { font-size: var(--text-md); }
-.it__actions { display: flex; flex-wrap: wrap; gap: 10px; }
+/* The stage: open ground for the trail, the name in the middle of it. */
+.it__hero { overflow: clip; }
+.it__title { position: relative; z-index: 1; font-size: clamp(2.8rem, 1rem + 6.4vw, 7.5rem); text-align: center; }
 
 /* Pictures: a 4:5 frame around a photo from the shared set. */
 .it__pic { display: block; width: min(var(--pic-w), 24vw); aspect-ratio: 4 / 5; border-radius: 3px; overflow: hidden; background: var(--bg-2); box-shadow: var(--shadow-2); }
@@ -32,33 +15,16 @@
 /* The stills: the rest frame. They step aside quickly while a trail is alive and return a beat after it. */
 .it__stills { position: absolute; inset: 0; pointer-events: none; transition: opacity var(--dur-m) var(--ease-out) 0.4s; }
 .it__hero.is-trailing .it__stills { opacity: 0; transition-duration: var(--dur-s); transition-delay: 0s; }
-.it__still { position: absolute; width: clamp(92px, 13vw, calc(var(--pic-w) * 1.45)); }
-.it__still--0 { left: 50%; top: 9%; rotate: -5deg; }
-.it__still--1 { left: 66%; top: 23%; rotate: 4deg; }
-.it__still--2 { left: 82%; top: 6%; rotate: -2deg; }
+.it__still { position: absolute; width: clamp(84px, 10vw, calc(var(--pic-w) * 1.2)); }
+.it__still--0 { left: 12%; top: 7%; rotate: -5deg; }
+.it__still--1 { right: 12%; top: 11%; rotate: 4deg; }
+.it__still--2 { left: 60%; bottom: 7%; rotate: -2deg; }
 .it--still .it__stills { transition: none; }
 
-/* Recent commissions: a ruled list under the hero. */
-.it__recent { display: grid; gap: 18px; padding-block: 56px 120px; border-top: 1px solid var(--line); }
-.it__list { margin: 0; border-top: 1px solid var(--line); }
-.it__list a { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.6fr) minmax(0, 0.4fr) minmax(0, 0.5fr); gap: 16px; align-items: baseline; padding: 18px 4px; border-bottom: 1px solid var(--line); color: var(--ink-2); transition: background-color var(--dur-s), color var(--dur-s); }
-.it__list a:is(:hover, :focus-visible) { background: var(--bg-2); color: var(--ink); }
-.it__list strong { color: var(--ink); font-weight: 640; }
-.it__frames { justify-self: end; color: var(--muted); font-size: var(--text-sm); }
-
-@media (max-width: 900px) {
-  .it__bar nav { display: none; }
-  .it__copy { grid-template-columns: minmax(0, 1fr) minmax(0, 18.5rem); }
-}
 @media (max-width: 680px) {
-  .it__copy { grid-template-columns: minmax(0, 1fr); }
-  /* On a phone the stills join the flow above the copy, centred in the open ground, so they never sit on it. */
-  .it__stills { position: static; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; align-items: start; width: min(100% - 2 * var(--gutter) - 36px, 380px); margin: auto; padding-block: 28px 40px; }
+  /* On a phone the stills join the flow above the name, so they never sit on it. */
+  .it__stills { position: static; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; align-items: start; width: min(100%, 380px); }
   .it__still { position: static; width: 100%; }
   .it__still--1 { margin-top: 2.5rem; }
   .it__still--2 { margin-top: 1rem; }
-  .it__list a { grid-template-columns: minmax(0, 1fr) auto; row-gap: 4px; }
-  .it__list a > :nth-child(2) { grid-column: 1; grid-row: 2; font-size: var(--text-sm); }
-  .it__list a > :nth-child(3) { grid-column: 2; grid-row: 2; justify-self: end; font-size: var(--text-sm); color: var(--muted); }
-  .it__frames { grid-column: 2; grid-row: 1; }
 }

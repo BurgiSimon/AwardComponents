@@ -1,17 +1,14 @@
 .wr { --on-photo: var(--bg); overflow-x: clip; }
 :root[data-theme='dark'] .wr { --on-photo: var(--ink); }
-.wr a { text-decoration: none; }
 
 /* Paper (the day picture), then the world canvas (alpha = the wake), then a scrim, then the words. */
-.wr__hero { position: relative; min-height: calc(100svh - 64px); display: grid; align-items: end; overflow: hidden; background: var(--bg-2); }
+.wr__hero { position: relative; min-height: 100svh; display: grid; align-items: end; overflow: hidden; background: var(--bg-2); }
 .wr__paper, .wr__gl, .wr__scrim { position: absolute; inset: 0; }
 .wr__paper img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .wr__gl { pointer-events: none; }
 .wr__scrim {
   pointer-events: none;
-  background:
-    linear-gradient(0deg, color-mix(in oklab, var(--night) 80%, transparent) 0%, color-mix(in oklab, var(--night) 54%, transparent) 38%, color-mix(in oklab, var(--night) 40%, transparent) 60%, transparent 82%),
-    linear-gradient(180deg, color-mix(in oklab, var(--night) 22%, transparent), transparent 22%);
+  background: linear-gradient(0deg, color-mix(in oklab, var(--night) 76%, transparent) 0%, color-mix(in oklab, var(--night) 46%, transparent) 32%, transparent 64%);
 }
 
 /* The CSS world: a graded copy of the picture, for the Night button where WebGL does not run. */
@@ -21,8 +18,17 @@
 .wr[data-grade='winter'] .wr__css-world { filter: grayscale(0.75) brightness(1.18) contrast(0.92) sepia(0.15) hue-rotate(170deg); }
 .wr--night .wr__css-world { opacity: 1; }
 
-.wr__copy { position: relative; z-index: 1; display: grid; gap: clamp(14px, 2.2vh, 22px); padding-block: 48px clamp(28px, 5vh, 48px); color: var(--on-photo); }
-.wr__kicker { color: color-mix(in oklab, var(--on-photo) 78%, transparent); }
+.wr__copy {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: end;
+  gap: 20px 40px;
+  padding-block: 48px clamp(56px, 9vh, 80px);
+  color: var(--on-photo);
+}
 .wr__title {
   max-width: 14ch;
   font-size: clamp(2.6rem, 1.2rem + 4.6vw, 6.2rem);
@@ -32,9 +38,6 @@
   letter-spacing: -0.035em;
   text-wrap: balance;
 }
-.wr__row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 20px 40px; padding-top: 18px; border-top: 1px solid color-mix(in oklab, var(--on-photo) 26%, transparent); }
-.wr__lede { max-width: 42ch; font-size: var(--text-lg); line-height: 1.5; color: color-mix(in oklab, var(--on-photo) 88%, transparent); }
-.wr__actions { display: flex; flex-wrap: wrap; gap: 10px; }
 
 .wr__toggle {
   display: inline-flex; align-items: center; gap: 10px;
@@ -53,21 +56,3 @@
 .wr__moon { display: none !important; background: var(--night); color: var(--on-photo); }
 .wr__toggle[aria-pressed='true'] .wr__sun { display: none !important; }
 .wr__toggle[aria-pressed='true'] .wr__moon { display: grid !important; }
-
-.wr__hint { position: absolute; z-index: 1; top: 20px; right: var(--gutter); display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px; border-radius: var(--radius-pill); background: color-mix(in oklab, var(--night) 45%, transparent); color: var(--on-photo); backdrop-filter: blur(8px); pointer-events: none; }
-.wr__hint::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
-.wr__hint[hidden], :root[data-capture] .wr__hint { display: none; }
-
-.wr__facts { padding-block: clamp(32px, 6vh, 56px) clamp(56px, 10vh, 96px); }
-.wr__facts dl { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; margin: 0; }
-.wr__facts div { display: grid; gap: 6px; padding-top: 14px; border-top: 1px solid var(--line-2); }
-.wr__facts dd { margin: 0; font-size: var(--text-lg); font-weight: 600; }
-
-@media (max-width: 760px) {
-  .wr__bar nav { display: none; }
-  .wr__facts dl { grid-template-columns: 1fr 1fr; }
-}
-@media (max-width: 480px) {
-  .wr__actions { width: 100%; }
-  .wr__actions > * { flex: 1 1 auto; }
-}

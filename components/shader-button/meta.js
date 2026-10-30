@@ -10,7 +10,7 @@ export default {
   requires: ['webgl'],
   added: '2026-10-28',
   order: 45,
-  preview: { height: 620, hint: 'Hover the button, then click into the field', capture: { hover: '[data-charge]', wait: 1500 } },
+  preview: { height: 500, hint: 'Hover the button, then click into the field', capture: { hover: '[data-charge]', wait: 1500 } },
   useCases: [
     'The closing call to action of a landing page',
     'A sign-up or waitlist band where the form should feel alive without moving',

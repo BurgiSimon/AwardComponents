@@ -1,7 +1,8 @@
-// Horizontal rail — an architecture studio's selected work. A sticky stage whose track moves sideways as the page
-// scrolls: the rail is the track's overflow plus one viewport tall, so vertical travel equals horizontal travel and
-// the scrollbar stays honest. Arrow buttons, arrow keys on the focused rail and tabbing to a card all move the page
-// scroll, which drives the track. Touch and reduced motion: a native horizontal scroller with snap points.
+// Horizontal rail — an architecture studio's project cards on their own, with arrows and a counter. A sticky stage
+// whose track moves sideways as the page scrolls: the rail is the track's overflow plus one viewport tall, so
+// vertical travel equals horizontal travel and the scrollbar stays honest. Arrow buttons, arrow keys on the focused
+// rail and tabbing to a card all move the page scroll, which drives the track. Touch and reduced motion: a native
+// horizontal scroller with snap points.
 import './demo.css';
 import { on, html, raw, clamp, photos, imageHTML, content } from '../../src/demo-kit/index.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
@@ -12,32 +13,24 @@ const ARROW = (d) => raw(`<svg viewBox="0 0 24 24" fill="none" stroke="currentCo
 export default function mount(root, options, ctx) {
   const { studio } = content;
   const projects = studio.projects;
-  const shots = projects.map((p, i) => photos({ tags: p.tags, count: 1, seed: `hr-${p.slug}-${i}` })[0]);
+  // Picked in order, each excluding the pictures before it, so no two cards share one; city pictures only for a city
+  // project.
+  const used = [];
+  const shots = projects.map((p, i) => {
+    const [s] = photos({ tags: p.tags, not: p.tags.includes('city') ? [] : ['city'], exclude: used, count: 1, seed: `hr-${p.slug}-${i}` });
+    used.push(s.id);
+    return s;
+  });
   const n = projects.length;
   const pad = (i) => String(i).padStart(2, '0');
   let cfg = { ...options };
 
   root.className = 'hr';
   root.innerHTML = html`
-    <header class="ac-bar hr__bar">
-      <a class="ac-brand" href="#top">${studio.name}</a>
-      <nav aria-label="Studio">${studio.nav.map((x, i) => html`<a href="#top" ${i === 0 ? raw('aria-current="page"') : ''}>${x}</a>`)}</nav>
-    </header>
-
     <section class="hr__rail" data-rail tabindex="0" aria-labelledby="hr-title" aria-describedby="hr-keys">
       <div class="hr__stage" data-stage>
-        <div class="hr__head">
-          <div class="hr__titles">
-            <p class="ac-label">Selected work · 2022–2026</p>
-            <h2 class="ac-h1" id="hr-title">Eight buildings on one coast.</h2>
-            <p class="sr-only" id="hr-keys">Use the left and right arrow keys to move one project.</p>
-          </div>
-          <div class="hr__nav">
-            <p class="hr__count ac-num" aria-hidden="true"><b data-count>01</b><span> / ${pad(n)}</span></p>
-            <button class="hr__arrow" type="button" data-step="-1" aria-label="Previous project">${ARROW('prev')}</button>
-            <button class="hr__arrow" type="button" data-step="1" aria-label="Next project">${ARROW('next')}</button>
-          </div>
-        </div>
+        <h1 class="sr-only" id="hr-title">${studio.name}, selected work</h1>
+        <p class="sr-only" id="hr-keys">Use the left and right arrow keys to move one project.</p>
         <div class="hr__viewport" data-viewport>
           <ul class="hr__track" role="list" data-track>
             ${projects.map((p, i) => html`
@@ -46,24 +39,26 @@ export default function mount(root, options, ctx) {
                   <span class="ac-media hr__media">${raw(imageHTML(shots[i], { sizes: '(max-width: 700px) 78vw, 30vw', alt: '' }))}<span class="hr__no ac-label">${pad(i + 1)}</span></span>
                   <span class="hr__cap">
                     <strong class="hr__name">${p.title}</strong>
-                    <span class="hr__meta">${p.discipline} · ${p.place} · ${p.year}</span>
+                    <span class="hr__meta">${p.place}</span>
                   </span>
                 </a>
               </li>`)}
           </ul>
         </div>
-        <div class="hr__progress" aria-hidden="true">
-          <span class="hr__line"><span data-fill></span></span>
-          <span class="hr__ticks">${projects.map(() => raw('<span></span>'))}</span>
-          <span class="hr__big ac-num"><b data-big>01</b> / ${pad(n)}</span>
+        <div class="hr__foot" data-foot>
+          <div class="hr__progress" aria-hidden="true">
+            <span class="hr__line"><span data-fill></span></span>
+            <span class="hr__ticks">${projects.map(() => raw('<span></span>'))}</span>
+            <span class="hr__big ac-num"><b data-big>01</b> / ${pad(n)}</span>
+          </div>
+          <div class="hr__nav">
+            <p class="hr__count ac-num" aria-hidden="true"><b data-count>01</b><span> / ${pad(n)}</span></p>
+            <button class="hr__arrow" type="button" data-step="-1" aria-label="Previous project">${ARROW('prev')}</button>
+            <button class="hr__arrow" type="button" data-step="1" aria-label="Next project">${ARROW('next')}</button>
+          </div>
         </div>
+        <p class="ac-stage__note"><span>${studio.name} · selected work</span></p>
       </div>
-    </section>
-
-    <section class="hr__after ac-wrap" aria-labelledby="hr-after">
-      <p class="ac-label">The studio</p>
-      <h2 class="ac-h2" id="hr-after">Eleven people above a boatyard in ${studio.city}, drawing buildings that are cheap to heat and easy to mend.</h2>
-      <a class="ac-link" href="#top">Read about the studio</a>
     </section>`;
   root.querySelectorAll('a[href="#top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
@@ -78,8 +73,8 @@ export default function mount(root, options, ctx) {
   const bigEl = root.querySelector('[data-big]');
   const [prevBtn, nextBtn] = root.querySelectorAll('[data-step]');
 
-  const head = root.querySelector('.hr__head');
-  const padPx = () => root.style.setProperty('--pad-px', getComputedStyle(head).paddingLeft);
+  const foot = root.querySelector('[data-foot]');
+  const padPx = () => root.style.setProperty('--pad-px', getComputedStyle(foot).paddingLeft);
   const apply = () => {
     padPx();
     root.style.setProperty('--card', `${cfg.card}vw`);

@@ -30,6 +30,7 @@ Playwright is pinned in package.json; `scripts/lib/browser.mjs` falls back to `A
 Read `docs/authoring.md` first; it is the contract. In short:
 
 - One folder `components/<id>/` with `meta.js` (plain data, no imports), `demo.js` (`export default function mount(root, options, ctx)`), `demo.css`. Nothing else is registered by hand.
+- Stage the move, not a site: the component alone on `.ac-stage`, or with only the content it acts on; a page only when the move is the page. No nav bar, eyebrow, lede or footer for their own sake (authoring rule 4).
 - Colours are tokens (`src/styles/tokens.css`); type and primitives come from `src/demo-kit/base.css`; content from `src/demo-kit/content.js`; pictures from `src/demo-kit/media.js`.
 - Everything a demo starts stops through `ctx` (`ctx.signal`, `ctx.onCleanup`, `useGsap`, `useLenis`, `useRenderer`, `onFrame`).
 - Every motion has a reduced path (`ctx.motion`), pointer effects only for fine pointers, WebGL demos have a no-WebGL still.

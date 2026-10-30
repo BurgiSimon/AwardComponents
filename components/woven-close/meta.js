@@ -4,7 +4,7 @@ export default {
   title: 'Woven footage close',
   category: 'closers',
   summary: 'An observatory’s close: tonight’s shows and a ticket link beside the Earth from deep space and an orbit horizon, both woven live into the section’s own ink as bars or ASCII glyphs.',
-  description: 'The last screen of Meridian Observatory’s site. Two clips graded on black, the whole Earth filmed from a million miles out and a time-lapse horizon from the space station, sit as layers on one raw-WebGL canvas over a generated star field. Black is the matte: a cell whose footage is near-black drops out, so each clip lands as a cut-out with no alpha channel. Every other cell is redrawn as a vertical bar as wide as the cell is dark, or as a glyph from an ASCII ramp sorted by how much ink each character really has in the mono face.\n\nEach layer is a plain object (cell grid, black and white points, bar range, ground and ink opacity, develop) that GSAP tweens, so scrolling develops every layer from blank while its slot comes into view. The canvas renders only when a clip frame, a tween value, the size, the theme or a setting changed, at 30 fps at most, and never while the close is off screen. Every word, link and button sits beside the weave, never under it.',
+  description: 'The last screen of Meridian Observatory’s site. Two clips graded on black, the whole Earth filmed from a million miles out and a time-lapse horizon from the space station, sit as layers on one raw-WebGL canvas over a generated star field. Black is the matte: a cell whose footage is near-black drops out, so each clip lands as a cut-out with no alpha channel. Every other cell is redrawn as a vertical bar as wide as the cell is dark, or as a glyph from an ASCII ramp sorted by how much ink each character really has in the mono face.\n\nEach layer is a plain object (cell grid, black and white points, bar range, ground and ink opacity, develop) that GSAP tweens: on a page the scroll develops every layer from blank while its slot comes into view, and Replay the develop runs it again here. The canvas renders only when a clip frame, a tween value, the size, the theme or a setting changed, at 30 fps at most, and never while the close is off screen. Every word, link and button sits beside the weave, never under it.',
   recipe: 'gl-video-dither-layers',
   deps: ['gsap'],
   tags: ['webgl', 'shader', 'video', 'footer', 'mask', 'scrub', 'gsap', 'scrolltrigger', 'ascii', 'dither', 'reduced-motion'],
@@ -12,14 +12,14 @@ export default {
   added: '2026-10-28',
   labels: ['new'], // added on the launch day after the launch set; expires like any New label
   order: 60,
-  preview: { height: 760, scroll: true, hint: 'Scroll to the close', capture: { scroll: 1, wait: 2600 } },
+  preview: { height: 640, hint: 'Press Replay the develop', capture: { wait: 2600 } },
   useCases: [
     'The close of a museum, planetarium or festival site, where the last screen carries tonight’s programme and one ticket action',
     'A footer that turns mixed footage (drone, archive, product renders) into one texture in the brand’s own ink',
     'A campaign end screen where a film shot on black is woven beside the call to action',
   ],
   notes: [
-    'The canvas is aria-hidden and a visible caption names the footage; the show list, visit facts, ticket link and credits are DOM beside the weave, never under it.',
+    'The canvas is aria-hidden and a visible caption names the footage; the show list and the ticket link are DOM beside the weave, never under it.',
     'Pause footage is a real button whose label stays put while aria-pressed carries the state; the clips also stop whenever the close leaves the screen.',
     'Under reduced motion and static the weave is one developed still from the clips’ posters: no clock, no video, no pause button.',
     'Without WebGL, or after a lost context, the posters sit in the same slots as a striped, masked still and the copy does not move.',

@@ -8,14 +8,14 @@ export default {
   tags: ['scroll', 'svg', 'path', 'stroke-dashoffset', 'timeline', 'scrub', 'scrolltrigger', 'gsap', 'lenis'],
   added: '2026-10-28',
   order: 80,
-  preview: { height: 680, scroll: true, hint: 'Scroll to draw the line', capture: { scroll: 0.3, wait: 1200 } },
+  preview: { height: 680, scroll: true, hint: 'Scroll to draw the line', capture: { scroll: 0.34, wait: 1200 } },
   useCases: [
     'A company history or a project timeline where the milestones are the content',
     'A route: a hike, a delivery journey, a ferry line, a supply chain',
     'A process (brief, sketch, build, hand-over) that should read as one continuous thread',
   ],
   notes: [
-    'The line is decoration (aria-hidden); every milestone is a real heading, paragraph and picture in reading order, and lighting up is a visual cue only.',
+    'The line is decoration (aria-hidden); every milestone is a real heading and picture in reading order, and lighting up is a visual cue only.',
     'The path is generated from the milestones’ positions on load and resize, so it always passes through each marker at any width.',
     'Under reduced motion the whole line is drawn and every milestone is lit from the start.',
   ],

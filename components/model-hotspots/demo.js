@@ -1,12 +1,12 @@
-// Model with hotspots — Halden's Granite Court as a white massing model on the project page. A hand-written
+// Model with hotspots — Halden's Granite Court as a white massing model beside its story card. A hand-written
 // clamped orbit: input only writes a goal (polar 0.8–1.3 rad, distance per zoom range), and each frame the camera
 // eases toward it by 1 − k^dt (k 0.0004 while dragging; a fly-to's k comes from the Fly time control). Every zone is
 // a real <button aria-pressed> pinned to its projected point; pressing one flies the camera there and paints the
-// zone in the accent, and the detail panel (aria-live) tells its story. Frames render only while something moves.
+// zone in the accent, and the story card (aria-live) tells its story. Frames render only while something moves.
 // Reduced: GL stays, moves land at once, no idle turn. Static or no WebGL: a drawn plan with the same buttons.
 import './demo.css';
 import * as THREE from 'three';
-import { on, onFrame, whileVisible, later, html, raw, clamp, lerp, readToken, colour, content } from '../../src/demo-kit/index.js';
+import { on, onFrame, whileVisible, later, html, clamp, lerp, readToken, colour, content } from '../../src/demo-kit/index.js';
 import { useRenderer, webglAvailable, disposeScene } from '../../src/demo-kit/three.js';
 
 const POLAR = [0.8, 1.3];
@@ -43,39 +43,27 @@ export default function mount(root, options, ctx) {
 
   root.className = 'mh';
   root.innerHTML = html`
-    <header class="ac-bar mh__bar">
-      <a class="ac-brand" href="#top">${studio.name}</a>
-      <nav aria-label="Studio">${studio.nav.map((n, i) => html`<a href="#top" ${i === 0 ? raw('aria-current="page"') : ''}>${n}</a>`)}</nav>
-    </header>
-    <main class="mh__page ac-wrap">
-      <div class="mh__stage" data-stage tabindex="0" role="group" aria-label="${project.title} model. Drag or use the arrow keys to turn it." aria-describedby="mh-hint">
-        <div class="mh__gl" data-gl></div>
-        <ul class="mh__spots" role="list" data-spots>
-          ${ZONES.map((z, i) => html`<li><button class="mh__spot" type="button" data-zone="${z.id}" aria-pressed="false"><span class="mh__dot" aria-hidden="true">${i + 1}</span><span class="mh__name">${z.name}</span></button></li>`)}
-        </ul>
-        <div class="mh__tools">
-          <button class="mh__tool" type="button" data-reset>Reset view</button>
+    <section class="ac-stage mh__wrap" aria-label="${project.title}">
+      <div class="mh__page">
+        <div class="mh__stage" data-stage tabindex="0" role="group" aria-label="${project.title} model. Drag or use the arrow keys to turn it." aria-describedby="mh-hint">
+          <div class="mh__gl" data-gl></div>
+          <ul class="mh__spots" role="list" data-spots>
+            ${ZONES.map((z, i) => html`<li><button class="mh__spot" type="button" data-zone="${z.id}" aria-pressed="false"><span class="mh__dot" aria-hidden="true">${i + 1}</span><span class="mh__name">${z.name}</span></button></li>`)}
+          </ul>
+          <div class="mh__tools">
+            <button class="mh__tool" type="button" data-reset>Reset view</button>
+          </div>
+          <p class="mh__toast" data-toast aria-hidden="true">Hold <span class="ac-kbd">⌘</span> or <span class="ac-kbd">Ctrl</span> to zoom</p>
+          <p class="sr-only" id="mh-hint">Drag to turn. Hold Command or Ctrl and scroll to zoom. With the model focused, arrows turn, plus and minus zoom, Home resets.</p>
         </div>
-        <p class="mh__toast" data-toast aria-hidden="true">Hold <span class="ac-kbd">⌘</span> or <span class="ac-kbd">Ctrl</span> to zoom</p>
-      </div>
-
-      <aside class="mh__panel" aria-labelledby="mh-title">
-        <p class="ac-label">${project.title} · ${project.place.replace(', NO', '')} · ${project.year}</p>
-        <h1 class="ac-h2" id="mh-title">Forty-two flats around a courtyard cut from the hill.</h1>
         <div class="mh__detail" aria-live="polite">
           <p class="ac-label" data-d-name>${SITE.name}</p>
           <p class="mh__figure" data-d-figure>${SITE.figure}</p>
           <p class="ac-body" data-d-text>${SITE.text}</p>
         </div>
-        <dl class="mh__facts">
-          <div><dt class="ac-label">Flats</dt><dd>42</dd></div>
-          <div><dt class="ac-label">Floors</dt><dd>2–6</dd></div>
-          <div><dt class="ac-label">Gross area</dt><dd>${project.size}</dd></div>
-        </dl>
-        <p class="ac-small mh__hint" id="mh-hint">Drag to turn · ⌘ or Ctrl + scroll to zoom · with the model focused, arrows turn, + and − zoom, Home resets</p>
-      </aside>
-    </main>`;
-  root.querySelectorAll('a[href="#top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
+      </div>
+      <p class="ac-stage__note"><span>${studio.name} · project page</span></p>
+    </section>`;
 
   const stage = root.querySelector('[data-stage]');
   const host = root.querySelector('[data-gl]');
@@ -83,6 +71,7 @@ export default function mount(root, options, ctx) {
   const toast = root.querySelector('[data-toast]');
   const detail = { name: root.querySelector('[data-d-name]'), figure: root.querySelector('[data-d-figure]'), text: root.querySelector('[data-d-text]') };
   const state = { zone: null, mode: 'gl' };
+  let site = SITE;
   let onSelect = () => {};
 
   const select = (id) => {
@@ -90,7 +79,7 @@ export default function mount(root, options, ctx) {
     const z = ZONES.find((x) => x.id === id);
     buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.zone === id)));
     root.querySelectorAll('[data-p]').forEach((el) => el.classList.toggle('is-on', el.dataset.p === id));
-    const d = z || SITE;
+    const d = z || site;
     detail.name.textContent = d.name;
     detail.figure.textContent = d.figure;
     detail.text.textContent = d.text;
@@ -118,6 +107,13 @@ export default function mount(root, options, ctx) {
     state.mode = 'plan';
     root.dataset.mode = 'plan';
     host.innerHTML = PLAN;
+    // Nothing turns here: only the buttons work, so the stage stops offering drag, keys and zoom.
+    site = { ...SITE, text: 'Choose a building.' };
+    detail.text.textContent = site.text;
+    stage.removeAttribute('tabindex');
+    stage.removeAttribute('aria-describedby');
+    stage.setAttribute('aria-label', `${project.title} site plan`);
+    root.querySelector('#mh-hint').remove();
     return instance;
   }
   root.dataset.mode = 'gl';

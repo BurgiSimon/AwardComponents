@@ -7,6 +7,7 @@ import { icon } from '../icons.js';
 import { setQuery, strip } from '../router.js';
 import { card } from '../ui/card.js';
 import { scoreComponent } from '../ui/palette.js';
+import { savedIds } from '../saved.js';
 
 const TECH = ['css', 'gsap', 'lenis', 'webgl', 'canvas', 'physics'];
 const SORTS = { category: 'By category', az: 'A–Z', new: 'Newest' };
@@ -17,7 +18,9 @@ export default function browsePage({ query }) {
     cat: categories.some((c) => c.id === query.get('cat')) ? query.get('cat') : '',
     tech: TECH.includes(query.get('tech')) ? query.get('tech') : '',
     sort: SORTS[query.get('sort')] ? query.get('sort') : 'category',
+    saved: query.get('saved') === '1',
   };
+  const saved = savedIds();
   const techMatch = (c, t) => (t === 'css' ? !c.tech.some((x) => x !== 'css') : c.tech.includes(t));
   const techCount = (t) => components.filter((c) => techMatch(c, t)).length;
   const myPath = strip(location.pathname);
@@ -46,9 +49,12 @@ export default function browsePage({ query }) {
           <button type="button" class="fchip fchip--sm" data-tech="" aria-pressed="${!state.tech}">Any tech</button>
           ${TECH.filter((t) => techCount(t)).map((t) => raw(html`<button type="button" class="fchip fchip--sm" data-tech="${t}" aria-pressed="${state.tech === t}">${TECH_LABELS[t]}</button>`))}
         </div>
+        <div class="filters__end">
+        ${saved.length || state.saved ? raw(html`<button type="button" class="fchip fchip--sm fchip--saved" data-saved aria-pressed="${state.saved}">${raw(icon('bookmark', { size: 13 }))}Saved<span>${saved.length}</span></button>`) : ''}
         <label class="sort">Sort
           <span class="tw-select"><select data-sort aria-label="Sort">${Object.entries(SORTS).map(([k, v]) => raw(html`<option value="${k}" ${state.sort === k ? raw('selected') : ''}>${v}</option>`))}</select>${raw(icon('chevronDown', { size: 14 }))}</span>
         </label>
+        </div>
       </div>
     </div>
     <p class="results-count" role="status" aria-live="polite" data-count></p>
@@ -59,6 +65,7 @@ export default function browsePage({ query }) {
 
   const filtered = () => {
     let list = components.filter((c) =>
+      (!state.saved || saved.includes(c.id)) &&
       (!state.cat || c.category === state.cat) &&
       (!state.tech || techMatch(c, state.tech)));
     if (state.q) {
@@ -78,11 +85,11 @@ export default function browsePage({ query }) {
     });
     if (!list.length) {
       const cat = categories.find((x) => x.id === state.cat);
-      const what = [state.q && `“${escapeHTML(state.q)}”`, cat && escapeHTML(cat.title), state.tech && TECH_LABELS[state.tech]].filter(Boolean).join(' + ');
+      const what = [state.saved && 'your saved list', state.q && `“${escapeHTML(state.q)}”`, cat && escapeHTML(cat.title), state.tech && TECH_LABELS[state.tech]].filter(Boolean).join(' + ');
       results.innerHTML = `<div class="empty">${icon('search', { size: 22 })}<p>No component matches ${what}.</p><button class="btn btn--ghost" type="button" data-clear>Clear filters</button></div>`;
       return;
     }
-    if (state.sort === 'category' && !state.q && !state.cat) {
+    if (state.sort === 'category' && !state.q && !state.cat && !state.saved) {
       results.innerHTML = groups.map((g) => {
         const items = list.filter((c) => c.category === g.id);
         if (!items.length) return '';
@@ -100,6 +107,7 @@ export default function browsePage({ query }) {
     if (state.cat) p.set('cat', state.cat);
     if (state.tech) p.set('tech', state.tech);
     if (state.sort !== 'category') p.set('sort', state.sort);
+    if (state.saved) p.set('saved', '1');
     setQuery(p, { path: myPath });
   };
   const syncLater = debounce(sync, 300);
@@ -118,10 +126,17 @@ export default function browsePage({ query }) {
       node.querySelectorAll('[data-tech]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.tech === state.tech)));
       render(); sync();
     }
+    const savedBtn = e.target.closest('[data-saved]');
+    if (savedBtn) {
+      state.saved = !state.saved;
+      savedBtn.setAttribute('aria-pressed', String(state.saved));
+      render(); sync();
+    }
     if (e.target.closest('[data-clear]')) {
-      Object.assign(state, { q: '', cat: '', tech: '' });
+      Object.assign(state, { q: '', cat: '', tech: '', saved: false });
       node.querySelector('[data-q]').value = '';
       node.querySelectorAll('[data-cat],[data-tech]').forEach((b) => b.setAttribute('aria-pressed', String(!b.dataset.cat && !b.dataset.tech)));
+      node.querySelector('[data-saved]')?.setAttribute('aria-pressed', 'false');
       render(); sync();
       node.querySelector('[data-q]').focus();
     }

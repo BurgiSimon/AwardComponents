@@ -1,21 +1,13 @@
 .pc {
   --pc-blur: 6px;
   --pc-dim: 0.2;
-  min-height: 100svh;
-  display: grid;
-  grid-template-rows: auto 1fr;
-  grid-template-columns: minmax(0, 1fr);
   overflow-x: clip;
 }
-.pc__brand { font-family: var(--font-serif); font-stretch: normal; font-weight: 600; font-style: italic; font-size: 1.35rem; letter-spacing: -0.01em; }
-.pc__bar a { text-decoration: none; }
 
-.pc__carousel { display: grid; grid-template-columns: minmax(0, 1fr); align-content: center; gap: clamp(18px, 3.2svh, 36px); padding-block: 8px clamp(28px, 6svh, 64px); }
-.pc__head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
-.pc__heading { display: grid; gap: 10px; }
-.pc__title { font-family: var(--font-serif); font-weight: 500; font-size: clamp(2.2rem, 1.3rem + 3.2vw, 4.2rem); line-height: 0.95; letter-spacing: -0.015em; }
-.pc__controls { display: flex; align-items: center; gap: 8px; }
-.pc__count { min-width: 7ch; margin-right: 8px; text-align: right; color: var(--ink-2); }
+/* The carousel runs edge to edge so the neighbours peek in from the frame's sides; the controls sit under it. */
+.pc__carousel { --stage-gap: clamp(18px, 3.2svh, 32px); grid-template-columns: minmax(0, 1fr); padding-inline: 0; }
+.pc__controls { display: flex; align-items: center; gap: 14px; }
+.pc__count { min-width: 7ch; text-align: center; color: var(--ink-2); }
 .pc__btn {
   width: 44px;
   height: 44px;
@@ -32,7 +24,7 @@
 
 /* The viewport clips (clip, not hidden, so focus cannot scroll it); the track moves by transform only.
    pan-y leaves vertical page scroll to the browser and hands horizontal drags to the pointer handlers. */
-.pc__viewport { overflow: clip; touch-action: pan-y; cursor: grab; }
+.pc__viewport { width: 100%; overflow: clip; touch-action: pan-y; cursor: grab; }
 .pc.is-dragging .pc__viewport { cursor: grabbing; }
 .pc__track { display: flex; width: max-content; margin: 0; user-select: none; -webkit-user-select: none; will-change: transform; }
 
@@ -64,10 +56,6 @@
   .pc__item.is-active { opacity: 1; }
 }
 @media (max-width: 560px) {
-  .pc__bar nav { display: none; }
-  .pc__head { flex-direction: column; align-items: flex-start; gap: 16px; }
-  .pc__controls { width: 100%; }
-  .pc__count { order: -1; margin-right: auto; text-align: left; }
   .pc__art { --ratio: 4 / 5; }
   .pc__name { font-size: 1.6rem; }
   .pc__dek { font-size: var(--text-sm); }

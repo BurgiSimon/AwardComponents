@@ -10,7 +10,7 @@ export default {
   requires: ['webgl'],
   added: '2026-10-28',
   order: 60,
-  preview: { height: 640, hint: 'Flick the wheel once, or drag', capture: { action: 'next', wait: 1400 } },
+  preview: { height: 640, hint: 'Flick the wheel once, or drag', capture: { action: 'next', wait: 3200 } },
   actions: [{ id: 'next', label: 'Next issue', icon: 'arrowRight' }],
   useCases: [
     'A magazine’s back catalogue or a record label’s releases',

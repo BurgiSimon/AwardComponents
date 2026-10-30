@@ -4,7 +4,7 @@ A component library of award-league web moves — scroll set-pieces, cursors, lo
 
 Every component has:
 
-- **a live demo** in a real use case (a studio's contact section, a shop's bag, a magazine's long read), all in one theme, light and dark;
+- **a live demo** that stages the component on its own, or with only the content it acts on, using real names and pictures (a studio's contact disc, a shop's bag, a magazine's long read), all in one theme, light and dark;
 - **controls** for the values that change its feel, with the setup kept in the URL;
 - **a prompt** that rebuilds it inside your own project with the awards plugin, naming the recipe and only the settings you changed.
 

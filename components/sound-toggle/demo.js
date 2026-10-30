@@ -1,15 +1,17 @@
-// Sound toggle — a studio's project page with an opt-in sound switch in the header. Three states (off, armed, on);
-// only "on" has ever touched an AudioContext, because the context is built inside the click. The bed is synthesised
-// (two detuned sines through a swept lowpass, under band-passed noise, ambient .375), the cues are triangle blips
-// (.35), and the icon is an AnalyserNode drawn into a canvas inside the button, on the ticker only while sound is on
-// in the full tier. A stored yes comes back armed: the first gesture anywhere starts it. Hidden tabs suspend it.
+// Sound toggle — a studio site's opt-in sound switch, alone with the header links it sounds. Three states (off,
+// armed, on); only "on" has ever touched an AudioContext, because the context is built inside the click. The bed is
+// synthesised (two detuned sines through a swept lowpass, under band-passed noise, ambient .375), the cues are
+// triangle blips (.35), and the icon is an AnalyserNode drawn into a canvas inside the button, on the ticker only
+// while sound is on in the full tier. A stored yes comes back armed: the first gesture anywhere starts it. Hidden
+// tabs suspend it.
 import './demo.css';
-import { on, ticker, readToken, finePointer, html, raw, photos, imageHTML, content } from '../../src/demo-kit/index.js';
+import { on, ticker, readToken, finePointer, html, content } from '../../src/demo-kit/index.js';
 
 const KEY = 'halden:sound';
 const SFX = 0.35;
 const NOTES = [523.25, 587.33, 659.25, 783.99]; // one pentatonic step per menu item
 const BINS = [2, 3, 4, 6, 9, 13, 19]; // FFT bins (47 Hz each) from the tones up to the noise band
+const ICON = 2; // the equaliser drawn at twice the header size, so it reads on its own
 const store = {
   read() { try { return localStorage.getItem(KEY); } catch { return null; } },
   write(v) { try { localStorage.setItem(KEY, v); } catch { /* the toggle still works, it just forgets */ } },
@@ -17,46 +19,22 @@ const store = {
 
 export default function mount(root, options, ctx) {
   const { studio } = content;
-  const project = studio.projects.find((p) => p.slug === 'tern-library');
-  const [hero] = photos({ tags: ['interior'], count: 1, seed: 'snd-hero', orientation: 'portrait' });
-  const strip = photos({ tags: ['architecture'], not: ['city'], count: 3, seed: 'snd-strip' });
   let cfg = { ...options };
   root.className = 'sn';
   root.innerHTML = html`
-    <header class="ac-bar sn__bar">
-      <a class="ac-brand" href="#top">${studio.name}</a>
-      <nav aria-label="Studio" data-nav>${studio.nav.map((n, i) => html`<a href="#top" data-note="${i}">${n}</a>`)}</nav>
+    <section class="ac-stage sn__stage" aria-label="${studio.name} site header">
       <button class="sn__toggle" type="button" aria-pressed="false" data-sound>
         <canvas class="sn__meter" aria-hidden="true" data-meter></canvas>
         <span data-label>Sound off</span>
       </button>
-    </header>
-    <main class="sn__hero ac-wrap">
-      <div class="sn__copy">
-        <p class="ac-label">Project 02 of 08 · ${project.discipline}</p>
-        <h1 class="ac-display">${project.title}</h1>
-        <dl class="sn__meta">
-          <div><dt class="ac-label">Place</dt><dd>${project.place}</dd></div>
-          <div><dt class="ac-label">Year</dt><dd>${project.year}</dd></div>
-          <div><dt class="ac-label">Area</dt><dd>${project.size}</dd></div>
-        </dl>
-        <p class="ac-lede">${project.summary} The room is tuned for quiet: oak slats over wool felt, and a floor that swallows footsteps.</p>
-        <p class="sn__hint"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/></svg><span data-hint>Turn the sound on to hear the reading room’s hum.</span></p>
-      </div>
-      <figure class="sn__fig">
-        <span class="ac-media sn__pic">${raw(imageHTML(hero, { sizes: '(max-width: 760px) 100vw, 44vw', alt: 'The Tern Library reading room, its long window facing the sound.', eager: true }))}</span>
-        <figcaption class="ac-small">The reading room at four in the afternoon, in February.</figcaption>
-      </figure>
-    </main>
-    <section class="sn__strip ac-wrap" aria-label="More of the building">
-      ${strip.map((p, i) => html`<figure><span class="ac-media">${raw(imageHTML(p, { sizes: '(max-width: 760px) 100vw, 30vw', alt: '' }))}</span><figcaption class="ac-small">${['North façade, larch over concrete', 'The stair to the archive', 'Window seat, 22 m long'][i]}</figcaption></figure>`)}
+      <nav class="sn__links" aria-label="Studio">${studio.nav.map((n, i) => html`<a href="#top" data-note="${i}">${n}</a>`)}</nav>
+      <p class="ac-stage__note"><span>${studio.name} · site header</span></p>
     </section>`;
   root.querySelectorAll('a[href="#top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const $ = (s) => root.querySelector(s);
   const button = $('[data-sound]');
   const label = $('[data-label]');
-  const hint = $('[data-hint]');
   const meter = $('[data-meter]');
   const g = meter.getContext('2d');
 
@@ -134,11 +112,12 @@ export default function mount(root, options, ctx) {
     const dpr = Math.min(2, window.devicePixelRatio || 1);
     const w = cfg.style === 'wave' ? 30 : 4 + cfg.bars * 5;
     const h = 22;
-    if (meter.width !== Math.round(w * dpr) || meter.height !== Math.round(h * dpr)) {
-      meter.width = Math.round(w * dpr); meter.height = Math.round(h * dpr);
-      meter.style.width = `${w}px`; meter.style.height = `${h}px`;
+    const k = dpr * ICON;
+    if (meter.width !== Math.round(w * k) || meter.height !== Math.round(h * k)) {
+      meter.width = Math.round(w * k); meter.height = Math.round(h * k);
+      meter.style.width = `${w * ICON}px`; meter.style.height = `${h * ICON}px`;
     }
-    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g.setTransform(k, 0, 0, k, 0, 0);
     g.clearRect(0, 0, w, h);
     const live = state.sound === 'on' && audio?.state === 'running';
     const moving = live && ctx.motion === 'full';
@@ -174,8 +153,6 @@ export default function mount(root, options, ctx) {
   const reflect = () => {
     button.setAttribute('aria-pressed', String(state.sound !== 'off'));
     label.textContent = state.sound === 'on' ? 'Sound on' : state.sound === 'armed' ? 'Sound on · press anywhere' : 'Sound off';
-    hint.textContent = state.sound === 'on' ? 'Playing the reading room’s hum. The menu clicks softly too.' : state.sound === 'armed' ? 'You left the sound on last time; it starts with your first press.' : 'Turn the sound on to hear the reading room’s hum.';
-    root.dataset.audio = state.sound;
     const want = state.sound === 'on' && ctx.motion === 'full';
     if (want && !looping) { looping = true; ticker.add(paint); }
     if (!want && looping) { looping = false; ticker.remove(paint); }

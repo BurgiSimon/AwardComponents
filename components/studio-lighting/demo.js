@@ -1,13 +1,15 @@
-// Studio lighting — a ceramics shop's product viewer. A forged candle holder and a glazed cup take every
+// Studio lighting — a ceramics shop's product viewer on its own: the scene, its lighting switch, light slider and
+// finish swatches. A forged candle holder and a glazed cup take every
 // highlight from a studio built in code and baked once into a PMREM environment: a room of emissive panels
 // (fromScene, half-float, so a strip at 8 stays a hard glint after the rough mips blur) or a window gradient
 // painted on a canvas (fromEquirectangular, 8-bit, so the scene's environmentIntensity carries the punch).
 // The scene has no lights at all. Lathed objects look the same from every side, so the light turns instead
 // (scene.environmentRotation): it orbits slowly at rest, and a drag or the Light slider moves it.
-// Reduced motion and static: lighting is not motion, so it still renders, held. No WebGL: a drawn still.
+// Reduced motion and static: lighting is not motion, so it still renders, held. No WebGL: a drawn still in the
+// chosen finish.
 import './demo.css';
 import * as THREE from 'three';
-import { on, onFrame, whileVisible, html, raw, readToken, colour, content, formatPrice } from '../../src/demo-kit/index.js';
+import { on, onFrame, whileVisible, html, raw, readToken, colour, content } from '../../src/demo-kit/index.js';
 import { useRenderer, webglAvailable, disposeScene } from '../../src/demo-kit/three.js';
 
 // [width, height, position, value, tint]: the lighting design, placed like a photo studio.
@@ -22,9 +24,9 @@ const PANELS = [
 ];
 
 const FINISHES = {
-  brass: { name: 'Brass', color: '#d2a865', roughness: 0.2, swatch: 'linear-gradient(135deg, #f0d39a, #a87b3b)' },
-  iron: { name: 'Waxed iron', color: '#4a4a4f', roughness: 0.42, swatch: 'linear-gradient(135deg, #77777c, #232326)' },
-  nickel: { name: 'Nickel', color: '#e4e4e2', roughness: 0.08, swatch: 'linear-gradient(135deg, #ffffff, #9a9a98)' },
+  brass: { name: 'Brass', color: '#d2a865', roughness: 0.2, swatch: 'linear-gradient(135deg, #f0d39a, #a87b3b)', still: ['#8a6a3a', '#f3d9a0', '#b08245', '#5e4524'] },
+  iron: { name: 'Waxed iron', color: '#4a4a4f', roughness: 0.42, swatch: 'linear-gradient(135deg, #77777c, #232326)', still: ['#2e2e32', '#8d8d93', '#4a4a4f', '#1c1c1f'] },
+  nickel: { name: 'Nickel', color: '#e4e4e2', roughness: 0.08, swatch: 'linear-gradient(135deg, #ffffff, #9a9a98)', still: ['#8f8f8d', '#ffffff', '#c9c9c7', '#6c6c6a'] },
 };
 const LIGHTS = { panels: 'Studio', painted: 'Window' };
 
@@ -94,7 +96,7 @@ function shadowTexture() {
 }
 
 const STILL = `<svg viewBox="0 0 400 300" aria-hidden="true"><defs>
-  <linearGradient id="sl-m" x1="0" x2="1"><stop offset="0" stop-color="#8a6a3a"/><stop offset=".35" stop-color="#f3d9a0"/><stop offset=".6" stop-color="#b08245"/><stop offset="1" stop-color="#5e4524"/></linearGradient>
+  <linearGradient id="sl-m" x1="0" x2="1"><stop offset="0" stop-color="var(--sl-m0)"/><stop offset=".35" stop-color="var(--sl-m1)"/><stop offset=".6" stop-color="var(--sl-m2)"/><stop offset="1" stop-color="var(--sl-m3)"/></linearGradient>
   <linearGradient id="sl-c" x1="0" x2="1"><stop offset="0" stop-color="var(--sl-glaze)" stop-opacity=".7"/><stop offset=".4" stop-color="var(--sl-glaze)"/><stop offset="1" stop-color="var(--sl-glaze)" stop-opacity=".55"/></linearGradient></defs>
   <ellipse cx="140" cy="262" rx="92" ry="9" fill="#000" opacity=".25"/><ellipse cx="290" cy="262" rx="52" ry="7" fill="#000" opacity=".25"/>
   <path d="M52 258h176l-6-10H58z" fill="url(#sl-m)"/><rect x="134" y="168" width="12" height="82" fill="url(#sl-m)"/><path d="M112 168h56l-3-28h-50z" fill="url(#sl-m)"/>
@@ -108,29 +110,21 @@ export default function mount(root, options, ctx) {
   let cfg = { ...options };
   root.className = 'sl';
   root.innerHTML = html`
-    <section class="sl__hero ac-wrap" aria-labelledby="sl-title">
-      <div class="sl__copy">
-        <p class="ac-label">${shop.name} · Candle holders</p>
-        <h1 class="ac-h1" id="sl-title">${holder.name}</h1>
-        <p class="sl__price ac-num">${formatPrice(holder.price)} <span class="ac-small">· shown with the ${cup.name}, ${formatPrice(cup.price)}</span></p>
-        <p class="ac-lede">Forged one at a time in Ålesund. Brass darkens to a soft bronze within a year; iron is waxed and stays black.</p>
+    <section class="ac-stage sl__ground" aria-label="${holder.name} with the ${cup.name}">
+      <div class="sl__stage" data-stage><div class="sl__still" data-still hidden>${raw(STILL)}</div></div>
+      <div class="sl__bar">
+        <div class="sl__lights" role="group" aria-label="Lighting">
+          ${Object.entries(LIGHTS).map(([id, name]) => html`<button type="button" class="sl__light" data-light="${id}" aria-pressed="false">${name}</button>`)}
+        </div>
         <fieldset class="sl__finish">
-          <legend class="ac-label">Finish — <span data-finish-name></span></legend>
+          <legend class="sr-only">Holder finish</legend>
           ${Object.entries(FINISHES).map(([id, f]) => html`<label class="sl__sw" style="--sw:${f.swatch}"><input type="radio" name="sl-finish" value="${id}"><span class="sr-only">${f.name}</span></label>`)}
+          <span class="ac-label sl__finish-name" aria-hidden="true" data-finish-name></span>
         </fieldset>
-        <div class="sl__buy"><a class="ac-btn ac-btn--lg" href="#bag">Add to bag</a><span class="ac-small">Ships in 3–5 days · ${holder.dims.h} × ${holder.dims.d} cm</span></div>
+        <label class="sl__angle"><span class="ac-label">Light</span><input type="range" min="0" max="360" step="1" value="0" data-angle aria-label="Light angle in degrees"></label>
       </div>
-      <figure class="sl__figure">
-        <div class="sl__stage" data-stage><div class="sl__still" data-still hidden>${raw(STILL)}</div></div>
-        <figcaption class="sl__bar">
-          <div class="sl__lights" role="group" aria-label="Lighting">
-            ${Object.entries(LIGHTS).map(([id, name]) => html`<button type="button" class="sl__light" data-light="${id}" aria-pressed="false">${name}</button>`)}
-          </div>
-          <label class="sl__angle"><span class="ac-label">Light</span><input type="range" min="0" max="360" step="1" value="0" data-angle aria-label="Light angle in degrees"></label>
-        </figcaption>
-      </figure>
+      <p class="ac-stage__note"><span>${shop.name} · product viewer</span></p>
     </section>`;
-  on(ctx, root.querySelector('a[href="#bag"]'), 'click', (e) => e.preventDefault());
 
   const stage = root.querySelector('[data-stage]');
   const still = root.querySelector('[data-still]');
@@ -146,6 +140,7 @@ export default function mount(root, options, ctx) {
       cfg.finish = id;
       radios.forEach((r) => { r.checked = r.value === id; });
       finishName.textContent = FINISHES[id].name;
+      FINISHES[id].still.forEach((c, i) => root.style.setProperty(`--sl-m${i}`, c)); // the drawn still's metal
       gl?.finish();
     },
     light(id) {
@@ -254,7 +249,8 @@ export default function mount(root, options, ctx) {
   onResize(({ width, height }) => {
     camera.aspect = width / height;
     const portrait = width / height < 1;
-    camera.position.set(0, portrait ? 2.4 : 2, portrait ? 13 : 9.6);
+    const wide = width / height > 1.6; // a wide stage: step in so the pair fills its height
+    camera.position.set(0, portrait ? 2.4 : 2, portrait ? 13 : wide ? 8.6 : 9.6);
     camera.lookAt(target);
     camera.updateProjectionMatrix();
     dirty = true;

@@ -16,11 +16,33 @@ import { highlight } from '../ui/highlight.js';
 import { bindCopy } from '../ui/copy.js';
 import { frameImg } from '../frames.js';
 import { prefs } from '../prefs.js';
+import { isSaved, toggleSaved } from '../saved.js';
+import { toast } from '../ui/toast.js';
 import notFound from './not-found.js';
 
 
 function list(items) {
   return items?.length ? `<ul class="ticks">${items.map((t) => `<li>${escapeHTML(t)}</li>`).join('')}</ul>` : '';
+}
+
+// Related components: the ones sharing the rarest tags with this one (a shared tag weighs more the fewer components
+// carry it, so "footer" counts and "gsap" barely does), with a nudge for the same category. The pager already
+// offers the neighbours, so they are left out.
+let tagCounts = null;
+function related(c, skip, n = 3) {
+  if (!tagCounts) {
+    tagCounts = new Map();
+    for (const x of components) for (const t of x.tags) tagCounts.set(t, (tagCounts.get(t) || 0) + 1);
+  }
+  const own = new Set(c.tags);
+  const weight = (t) => (own.has(t) ? Math.log(components.length / tagCounts.get(t)) : 0);
+  return components
+    .filter((x) => x.id !== c.id && !skip.includes(x.id))
+    .map((x) => ({ x, s: x.tags.reduce((sum, t) => sum + weight(t), 0) + (x.category === c.category ? 1 : 0) }))
+    .filter((r) => r.s > 1)
+    .sort((a, b) => b.s - a.s || a.x.title.localeCompare(b.x.title))
+    .slice(0, n)
+    .map((r) => r.x);
 }
 
 // The recipe snapshot loads with the first component page, not with the shell.
@@ -52,6 +74,7 @@ export default async function componentPage({ params, query }) {
   const cat = categoryById.get(c.category);
   let values = resolve(c, fromParams(c, query));
   const missing = unsupported(c.requires);
+  const near = related(c, [prev?.id, next?.id].filter(Boolean));
   const hasPanel = c.controls.length > 0 || c.actions.length > 0;
   let panelOpen = prefs.get('panel', true);
 
@@ -63,6 +86,7 @@ export default async function componentPage({ params, query }) {
       <div class="cpage__title">
         <h1 tabindex="-1">${c.title}</h1>
         <div class="labels">${raw(labelChips(c, { max: 4 }))}</div>
+        <button class="save-btn" type="button" aria-pressed="${isSaved(c.id)}" data-save>${raw(icon('bookmark', { size: 15 }))}<span data-save-label>${isSaved(c.id) ? 'Saved' : 'Save'}</span></button>
       </div>
       <p class="cpage__summary">${c.summary}</p>
       <div class="cpage__meta">
@@ -116,12 +140,29 @@ export default async function componentPage({ params, query }) {
       </div>
     </section>
 
+    ${near.length ? raw(html`
+    <section class="related" aria-labelledby="related-title">
+      <h2 id="related-title">Related components</h2>
+      <ul class="related__list" role="list">
+        ${near.map((r) => raw(html`<li><a class="related__item" href="${href(`/components/${r.id}/`)}"><span class="related__media">${raw(frameImg(r.id, { size: 'sm', sizes: '(max-width: 700px) 92vw, 320px' }))}</span><span class="related__t">${r.title}</span><span class="related__c">${r.categoryTitle}</span></a></li>`))}
+      </ul>
+    </section>`) : ''}
+
     <nav class="pager" aria-label="More components">
       ${prev ? raw(html`<a class="pager__link" href="${href(`/components/${prev.id}/`)}" rel="prev"><span class="pager__k">${raw(icon('arrowLeft', { size: 14 }))} Previous</span><span class="pager__t">${prev.title}</span>${raw(frameImg(prev.id, { size: 'sm' }))}</a>`) : raw('<span></span>')}
       ${next ? raw(html`<a class="pager__link pager__link--next" href="${href(`/components/${next.id}/`)}" rel="next"><span class="pager__k">Next ${raw(icon('arrowRight', { size: 14 }))}</span><span class="pager__t">${next.title}</span>${raw(frameImg(next.id, { size: 'sm' }))}</a>`) : raw('<span></span>')}
     </nav>`;
 
   if (!recipesData) loadRecipes().then(() => { const slot = node.querySelector('[data-slot="recipes"]'); if (slot) slot.innerHTML = c.recipes.map(recipeCard).join(''); });
+
+  // Save: a shortlist for one project, kept in this browser; the browse page filters by it.
+  const saveBtn = node.querySelector('[data-save]');
+  saveBtn.addEventListener('click', () => {
+    const on = toggleSaved(c.id);
+    saveBtn.setAttribute('aria-pressed', String(on));
+    saveBtn.querySelector('[data-save-label]').textContent = on ? 'Saved' : 'Save';
+    toast(on ? `${c.title} saved — find it under Saved on the components page` : `${c.title} removed from Saved`);
+  });
 
   const myPath = strip(location.pathname);
   const syncUrl = debounce(() => setQuery(toParams(c, values), { path: myPath }), 250);

@@ -1,13 +1,13 @@
-// Fluid wake — a festival poster as one material. The poster (ground, a vermilion disc, signal rings and every
-// line of its type) is drawn into a texture from the real DOM, and a single full-frame pass distorts it by a
-// velocity field and fringes its red and blue along the flow. The field is advected and dissipated each frame
-// (no pressure solve: a wake, not water) and splatted where the pointer moves, up to eight splats a frame so a
-// fast stroke stays continuous. The DOM text stays in place, transparent, as the mirror; the nav and the ticket
-// call to action sit above the canvas, undistorted. The loop stops once the wake has died away.
+// Fluid wake — a festival poster as one material, alone on the stage: the wordmark, the disc and the dates. The
+// poster (ground, a vermilion disc, signal rings and its type) is drawn into a texture from the real DOM, and a
+// single full-frame pass distorts it by a velocity field and fringes its red and blue along the flow. The field is
+// advected and dissipated each frame (no pressure solve: a wake, not water) and splatted where the pointer moves, up
+// to eight splats a frame so a fast stroke stays continuous. The DOM text stays in place, transparent, as the
+// mirror; the plate line sits above the canvas, undistorted. The loop stops once the wake has died away.
 // Reduced motion, static or no WebGL: the same poster in the DOM over a drawn still, no simulation.
 import './demo.css';
 import * as THREE from 'three';
-import { on, onFrame, html, readToken, observeResize, finePointer, content, formatPrice } from '../../src/demo-kit/index.js';
+import { on, onFrame, html, readToken, observeResize, content } from '../../src/demo-kit/index.js';
 import { useRenderer, webglAvailable } from '../../src/demo-kit/three.js';
 
 const SIM = 128; // the velocity field, 128² whatever the screen
@@ -55,28 +55,14 @@ export default function mount(root, options, ctx) {
   let cfg = { ...options };
   root.className = 'fc';
   root.innerHTML = html`
-    <section class="fc__hero" aria-labelledby="fc-title" data-hero>
+    <section class="ac-stage fc__hero" aria-labelledby="fc-title" data-hero>
       <div class="fc__gl" data-gl aria-hidden="true"><canvas class="fc__still" data-still></canvas></div>
-      <header class="ac-bar fc__bar">
-        <a class="ac-brand" href="#top">${festival.name}</a>
-        <nav aria-label="Festival"><a href="#top">Line-up</a><a href="#top">Programme</a><a href="#top">Venue</a></nav>
-        <a class="ac-btn ac-btn--sm fc__buy-sm" href="#tickets">Tickets</a>
-      </header>
-      <div class="fc__poster ac-wrap">
-        <p class="ac-label fc__kicker" data-draw="muted">${festival.edition} · Ninth edition</p>
+      <div class="fc__poster">
         <h1 class="fc__word" id="fc-title" data-draw="ink">${festival.name}</h1>
-        <p class="fc__when"><span data-draw="ink">${festival.dates}</span><span data-draw="ink-2">${festival.place}</span></p>
-        <ul class="fc__lineup" role="list" aria-label="Line-up">
-          ${festival.lineup.map((name) => html`<li data-draw="ink">${name}</li>`)}
-        </ul>
+        <p class="fc__when" data-draw="ink">${festival.dates}</p>
       </div>
-      <div class="fc__cta ac-wrap" id="tickets">
-        <p class="ac-small">Weekend from <strong>${formatPrice(festival.tickets[1].price)}</strong> · day passes ${formatPrice(festival.tickets[0].price)} · four stages</p>
-        <a class="ac-btn ac-btn--accent ac-btn--lg" href="#tickets">Buy tickets</a>
-      </div>
-      <p class="fc__hint ac-label" data-hint>${finePointer() ? 'Move the pointer through the poster' : 'Drag across the poster'}</p>
+      <p class="ac-stage__note"><span>${festival.name} · festival hero</span></p>
     </section>`;
-  root.querySelectorAll('a[href^="#"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const hero = root.querySelector('[data-hero]');
   const host = root.querySelector('[data-gl]');
@@ -101,8 +87,6 @@ export default function mount(root, options, ctx) {
       disc: readToken(accentGround ? '--night' : '--accent'),
       ring: accentGround ? 'rgba(20, 8, 3, 0.22)' : readToken('--line-2'),
       ink: readToken(accentGround ? '--night' : '--ink'),
-      'ink-2': accentGround ? readToken('--night') : readToken('--ink-2'),
-      muted: accentGround ? readToken('--night') : readToken('--muted'),
     };
     g.fillStyle = tone.ground;
     g.fillRect(0, 0, w, h);
@@ -151,7 +135,9 @@ export default function mount(root, options, ctx) {
     root.classList.add('fc--dom');
     const redraw = () => paint(still, false);
     redraw();
-    observeResize(ctx, hero, redraw);
+    // The disc is placed from the wordmark's box, so redraw when the type settles as well as on resize.
+    observeResize(ctx, [hero, ...drawn], redraw);
+    document.fonts?.ready.then(() => { if (!ctx.signal.aborted) redraw(); });
     ctx.onTheme(redraw);
     return { update(next) { cfg = { ...next }; root.dataset.ground = cfg.ground; redraw(); } };
   }

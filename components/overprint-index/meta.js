@@ -11,7 +11,7 @@ export default {
   added: '2026-10-28',
   labels: ['new'], // added on the launch day after the launch set; expires like any New label
   order: 42,
-  preview: { height: 680, scroll: true, hint: 'Point at, Tab to or sort the acts', capture: { wait: 900 } },
+  preview: { height: 660, scroll: true, hint: 'Point at, Tab to or sort the acts', capture: { wait: 900 } },
   actions: [
     { id: 'sort-day', label: 'Sort by day' },
     { id: 'sort-stage', label: 'Sort by stage' },
@@ -23,7 +23,7 @@ export default {
     'A programme, release list or reading list where one row at a time is the focus',
   ],
   notes: [
-    'Every act is a link in an ordered list and the marker is aria-hidden decoration; the sort buttons are aria-pressed buttons and a status line says the new order after each sort.',
+    'Every act is a link in an ordered list and the marker is aria-hidden decoration; the sort buttons are aria-pressed buttons and a polite status, read to screen readers, says the new order after each sort.',
     'Keyboard focus moves the marker the way the mouse does; the focus ring is drawn above the marker, in the paper colour on the marked row and in ink when the mouse has moved the marker elsewhere.',
     'Touch screens mark the act crossing a reading line two fifths down the screen as you scroll; a tapped link does not freeze it.',
     'Reduced motion keeps the cut and drops the blink and the stepped re-entry; forced colours hide the marker and outline the marked act instead.',

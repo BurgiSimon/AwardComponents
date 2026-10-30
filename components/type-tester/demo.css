@@ -1,17 +1,10 @@
 .tt { overflow-x: clip; background: var(--bg); }
-.tt a { text-decoration: none; }
-.tt__bar { border-bottom: 1px solid var(--line); }
-.tt__book { margin-left: 10px; padding-left: 10px; border-left: 1px solid var(--line-2); font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 500; font-stretch: 100%; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
-.tt__bar nav a[aria-current] { color: var(--ink); }
-
-.tt__page { display: grid; gap: clamp(18px, 2.4vw, 26px); padding-block: clamp(24px, 4vh, 40px) 96px; }
-.tt__head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr); gap: 12px clamp(24px, 5vw, 80px); align-items: end; }
-.tt__head > div { display: grid; gap: 10px; }
 .tt__row { display: flex; justify-content: space-between; align-items: center; gap: 12px 24px; flex-wrap: wrap; }
 
 /* The tester: one big editable line and its axes. */
 .tt__tester {
   display: grid;
+  width: min(100%, 1320px);
   gap: 16px;
   padding: clamp(18px, 2.4vw, 28px);
   background: var(--surface);
@@ -54,77 +47,10 @@
 .tt__axis input { grid-column: 1 / -1; width: 100%; margin: 0; accent-color: var(--ink); height: 22px; }
 .tt__css { align-self: stretch; display: flex; align-items: center; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--bg-2); font-family: var(--font-mono); font-size: 11px; line-height: 1.5; color: var(--ink-2); overflow-wrap: anywhere; }
 
-/* Registers: identical copy, three hierarchies. */
-.tt__registers { display: grid; gap: 14px; padding-top: clamp(4px, 1vw, 12px); }
-.tt__tabs { display: inline-flex; gap: 4px; flex-wrap: wrap; }
-.tt__tab { display: grid; justify-items: start; gap: 1px; padding: 8px 14px; border: 1px solid var(--line-2); border-radius: var(--radius-md); background: none; text-align: left; }
-.tt__tab span { font-size: var(--text-sm); font-weight: 650; }
-.tt__tab small { font-size: 11px; color: var(--muted); }
-.tt__tab:hover { background: var(--bg-2); }
-.tt__tab[aria-selected='true'] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
-.tt__tab[aria-selected='true'] small { color: color-mix(in oklab, var(--bg) 70%, transparent); }
-
-.tt-spec { --spec-line: var(--line-2); --spec-muted: var(--muted); padding: clamp(22px, 4vw, 56px); border-radius: var(--radius-lg); }
-.tt-spec[hidden] { display: none; }
-.tt-spec :is(h3, h4, p, ul, figure, dl, dd) { margin: 0; }
-.tt-spec__intro { display: grid; gap: 24px; }
-.tt-spec__title { font-size: 2.5rem; line-height: 1.1; letter-spacing: -0.03em; overflow-wrap: anywhere; }
-.tt-spec__lead { max-width: 34ch; font-size: clamp(1.25rem, 1rem + 1vw, 1.75rem); line-height: 1.38; text-wrap: pretty; }
-.tt-spec__body { display: grid; gap: 28px; margin-top: 36px; }
-.tt-spec__reading { display: grid; align-content: start; gap: 16px; }
-.tt-spec__heading { font-size: 1.25rem; font-weight: 600; line-height: 1.3; }
-.tt-spec__copy { max-width: 58ch; line-height: 1.6; text-wrap: pretty; }
-.tt-spec__list { padding-left: 1.1em; line-height: 1.6; }
-.tt-spec__facts > div { display: flex; justify-content: space-between; gap: 16px; padding-block: 10px; border-bottom: 1px solid var(--spec-line); }
-.tt-spec__facts dt { color: var(--spec-muted); }
-.tt-spec__facts dd { font-variant-numeric: tabular-nums; white-space: nowrap; }
-.tt-spec__figure figcaption { max-width: 36ch; margin-top: 12px; font-size: var(--text-sm); line-height: 1.5; color: var(--spec-muted); }
-.tt-spec__glyphs { margin-top: 32px; font-size: clamp(2rem, 1rem + 3vw, 3.6rem); line-height: 1.25; }
-
-/* Poster: wide and heavy on the accent field; the lead steps in from the left. */
-.tt-spec--poster { --spec-line: color-mix(in oklab, var(--on-accent) 32%, transparent); --spec-muted: color-mix(in oklab, var(--on-accent) 78%, transparent); background: var(--accent); color: var(--on-accent); }
-.tt-spec--poster .tt-spec__title { max-width: 11ch; font-size: clamp(3rem, 0.8rem + 7.4vw, 8.4rem); font-weight: 840; font-stretch: 125%; line-height: 0.92; letter-spacing: -0.05em; }
-.tt-spec--poster .tt-spec__heading { font-weight: 720; font-stretch: 112%; }
-.tt-spec--poster .tt-spec__glyphs { font-weight: 840; font-stretch: 125%; letter-spacing: -0.04em; }
-
-/* Editorial: upright and light, generous leading, two balanced columns. */
-.tt-spec--editorial { background: var(--surface); border: 1px solid var(--line); }
-.tt-spec--editorial .tt-spec__title { max-width: 12ch; font-size: clamp(2.6rem, 1.2rem + 3.6vw, 5.2rem); font-weight: 340; line-height: 1.04; letter-spacing: -0.035em; }
-.tt-spec--editorial .tt-spec__lead { font-weight: 360; color: var(--ink-2); }
-.tt-spec--editorial .tt-spec__heading { font-size: 1.6rem; font-weight: 420; letter-spacing: -0.015em; }
-.tt-spec--editorial .tt-spec__copy { font-size: var(--text-lg); line-height: 1.7; color: var(--ink-2); }
-.tt-spec--editorial .tt-spec__glyphs { font-weight: 300; color: var(--accent-ink); }
-
-/* Technical: narrow, ruled, tabular mono figures. */
-.tt-spec--technical { border-radius: 0; border-block: 2px solid var(--ink); padding-inline: 0; }
-.tt-spec--technical .tt-spec__title { max-width: 16ch; font-size: clamp(2rem, 1.4rem + 1.6vw, 2.9rem); font-weight: 620; font-stretch: 82%; letter-spacing: -0.02em; }
-.tt-spec--technical .tt-spec__lead { font-size: var(--text-lg); line-height: 1.55; color: var(--ink-2); }
-.tt-spec--technical .tt-spec__heading { font-stretch: 82%; text-transform: uppercase; letter-spacing: 0.02em; font-size: var(--text-md); }
-.tt-spec--technical .tt-spec__facts { font-family: var(--font-mono); }
-.tt-spec--technical .tt-spec__glyphs { font-family: var(--font-mono); font-size: clamp(1.6rem, 1rem + 1.6vw, 2.4rem); }
-
-@media (min-width: 760px) {
-  .tt-spec--poster .tt-spec__lead { margin-left: 35%; }
-  .tt-spec--poster .tt-spec__body { grid-template-columns: 1.4fr 1fr; gap: clamp(32px, 7vw, 112px); }
-  .tt-spec--editorial { display: grid; grid-template-columns: 1fr 1fr; gap: 24px clamp(32px, 6vw, 96px); }
-  .tt-spec--editorial .tt-spec__intro { align-content: start; gap: 40px; }
-  .tt-spec--editorial .tt-spec__body { margin-top: 0; gap: 36px; }
-  .tt-spec--editorial .tt-spec__glyphs { grid-column: 1 / -1; margin-top: 8px; }
-  .tt-spec--technical { display: grid; grid-template-columns: 1fr 1.5fr; gap: 24px clamp(32px, 6vw, 96px); }
-  .tt-spec--technical .tt-spec__intro { align-content: start; }
-  .tt-spec--technical .tt-spec__body { margin-top: 0; }
-  .tt-spec--technical .tt-spec__facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-  .tt-spec--technical .tt-spec__facts > div { display: grid; gap: 6px; border-top: 1px solid var(--line-2); border-bottom: 0; }
-  .tt-spec--technical .tt-spec__glyphs { grid-column: 2; margin-top: 0; }
-}
 @media (max-width: 900px) {
   .tt__axes { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .tt__css { grid-column: 1 / -1; }
 }
 @media (max-width: 760px) {
-  .tt__head { grid-template-columns: 1fr; }
-  .tt__bar nav a:not([aria-current]) { display: none; }
   .tt__axes { grid-template-columns: 1fr; gap: 16px; }
-  .tt__tabs { width: 100%; display: grid; grid-template-columns: repeat(3, 1fr); }
-  .tt__tab small { display: none; }
 }

@@ -9,14 +9,14 @@ export default {
   tags: ['drag', 'pan', 'inertia', 'wheel', 'grid', 'wrap', 'pointer', 'keyboard'],
   added: '2026-10-28',
   order: 40,
-  preview: { height: 640, hint: 'Drag, flick or scroll the plane' },
+  preview: { height: 520, hint: 'Drag, flick or scroll the plane' },
   useCases: [
     'An architecture or design studio’s full archive as one field of work',
     'A shop’s whole collection as an explorable wall before the filtered grid',
     'An exhibition or festival archive where browsing matters more than order',
   ],
   notes: [
-    'Every tile is a link in reading order; Tab glides an off-stage tile 32 px inside, the arrows step to the neighbour by exactly one pitch, Home and End centre the first and last project, and a skip link jumps past all 24.',
+    'Every tile is a link in reading order; Tab glides an off-stage tile 32 px inside (and clear of the fade at the foot), the arrows step to the neighbour by exactly one pitch, Home and End centre the first and last project, and a skip link jumps past all 24.',
     'A press is a click until it travels 6 px; touch-action: none is set on the stage only. Until the stage sits wholly in the window a vertical wheel scrolls the page instead.',
     'Reduced motion keeps the drag and the wheel (direct manipulation) but never coasts, and keys land at once; static shows the same links as a plain grid.',
   ],

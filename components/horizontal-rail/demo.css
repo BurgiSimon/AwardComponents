@@ -1,7 +1,5 @@
 .hr { --card: 30vw; --gap: 24px; --pad-x: max(var(--gutter), calc((100% - 1320px) / 2)); position: relative; overflow-x: clip; }
 .hr a { text-decoration: none; }
-.hr__bar { position: absolute; inset: 0 0 auto; z-index: 3; }
-.hr__bar nav a[aria-current] { color: var(--ink); }
 
 /* The rail: its height (set in demo.js) is the track's overflow plus one viewport. The stage sticks for all of it. */
 .hr__rail { position: relative; }
@@ -12,15 +10,14 @@
   height: 100svh;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr) auto;
   gap: clamp(14px, 3svh, 32px);
-  padding-block: clamp(72px, 11svh, 96px) clamp(20px, 4svh, 40px);
+  padding-block: clamp(32px, 7svh, 64px) clamp(48px, 9svh, 72px); /* the foot row clears the plate line */
   overflow: clip;
 }
-.hr__head { display: flex; align-items: end; justify-content: space-between; gap: 24px; padding-inline: var(--pad-x); }
-.hr__titles { display: grid; gap: 10px; }
-.hr__titles .ac-h1 { max-width: 16ch; }
-.hr__nav { display: flex; align-items: center; gap: 10px; }
+/* Under the track: the progress on the left, the counter and the arrows on the right. */
+.hr__foot { display: flex; align-items: center; gap: clamp(16px, 3vw, 40px); padding-inline: var(--pad-x); }
+.hr__nav { flex: none; display: flex; align-items: center; gap: 10px; }
 .hr__count { margin-right: 10px; font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
 .hr__count b { font-weight: 500; color: var(--ink); }
 .hr__arrow {
@@ -40,9 +37,9 @@
 .hr__arrow[aria-disabled='true'] { opacity: 0.35; pointer-events: none; }
 
 .hr__viewport { min-height: 0; overflow: clip; }
-/* The track is max-content wide, so a % padding would be cyclic: demo.js copies the head's padding in px. */
+/* The track is max-content wide, so a % padding would be cyclic: demo.js copies the foot's padding in px. */
 .hr .hr__track { position: relative; display: flex; gap: var(--gap); width: max-content; height: 100%; margin: 0; padding: 0 var(--pad-px, var(--gutter)); will-change: transform; }
-.hr__card { flex: none; width: min(var(--card), calc((100svh - 300px) * 1.15)); min-width: 180px; height: 100%; }
+.hr__card { flex: none; width: min(var(--card), calc((100svh - 280px) * 1.15)); min-width: 180px; height: 100%; }
 .hr__link { display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 14px; height: 100%; }
 .hr__media { --ratio: auto; height: 100%; border-radius: var(--radius-md); }
 .hr__media img { transition: transform var(--dur-l) var(--ease-out); }
@@ -54,7 +51,7 @@
 .hr__meta { overflow: hidden; font-size: var(--text-sm); color: var(--muted); white-space: nowrap; text-overflow: ellipsis; }
 
 /* Progress: one of three looks, all fed by the same 0–1. */
-.hr__progress { display: grid; align-items: center; min-height: 24px; padding-inline: var(--pad-x); }
+.hr__progress { flex: 1; display: grid; align-items: center; min-height: 24px; }
 .hr__progress > * { grid-area: 1 / 1; }
 .hr__line { position: relative; height: 2px; border-radius: 2px; background: var(--line-2); overflow: hidden; }
 .hr__line span { position: absolute; inset: 0; background: var(--ink); transform: scaleX(0); transform-origin: left; }
@@ -67,12 +64,9 @@
 .hr[data-progress='ticks'] :is(.hr__line, .hr__big),
 .hr[data-progress='count'] :is(.hr__line, .hr__ticks, .hr__count) { display: none; }
 
-.hr__after { display: grid; gap: 20px; justify-items: start; padding-block: clamp(80px, 16svh, 160px); border-top: 1px solid var(--line); }
-.hr__after .ac-h2 { max-width: 32ch; }
-
 /* Touch and reduced motion: a native horizontal scroller with snap points, no sticky stage. */
 .hr--native .hr__rail { height: auto !important; }
-.hr--native .hr__stage { position: relative; height: auto; overflow: visible; padding-bottom: 56px; }
+.hr--native .hr__stage { position: relative; height: auto; min-height: 100svh; grid-template-rows: auto auto; align-content: center; overflow: visible; }
 .hr--native .hr__viewport { overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-padding-inline: var(--pad-x); scrollbar-width: none; }
 .hr--native .hr__viewport::-webkit-scrollbar { display: none; }
 .hr--native .hr__track { height: auto; transform: none !important; }
@@ -80,7 +74,5 @@
 .hr--native .hr__media { --ratio: 4 / 5; height: auto; max-height: 62svh; }
 
 @media (max-width: 700px) {
-  .hr__bar nav { display: none; }
-  .hr__head { flex-direction: column; align-items: start; gap: 18px; }
   .hr__card { width: 78vw; }
 }

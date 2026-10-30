@@ -1,6 +1,7 @@
-// Stepped WebGL gallery — Fieldnote's back issues as a WebGL cover-flow driven by one float index. A spring
-// (frequency 9.5, damping 12, ζ ≈ .63) pulls the index to a whole issue in fixed 1/240 s substeps; every cover's
-// depth, scale, lift, yaw and opacity are read from its distance to that index, so nothing else animates. Wheel,
+// Stepped WebGL gallery — Fieldnote's back issues as a WebGL cover-flow with one caption line between two arrows,
+// driven by one float index. A spring (frequency 9.5, damping 12, ζ ≈ .63) pulls the index to a whole issue in
+// fixed 1/240 s substeps; every cover's depth, scale, lift, yaw and opacity are read from its distance to that
+// index, so nothing else animates. Wheel,
 // keys and buttons only move the spring's target; a drag writes the index, coasts with friction and hands over.
 // A wheel step detector turns any gesture (a mouse notch or a long trackpad flick) into exactly one step, and at
 // either end a wheel pointing outward is left to the page. The canvas only paints: the carousel is the DOM (a
@@ -12,14 +13,14 @@ import { on, html, clamp, ticker, photo, allPhotos, loadImage, readToken, conten
 import { useRenderer, webglAvailable, disposeScene } from '../../src/demo-kit/three.js';
 
 const ISSUES = [
-  { n: 14, theme: 'Weather', line: 'How to read a sky', season: 'Winter 2026', pages: 164, price: 18, tags: ['sky'], ground: '--sky' },
-  { n: 13, theme: 'Salt', line: 'Boiling the sea on Læsø', season: 'Autumn 2026', pages: 156, price: 14, tags: ['landscape'], ground: '--sand' },
-  { n: 12, theme: 'Night', line: 'The bathers of the far north', season: 'Summer 2026', pages: 148, price: 14, tags: ['night'], ground: '--night' },
-  { n: 11, theme: 'Timber', line: 'A house that breathes', season: 'Spring 2026', pages: 160, price: 14, tags: ['architecture'], ground: '--clay' },
-  { n: 10, theme: 'Water', line: 'Harbour baths, Oslo to Ålesund', season: 'Winter 2025', pages: 152, price: 14, tags: ['water'], ground: '--moss' },
-  { n: 9, theme: 'Light', line: 'December in a reading room', season: 'Autumn 2025', pages: 144, price: 14, tags: ['interior'], ground: '--plum' },
-  { n: 8, theme: 'Stone', line: 'Quarries and who closes them', season: 'Summer 2025', pages: 140, price: 0, tags: ['texture'], ground: '--sand' },
-  { n: 7, theme: 'Glaze', line: 'Three kilns, three bad days', season: 'Spring 2025', pages: 136, price: 14, tags: ['ceramic'], ground: '--clay' },
+  { n: 14, theme: 'Weather', line: 'How to read a sky', season: 'Winter 2026', pages: 164, tags: ['sky'], ground: '--sky' },
+  { n: 13, theme: 'Salt', line: 'Boiling the sea on Læsø', season: 'Autumn 2026', pages: 156, tags: ['landscape'], ground: '--sand' },
+  { n: 12, theme: 'Night', line: 'The bathers of the far north', season: 'Summer 2026', pages: 148, tags: ['night'], ground: '--night' },
+  { n: 11, theme: 'Timber', line: 'A house that breathes', season: 'Spring 2026', pages: 160, tags: ['architecture'], ground: '--clay' },
+  { n: 10, theme: 'Water', line: 'Harbour baths, Oslo to Ålesund', season: 'Winter 2025', pages: 152, tags: ['water'], ground: '--moss' },
+  { n: 9, theme: 'Light', line: 'December in a reading room', season: 'Autumn 2025', pages: 144, tags: ['interior'], ground: '--plum' },
+  { n: 8, theme: 'Stone', line: 'Quarries and who closes them', season: 'Summer 2025', pages: 140, tags: ['texture'], ground: '--sand' },
+  { n: 7, theme: 'Glaze', line: 'Three kilns, three bad days', season: 'Spring 2025', pages: 136, tags: ['ceramic'], ground: '--clay' },
 ];
 const N = ISSUES.length;
 
@@ -31,7 +32,6 @@ const DRAG = { threshold: 6, sensitivity: 0.95, smoothing: 0.32, maxV: 30, frict
 // repeats after 480 ms; a trackpad's inertia tail decays under its own envelope (550 ms) and never steps twice.
 const WHEEL = { floor: 0.3, cap: 24, threshold: 6, quiet: 130, sustain: 480, envelope: 550 };
 const PLATE = { w: 1.5, h: 1.95 };
-const pad = (n) => String(n).padStart(2, '0');
 
 function pictures() {
   const pool = allPhotos();
@@ -103,44 +103,27 @@ export default function mount(root, options, ctx) {
 
   root.className = 'sg';
   root.innerHTML = html`
-    <header class="ac-bar sg__bar">
-      <a class="ac-brand sg__brand" href="#top">${magazine.name}</a>
-      <nav aria-label="Magazine"><a href="#issues" aria-current="page">Back issues</a><a href="#subscribe">Subscribe</a><a href="#stockists">Stockists</a></nav>
-    </header>
     <section class="sg__gallery" aria-roledescription="carousel" aria-labelledby="sg-title">
-      <div class="sg__head ac-wrap">
-        <h1 class="ac-h2" id="sg-title">Back issues</h1>
-        <p class="ac-label">${N} issues · most still in print</p>
-      </div>
+      <h2 class="sr-only" id="sg-title">${magazine.name} back issues</h2>
       <div class="sg__stage" data-stage tabindex="0" role="group" aria-label="Back issues. Arrow keys move one issue; Home and End jump to the ends.">
         <figure class="sg__still" data-still aria-hidden="true" hidden></figure>
       </div>
       <ol class="sr-only">
         ${ISSUES.map((it, i) => html`<li aria-roledescription="slide" aria-label="${i + 1} of ${N}">Issue ${it.n}, ${it.theme}: ${it.line}. ${it.season}, ${it.pages} pages.</li>`)}
       </ol>
-      <div class="sg__caption ac-wrap">
-        <p class="sg__count ac-label ac-num" data-count></p>
-        <div class="sg__text">
-          <p class="sg__title" data-title></p>
-          <p class="sg__meta ac-small" data-meta></p>
-        </div>
-        <div class="sg__actions">
-          <a class="ac-btn" href="#buy" data-buy></a>
-          <button type="button" class="sg__key" data-prev aria-label="Previous issue"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg></button>
-          <button type="button" class="sg__key" data-next aria-label="Next issue"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
-        </div>
+      <div class="sg__caption">
+        <button type="button" class="sg__key" data-prev aria-label="Previous issue"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg></button>
+        <p class="sg__title" data-title></p>
+        <button type="button" class="sg__key" data-next aria-label="Next issue"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
       </div>
       <p class="sr-only" aria-live="polite" aria-atomic="true" data-live></p>
+      <p class="ac-stage__note"><span>${magazine.name} · back issues</span></p>
     </section>`;
-  root.querySelectorAll('a[href^="#"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const stage = root.querySelector('[data-stage]');
   const still = root.querySelector('[data-still]');
   const live = root.querySelector('[data-live]');
-  const count = root.querySelector('[data-count]');
   const title = root.querySelector('[data-title]');
-  const meta = root.querySelector('[data-meta]');
-  const buy = root.querySelector('[data-buy]');
 
   const S = { pos: 0, v: 0, target: 0, mode: 'rest' };
   let render = () => {};
@@ -151,11 +134,7 @@ export default function mount(root, options, ctx) {
   // The caption, the DOM still and the announcer follow the target, never the in-between index.
   function announce(i, speak = true) {
     const it = ISSUES[i];
-    count.textContent = `${pad(i + 1)} / ${pad(N)}`;
     title.textContent = `Issue ${it.n} — ${it.theme}`;
-    meta.textContent = `${it.line}. ${it.season} · ${it.pages} pages`;
-    buy.textContent = it.price ? `Buy · €${it.price}` : 'Sold out · reprint list';
-    buy.classList.toggle('ac-btn--ghost', !it.price);
     if (!still.hidden) still.replaceChildren(stillCover(i));
     if (speak) live.textContent = `Issue ${i + 1} of ${N}: ${it.theme}`;
   }
@@ -283,7 +262,12 @@ export default function mount(root, options, ctx) {
   ctx.onTheme(() => { for (let i = 0; i < N; i++) redrawers.forEach((fn) => fn(i)); });
   const instance = {
     update(next) { cfg = { ...next }; render(); },
-    action(id) { if (id === 'next') go(S.target === N - 1 ? 0 : S.target + 1); },
+    action(id) {
+      if (id !== 'next') return;
+      go(S.target === N - 1 ? 0 : S.target + 1);
+      // The frame: settle on the cover at once, since a headless clock may not finish the spring in the wait.
+      if (ctx.capture) { S.pos = S.target; S.v = 0; S.mode = 'rest'; render(); }
+    },
   };
 
   if (!webglAvailable()) {

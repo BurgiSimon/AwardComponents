@@ -10,14 +10,14 @@ export default {
   requires: ['webgl'],
   added: '2026-10-28',
   order: 44,
-  preview: { height: 640, hint: 'Drag across the cover', capture: { action: 'smear', wait: 950 } },
+  preview: { height: 540, hint: 'Drag across the cover', capture: { action: 'smear', wait: 950 } },
   useCases: [
     'A magazine, album or poster hero where the artwork should answer the pointer',
     'A post pass over a WebGL scene: the same field can smear, reveal or light it',
     'A campaign image that rewards a sweep of the pointer and then returns to itself',
   ],
   notes: [
-    'The cover is a figure with a full text description; the canvas is aria-hidden and the page copy beside it is ordinary HTML.',
+    'The cover is a figure with a full text description; the canvas is aria-hidden.',
     'On touch screens the brush paints only while a finger is down, and vertical swipes still scroll the page.',
     'Under reduced motion there is no field: the cover is shown as a still picture. The same still stands in without WebGL.',
     'The loop sleeps once the field has decayed to zero, so a resting page renders nothing.',

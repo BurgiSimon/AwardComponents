@@ -1,10 +1,11 @@
-// Knockout wordmark — a festival hero whose name is a hole. The hero has no background: one SVG rect filled with
-// the page colour and masked by the letters (white rect, black glyphs) paints it, overflowing the word's box while
-// the hero clips it. Behind the page a fixed canvas at a sixth of the viewport draws four soft blobs on Lissajous
-// paths plus light folds (the browser's upscale is the blur), so the colour shows only through the letters and
-// stays put while they scroll past. The loop runs only while the hero is on screen; reduced motion: one still.
+// Knockout wordmark — a festival name alone on the first screen, cut out as a window. The hero has no background:
+// one SVG rect filled with the page colour and masked by the letters (white rect, black glyphs) paints it,
+// overflowing the word's box while the hero clips it. Behind the page a fixed canvas at a sixth of the viewport draws
+// four soft blobs on Lissajous paths plus light folds (the browser's upscale is the blur), so the colour shows only
+// through the letters and stays put while they scroll past. The loop runs only while the hero is on screen; reduced
+// motion: one still.
 import './demo.css';
-import { on, onFrame, whileVisible, html, readToken, content, formatPrice } from '../../src/demo-kit/index.js';
+import { on, onFrame, whileVisible, html, readToken, content } from '../../src/demo-kit/index.js';
 
 const SCALE = 1 / 6;  // backing store vs the viewport; the bilinear upscale supplies the softness
 const STILL_T = 7.5;  // seconds: the composed frame the loop starts from and the reduced tier keeps
@@ -53,34 +54,22 @@ export default function mount(root, options, ctx) {
   root.innerHTML = html`
     <canvas class="kh__ground" aria-hidden="true" data-ground></canvas>
     <section class="kh__hero" aria-labelledby="kh-title" data-hero>
-      <header class="ac-bar kh__bar">
-        <nav aria-label="Festival">${['Line-up', 'Programme', 'Venue', 'Info'].map((n) => html`<a href="#top">${n}</a>`)}</nav>
-        <a class="ac-btn ac-btn--sm" href="#top">Tickets</a>
-      </header>
-      <p class="kh__lede">Three days of music and art on the old shipyard at the mouth of the harbour.</p>
-      <h1 class="kh__mark" id="kh-title">
-        <span class="sr-only" data-name></span>
-        <svg class="kh__svg" aria-hidden="true" focusable="false" data-svg>
-          <defs>
-            <mask id="kh-mask" maskUnits="userSpaceOnUse" x="-6000" y="-6000" width="14000" height="14000">
-              <rect x="-6000" y="-6000" width="14000" height="14000" fill="#fff"/>
-              <text class="kh__glyphs" x="0" y="0" fill="#000" data-text></text>
-            </mask>
-          </defs>
-          <rect class="kh__solid" x="-6000" y="-6000" width="14000" height="14000" mask="url(#kh-mask)"/>
-        </svg>
-      </h1>
-      <div class="kh__foot">
-        <p class="kh__when"><strong>${festival.dates}</strong><span>${festival.place}</span></p>
-        <p class="ac-label kh__ed">Edition 06 · ${festival.stages.length} stages</p>
-        <div class="kh__buy"><span>Weekend from <strong>${formatPrice(festival.tickets[1].price)}</strong></span><a class="ac-btn ac-btn--accent" href="#top">Get tickets</a></div>
+      <div class="ac-stage kh__screen">
+        <h1 class="kh__mark" id="kh-title">
+          <span class="sr-only" data-name></span>
+          <svg class="kh__svg" aria-hidden="true" focusable="false" data-svg>
+            <defs>
+              <mask id="kh-mask" maskUnits="userSpaceOnUse" x="-6000" y="-6000" width="14000" height="14000">
+                <rect x="-6000" y="-6000" width="14000" height="14000" fill="#fff"/>
+                <text class="kh__glyphs" x="0" y="0" fill="#000" data-text></text>
+              </mask>
+            </defs>
+            <rect class="kh__solid" x="-6000" y="-6000" width="14000" height="14000" mask="url(#kh-mask)"/>
+          </svg>
+        </h1>
+        <p class="ac-stage__note"><span>${festival.name} · festival hero</span></p>
       </div>
-    </section>
-    <section class="kh__after ac-wrap" aria-labelledby="kh-lineup">
-      <h2 class="ac-h2" id="kh-lineup">Twelve acts, four stages, one harbour</h2>
-      <ul class="kh__lineup" role="list">${festival.lineup.map((n, i) => html`<li><span class="ac-label">${festival.stages[i % festival.stages.length]}</span>${n}</li>`)}</ul>
     </section>`;
-  root.querySelectorAll('a[href="#top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const canvas = root.querySelector('[data-ground]');
   const g = canvas.getContext('2d', { alpha: false });

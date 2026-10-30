@@ -10,7 +10,7 @@ export default {
   requires: ['webgl'],
   added: '2026-10-28',
   order: 60,
-  preview: { height: 620, hint: 'Press Night reading', capture: { wait: 900 } },
+  preview: { height: 500, hint: 'Press Dark theme', capture: { wait: 900 } },
   useCases: [
     'The light and dark switch on a magazine, a portfolio or a documentation site',
     'A switch between two brand grounds, such as a day and a night edition',

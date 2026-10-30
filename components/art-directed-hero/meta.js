@@ -15,7 +15,7 @@ export default {
     'Any hero where the headline must never land on the subject’s face',
   ],
   notes: [
-    'Copy and actions come before the picture in the DOM and in the visual order at every size; no CSS order reversal gives keyboard users a different sequence.',
+    'The headline comes before the picture in the DOM and in the visual order at every size; no CSS order reversal gives keyboard users a different sequence.',
     'The browser picks the composition from the picture’s sources, so the switch needs no script, and the frame’s ratio is reserved before the file decodes.',
     'Text over a photograph always sits on a scrim from the quiet side; nothing moves, so reduced motion changes nothing.',
   ],

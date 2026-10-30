@@ -1,4 +1,4 @@
-// Physics tags — Halden's "What we do" as a box of pills. matter-js steps the bodies with no renderer of its own:
+// Physics tags — Halden's "What we do" as a box of pills, on its own. matter-js steps the bodies with no renderer of its own:
 // each <li> is placed at the box origin and moved by translate() rotate() from its body, so the words stay text in
 // source order. A fixed 1/60 s step on the shared ticker (at most four a frame), seeded drop slots so every load
 // makes the same heap, sleeping on: once every body sleeps the step leaves the clock. Fine pointers drag through a
@@ -46,35 +46,19 @@ export default function mount(root, options, ctx) {
 
   root.className = 'pt';
   root.innerHTML = html`
-    <section class="pt__section ac-wrap" aria-labelledby="pt-title">
-      <div class="pt__head">
-        <div>
-          <p class="ac-label">What we do</p>
-          <h2 class="ac-h1" id="pt-title">Fourteen things we are asked for, in no particular order.</h2>
-        </div>
-        <div class="pt__side">
-          <p class="ac-body">Most projects start as one of these and end up as three. Tell us which, and we will tell you who in the studio has done it before.</p>
-          <a class="ac-btn ac-btn--accent" href="#top">Start a project</a>
-        </div>
-      </div>
+    <section class="ac-stage pt__stage" aria-label="What we do">
       <div class="pt__box" data-box>
         <ul class="pt__list" role="list" data-list>
           ${WORDS.map(([word, , , size]) => html`<li ${size ? raw(`data-size="${size}"`) : ''}>${word}</li>`)}
         </ul>
       </div>
-      <div class="pt__under">
-        <p class="ac-small pt__hint" id="pt-hint" data-hint></p>
-        <div class="pt__acts">
-          <button class="ac-btn ac-btn--ghost ac-btn--sm" type="button" data-shake>Shake</button>
-          <button class="ac-btn ac-btn--ghost ac-btn--sm" type="button" data-drop>Drop again</button>
-        </div>
+      <p class="sr-only" id="pt-hint" data-hint></p>
+      <div class="pt__acts">
+        <button class="ac-btn ac-btn--ghost ac-btn--sm" type="button" data-shake>Shake</button>
+        <button class="ac-btn ac-btn--ghost ac-btn--sm" type="button" data-drop>Drop again</button>
       </div>
-    </section>
-    <footer class="pt__foot ac-wrap">
-      <p>© 2026 ${studio.full}</p>
-      <a class="ac-link" href="mailto:${studio.email}">${studio.email}</a>
-    </footer>`;
-  root.querySelectorAll('a[href="#top"], a[href^="mailto"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
+      <p class="ac-stage__note"><span>${studio.name} · what we do</span></p>
+    </section>`;
 
   const box = root.querySelector('[data-box]');
   const list = root.querySelector('[data-list]');

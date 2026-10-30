@@ -1,12 +1,13 @@
-// Frame-exact film scrub — Meridian's exhibition page for “One orbit”. A twelve-second time-lapse from the station
-// window (the shared orbit footage) is packed offline by pack.mjs into one file: H.264 chunks back to back, a JSON
+// Frame-exact film scrub — the time-lapse from Meridian's “One orbit” exhibition with its four captions, alone on a
+// sticky stage. Twelve seconds from the station window (the shared orbit footage) are packed offline by pack.mjs into one file: H.264 chunks back to back, a JSON
 // manifest of every frame's offset, length, timestamp and type, and a four-byte pointer to the manifest. The page
 // fetches it once and WebCodecs decodes exactly the frame the scroll names, on a sticky stage; the four captions land
 // when the frame on screen reaches their share of the clip. The decoding rules live in scrubber.js.
 // Without WebCodecs or an H.264 decoder the shared WebM is scrubbed by <video>.currentTime instead (not frame-exact).
-// Reduced motion and static: no film at all, one still above the captions as a list.
+// Reduced motion and static: no film at all, one still above the captions as a list. The shared clip is credited
+// through video(), which records it for the component page.
 import './demo.css';
-import { on, html, clamp, video, content, observeResize } from '../../src/demo-kit/index.js';
+import { html, clamp, video, content, observeResize } from '../../src/demo-kit/index.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
 import { useLenis } from '../../src/demo-kit/lenis.js';
 import { readPack, decoderConfig, FrameScrubber, VideoScrubber } from './scrubber.js';
@@ -39,19 +40,8 @@ export default function mount(root, options, ctx) {
   root.className = `wc${full ? '' : ' wc--still'}${ctx.capture ? ' wc--capture' : ''}`;
   root.style.setProperty('--track', `${cfg.track}svh`);
   root.innerHTML = html`
-    <section class="wc__track" data-track aria-labelledby="wc-title">
+    <section class="wc__track" data-track aria-label="${m.exhibition.title}">
       <div class="wc__stage">
-        <header class="ac-bar wc__bar">
-          <a class="ac-brand" href="#top">${m.name}</a>
-          <nav aria-label="${m.name}"><a href="#top">Shows</a><a href="#top" aria-current="page">Exhibitions</a><a href="#top">Visit</a></nav>
-          <a class="ac-btn ac-btn--sm" href="#wc-visit" data-to-visit>Tickets</a>
-        </header>
-        <div class="wc__intro" data-intro>
-          <p class="ac-label wc__kicker">Exhibition · ${m.exhibition.dates}</p>
-          <h1 class="ac-display wc__title" id="wc-title">${m.exhibition.title}</h1>
-          <p class="wc__dek">${m.exhibition.dek}</p>
-          <p class="ac-label wc__cue" aria-hidden="true"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 2v11M3.5 8.5 8 13l4.5-4.5"/></svg>Scroll to fly the orbit</p>
-        </div>
         <figure class="wc__film" data-film>
           ${footage ? html`<img class="wc__poster" src="${footage.poster}" alt="" width="1800" height="1013" decoding="async">` : ''}
           <canvas class="wc__canvas" data-canvas aria-hidden="true"></canvas>
@@ -68,41 +58,23 @@ export default function mount(root, options, ctx) {
             <span class="wc__head"></span>
           </div>
         </div>
+        <p class="ac-stage__note"><span>${m.name} · exhibition page</span></p>
       </div>
-    </section>
-
-    <section class="wc__visit ac-wrap" id="wc-visit" aria-labelledby="wc-visit-title">
-      <div class="wc__visit-head">
-        <p class="ac-label">Dome gallery · ${m.place}</p>
-        <h2 class="ac-h1" id="wc-visit-title" tabindex="-1">The whole orbit, on a wall eleven metres wide.</h2>
-        <p class="ac-lede">This page holds twelve seconds of it. In the gallery the film runs all ninety-two minutes, start to finish, on a loop from opening to close.</p>
-        <a class="ac-btn ac-btn--accent ac-btn--lg" href="#top">Book a time</a>
-      </div>
-      <dl class="wc__facts">
-        ${m.visit.map((v) => html`<div><dt class="ac-label">${v.label}</dt><dd>${v.value}</dd></div>`)}
-        <div><dt class="ac-label">Dates</dt><dd>${m.exhibition.dates}</dd></div>
-      </dl>
-      ${footage ? html`<p class="ac-small wc__credit">Footage: <a class="ac-link" href="${footage.page}" target="_blank" rel="noopener">${footage.credit}</a>.</p>` : ''}
     </section>`;
-  root.querySelectorAll('a[href="#top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const track = root.querySelector('[data-track]');
   const film = root.querySelector('[data-film]');
   const canvas = root.querySelector('[data-canvas]');
-  const intro = root.querySelector('[data-intro]');
   const caps = [...root.querySelectorAll('[data-cap]')];
   const ticks = [...root.querySelectorAll('[data-tick]')];
   const rail = root.querySelector('[data-rail]');
   const readout = root.querySelector('[data-readout]');
-  const visit = root.querySelector('#wc-visit');
   const g = canvas.getContext('2d', { alpha: false });
   const applyLook = () => {
     root.classList.toggle('wc--no-readout', !cfg.readout);
     root.classList.toggle('wc--no-rail', !cfg.rail);
   };
   applyLook();
-  // An in-page link moves focus with the scroll, as a native one would; a ring only when it was pressed with a key.
-  const toVisit = (e) => root.querySelector('#wc-visit-title').focus({ preventScroll: true, focusVisible: e.detail === 0 });
 
   // ── Captions: each lands when the frame on screen reaches its share of the clip ─────────────────────────────────
   let active = null;
@@ -112,7 +84,6 @@ export default function mount(root, options, ctx) {
     captions.forEach((c, i) => { if (p >= c.at) idx = i; });
     if (idx === active) return;
     active = idx;
-    intro.classList.toggle('is-on', idx === -1);
     caps.forEach((el, i) => el.classList.toggle('is-on', i === idx));
     ticks.forEach((el, i) => el.classList.toggle('is-past', i <= idx));
   };
@@ -122,7 +93,6 @@ export default function mount(root, options, ctx) {
     setShare(0);
     readout.textContent = '';
     const toList = () => root.querySelector('.wc__caps').scrollIntoView({ block: 'center' });
-    on(ctx, root.querySelector('[data-to-visit]'), 'click', (e) => { e.preventDefault(); visit.scrollIntoView(); toVisit(e); });
     return {
       update(next) { cfg = { ...next }; applyLook(); root.style.setProperty('--track', `${cfg.track}svh`); return true; },
       action(id) { if (id === 'fly' || id === 'next') toList(); },
@@ -295,12 +265,6 @@ export default function mount(root, options, ctx) {
     if (lenis) lenis.scrollTo(y, { force: true, ...opts });
     else { window.scrollTo(0, y); ScrollTrigger.update(); }
   };
-  on(ctx, root.querySelector('[data-to-visit]'), 'click', (e) => {
-    e.preventDefault();
-    if (lenis) lenis.scrollTo(visit, { duration: 1.4 }); else visit.scrollIntoView();
-    toVisit(e);
-  });
-
   boot();
 
   // For verification scripts: the engine and the mechanism's counters (removed on unmount).

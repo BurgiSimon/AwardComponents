@@ -11,7 +11,7 @@ export default {
   added: '2026-10-28',
   featured: true,
   order: 10,
-  preview: { height: 560, hint: 'Move the pointer near a button' },
+  preview: { height: 500, hint: 'Move the pointer near a button', capture: { pointer: [0.56, 0.4], wait: 700 } },
   useCases: [
     'The one primary action in a hero or a contact section',
     'A round “Play reel” or “Start a project” disc in a studio portfolio',

@@ -1,5 +1,5 @@
 /* The slot: every view starts one bar plus one gap from the top. The exit reads this padding to aim the rise. */
-.se { --bar: 56px; --slot-gap: 24px; min-height: 100svh; overflow-x: clip; }
+.se { --bar: 56px; --slot-gap: 24px; position: relative; min-height: 100svh; overflow-x: clip; }
 .se a { text-decoration: none; }
 
 .se__bar {
@@ -8,22 +8,19 @@
   z-index: 10;
   height: var(--bar);
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: 1fr auto;
   align-items: center;
   gap: 16px;
   padding-inline: var(--gutter);
   background: var(--bg);
   border-bottom: 1px solid var(--line);
 }
-.se__crumb { justify-self: center; }
 .se__back { justify-self: end; display: inline-flex; align-items: center; gap: 8px; font-size: var(--text-sm); font-weight: 600; }
 .se__back svg { width: 16px; height: 16px; transition: translate var(--dur-s) var(--ease-out); }
 .se__back:hover svg { translate: -3px 0; }
 .se__back[hidden] { display: none; }
 
 .se__view { min-height: 100svh; padding-top: calc(var(--bar) + var(--slot-gap)); padding-bottom: clamp(48px, 10vh, 112px); }
-.se__intro { display: grid; gap: 14px; padding-block: clamp(20px, 5vh, 56px) clamp(28px, 5vh, 48px); }
-.se__intro .ac-h1 { max-width: 18ch; }
 
 /* One row, two pages: the index link and the project page's heading share every measurement. */
 .se__rows { margin: 0; border-bottom: 1px solid var(--line); }
@@ -50,25 +47,17 @@
 .se__row:focus-visible { outline-offset: -2px; }
 .se__row--head .se__name:focus { outline: none; }
 
-/* The project page, built under its heading row. */
+/* The project page, built under its heading row: the picture and two facts. */
 .se__hero { --ratio: 21 / 9; margin-top: 20px; border-radius: var(--radius-lg); }
-.se__body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 5vw, 80px); padding-block: clamp(32px, 6vh, 56px); }
-.se__summary { max-width: 22ch; text-wrap: balance; }
-.se__text { display: grid; gap: 24px; align-content: start; }
-.se__facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 0; padding-top: 18px; border-top: 1px solid var(--line); }
+.se__facts { display: grid; grid-template-columns: repeat(2, minmax(0, 12rem)); gap: 16px; margin: 0; padding-top: 18px; }
 .se__facts div { display: grid; gap: 6px; }
 .se__facts dd { margin: 0; font-size: var(--text-sm); }
-.se__next { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding-block: 28px; border-top: 1px solid var(--line); font-size: var(--text-xl); font-weight: 640; letter-spacing: -0.01em; }
-.se__next:hover span:last-child { color: var(--accent-ink); }
 
 @media (max-width: 48rem) {
-  .se__bar { grid-template-columns: 1fr auto; }
-  .se__crumb { display: none; }
   .se__row { grid-template-columns: 2.5ch 64px minmax(0, 1fr); gap: 2px 14px; padding-block: 12px; }
   .se__n, .se__thumb { grid-row: span 2; }
   .se__name { grid-column: 3; }
   .se__place { grid-column: 3; grid-row: 2; font-size: var(--text-xs); }
   .se__meta { display: none; }
   .se__hero { --ratio: 4 / 3; }
-  .se__body { grid-template-columns: 1fr; }
 }

@@ -1,8 +1,9 @@
-// Many-canvas thumbnails — Ostra's shop grid. Every card is a link with its own 2D <canvas>; one WebGL renderer on a
-// detached canvas draws each object in turn into a slice of its drawing buffer and drawImage()s that slice into the
-// card's canvas in the same task. A card redraws only when it changed and sits within half a viewport of the screen,
-// and one pixel budget sets the resolution for the whole set. Hover (mouse) or keyboard focus turns one object a
-// revolution on a damped angle (k = 5). Reduced motion: hover shows the second glaze. No WebGL: drawn silhouettes.
+// Many-canvas thumbnails — Ostra's shop grid, the cards alone on the stage. Every card is a link with its own 2D
+// <canvas>; one WebGL renderer on a detached canvas draws each object in turn into a slice of its drawing buffer and
+// drawImage()s that slice into the card's canvas in the same task. A card redraws only when it changed and sits
+// within half a viewport of the screen, and one pixel budget sets the resolution for the whole set. Hover (mouse) or
+// keyboard focus turns one object a revolution on a damped angle (k = 5). Reduced motion: hover shows the second
+// glaze. No WebGL: drawn silhouettes.
 import './demo.css';
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
@@ -12,16 +13,16 @@ import { webglAvailable, disposeScene } from '../../src/demo-kit/three.js';
 
 const V = (x, y) => new THREE.Vector2(x, y);
 
-// Colours are token mixes: [token, other token or 'white', share of the other]. The DOM swatches use the same mix.
+// Colours are token mixes: [token, other token or 'white', share of the other]. The card grounds use the same mix.
 const ITEMS = [
-  { id: 'tide-vase', kind: 'Stoneware', badge: 'New', tones: [['Oat', ['--sand']], ['Iron', ['--night', '--clay', 0.12]], ['Celadon', ['--moss', 'white', 0.45]]] },
-  { id: 'dune-bowl', kind: 'Stoneware', tones: [['Ash', ['--sand', '--night', 0.42]], ['Sand', ['--sand', '--clay', 0.18]]] },
-  { id: 'luma-lamp', kind: 'Opal glass', tones: [['Opal', ['--sand', 'white', 0.6]], ['Smoke', ['--night', '--sky', 0.2]]] },
-  { id: 'ember-cup', kind: 'Porcelain', tones: [['Rust', ['--clay']], ['Chalk', ['--sand', 'white', 0.6]], ['Moss', ['--moss']]] },
-  { id: 'arc-chair', kind: 'Steam-bent ash', tones: [['Natural', ['--sand', '--clay', 0.38]], ['Smoked', ['--night', '--clay', 0.3]]] },
-  { id: 'pebble-dish', kind: 'Porcelain', badge: 'Last few', tones: [['Celadon', ['--moss', 'white', 0.5]], ['Oat', ['--sand']]] },
-  { id: 'strand-throw', kind: 'Lambswool', tones: [['Indigo', ['--sky', '--night', 0.55]], ['Undyed', ['--sand', 'white', 0.4]]] },
-  { id: 'wick-candle', kind: 'Forged iron', tones: [['Iron', ['--night', '--clay', 0.1]], ['Brass', ['--sand', '--clay', 0.55]]] },
+  { id: 'tide-vase', tones: [['Oat', ['--sand']], ['Iron', ['--night', '--clay', 0.12]], ['Celadon', ['--moss', 'white', 0.45]]] },
+  { id: 'dune-bowl', tones: [['Ash', ['--sand', '--night', 0.42]], ['Sand', ['--sand', '--clay', 0.18]]] },
+  { id: 'luma-lamp', tones: [['Opal', ['--sand', 'white', 0.6]], ['Smoke', ['--night', '--sky', 0.2]]] },
+  { id: 'ember-cup', tones: [['Rust', ['--clay']], ['Chalk', ['--sand', 'white', 0.6]], ['Moss', ['--moss']]] },
+  { id: 'arc-chair', tones: [['Natural', ['--sand', '--clay', 0.38]], ['Smoked', ['--night', '--clay', 0.3]]] },
+  { id: 'pebble-dish', tones: [['Celadon', ['--moss', 'white', 0.5]], ['Oat', ['--sand']]] },
+  { id: 'strand-throw', tones: [['Indigo', ['--sky', '--night', 0.55]], ['Undyed', ['--sand', 'white', 0.4]]] },
+  { id: 'wick-candle', tones: [['Iron', ['--night', '--clay', 0.1]], ['Brass', ['--sand', '--clay', 0.55]]] },
 ];
 const cssTone = ([a, b, t]) => (b ? `color-mix(in oklab, var(${a}), ${b === 'white' ? 'white' : `var(${b})`} ${Math.round(t * 100)}%)` : `var(${a})`);
 
@@ -194,19 +195,7 @@ export default function mount(root, options, ctx) {
   const list = ITEMS.slice(0, cfg.count).map((it) => ({ ...it, product: shop.products.find((p) => p.id === it.id) }));
   root.className = 'gt';
   root.innerHTML = html`
-    <header class="ac-bar gt__bar">
-      <a class="ac-brand" href="#shop">${shop.name}</a>
-      <nav aria-label="Shop"><a href="#shop" aria-current="page">Objects</a><a href="#shop">Lighting</a><a href="#shop">Textiles</a><a href="#shop">Journal</a></nav>
-      <a class="gt__bag" href="#bag">Bag <span class="gt__count">0</span></a>
-    </header>
-    <section class="gt__shop ac-wrap" id="shop" aria-labelledby="gt-title">
-      <div class="gt__head">
-        <div class="gt__title">
-          <p class="ac-label">Autumn run · ${list.length} objects</p>
-          <h1 class="ac-h2" id="gt-title">${shop.tagline}</h1>
-        </div>
-        <p class="gt__readout ac-label" data-readout aria-hidden="true"><span class="gt__led"></span><span data-r="mode">1 WebGL context</span><span data-r="n"></span><span data-r="dpr"></span><span data-r="px"></span><span data-r="draws"></span></p>
-      </div>
+    <section class="ac-stage gt__stage" id="shop" aria-label="${shop.name} shop">
       <ul class="gt__grid" role="list">
         ${list.map((it) => html`
           <li>
@@ -214,15 +203,13 @@ export default function mount(root, options, ctx) {
               <span class="gt__thumb">
                 <canvas aria-hidden="true"></canvas>
                 <span class="gt__still" data-still hidden>${raw(stillSVG(it.id, cssTone(it.tones[0][1])))}</span>
-                ${it.badge ? html`<span class="gt__badge">${it.badge}</span>` : ''}
               </span>
               <span class="gt__row"><span class="gt__name">${it.product.name}</span><span class="gt__price ac-num">${formatPrice(it.product.price)}</span></span>
-              <span class="gt__row gt__sub"><span data-glaze>${it.tones[0][0]}</span><span>${it.kind}</span>
-                <span class="gt__dots" aria-hidden="true">${it.tones.map(([, t]) => html`<i style="background:${raw(cssTone(t))}"></i>`)}</span>
-              </span>
+              <span class="sr-only">, <span data-glaze>${it.tones[0][0]}</span></span>
             </a>
           </li>`)}
       </ul>
+      <p class="ac-stage__note"><span>${shop.name} · shop</span><span class="gt__readout" data-readout aria-hidden="true"><span class="gt__led"></span><span data-r="mode">1 WebGL context</span><span data-r="n"></span><span data-r="dpr"></span><span data-r="px"></span><span data-r="draws"></span></span></p>
     </section>`;
   root.querySelectorAll('a[href^="#"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 

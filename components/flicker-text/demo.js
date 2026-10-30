@@ -1,18 +1,14 @@
-// Flicker text — Signal's night programme. The sign and each act name are split into glyph spans (words kept whole,
-// a visually hidden copy for assistive tech) after the fonts settle; a flicker runs every glyph through the opacity
-// ladder [0, 1, 0, 0, 1, 1] as GSAP keyframes with ease none, staggered. The bloom behind the sign follows how much of
-// it is lit. Loop mode: a random glyph catches every 2–5 s, only while on screen. Reduced: everything lit, no replays.
+// Flicker text — Signal's after-dark sign and three act names under it, on a dark stage. The sign and each act name
+// are split into glyph spans (words kept whole, a visually hidden copy for assistive tech) after the fonts settle; a
+// flicker runs every glyph through the opacity ladder [0, 1, 0, 0, 1, 1] as GSAP keyframes with ease none, staggered.
+// The bloom behind the sign follows how much of it is lit. Loop mode: a random glyph catches every 2–5 s, only while
+// on screen. Reduced: everything lit, no replays.
 import './demo.css';
 import { on, whileVisible, html, content, colour } from '../../src/demo-kit/index.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
 
 const LADDER = [0, 1, 0, 0, 1, 1];
-const ACTS = [
-  { time: '21:30', act: 'Black Pine', stage: 'Hall 4' },
-  { time: '23:00', act: 'Moss Theory', stage: 'The Crane' },
-  { time: '00:30', act: 'Juno Park', stage: 'Hall 4' },
-  { time: '02:00', act: 'Vesper Choir', stage: 'Greenhouse' },
-];
+const ACTS = ['Black Pine', 'Moss Theory', 'Juno Park'];
 
 // Glyph spans inside word spans (so a line never breaks mid-word), after a visually hidden copy of the text.
 function split(el) {
@@ -44,20 +40,13 @@ export default function mount(root, options, ctx) {
   let cfg = { ...options };
   root.className = 'fl';
   root.innerHTML = html`
-    <header class="ac-bar fl__bar">
-      <a class="ac-brand" href="#top">${festival.name}</a>
-      <nav aria-label="Festival"><a href="#top">Line-up</a><a href="#top" aria-current="page">After dark</a><a href="#top">Tickets</a></nav>
-    </header>
-    <section class="fl__night ac-wrap" aria-labelledby="fl-sign">
+    <section class="ac-stage fl__night" aria-labelledby="fl-sign">
       <div class="fl__bloom" aria-hidden="true"></div>
-      <div class="fl__head">
-        <p class="ac-label fl__label">${festival.name} after dark · ${festival.dates}</p>
-        <h1 class="fl__sign" id="fl-sign" data-sign>Doors at 21:00</h1>
-        <p class="fl__sub">Hall 4, the Crane and the Greenhouse stay open until three. Night tickets are €45, or free with a weekend pass.</p>
-      </div>
-      <ol class="fl__acts" role="list">
-        ${ACTS.map((a) => html`<li><a class="fl__act" href="#top"><span class="fl__time ac-num">${a.time}</span><span class="fl__name" data-act>${a.act}</span><span class="fl__stage ac-label">${a.stage}</span></a></li>`)}
-      </ol>
+      <h1 class="fl__sign" id="fl-sign" data-sign>Doors at 21:00</h1>
+      <ul class="fl__acts" role="list" aria-label="Tonight">
+        ${ACTS.map((a) => html`<li><a class="fl__act" href="#top"><span class="fl__name" data-act>${a}</span></a></li>`)}
+      </ul>
+      <p class="ac-stage__note ac-stage__note--media"><span>${festival.name} · after-dark programme</span></p>
     </section>`;
   root.querySelectorAll('a[href="#top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 

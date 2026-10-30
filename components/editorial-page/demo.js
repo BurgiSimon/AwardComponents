@@ -5,7 +5,7 @@
 // nothing needs the script to read: the controls only swap tokens and data attributes on the root.
 import './demo.css';
 import '../../src/demo-kit/serif.css';
-import { on, html, raw, photos, imageHTML, content } from '../../src/demo-kit/index.js';
+import { on, html, raw, photo, imageHTML, content } from '../../src/demo-kit/index.js';
 
 const FIGURES = [
   ['Floor area', '310', 'm²', 'over two levels'],
@@ -20,8 +20,11 @@ const WEATHER = [['Year one', 'Honey'], ['Year three', 'Driftwood'], ['Year ten'
 
 export default function mount(root, options, ctx) {
   const { studio, people } = content;
-  const [hero, profile] = photos({ tags: ['architecture'], count: 2, seed: 'ep-house', orientation: 'landscape' });
-  const [detail] = photos({ tags: ['interior'], count: 1, seed: 'ep-hearth' });
+  // Picked by id so each caption names what its picture shows: the shared set has no timber house, so the pictures
+  // are the view from the long window, the site above the fjord and the window's light inside.
+  const hero = photo('land-fog-slope', { fallbackTags: ['landscape', 'nature'] });
+  const detail = photo('land-lake-reflection', { fallbackTags: ['landscape', 'water'] });
+  const profile = photo('tex-curtain-shadow', { fallbackTags: ['interior', 'light'] });
   const work = studio.projects.slice(0, 3);
   root.className = 'ep';
   root.innerHTML = html`
@@ -42,15 +45,15 @@ export default function mount(root, options, ctx) {
           <a class="ep-action" href="#ep-story">Read about the house <span aria-hidden="true">↓</span></a>
         </div>
         <figure class="ep-hero__figure">
-          <div class="ep-hero__media" style="--focus-point:${hero.focus || '50% 50%'}">${raw(imageHTML(hero, { eager: true, sizes: '(min-width: 900px) 58vw, 100vw', alt: hero.alt || 'Fjordhus seen from the water' }))}</div>
-          <figcaption class="ep-cap"><span>Fjordhus from the water, late March.</span><span class="ep-cap__k">01</span></figcaption>
+          <div class="ep-hero__media" style="--focus-point:${hero.focus || '50% 50%'}">${raw(imageHTML(hero, { eager: true, sizes: '(min-width: 900px) 58vw, 100vw', alt: hero.alt || 'Fog on the far side of the fjord' }))}</div>
+          <figcaption class="ep-cap"><span>From the long window: fog on the far side of the fjord, late March.</span><span class="ep-cap__k">01</span></figcaption>
         </figure>
       </section>
 
       <section class="ep-story ac-wrap" id="ep-story" aria-labelledby="ep-story-title">
         <figure class="ep-story__figure">
-          <div class="ep-media ep-media--detail" style="--focus-point:${detail.focus || '50% 50%'}">${raw(imageHTML(detail, { sizes: '(min-width: 760px) 56vw, 100vw', alt: detail.alt || 'The lower level of Fjordhus' }))}</div>
-          <figcaption class="ep-cap"><span>The lower level, where the granite comes up through the floor and became the hearth.</span><span class="ep-cap__k">02</span></figcaption>
+          <div class="ep-media ep-media--detail" style="--focus-point:${detail.focus || '50% 50%'}">${raw(imageHTML(detail, { sizes: '(min-width: 760px) 56vw, 100vw', alt: detail.alt || 'The fjord below the site' }))}</div>
+          <figcaption class="ep-cap"><span>The fjord from the granite shelf in March, before the first pin went in.</span><span class="ep-cap__k">02</span></figcaption>
         </figure>
         <div class="ep-story__copy">
           <p class="ac-label">The site</p>
@@ -64,8 +67,8 @@ export default function mount(root, options, ctx) {
 
       <section class="ep-spec ac-wrap" id="ep-spec" aria-labelledby="ep-spec-title">
         <figure class="ep-spec__figure">
-          <div class="ep-media ep-media--profile" style="--focus-point:${profile.focus || '50% 50%'}">${raw(imageHTML(profile, { sizes: '(min-width: 1000px) 56vw, 100vw', alt: profile.alt || 'The long side of Fjordhus' }))}</div>
-          <figcaption class="ep-cap"><span>The long side, and the window that runs the length of the living room.</span><span class="ep-cap__k">03</span></figcaption>
+          <div class="ep-media ep-media--profile" style="--focus-point:${profile.focus || '50% 50%'}">${raw(imageHTML(profile, { sizes: '(min-width: 1000px) 56vw, 100vw', alt: profile.alt || 'The long window’s shadow on a curtain' }))}</div>
+          <figcaption class="ep-cap"><span>Morning on the living-room curtain: the long window, drawn in shadow.</span><span class="ep-cap__k">03</span></figcaption>
         </figure>
         <div class="ep-spec__facts">
           <p class="ac-label">Particulars</p>

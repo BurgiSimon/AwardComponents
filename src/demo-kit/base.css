@@ -64,6 +64,39 @@ h1, h2, h3, h4, p, figure, blockquote, ul, ol, dl, dd { margin: 0; }
 
 .ac-section { padding-block: clamp(56px, 9vw, 128px); }
 .ac-fill { min-height: 100svh; }
+
+/* The stage: the frame's quiet ground for a component shown on its own or with the one piece of content it acts
+   on. It fills the frame and centres what it holds; --stage-gap spaces several children. A component that is a
+   whole page (a long read, a footer, a route change) skips it and lays out its page instead. */
+.ac-stage {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: var(--stage-gap, var(--space-6));
+  padding: clamp(48px, 9vh, 88px) var(--gutter);
+}
+/* The plate line: one quiet line pinned to the stage's foot naming where the component lives on a real site
+   ("Halden · contact section"). Context in five words instead of a page of it; never an instruction. */
+.ac-stage__note {
+  position: absolute;
+  left: var(--gutter);
+  right: var(--gutter);
+  bottom: clamp(14px, 3vh, 24px);
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  pointer-events: none;
+}
+.ac-stage__note--media { color: var(--on-media-2); }
 .ac-center { display: grid; place-items: center; }
 .ac-stack > * + * { margin-top: var(--stack, var(--space-4)); }
 

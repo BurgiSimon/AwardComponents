@@ -2,7 +2,7 @@ export default {
   id: 'post-presets',
   title: 'Post-processing presets',
   category: 'webgl',
-  summary: 'A neon night-programme hero with bloom, grain and SMAA from one post pipeline, switched between three fixed looks (hero, chapter, quiet) instead of a free dial.',
+  summary: 'A neon festival sign on a wet floor with bloom, grain and SMAA from one post pipeline, switched between three fixed looks (hero, chapter, quiet) instead of a free dial.',
   description: 'A site with six scenes and three bloom values reads as one world; a per-scene intensity dial drifts. So the look is a preset: hero 1.5, chapter 0.5, quiet 0.25, each with its own grain, chosen where the scene is authored.\n\nOne postprocessing composer merges bloom and grain into a single pass and runs SMAA after it, on half-float buffers. The low quality tier skips the post pass altogether.',
   recipe: 'gl-postprocessing-presets',
   deps: ['three', 'postprocessing'],
@@ -10,7 +10,7 @@ export default {
   requires: ['webgl'],
   added: '2026-10-28',
   order: 42,
-  preview: { height: 640, hint: 'Switch the look in the corner', capture: { wait: 2600 } },
+  preview: { height: 540, hint: 'Switch the look in the corner', capture: { wait: 2600 } },
   useCases: [
     'A night, music or launch hero where light should glow without washing the page out',
     'A multi-scene WebGL site that needs its chapters to share one post look',
@@ -18,7 +18,7 @@ export default {
   ],
   notes: [
     'The look switch is a group of real buttons with aria-pressed; the active look’s numbers are announced politely.',
-    'The canvas is aria-hidden; the headline, dates and ticket link are HTML over it, on a shaded floor so they keep contrast.',
+    'The canvas is aria-hidden; the look switch and its readout are HTML over it, on a shaded floor so they keep contrast.',
     'Under reduced motion and static the neon does not pulse and the truss does not chase: the scene renders once per change.',
     'Without WebGL a drawn, glowing still of the mark takes the canvas’s place. The low quality tier renders without post.',
   ],

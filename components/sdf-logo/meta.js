@@ -10,7 +10,7 @@ export default {
   requires: ['webgl2'],
   added: '2026-10-28',
   order: 47,
-  preview: { height: 620, capture: { wait: 3200 } },
+  preview: { height: 520, capture: { wait: 3200 } },
   actions: [{ id: 'replay', label: 'Replay intro' }],
   useCases: [
     'A brand or identity page that shows the mark as an object',
@@ -19,6 +19,7 @@ export default {
   ],
   notes: [
     'The stage is role="img" with a label that describes the mark; the canvas and the SVG still are aria-hidden.',
+    'The finish switch is a group of real buttons with aria-pressed; without a running context it recolours the still’s strokes.',
     'The sway is slow and never flashes. Under reduced motion and static no WebGL context is created: the SVG stroke still stays.',
     'Without WebGL 2, on a shader failure or a lost context the SVG still shows, so the stage is never empty.',
   ],

@@ -6,13 +6,11 @@
   --vw-pad: clamp(20px, 3.6vw, 52px);
   height: 100svh;
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr) auto;
+  padding-top: var(--gutter);
   overflow: clip;
   background: var(--bg);
 }
-.vw a { text-decoration: none; }
-.vw__edition { font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.06em; color: var(--muted); font-stretch: 100%; }
-.vw__bar nav a[aria-current] { color: var(--ink); }
 
 /* The framed stage: two media buffers, the seam and a legibility shade under the copy. */
 .vw__frame {
@@ -65,28 +63,14 @@
   inset: 0;
   display: grid;
   align-content: end;
-  padding: var(--vw-pad);
+  padding: var(--vw-pad) var(--vw-pad) calc(var(--vw-pad) + 28px);
   color: var(--vw-on);
   visibility: hidden;
 }
 .vw__panel:is(.is-active, .is-leaving) { visibility: visible; }
-.vw__copy { display: grid; gap: 14px; max-width: 40rem; }
-.vw__kicker { color: color-mix(in oklab, var(--vw-on) 76%, transparent); }
 .vw__title { font-size: clamp(2.6rem, 1.1rem + 6.4vw, 7.6rem); line-height: 0.9; }
-.vw__body { max-width: 44ch; font-size: var(--text-lg); line-height: 1.45; color: color-mix(in oklab, var(--vw-on) 86%, transparent); text-wrap: pretty; }
-.vw__acts { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 4px; font-size: var(--text-sm); font-weight: 620; }
-.vw__acts li { display: inline-flex; align-items: baseline; gap: 8px; white-space: nowrap; }
-.vw__acts .ac-label { color: color-mix(in oklab, var(--vw-on) 62%, transparent); }
-.vw__cap {
-  position: absolute;
-  top: var(--vw-pad);
-  right: var(--vw-pad);
-  padding: 7px 12px;
-  border: 1px solid color-mix(in oklab, var(--vw-on) 30%, transparent);
-  border-radius: var(--radius-pill);
-  background: color-mix(in oklab, var(--night) 34%, transparent);
-  color: var(--vw-on);
-}
+/* The plate line sits on the footage, under the stage name. */
+.vw__note { z-index: 6; left: var(--vw-pad); right: var(--vw-pad); }
 
 /* The stage list under the frame: each segment fills on the same clock as the wipe. */
 .vw__nav { display: flex; align-items: center; gap: clamp(14px, 2.4vw, 32px); padding: 10px var(--gutter) 16px; }
@@ -135,15 +119,14 @@
 :root[data-motion='static'] .vw__seam { display: none; }
 
 @media (max-width: 720px) {
-  .vw__bar nav { display: none; }
-  .vw__tab-name { display: none; }
+  /* Hidden from sight only: the name stays each button's accessible name. */
+  .vw__tab-name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   .vw__tab { justify-content: center; }
   .vw__count { display: none; }
 }
 @media (max-width: 560px) {
   .vw__frame { margin-inline: 12px; border-radius: var(--radius-lg); }
+  .vw { padding-top: 12px; }
   .vw__shade { background: linear-gradient(0deg, color-mix(in oklab, var(--night) 82%, transparent), color-mix(in oklab, var(--night) 30%, transparent) 62%, transparent); }
-  .vw__body { font-size: var(--text-md); }
   .vw__nav { padding-inline: 12px; }
-  .vw__bar .ac-btn { padding-inline: 0.8em; }
 }

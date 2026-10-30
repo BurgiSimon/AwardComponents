@@ -1,5 +1,5 @@
-// Shader hover states — the sign-up band that closes a banking app's page. A ring field in one fragment shader sits
-// behind the form, centred on the submit button. Its uniforms are plain GSAP tween targets: hovering or focusing the
+// Shader hover states — a banking app's sign-up band on its own: the email field and its button over the shader.
+// A ring field in one fragment shader sits behind the form, centred on the submit button. Its uniforms are plain GSAP tween targets: hovering or focusing the
 // button charges the rings (0.9 s power2.out in, 0.45 s power2.in out), focusing the email field moves the band's
 // look from calm to charged (0.9 s power2.inOut). Every change goes through one retarget(): kill what is moving
 // that value, then tween from wherever it is now, so a half-finished hover turns round without a jump. Frames are
@@ -15,7 +15,7 @@ const PRESETS = { calm: { vignette: 0.3, grain: 0.035, density: 96 }, charged: {
 
 const vertexShader = /* glsl */ 'void main() { gl_Position = vec4(position.xy, 0.0, 1.0); }';
 const fragmentShader = /* glsl */ `
-  uniform vec2 uRes, uCenter, uBoxCenter, uBoxHalf, uCopyCenter, uCopyHalf;
+  uniform vec2 uRes, uCenter, uBoxCenter, uBoxHalf;
   uniform float uPx;
   uniform vec3 uGround, uShade, uRest, uTarget;
   uniform float uHover, uSwell, uVignette, uGrain, uDensity;
@@ -27,9 +27,8 @@ const fragmentShader = /* glsl */ `
     vec3 tint = mix(uRest, uTarget, uHover);
     float reach = 0.42 + 0.14 * uSwell;
     float rings = smoothstep(0.55, 0.9, 0.5 + 0.5 * cos(r * uDensity - uSwell * 4.0));
-    // The rings stay off the form and the copy (rounded boxes from their rectangles), so the label, lede and note keep
-    // their contrast, also where the layout stacks the copy inside the rings' reach (a phone).
-    float quiet = min(sdBox(gl_FragCoord.xy - uBoxCenter, uBoxHalf), sdBox(gl_FragCoord.xy - uCopyCenter, uCopyHalf));
+    // The rings stay off the form (a rounded box from its rectangle), so the label, field and note keep their contrast.
+    float quiet = sdBox(gl_FragCoord.xy - uBoxCenter, uBoxHalf);
     float calm = smoothstep(2.0 * uPx, 44.0 * uPx, quiet);
     float halo = rings * calm * (1.0 - smoothstep(reach * 0.3, reach, r)) * (0.5 + 0.5 * uHover);
     vec3 col = mix(uGround, tint, halo);
@@ -46,33 +45,18 @@ export default function mount(root, options, ctx) {
   let cfg = { ...options };
   root.className = 'sb';
   root.innerHTML = html`
-    <header class="ac-bar sb__bar">
-      <a class="ac-brand" href="#top">${app.name}</a>
-      <nav aria-label="Product"><a href="#top">Features</a><a href="#top">Pricing</a><a href="#top">Sign in</a></nav>
-    </header>
-    <section class="sb__features ac-wrap" aria-label="Features">
-      ${app.features.slice(0, 3).map((f, i) => html`<div><span class="ac-label">0${i + 1}</span><h2 class="sb__ft">${f.title}</h2><p class="ac-small">${f.body.split('. ')[0].replace(/\.$/, '')}.</p></div>`)}
-    </section>
-    <section class="sb__band" data-band aria-labelledby="sb-title">
+    <section class="ac-stage sb__band" data-band aria-label="${app.name} sign-up">
       <div class="sb__gl" data-stage></div>
-      <div class="sb__inner ac-wrap">
-        <div class="sb__copy">
-          <p class="ac-label">${app.name} · for studios of two to twenty</p>
-          <h2 class="ac-display sb__title" id="sb-title">Close the month in an afternoon.</h2>
-          <p class="ac-lede">Open an account in eleven minutes, ID included. Your first invoice can go out today.</p>
+      <form class="sb__form" data-form novalidate>
+        <label class="ac-label" for="sb-email">Work email</label>
+        <div class="sb__row">
+          <input class="sb__input" id="sb-email" name="email" type="email" autocomplete="email" placeholder="you@studio.com" data-email>
+          <button class="sb__cta" type="submit" data-charge>Open an account<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M11 5l5 5-5 5"/></svg></button>
         </div>
-        <form class="sb__form" data-form novalidate>
-          <label class="ac-label" for="sb-email">Work email</label>
-          <div class="sb__row">
-            <input class="sb__input" id="sb-email" name="email" type="email" autocomplete="email" placeholder="you@studio.com" data-email>
-            <button class="sb__cta" type="submit" data-charge>Open an account<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M11 5l5 5-5 5"/></svg></button>
-          </div>
-          <p class="ac-small sb__note" data-status role="status">Free for one person. No card, no call.</p>
-        </form>
-      </div>
-    </section>
-    <footer class="sb__foot ac-wrap"><span class="ac-small">${app.name} is a fictional bank, used for this demo.</span><span class="ac-label">Plans from €0</span></footer>`;
-  root.querySelectorAll('a[href^="#"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
+        <p class="ac-small sb__note" data-status role="status">Free for one person. No card, no call.</p>
+      </form>
+      <p class="ac-stage__note"><span>${app.name} · sign-up</span></p>
+    </section>`;
 
   const band = root.querySelector('[data-band]');
   const host = root.querySelector('[data-stage]');
@@ -80,7 +64,6 @@ export default function mount(root, options, ctx) {
   const email = root.querySelector('[data-email]');
   const status = root.querySelector('[data-status]');
   const form = root.querySelector('[data-form]');
-  const copy = root.querySelector('.sb__copy');
 
   // Timing per motion tier. Full: entrance slower than exit, spatial swell on. Reduced: colour only, short. Static: instant.
   const timing = () => ({
@@ -97,8 +80,6 @@ export default function mount(root, options, ctx) {
     uCenter: { value: new THREE.Vector2(0, 0) },
     uBoxCenter: { value: new THREE.Vector2(0, 0) },
     uBoxHalf: { value: new THREE.Vector2(0, 0) },
-    uCopyCenter: { value: new THREE.Vector2(-1e5, -1e5) },
-    uCopyHalf: { value: new THREE.Vector2(0, 0) },
     uPx: { value: 1 },
     uGround: { value: new THREE.Color() },
     uShade: { value: new THREE.Color() },
@@ -162,7 +143,10 @@ export default function mount(root, options, ctx) {
 
   if (!webglAvailable()) {
     band.classList.add('sb--still');
-    return { update(next) { cfg = { ...next }; band.style.setProperty('--sb-target', colour(cfg.palette)); } };
+    return {
+      update(next) { cfg = { ...next }; band.style.setProperty('--sb-target', colour(cfg.palette)); },
+      action(id) { if (id === 'charge') setCharge(!charged); },
+    };
   }
 
   const { renderer, onResize } = useRenderer(ctx, host, { alpha: false, antialias: false, dprCap: 1.5 });
@@ -175,20 +159,16 @@ export default function mount(root, options, ctx) {
   ctx.onCleanup(() => { quad.geometry.dispose(); material.dispose(); });
   paint();
 
-  // The rings are centred on the button, wherever the layout puts it; the form's and the copy's rectangles are their
-  // quiet zones.
+  // The rings are centred on the button, wherever the layout puts it; the form's rectangle is their quiet zone.
   const centre = () => {
     const br = band.getBoundingClientRect();
     const r = button.getBoundingClientRect();
     const fr = form.getBoundingClientRect();
-    const cr = copy.getBoundingClientRect();
     const dpr = renderer.getPixelRatio();
     u.uPx.value = dpr;
     u.uCenter.value.set((r.left + r.width / 2 - br.left) * dpr, (br.bottom - (r.top + r.height / 2)) * dpr);
     u.uBoxCenter.value.set((fr.left + fr.width / 2 - br.left) * dpr, (br.bottom - (fr.top + fr.height / 2)) * dpr);
     u.uBoxHalf.value.set((fr.width / 2 + 6) * dpr, (fr.height / 2 + 6) * dpr);
-    u.uCopyCenter.value.set((cr.left + cr.width / 2 - br.left) * dpr, (br.bottom - (cr.top + cr.height / 2)) * dpr);
-    u.uCopyHalf.value.set((cr.width / 2 + 6) * dpr, (cr.height / 2 + 6) * dpr);
     markDirty();
   };
   onResize(({ width, height }) => {
@@ -196,7 +176,7 @@ export default function mount(root, options, ctx) {
     u.uRes.value.set(width * dpr, height * dpr);
     centre();
   });
-  observeResize(ctx, [button, form, copy], centre);
+  observeResize(ctx, [button, form], centre);
   document.fonts?.ready.then(() => { if (!ctx.signal.aborted) centre(); });
 
   // GSAP owns the clock: ticker listeners run after tweens update, so the frame drawn shows this tick's values.

@@ -66,26 +66,14 @@ export default function mount(root, options, ctx) {
   root.dataset.tier = ctx.motion;
   if (ctx.capture) root.classList.add('ch--capture');
   root.innerHTML = html`
-    <header class="ch__bar ac-wrap">
-      <a class="ch__brand" href="#top" data-brand>${magazine.name}</a>
-      <nav aria-label="Main">${['Places', 'Architecture', 'Craft', 'Culture'].map((s) => html`<a href="#top">${s}</a>`)}</nav>
-      <a class="ac-btn ac-btn--sm" href="#top">Subscribe</a>
-    </header>
-
     <main class="ch__page">
-      <section class="ch__head ac-wrap" aria-labelledby="ch-title">
-        <p class="ac-label">${magazine.issue} · Autumn 2026</p>
-        <h1 class="ch__title" id="ch-title">The weather issue</h1>
-        <p class="ac-lede">Four stories from places where the forecast sets the work: salt boiled from the sea, a library built around one window, glazes read like skies, and swimming after dark.</p>
-      </section>
+      <h1 class="ch__title ac-wrap" tabindex="-1" data-top>The weather issue</h1>
 
       <section class="ch__stories ac-wrap" aria-label="In this issue">
         <article class="ch__lead" aria-labelledby="ch-s0">
           <span class="ac-media ch__lead-pic">${raw(imageHTML(pics[0], { sizes: '(max-width: 760px) 100vw, 58vw', alt: '', eager: true }))}</span>
           <div class="ch__lead-copy">
-            <p class="ac-label">${lead.section} · ${lead.read}</p>
             <h2 class="ch__lead-title" id="ch-s0"><a href="#top">${lead.title}</a></h2>
-            <p class="ac-lede">${lead.dek}</p>
             <p class="ac-small">Words by ${lead.author}</p>
           </div>
         </article>
@@ -94,9 +82,7 @@ export default function mount(root, options, ctx) {
             <li>
               <article class="ch__story" aria-labelledby="ch-s${i + 1}">
                 <span class="ac-media ch__story-pic">${raw(imageHTML(pics[i + 1], { sizes: '(max-width: 760px) 40vw, 30vw', alt: '' }))}</span>
-                <p class="ac-label">${a.section} · ${a.read}</p>
                 <h2 class="ch__story-title" id="ch-s${i + 1}"><a href="#top">${a.title}</a></h2>
-                <p class="ch__dek">${a.dek}</p>
                 <p class="ac-small">Words by ${a.author}</p>
               </article>
             </li>`)}
@@ -124,7 +110,6 @@ export default function mount(root, options, ctx) {
             <div class="ch__cols">
               <section class="ch__col ch__col--sub" aria-labelledby="ch-f2">
                 <h3 class="ch__label" id="ch-f2">Subscribe</h3>
-                <p class="ch__note">Four issues a year, posted in March, June, September and December. 56 € a year.</p>
                 <ul class="ch__inline" role="list"><li><a href="#top" data-blink>Subscribe</a></li><li><a href="#top" data-blink>Give a year</a></li><li><a href="#top" data-blink>Back issues</a></li></ul>
               </section>
               <nav class="ch__col" aria-labelledby="ch-f3">
@@ -179,7 +164,7 @@ export default function mount(root, options, ctx) {
   const title = panel.querySelector('h2');
   const closeBtn = panel.querySelector('[data-credits-close]');
   const up = root.querySelector('[data-up]');
-  const brand = root.querySelector('[data-brand]');
+  const pageTitle = root.querySelector('[data-top]');
   root.querySelectorAll('a[href^="#"]:not([data-up]), a[href^="mailto"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   // One clock: Lenis rides GSAP's ticker and feeds ScrollTrigger (full tier only; native scroll otherwise).
@@ -316,7 +301,7 @@ export default function mount(root, options, ctx) {
     setOpen(false, { moveFocus: false });
     if (lenis) lenis.scrollTo(0, { duration: 1.2, easing: expoOut, force: true });
     else window.scrollTo(0, 0);
-    brand.focus({ preventScroll: true, focusVisible: e.detail === 0 });
+    pageTitle.focus({ preventScroll: true, focusVisible: e.detail === 0 });
   });
 
   return {

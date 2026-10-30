@@ -1,12 +1,6 @@
 .dp { --dp-colour: var(--accent); --dp-stroke: 3px; overflow-x: clip; }
-.dp a { text-decoration: none; }
-.dp__bar nav a[aria-current] { color: var(--ink); }
-
-.dp__intro { display: grid; gap: clamp(14px, 2.4svh, 22px); padding-block: clamp(40px, 9svh, 104px) clamp(16px, 4svh, 48px); }
-.dp__intro .ac-display { max-width: 13ch; }
-
 /* The route: the SVG covers it; demo.js sets its viewBox to the route's px box and builds the path through the markers. */
-.dp__route { position: relative; padding-block: 48px clamp(80px, 14svh, 140px); }
+.dp__route { position: relative; padding-block: clamp(120px, 22svh, 200px) clamp(80px, 30svh, 260px); }
 .dp__svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
 .dp__ghost { fill: none; stroke: var(--line-2); stroke-width: 1.5; stroke-dasharray: 2 7; stroke-linecap: round; }
 .dp__line { fill: none; stroke: var(--dp-colour); stroke-width: var(--dp-stroke); stroke-linejoin: round; }
@@ -15,12 +9,10 @@
 
 .dp__list { position: relative; display: grid; gap: clamp(56px, 12svh, 140px); margin: 0; }
 .dp__item { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; }
-.dp__card { grid-column: 1; grid-row: 1; justify-self: start; display: grid; gap: 8px; width: min(100%, 440px); opacity: 0.42; transition: opacity var(--dur-l) var(--ease-out); }
+.dp__card { grid-column: 1; grid-row: 1; justify-self: start; display: grid; gap: 12px; width: min(100%, 440px); opacity: 0.42; transition: opacity var(--dur-l) var(--ease-out); }
 .dp__item[data-side='right'] .dp__card { grid-column: 2; justify-self: end; }
-.dp__media { --ratio: 3 / 2; margin-bottom: 8px; border-radius: var(--radius-md); }
+.dp__media { --ratio: 3 / 2; border-radius: var(--radius-md); }
 .dp__media img { filter: grayscale(0.85); transition: filter var(--dur-l) var(--ease-out); }
-.dp__when { color: var(--muted); }
-.dp__body { max-width: 40ch; color: var(--ink-2); text-wrap: pretty; }
 
 /* Markers sit in the empty half, the big year beside them; both light up when the line reaches them. */
 .dp__marker {
@@ -55,11 +47,7 @@
 }
 .dp__item[data-side='right'] .dp__year { left: auto; right: calc(64% + 32px); }
 
-.dp__end { position: relative; display: grid; justify-items: center; gap: 22px; padding-top: clamp(64px, 12svh, 128px); text-align: center; }
-.dp__end .ac-h2 { max-width: 22ch; opacity: 0.42; transition: opacity var(--dur-l) var(--ease-out); }
-.dp__marker--end { position: relative; top: auto; left: auto; translate: none; }
-
-.dp .is-lit .dp__card, .dp .is-lit.dp__end .ac-h2 { opacity: 1; }
+.dp .is-lit .dp__card { opacity: 1; }
 .dp .is-lit .dp__media img { filter: none; }
 .dp .is-lit .dp__year { color: var(--ink); }
 .dp .is-lit .dp__marker { border-color: var(--dp-colour); background: var(--dp-colour); box-shadow: 0 0 0 6px color-mix(in oklab, var(--dp-colour) 18%, transparent); }
@@ -72,7 +60,6 @@
 .dp[data-markers='none'] .dp__marker { visibility: hidden; }
 
 @media (max-width: 760px) {
-  .dp__bar nav { display: none; }
   .dp__item { grid-template-columns: minmax(0, 1fr); padding-left: 48px; }
   .dp__card, .dp__item[data-side='right'] .dp__card { grid-column: 1; grid-row: 2; justify-self: stretch; width: 100%; }
   .dp__year, .dp__item[data-side='right'] .dp__year { position: static; grid-row: 1; translate: none; margin-bottom: 14px; font-size: var(--text-3xl); }
@@ -81,6 +68,4 @@
   .dp[data-markers='years'] .dp__item { padding-left: 58px; }
   .dp[data-markers='years'] .dp__marker, .dp[data-markers='years'] .dp__item[data-side='right'] .dp__marker { left: 23px; height: 22px; padding: 0 5px; }
   .dp[data-markers='years'] .dp__marker span { font-size: 10px; }
-  .dp__end { justify-items: start; text-align: left; padding-left: 48px; }
-  .dp__marker--end { position: absolute; top: calc(clamp(64px, 12svh, 128px) + 0.6em); left: 14px; translate: -50% -50%; }
 }

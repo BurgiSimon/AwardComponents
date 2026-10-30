@@ -6,7 +6,7 @@
 // a next-project close that links back into the index and marks the row it names. Only what starts below the fold is
 // held back for a reveal: full rises 32 px and fades over 0.9 s, reduced only fades, static holds nothing back.
 import './demo.css';
-import { on, html, raw, photos, imageHTML, content } from '../../src/demo-kit/index.js';
+import { on, html, raw, photo, photos, imageHTML, content } from '../../src/demo-kit/index.js';
 
 const CREDITS = [
   ['Direction', 'Ingrid Vold'],
@@ -54,9 +54,11 @@ export default function mount(root, options, ctx) {
   const projects = studio.projects;
   const caseProject = projects.find((p) => p.slug === 'tern-library');
   const nextProject = projects.find((p) => p.slug === 'kiln-house');
-  const [opening, lead] = photos({ tags: ['architecture'], count: 2, seed: 'cs-tern', orientation: 'landscape' });
-  const [portrait] = photos({ tags: ['interior'], count: 1, seed: 'cs-room', orientation: 'portrait' });
-  const [square] = photos({ tags: ['texture'], count: 1, seed: 'cs-slats' });
+  // The captioned pictures are picked by id, so each caption names what its picture shows.
+  const opening = photo('arch-concrete-slab', { fallbackTags: ['architecture'] });
+  const lead = photo('tex-concrete-shadow', { fallbackTags: ['architecture'] });
+  const portrait = photo('interior-lamp-corner', { fallbackTags: ['interior'] });
+  const square = photo('tex-wood-geometric', { fallbackTags: ['texture'] });
   const [nextPic] = photos({ tags: ['interior'], count: 1, seed: 'cs-kiln', orientation: 'landscape' });
   let cfg = { ...options };
   let view = '';
@@ -70,7 +72,6 @@ export default function mount(root, options, ctx) {
       <a class="cs-bar__contact" href="mailto:${studio.email}">Contact</a>
     </header>
     <main id="cs-main" class="cs-main" data-view></main>
-    <footer class="cs-foot"><p>${studio.full} · ${studio.address.slice(0, 2).join(', ')}</p><a href="mailto:${studio.email}">${studio.email}</a></footer>
     <p class="sr-only" role="status" data-status></p>`;
 
   const main = root.querySelector('[data-view]');
@@ -104,8 +105,8 @@ export default function mount(root, options, ctx) {
 
   const ROWS = {
     plate: () => html`<figure class="cs-plate" data-row="plate" data-family="plate" data-reveal>
-        ${fig(opening, 'cs-media--open', 'Tern Library from the shore of the sound', '100vw')}
-        <figcaption class="cs-cap">The reading room’s window from the shore, an hour after the sun came back in late January.</figcaption>
+        ${fig(opening, 'cs-media--open', 'The ventilation tower of Tern Library', '100vw')}
+        <figcaption class="cs-cap">The town side: a ventilation tower in sand-coloured concrete, the one tall thing on the site.</figcaption>
       </figure>`,
     brief: () => html`<section class="cs-text" data-row="brief" data-family="offset-split" aria-labelledby="cs-brief" data-reveal>
         <h2 class="cs-h2" id="cs-brief">The brief</h2>
@@ -115,8 +116,8 @@ export default function mount(root, options, ctx) {
         </div>
       </section>`,
     pair: () => html`<div class="cs-pair" data-row="pair" data-family="uneven-grid">
-        <figure class="cs-pair__a" data-reveal>${fig(portrait, 'cs-media--portrait', 'The reading room at midday in winter', '(min-width: 760px) 46vw, 100vw')}<figcaption class="cs-cap">The reading room at noon in January, lit by the window and nothing else for two hours.</figcaption></figure>
-        <figure class="cs-pair__b" data-reveal>${fig(square, 'cs-media--square', 'Birch slats on the reading room ceiling', '(min-width: 760px) 30vw, 70vw')}<figcaption class="cs-cap">Birch slats on the ceiling, spaced to soften the voices of 220 readers.</figcaption></figure>
+        <figure class="cs-pair__a" data-reveal>${fig(portrait, 'cs-media--portrait', 'A reading corner behind the stacks', '(min-width: 760px) 46vw, 100vw')}<figcaption class="cs-cap">A reading corner behind the stacks, with a lamp of its own for the seven weeks the sun stays down.</figcaption></figure>
+        <figure class="cs-pair__b" data-reveal>${fig(square, 'cs-media--square', 'Wood veneer on the ends of the stacks', '(min-width: 760px) 30vw, 70vw')}<figcaption class="cs-cap">Veneer on the ends of the stacks, laid in triangles so the grain turns at every seam.</figcaption></figure>
       </div>`,
     lead: () => html`<figure class="cs-lead" data-row="lead" data-family="offset-split" data-reveal>
         <figcaption class="cs-lead__cap"><span class="cs-lead__title">One window, ninety-two metres</span>The glazing is set in five bays of 18.4 metres, with the mullions outside, so from a chair the sound reads as one view and the frames read as weather.</figcaption>

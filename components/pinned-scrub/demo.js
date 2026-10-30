@@ -1,16 +1,17 @@
-// Pinned scrub chapter — "How room tuning works" for a speaker. A tall section holds a CSS-sticky stage; one
-// ScrollTrigger scrubs a proxy { p } from 0 to 1 (linear, with optional catch-up), and render(p) draws everything:
-// the active step (quantised), the microphones, the sound field and the frequency curve flattening.
+// Pinned scrub chapter — a speaker's room-tuning diagram, its progress rail and one short label per beat. A tall
+// section holds a CSS-sticky stage; one ScrollTrigger scrubs a proxy { p } from 0 to 1 (linear, with optional
+// catch-up), and render(p) draws everything: the active step (quantised), the microphones, the sound field and the
+// frequency curve flattening.
 import './demo.css';
 import { on, html, raw, clamp, smoothstep, content } from '../../src/demo-kit/index.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
 import { useLenis } from '../../src/demo-kit/lenis.js';
 
 const STEPS = [
-  { k: 'Listen', t: 'It plays a short chirp', b: 'A two-second sweep from 30 Hz to 18 kHz fills the room, quietly enough to talk over.' },
-  { k: 'Measure', t: 'Four microphones hear the room', b: 'Each one times the reflections from the walls, the sofa and the window, and builds a map of where the bass piles up.' },
-  { k: 'Shape', t: 'The bass is shaped to the room', b: 'Peaks are pulled down and dips filled in, so a corner placement sounds as even as the middle of the floor.' },
-  { k: 'Forget', t: 'Then it stays out of the way', b: 'Eight seconds, once. It re-tunes on its own only when you move it.' },
+  { k: 'Listen', t: 'It plays a short chirp' },
+  { k: 'Measure', t: 'Four microphones hear the room' },
+  { k: 'Shape', t: 'The bass is shaped to the room' },
+  { k: 'Forget', t: 'Then it stays out of the way' },
 ];
 const BEATS = STEPS.length - 1;
 const MICS = [[0.5, 0.18], [0.82, 0.5], [0.5, 0.82], [0.18, 0.5]];
@@ -30,17 +31,11 @@ export default function mount(root, options, ctx) {
   let cfg = { ...options };
   root.className = 'ps';
   root.innerHTML = html`
-    <header class="ps__intro ac-wrap">
-      <p class="ac-label">${product.name} · Room tuning</p>
-      <h1 class="ac-display">Sounds right<br>in any corner.</h1>
-      <p class="ac-lede">${product.features[0].body}</p>
-      <p class="ps__cue ac-label">Scroll to see how</p>
-    </header>
     <section class="ps__chapter" aria-labelledby="ps-title">
-      <h2 class="sr-only" id="ps-title">How room tuning works</h2>
+      <h1 class="sr-only" id="ps-title">How ${product.name} tunes itself to the room</h1>
       <div class="ps__stage ac-wrap">
         <ol class="ps__steps" role="list">
-          ${STEPS.map((s, i) => html`<li class="ps__step" data-step="${i}"><span class="ps__k ac-label">${String(i + 1).padStart(2, '0')} · ${s.k}</span><h3 class="ac-h2">${s.t}</h3><p class="ac-body">${s.b}</p></li>`)}
+          ${STEPS.map((s, i) => html`<li class="ps__step" data-step="${i}"><span class="ps__k ac-label">${String(i + 1).padStart(2, '0')} · ${s.k}</span><h2 class="ac-h2">${s.t}</h2></li>`)}
         </ol>
         <figure class="ps__fig" aria-hidden="true">
           <svg class="ps__room" viewBox="0 0 400 400">
@@ -59,9 +54,9 @@ export default function mount(root, options, ctx) {
           </div>
         </figure>
         <div class="ps__rail" aria-hidden="true"><span class="ps__rail-fill" data-rail></span>${STEPS.map((_, i) => raw(`<span class="ps__tick" style="--at:${i / BEATS}" data-tick="${i}"></span>`))}</div>
+        <p class="ac-stage__note"><span>${product.maker} · how it works</span></p>
       </div>
-    </section>
-    <section class="ps__outro ac-wrap"><p class="ac-h2">Tuned in eight seconds. Then you forget it is there.</p></section>`;
+    </section>`;
 
   const steps = [...root.querySelectorAll('[data-step]')];
   const waves = [...root.querySelectorAll('[data-wave]')];

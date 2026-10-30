@@ -1,11 +1,11 @@
-// Sentence form — Halden's enquiry as one sentence to complete. Each phrase is the <label> of the blank after it;
+// Sentence form — Halden's enquiry as one sentence to complete, on its own. Each phrase is the <label> of the blank after it;
 // the project types are a radiogroup labelled by its phrase. Validation is the browser's constraint API (required,
 // type="email", a required select) with the studio's own message per field and failure, tied by aria-describedby;
 // the first invalid blank takes focus and, after a first attempt, each field re-checks as it is fixed. A focused
 // thank-you replaces the send row. The sentence arrives phrase by phrase (rise / fade / none); reduced: fade only.
 import './demo.css';
 import '../../src/demo-kit/serif.css';
-import { on, html, raw, photo, photos, imageHTML, content } from '../../src/demo-kit/index.js';
+import { on, html, content } from '../../src/demo-kit/index.js';
 
 const MESSAGES = {
   name: { valueMissing: 'Your name first: the sentence starts with it.' },
@@ -28,19 +28,13 @@ function replyBy(from = new Date()) {
 export default function mount(root, options, ctx) {
   const { studio, people } = content;
   let cfg = { ...options };
-  const chosen = photo('interior-butterfly-chair'); // a room with tall studio windows; any interior otherwise
-  const pic = chosen.drawn ? photos({ tags: ['interior'], count: 1, seed: 'sf-studio' })[0] : chosen;
   const reader = people[1].name;
 
   root.className = 'sf';
   root.innerHTML = html`
-    <header class="ac-bar sf__bar">
-      <a class="ac-brand" href="#top">${studio.name}</a>
-      <nav aria-label="Studio">${studio.nav.map((n) => html`<a href="#top" ${n === 'Contact' ? raw('aria-current="page"') : ''}>${n}</a>`)}</nav>
-    </header>
-    <main class="sf__page ac-wrap">
-      <section class="sf__main" aria-labelledby="sf-title">
-        <h1 class="ac-label sf__title" id="sf-title">Start a project</h1>
+    <section class="ac-stage sf__stage" aria-labelledby="sf-title">
+      <div class="sf__main">
+        <h2 class="sr-only" id="sf-title">Start a project</h2>
         <form class="sf__form" novalidate data-form>
           <p class="sf__text" data-text>
             <label class="sf__frag" for="sf-name">Hi, I’m</label>
@@ -61,31 +55,20 @@ export default function mount(root, options, ctx) {
           </ul>
           <div class="sf__send" data-send>
             <button class="ac-btn ac-btn--lg sf__btn" type="submit">Send the enquiry <span aria-hidden="true">→</span></button>
-            <p class="ac-small">Every blank but the company is needed. Nothing is sent from this demo.</p>
+            <p class="ac-small">Every blank but the studio is needed.</p>
           </div>
         </form>
         <p class="sf__sent" tabindex="-1" hidden data-sent></p>
-      </section>
-
-      <aside class="sf__aside" aria-label="About replies">
-        <figure class="sf__fig">
-          <span class="ac-media sf__pic">${raw(imageHTML(pic, { sizes: '(min-width: 900px) 28vw, 100vw', eager: true, alt: '' }))}</span>
-          <figcaption class="ac-small">The studio on ${studio.address[0]}, ${studio.city}.</figcaption>
-        </figure>
-        <div class="sf__next">
-          <p class="ac-label">What happens next</p>
-          <p class="ac-body">${reader} reads every enquiry and replies within two working days, usually with a few questions about the site.</p>
-          <p class="ac-small">Or write to <a class="ac-link" href="mailto:${studio.email}">${studio.email}</a> · ${studio.phone}</p>
-        </div>
-      </aside>
-    </main>`;
-  root.querySelectorAll('a[href="#top"], a[href^="mailto"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
+      </div>
+      <p class="ac-stage__note"><span>${studio.name} · enquiry</span></p>
+    </section>`;
 
   const form = root.querySelector('[data-form]');
   const group = root.querySelector('[data-group]');
   const sent = root.querySelector('[data-sent]');
   const text = root.querySelector('[data-text]');
   let submits = 0;
+  let fromToolbar = false; // a send pressed in the shell's toolbar checks and shows, but leaves focus where it is
 
   // Entrance pieces: each phrase, blank, choice and punctuation mark, in reading order.
   const pieces = [...text.children].flatMap((el) => (el === group ? [...group.children] : [el]));
@@ -111,13 +94,13 @@ export default function mount(root, options, ctx) {
     e.preventDefault(); // this form sends nothing
     submits++;
     const invalid = FIELDS.filter((name) => !check(name));
-    if (invalid.length) { focusField(invalid[0]); return; }
+    if (invalid.length) { if (!fromToolbar) focusField(invalid[0]); return; }
     const data = new FormData(form);
     const first = String(data.get('name')).trim().split(/\s+/)[0];
     sent.textContent = `Thank you, ${first}. ${reader.split(' ')[0]} will write to ${data.get('email')} by ${replyBy()}.`;
     sent.hidden = false;
     root.classList.add('is-sent');
-    sent.focus();
+    if (!fromToolbar) sent.focus();
   });
   // After the first attempt, a field clears or updates its message as soon as it is fixed.
   const recheck = (e) => { if (submits && MESSAGES[e.target.name]) check(e.target.name); };
@@ -155,7 +138,11 @@ export default function mount(root, options, ctx) {
         root.classList.remove('is-sent');
         play();
       }
-      if (id === 'errors') form.requestSubmit();
+      if (id === 'errors') {
+        fromToolbar = true; // requestSubmit() runs the submit handler synchronously
+        form.requestSubmit();
+        fromToolbar = false;
+      }
     },
   };
 }

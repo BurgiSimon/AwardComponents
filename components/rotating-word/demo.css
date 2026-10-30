@@ -1,9 +1,8 @@
-.rw { min-height: 100svh; overflow-x: clip; }
-.rw a { text-decoration: none; }
+.rw { overflow-x: clip; }
 
-.rw__hero { display: grid; gap: 24px; align-content: end; min-height: calc(82svh - 64px); padding-block: clamp(24px, 6vh, 64px) clamp(28px, 5vh, 48px); }
 .rw__title {
   max-width: 14ch;
+  text-align: center;
   font-size: clamp(2.9rem, 1rem + 6.6vw, 7.6rem);
   font-weight: 720;
   font-stretch: var(--wide);
@@ -13,34 +12,21 @@
 
 /* Every word in the same grid cell: the slot is as wide as the widest word, so the line never reflows. Clipped on
    the vertical axis only, so the roll hides above and below while the caret may overhang. */
-.rw__slot { display: inline-grid; overflow: visible clip; padding-block: 0.06em; margin-block: -0.06em; color: var(--accent-ink); vertical-align: bottom; }
+.rw__slot { display: inline-grid; overflow: visible clip; text-align: start; padding-block: 0.06em; margin-block: -0.06em; color: var(--accent-ink); vertical-align: bottom; }
 .rw__word, .rw__type { grid-area: 1 / 1; overflow-wrap: anywhere; }
 /* Before the script, and under reduced motion: the first word, nothing else. */
 .rw__word:not(:first-child), .rw__type { visibility: hidden; }
 .rw__type::after { content: ''; display: inline-block; width: 0.06em; height: 0.74em; margin-left: 0.04em; margin-right: -0.1em; background: currentColor; animation: rw-caret 1s steps(1) infinite; }
 @keyframes rw-caret { 50% { opacity: 0; } }
 
-.rw__foot { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 20px 40px; }
-.rw__foot .ac-lede { max-width: 46ch; }
-
-/* The list of words: which one is up, and how many the wheel has left. */
-.rw .rw__steps { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 0; padding-top: 18px; border-top: 1px solid var(--line); }
-.rw__steps li { display: inline-flex; align-items: center; gap: 8px; color: var(--faint); transition: color var(--dur-s); }
+/* The list of words, shown only under reduced motion, where the slot holds the first word still. */
+.rw .rw__steps { display: none; flex-wrap: wrap; justify-content: center; gap: 8px 22px; margin: 0; }
+.rw--list .rw__steps { display: flex; }
+.rw__steps li { display: inline-flex; align-items: center; gap: 8px; color: var(--ink-2); }
 .rw__steps li::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-.rw__steps li.is-on { color: var(--ink); }
 .rw__steps li.is-on::before { background: var(--accent); }
-.rw--list .rw__steps li { color: var(--ink-2); }
-
-.rw__band { padding-bottom: clamp(40px, 7vh, 72px); }
-.rw__pic { --ratio: 16 / 7; border-radius: var(--radius-lg); }
-.rw__after { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; padding-block: 0 clamp(64px, 12vh, 120px); }
-.rw__after > div { display: grid; gap: 8px; align-content: start; padding-top: 18px; border-top: 1px solid var(--line); }
 
 @media (max-width: 760px) {
-  .rw__bar nav { display: none; }
   /* The slot keeps the widest word's width; on a narrow line it ends the line, so that space never shows. */
   .rw__tail { display: block; }
-  .rw__hero { min-height: calc(78svh - 64px); }
-  .rw__pic { --ratio: 4 / 3; }
-  .rw__after { grid-template-columns: 1fr; }
 }

@@ -1,8 +1,8 @@
-// Cart drawer — Ostra's autumn kiln: three product cards (one link each; size radios and a quick add beside it) and
-// the bag behind the header's Bag (n) button. An add answers in words (a polite status) and a number (the count),
-// plus the button's own 1.4 s "Added" state. The bag is a native <dialog> opened with showModal(): page inert and
-// locked, focus on its heading; Escape (cancel), Close, the scrim and the empty state all end in the dialog's close
-// event, which returns focus to the bag button. Lines are keyed and updated in place so a focused stepper survives.
+// Cart drawer — Ostra's product row: two product cards (one link each; size radios and a quick add beside it) and
+// the bag behind the Bag (n) button. An add answers in words (a polite status) and a number (the count), plus the
+// button's own 1.4 s "Added" state. The bag is a native <dialog> opened with showModal(): page inert and locked,
+// focus on its heading; Escape (cancel), Close, the scrim and the empty state all end in the dialog's close event,
+// which returns focus to the bag button. Lines are keyed and updated in place so a focused stepper survives.
 // Full: the panel slides from the inline edge (bottom sheet on phones); reduced: fades; static: appears.
 import './demo.css';
 import { on, later, html, raw, photo, photos, imageHTML, content } from '../../src/demo-kit/index.js';
@@ -25,12 +25,11 @@ const listPrice = (eur, code) => {
   return Math.round((eur * c.rate) / c.round) * c.round * 100;
 };
 
-// Three pieces with a real choice each; the vase's large size is sold out and stays focusable. Each names the
+// Two pieces with a real choice each; the fern vase's tall size is sold out and stays focusable. Each names the
 // picture from the shared set that shows it, and falls back to any ceramic when that picture is missing.
 const PRODUCTS = [
-  { id: 'tide-vase', name: 'Tide Vase', glaze: 'Celadon glaze, porcelain stoneware', pic: 'obj-celadon-vase', options: [{ v: 'S', eur: 118 }, { v: 'M', eur: 148 }, { v: 'L', eur: 178, out: true }], pick: 1 },
-  { id: 'ember-bowl', name: 'Ember Tea Bowl', glaze: 'Streaked iron glaze, stoneware', pic: 'obj-jian-tea-bowl', options: [{ v: '180 ml', eur: 32 }, { v: '260 ml', eur: 38 }], pick: 0 },
-  { id: 'fern-vase', name: 'Fern Vase', glaze: 'Matte leaf-green glaze, earthenware', pic: 'obj-grueby-vase', options: [{ v: 'Short', eur: 86 }, { v: 'Tall', eur: 124 }], pick: 0 },
+  { id: 'ember-bowl', name: 'Ember Tea Bowl', pic: 'obj-jian-tea-bowl', options: [{ v: '180 ml', eur: 32 }, { v: '260 ml', eur: 38 }], pick: 0 },
+  { id: 'fern-vase', name: 'Fern Vase', pic: 'obj-grueby-vase', options: [{ v: 'Short', eur: 86 }, { v: 'Tall', eur: 124, out: true }], pick: 0 },
 ];
 
 export default function mount(root, options, ctx) {
@@ -52,29 +51,14 @@ export default function mount(root, options, ctx) {
   root.className = 'cd';
   root.dataset.side = cfg.side;
   root.innerHTML = html`
-    <header class="ac-bar cd__bar">
-      <a class="ac-brand" href="#top">${shop.name}</a>
-      <nav aria-label="Shop"><a href="#top" aria-current="page">Ceramics</a><a href="#top">Lighting</a><a href="#top">Textiles</a><a href="#top">Journal</a></nav>
+    <section class="ac-stage cd__stage" aria-label="${shop.name} products">
       <button class="cd__bag-btn" type="button" aria-haspopup="dialog" aria-controls="cd-bag" aria-expanded="false" data-opener>Bag (<span data-count>0</span>)</button>
-    </header>
-
-    <main class="cd__main ac-wrap">
-      <div class="cd__intro">
-        <div>
-          <p class="ac-label">New from the kiln · Autumn run</p>
-          <h1 class="ac-h1">Fired in October, in runs of forty.</h1>
-        </div>
-        <p class="ac-body">Thrown and glazed in our workshop in Os. When a size is gone it comes back with the spring firing.</p>
-      </div>
-      <p class="cd__status" role="status" data-announce></p>
-
       <ul class="cd__grid" role="list">
         ${PRODUCTS.map((p, i) => html`
           <li class="cd__card" data-product="${p.id}">
             <a class="cd__link" href="#top">
-              <span class="cd__media ac-media">${raw(imageHTML(pics[i], { sizes: '(min-width: 760px) 33vw, 100vw', eager: true, alt: '' }))}</span>
+              <span class="cd__media ac-media">${raw(imageHTML(pics[i], { sizes: '(min-width: 760px) 30vw, 100vw', eager: true, alt: '' }))}</span>
               <span class="cd__meta"><span class="cd__name">${p.name}</span><span class="cd__price" data-price></span></span>
-              <span class="cd__glaze">${p.glaze}</span>
             </a>
             <div class="cd__buy">
               <fieldset class="cd__sizes">
@@ -86,7 +70,9 @@ export default function mount(root, options, ctx) {
             <p class="cd__note" id="cd-note-${p.id}" data-note></p>
           </li>`)}
       </ul>
-    </main>
+      <p class="cd__status" role="status" data-announce></p>
+      <p class="ac-stage__note"><span>${shop.name} · product row</span></p>
+    </section>
 
     <dialog class="cd__bag" id="cd-bag" aria-labelledby="cd-bag-title" data-bag>
       <div class="cd__scrim" data-scrim></div>
@@ -136,6 +122,8 @@ export default function mount(root, options, ctx) {
   const demoNote = $('[data-demo]');
   const sheet = matchMedia('(max-width: 767.98px)');
   const say = (region, message) => { region.textContent = message; };
+  // The row's answer to an add; a refusal is marked so its dot is not the success colour.
+  const answer = (message, tone) => { announce.dataset.tone = tone; say(announce, message); };
 
   // The cart, keyed "product:option". A real shop keeps it on its commerce backend behind a cart id.
   const cart = new Map();
@@ -167,12 +155,12 @@ export default function mount(root, options, ctx) {
     on(ctx, button, 'click', () => add());
     const add = (quiet = false) => {
       const r = chosen();
-      if (r.hasAttribute('data-out')) { say(announce, `Not added. ${p.name}: ${soldOutText(r)}`); return; }
+      if (r.hasAttribute('data-out')) { answer(`Not added. ${p.name}: ${soldOutText(r)}`, 'refused'); return; }
       const key = `${p.id}:${r.value}`;
       const line = cart.get(key) ?? { key, id: p.id, index: i, name: p.name, option: r.value, eur: optionOf(r).eur, qty: 0 };
       if (line.qty >= MAX_QTY) {
         note.textContent = `${MAX_QTY} is the most per order for ${r.value}.`;
-        say(announce, `Not added. ${named(line)}: ${note.textContent}`);
+        answer(`Not added. ${named(line)}: ${note.textContent}`, 'refused');
         return;
       }
       line.qty += 1;
@@ -180,7 +168,7 @@ export default function mount(root, options, ctx) {
       render();
       if (quiet) return;
       // The answer is words and a number, never only an animation.
-      say(announce, `Added ${named(line)} to the bag. ${pieces(count())} in the bag.`);
+      answer(`Added ${named(line)} to the bag. ${pieces(count())} in the bag.`, 'added');
       button.dataset.added = '';
       opener.classList.add('is-bumped');
       clearTimeout(timer);
@@ -356,11 +344,13 @@ export default function mount(root, options, ctx) {
       if (id === 'sample') {
         // A tea bowl and the short vase: under the free-delivery line, so the meter has something to show.
         if (!cart.size) {
-          const bowl = cards[1].card.querySelector('input[value="260 ml"]');
+          const bowl = cards[0].card.querySelector('input[value="260 ml"]');
           bowl.checked = true;
+          cards[0].sync();
+          cards[0].add(true);
+          cards[1].card.querySelector('input[value="Short"]').checked = true;
           cards[1].sync();
           cards[1].add(true);
-          cards[2].add(true);
         }
         later(ctx, open, 60);
       }

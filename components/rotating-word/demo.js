@@ -1,9 +1,10 @@
-// Rotating word — Halden's home hero: "We design [houses] for long winters." Every word sits in one inline-grid cell,
-// so the slot is as wide as its widest word and the line never reflows. Three drivers: a reel (the next word in from
-// below, the current out the top on one tween), typed and erased per character, or stepped by the first wheel inputs
-// at the top of the page. Paused off-screen. Reduced: the first word, still, with the list shown beneath.
+// Rotating word — Halden's studio headline alone on the stage: "We design [houses] for long winters." Every word sits
+// in one inline-grid cell, so the slot is as wide as its widest word and the line never reflows. Three drivers: a
+// reel (the next word in from below, the current out the top on one tween), typed and erased per character, or
+// stepped by the first wheel inputs at the top of the page. Paused off-screen. Reduced: the first word, still, with
+// the list shown beneath.
 import './demo.css';
-import { on, whileVisible, html, raw, photos, imageHTML, content } from '../../src/demo-kit/index.js';
+import { on, whileVisible, html, content } from '../../src/demo-kit/index.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
 
 const ROLLS = {
@@ -19,28 +20,14 @@ const parse = (s) => {
 
 export default function mount(root, options, ctx) {
   const { studio } = content;
-  const [pic] = photos({ tags: ['architecture'], count: 1, seed: 'rw-hero', orientation: 'landscape' });
   let cfg = { ...options };
   root.className = 'rw';
   root.innerHTML = html`
-    <header class="ac-bar rw__bar">
-      <a class="ac-brand" href="#top">${studio.name}</a>
-      <nav aria-label="Studio">${studio.nav.map((n) => html`<a href="#top">${n}</a>`)}</nav>
-    </header>
-    <section class="rw__hero ac-wrap" aria-labelledby="rw-title">
-      <p class="ac-label">${studio.full} · ${studio.city}, since 2009</p>
+    <section class="ac-stage rw__hero" aria-labelledby="rw-title">
       <h1 class="rw__title" id="rw-title">We design <span class="rw__slot" aria-hidden="true" data-slot></span><span class="sr-only" aria-live="off" data-label></span> <span class="rw__tail">for long winters.</span></h1>
-      <div class="rw__foot">
-        <p class="ac-lede">Fourteen architects, one workshop and a long table by the window. Six projects a year, most of them within a day’s drive of the studio.</p>
-        <a class="ac-btn ac-btn--lg" href="#top">See the work</a>
-      </div>
       <ol class="rw__steps ac-label" role="list" aria-hidden="true" data-steps></ol>
-    </section>
-    <div class="rw__band ac-wrap"><div class="ac-media rw__pic">${raw(imageHTML(pic, { sizes: '(max-width: 1320px) 100vw, 1320px', alt: `${studio.projects[0].title}, ${studio.projects[0].place}` }))}</div></div>
-    <section class="rw__after ac-wrap" aria-label="Studio">
-      ${studio.projects.slice(0, 3).map((p) => html`<div><p class="ac-label">${p.discipline} · ${p.year}</p><p class="ac-h3">${p.title}</p><p class="ac-small">${p.summary}</p></div>`)}
+      <p class="ac-stage__note"><span>${studio.name} · studio hero</span></p>
     </section>`;
-  root.querySelectorAll('a[href="#top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const slot = root.querySelector('[data-slot]');
   const label = root.querySelector('[data-label]');

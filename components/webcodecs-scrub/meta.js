@@ -12,7 +12,7 @@ export default {
   added: '2026-10-28',
   labels: ['new'],
   order: 72,
-  preview: { height: 680, scroll: true, hint: 'Scroll to fly the orbit', capture: { scroll: 0.5, wait: 3000 } },
+  preview: { height: 640, scroll: true, hint: 'Scroll to fly the orbit', capture: { scroll: 0.62, wait: 3000 } },
   useCases: [
     'A time-lapse told at the reader’s pace (an orbit, a day, a building going up) with captions on their moments',
     'A product turning or assembling, where the frame on screen must be the frame the scroll names',

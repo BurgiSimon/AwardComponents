@@ -9,7 +9,7 @@ export default {
   requires: ['webgl'],
   added: '2026-10-28',
   order: 50,
-  preview: { height: 720, hint: 'Drag the model or press a label', capture: { action: 'corner', wait: 2400 } },
+  preview: { height: 620, hint: 'Drag the model or press a label', capture: { action: 'corner', wait: 2400 } },
   actions: [{ id: 'next', label: 'Fly to the next building' }, { id: 'reset', label: 'Reset view' }],
   useCases: [
     'A master plan or a building on an architecture studio’s project page',

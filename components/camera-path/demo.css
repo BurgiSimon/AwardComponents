@@ -1,13 +1,10 @@
 .cp { background: var(--bg); }
-.cp a { text-decoration: none; }
 
-/* The room owns the first viewport; the list below is the mirror and the way out. */
+/* The room owns the frame: the canvas, the projected tags, the caption and the step buttons. */
 .cp__world { position: relative; height: 100svh; overflow: hidden; touch-action: none; isolation: isolate; }
 .cp__gl { position: absolute; inset: 0; }
 .cp__gl canvas { position: absolute; inset: 0; }
 .cp__tags { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
-/* A fade of the ground under the header and the title, so they read over any part of the room. */
-.cp__world::after { content: ''; position: absolute; inset: 0 0 auto; height: min(30%, 230px); z-index: 1; pointer-events: none; background: linear-gradient(var(--bg) 18%, color-mix(in oklab, var(--bg) 60%, transparent) 55%, transparent); }
 .cp__tag {
   position: absolute;
   left: 0;
@@ -26,34 +23,26 @@
   transition: opacity var(--dur-m) var(--ease-out);
 }
 .cp__tag.is-visible { opacity: 1; }
+:root[data-capture] .cp__tag { transition: none; }
 
-.cp__bar { position: absolute; inset: 0 0 auto; z-index: 2; }
-.cp__skip { color: var(--ink-2); padding: 8px 0; }
-.cp__skip:hover { color: var(--ink); }
-.cp__hud { position: absolute; top: 64px; left: 0; right: 0; z-index: 2; display: grid; gap: 8px; pointer-events: none; }
-.cp__title { font-size: var(--text-3xl); font-weight: 720; font-stretch: var(--wide); letter-spacing: -0.03em; line-height: 1; max-width: 12ch; text-wrap: balance; }
-
-/* The wall text: the work nearest the camera, set like the label beside a print. */
+/* The caption: the work nearest the camera, set like the label beside a print, above the plate line. */
 .cp__wall {
   position: absolute;
   left: var(--gutter);
-  bottom: 28px;
+  bottom: 56px;
   z-index: 2;
-  width: min(360px, calc(100% - 2 * var(--gutter) - 112px));
+  width: min(300px, calc(100% - 2 * var(--gutter) - 112px));
   display: grid;
-  gap: 6px;
-  padding: 16px 18px;
+  gap: 4px;
+  padding: 14px 16px;
   border-radius: var(--radius-md);
   background: color-mix(in oklab, var(--surface) 90%, transparent);
   border: 1px solid var(--line);
   box-shadow: var(--shadow-2);
 }
 .cp__work { font-size: var(--text-xl); font-weight: 680; font-stretch: var(--wide); letter-spacing: -0.02em; line-height: 1.1; }
-.cp__text { font-size: var(--text-sm); color: var(--ink-2); text-wrap: pretty; }
-.cp__more { font-size: var(--text-sm); margin-top: 2px; justify-self: start; }
 
-.cp__nav { position: absolute; right: var(--gutter); bottom: 28px; z-index: 2; display: flex; align-items: center; gap: 8px; }
-.cp__count { margin-right: 6px; color: var(--ink-2); }
+.cp__nav { position: absolute; right: var(--gutter); bottom: 56px; z-index: 2; display: flex; align-items: center; gap: 8px; }
 .cp__key {
   width: 44px;
   height: 44px;
@@ -73,25 +62,15 @@
 
 /* No WebGL: one framed photograph at a time, hung on the ground colour. */
 .cp__still[hidden] { display: none; }
-.cp__still { position: absolute; inset: 0; display: grid; place-items: center; padding: 96px var(--gutter) 96px calc(var(--gutter) + 420px); }
-.cp__frame { width: min(100%, calc((100svh - 192px) * 0.8)); aspect-ratio: 4 / 5; padding: 10px; background: var(--ink); box-shadow: var(--shadow-3); }
+.cp__still { position: absolute; inset: 0; display: grid; place-items: center; padding: 64px var(--gutter) 64px calc(var(--gutter) + 340px); }
+.cp__frame { width: min(100%, calc((100svh - 128px) * 0.8)); aspect-ratio: 4 / 5; padding: 10px; background: var(--ink); box-shadow: var(--shadow-3); }
 .cp__frame img { width: 100%; height: 100%; object-fit: cover; }
 
-.cp__rooms { display: grid; gap: 28px; padding-block: 72px 96px; }
-.cp__rooms:focus { outline: none; }
-.cp__list { display: grid; margin: 0; }
-.cp__list li { display: grid; grid-template-columns: 3rem minmax(0, 1fr); gap: 16px; padding-block: 22px; border-top: 1px solid var(--line); }
-.cp__list li > .ac-label { padding-top: 6px; }
-.cp__list .ac-small { margin: 2px 0 8px; }
-
 @media (max-width: 760px) {
-  .cp__still { padding: 170px 24px 240px; }
-  .cp__frame { width: min(100%, calc((100svh - 410px) * 0.8)); }
+  .cp__still { padding: 48px 24px 230px; }
+  .cp__frame { width: min(100%, calc((100svh - 278px) * 0.8)); }
 }
 @media (max-width: 640px) {
-  .cp__title { font-size: var(--text-2xl); }
-  .cp__wall { left: 12px; right: 12px; bottom: 84px; width: auto; padding: 14px 16px; }
-  .cp__text { display: none; }
-  .cp__nav { left: 12px; right: 12px; bottom: 22px; justify-content: flex-end; }
-  .cp__count { margin-right: auto; }
+  .cp__wall { left: 12px; right: 12px; bottom: 112px; width: auto; }
+  .cp__nav { left: 12px; right: 12px; bottom: 48px; justify-content: flex-end; }
 }

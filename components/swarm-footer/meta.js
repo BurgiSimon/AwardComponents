@@ -10,7 +10,7 @@ export default {
   requires: ['webgl2'],
   added: '2026-10-28',
   order: 50,
-  preview: { height: 700, scroll: true, hint: 'Scroll to the footer, then move the light', capture: { scroll: 1, pointer: [0.58, 0.46], wait: 2600 } },
+  preview: { height: 700, hint: 'Move the pointer to move the light', capture: { pointer: [0.58, 0.46], wait: 2600 } },
   useCases: [
     'The last screen of a brand or shop site, where a small playful thing rewards reaching the end',
     'A footer that swaps the pebbles for its own small object: beans, petals, bolts, pills',

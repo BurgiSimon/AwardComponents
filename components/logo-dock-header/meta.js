@@ -15,7 +15,7 @@ export default {
     'A one-page site whose header underline tracks the chapter being read',
   ],
   notes: [
-    'The giant name and the header logo are one link with one accessible name and one focus ring; the hero’s heading is a separate sentence.',
+    'The giant name and the header logo are one link with one accessible name and one focus ring; each chapter is a section labelled by its own heading.',
     'Only a 2D transform moves the logo, on a painted (not composited) element, so the word is drawn sharp at every size it passes through.',
     'Under reduced motion the logo sits in the header from the start, a decorative copy fills the hero and fades out when the hero is half gone, and the underline jumps instead of easing.',
   ],

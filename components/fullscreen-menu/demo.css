@@ -14,19 +14,17 @@
 }
 .fm a { color: inherit; text-decoration: none; }
 
-/* The header: sticky, translucent, the Menu button on the right. */
+/* The header across the top of an empty stage, the Menu button on the right. */
 .fm__bar {
-  position: sticky;
-  top: 0;
+  position: absolute;
+  inset: 0 0 auto;
   z-index: 30;
   display: flex;
   align-items: center;
   justify-content: space-between;
   height: 72px;
   padding-inline: var(--edge);
-  background: color-mix(in oklab, var(--bg) 84%, transparent);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line);
 }
 .fm__toggle {
   display: inline-flex;
@@ -49,16 +47,6 @@
 .fm__toggle:hover .fm__bars i:first-child { transform: translateX(-4px); }
 .fm__close .fm__bars i:first-child, .fm__close:hover .fm__bars i:first-child { transform: translateY(4.25px) rotate(45deg); }
 .fm__close .fm__bars i:last-child { transform: translateY(-4.25px) rotate(-45deg); }
-
-/* The page behind. */
-.fm__hero { display: grid; gap: 22px; padding-block: clamp(28px, 7vh, 72px) clamp(28px, 5vh, 48px); }
-.fm__hero .ac-display { max-width: 15ch; }
-.fm__figure { display: grid; gap: 12px; }
-.fm__wide { --ratio: 21 / 9; border-radius: var(--radius-md); }
-.fm__more { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; padding-block: 64px; }
-.fm__tile { display: grid; gap: 8px; }
-.fm__tile .ac-media { --ratio: 4 / 3; border-radius: var(--radius-sm); margin-bottom: 4px; }
-.fm__foot { padding-block: 28px 48px; border-top: 1px solid var(--line); }
 
 /* The overlay: its own colours, a top bar where the header was, the links, the preview and the contact card. */
 .fm__menu { position: fixed; inset: 0; z-index: 60; overflow-y: auto; overscroll-behavior: contain; background: var(--m-bg); color: var(--m-ink); }
@@ -103,8 +91,6 @@
 :root:is([data-motion='reduced'], [data-motion='static']) .fm__frame img { transform: none; }
 
 @media (max-width: 720px) {
-  .fm__more { grid-template-columns: 1fr 1fr; }
-  .fm__more .fm__tile:nth-child(3) { display: none; }
   .fm__body { grid-template-columns: 1fr; align-items: center; padding-block: 24px 40px; }
   .fm__preview { display: none; }
   .fm__meta { grid-template-columns: 1fr 1fr; }

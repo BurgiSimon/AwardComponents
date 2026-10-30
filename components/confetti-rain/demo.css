@@ -1,31 +1,16 @@
-.cr {
-  --stub: 156px;
-  min-height: 100svh;
-  overflow-x: clip;
-  background:
-    radial-gradient(60% 55% at 78% 52%, color-mix(in oklab, var(--accent) 12%, transparent), transparent 70%),
-    var(--bg);
-}
-.cr a { text-decoration: none; }
-.cr__bar { border-bottom: 1px solid var(--line); }
-.cr__brand { font-size: 1.15rem; font-stretch: var(--wider); font-weight: 800; letter-spacing: -0.04em; }
-.cr__when { color: var(--ink-2); }
+.cr { --stub: 156px; overflow-x: clip; }
+.cr__stage { --stage-gap: clamp(32px, 6vh, 56px); }
 
-.cr__page { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); align-items: center; gap: clamp(28px, 5vw, 80px); min-height: calc(100svh - 64px); padding-block: clamp(28px, 4vw, 56px); }
-.cr__copy { display: grid; gap: 18px; justify-items: start; }
-.cr__copy .ac-display { font-size: clamp(2.6rem, 1.5rem + 4.2vw, 5.4rem); max-width: 9ch; }
-.cr__order { display: inline-flex; align-items: center; gap: 8px; color: var(--ink-2); }
-.cr__tick { position: relative; width: 16px; height: 16px; border-radius: 50%; background: var(--ok); }
-.cr__tick::after { content: ''; position: absolute; left: 5.5px; top: 3.5px; width: 4px; height: 7px; border-right: 1.6px solid var(--surface); border-bottom: 1.6px solid var(--surface); transform: rotate(45deg); }
-.cr__acts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
-.cr__again { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 2px; border: 0; background: none; color: var(--accent-ink); font-weight: 650; font-size: var(--text-sm); }
+/* The one control: Celebrate, with its polite answer under it. */
+.cr__act { display: grid; justify-items: center; gap: 8px; text-align: center; }
+.cr__again { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 20px; border: 1px solid var(--line-2); border-radius: var(--radius-pill); background: var(--surface); color: var(--accent-ink); font-weight: 650; font-size: var(--text-sm); transition: border-color var(--dur-s) var(--ease-out); }
+.cr__again:hover { border-color: var(--accent); }
 .cr__again span { font-size: 1.15em; transition: transform var(--dur-m) var(--ease-spring); }
 .cr__again:hover span { transform: rotate(72deg) scale(1.15); }
-.cr__status { min-height: 1.5em; margin-top: -10px; }
+.cr__status { min-height: 1.5em; max-width: 44ch; }
 
 /* The ticket: an accent body and a paper stub, notched at the perforation by a mask. */
 .cr__ticket {
-  justify-self: center;
   display: grid;
   grid-template-columns: minmax(0, 1fr) var(--stub);
   width: min(100%, 580px);
@@ -67,22 +52,11 @@
 /* The shower: one canvas over everything that never takes the pointer. */
 .cr__rain { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 20; }
 
-@media (max-width: 1000px) {
-  .cr { --stub: 116px; }
-  .cr__bar nav { display: none; }
-  .cr__page { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 32px; }
-  .cr__main { padding: 22px 20px 20px; gap: 12px; }
-  .cr__facts { grid-template-columns: minmax(0, 1fr); gap: 8px; }
-  .cr__qr svg { width: 80px; height: 80px; }
-  .cr__stub { padding: 16px 10px; }
-}
 @media (max-width: 700px) {
-  .cr__page { grid-template-columns: minmax(0, 1fr); align-items: start; min-height: 0; gap: 36px; }
-  .cr__ticket { rotate: -2deg; }
-}
-@media (max-width: 520px) {
   .cr { --stub: 104px; }
-  .cr__when { display: none; }
-  .cr__main { padding: 20px 18px 18px; }
+  .cr__main { padding: 20px 18px 18px; gap: 12px; }
+  .cr__facts { grid-template-columns: minmax(0, 1fr); gap: 8px; }
   .cr__qr svg { width: 76px; height: 76px; }
+  .cr__stub { padding: 16px 10px; }
+  .cr__ticket { rotate: -2deg; }
 }

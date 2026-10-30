@@ -1,10 +1,11 @@
-// Image trail — a photographer's portfolio hero. Travel accumulates along the mouse's path and a picture lands at
-// every `spacing` px, placed on the segment between two events (distance, not time). A fixed pool of <img> slots is
-// recycled oldest first; each grows in (.32 s expo-out from .6×), holds, then fades in arrival order (≥ 60 ms apart).
-// Smoothed speed sets size (.8–1.25×) and tilt (6°/px·ms, clamped). Pictures that would touch the copy are skipped.
-// Touch, reduced and static: three stills placed by the design, which are also the desktop rest frame.
+// Image trail — a photographer's portfolio hero: the open ground the pointer draws on, around her name. Travel
+// accumulates along the mouse's path and a picture lands at every `spacing` px, placed on the segment between two
+// events (distance, not time). A fixed pool of <img> slots is recycled oldest first; each grows in (.32 s expo-out
+// from .6×), holds, then fades in arrival order (≥ 60 ms apart). Smoothed speed sets size (.8–1.25×) and tilt
+// (6°/px·ms, clamped). Pictures that would touch the name or the plate line are skipped. Touch, reduced and static:
+// three stills placed by the design, which are also the desktop rest frame. The preview frame lays one sweep at once.
 import './demo.css';
-import { on, onFrame, whileVisible, observeResize, finePointer, clamp, html, raw, photos, imageHTML, content } from '../../src/demo-kit/index.js';
+import { onFrame, whileVisible, observeResize, finePointer, clamp, html, raw, photos, imageHTML } from '../../src/demo-kit/index.js';
 
 const MAX_PER_EVENT = 4;
 const IN = 0.32;
@@ -19,13 +20,6 @@ const ROT_K = 6;
 const SWAY = [-3, 2, -1, 3];
 const VEL_TAU = 50;
 const PAD = 12;
-
-const COMMISSIONS = [
-  ['Halden', 'Tern Library, Tromsø', '2025', '64 frames'],
-  ['Fieldnote', '“Salt and time”, Læsø', '2025', '38 frames'],
-  ['Ostra', 'Spring catalogue', '2026', '120 frames'],
-  ['Kova', 'Kova One launch', '2026', '22 frames'],
-];
 
 // Twenty pictures from her kind of work, interleaved so neighbours in the trail differ.
 function pictureSet() {
@@ -42,39 +36,18 @@ function pictureSet() {
 }
 
 export default function mount(root, options, ctx) {
-  const { studio, magazine, shop } = content;
   const pics = pictureSet();
   let cfg = { ...options };
   root.className = 'it';
   root.innerHTML = html`
-    <header class="ac-bar it__bar">
-      <a class="ac-brand" href="#top">Mira Lund</a>
-      <nav aria-label="Main">${['Commissions', 'Personal', 'Index', 'Contact'].map((n) => html`<a href="#top">${n}</a>`)}</nav>
-      <span class="ac-chip it__status"><span class="it__dot" aria-hidden="true"></span>Booking spring 2027</span>
-    </header>
-    <section class="it__hero" aria-labelledby="it-title" data-hero>
+    <section class="ac-stage it__hero" aria-labelledby="it-title" data-hero>
       <div class="it__stills" aria-hidden="true">
         ${[0, 3, 6].map((i, n) => html`<span class="it__pic it__still it__still--${n}">${raw(imageHTML(pics[i], { sizes: '220px', alt: '', eager: true }))}</span>`)}
       </div>
-      <div class="it__copy ac-wrap">
-        <div class="it__head">
-          <p class="ac-label" data-protect>Photographer · ${studio.city}</p>
-          <h1 class="ac-display it__title" id="it-title" data-protect>Rooms, objects, weather.</h1>
-        </div>
-        <div class="it__aside" data-protect>
-          <p class="ac-lede">Eleven years of commissions for architects, makers and magazines, among them ${studio.name}, ${shop.name} and ${magazine.name}.</p>
-          <div class="it__actions"><a class="ac-btn" href="#work">See the commissions</a><a class="ac-btn ac-btn--ghost" href="#top">Contact</a></div>
-        </div>
-      </div>
+      <h1 class="ac-display it__title" id="it-title" data-protect>Mira Lund</h1>
       <div class="it__trail" aria-hidden="true" inert data-trail></div>
-    </section>
-    <section class="it__recent ac-wrap" id="work" aria-labelledby="it-recent">
-      <h2 class="ac-label" id="it-recent">Recent commissions</h2>
-      <ul class="it__list" role="list">
-        ${COMMISSIONS.map(([client, subject, year, frames]) => html`<li><a href="#work"><strong>${client}</strong><span>${subject}</span><span class="ac-num">${year}</span><span class="it__frames ac-num">${frames}</span></a></li>`)}
-      </ul>
+      <p class="ac-stage__note"><span data-protect>Mira Lund · portfolio hero</span></p>
     </section>`;
-  root.querySelectorAll('a[href^="#"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const hero = root.querySelector('[data-hero]');
   const layer = root.querySelector('[data-trail]');
@@ -108,8 +81,8 @@ export default function mount(root, options, ctx) {
   let origin = { x: 0, y: 0 };
   let stop = null;
 
-  // Protected rectangles in hero coordinates: the heading's text box (a Range, so a short last line does not guard
-  // the full width), the label and the aside, each padded. Measured on arm, on resize and after fonts load.
+  // Protected rectangles in hero coordinates: the name's text box (a Range, so a short last line does not guard the
+  // full width) and the plate line, each padded. Measured on arm, on resize and after fonts load.
   const measure = () => {
     const hr = hero.getBoundingClientRect();
     origin = { x: hr.left + scrollX, y: hr.top + scrollY };
@@ -194,6 +167,26 @@ export default function mount(root, options, ctx) {
   const onLeave = () => { last = null; travel = 0; vel.x = 0; vel.y = 0; };
   const releaseAll = () => { pool.forEach(hide); setTrailing(false); stop?.(); stop = null; onLeave(); };
 
+  // The preview frame: one sweep from the lower left, over the name, down to the right (a quadratic curve), laid at
+  // once through the same path code and held (a headless pointer is too slow to leave a trail that lasts to the shot).
+  const layCaptureTrail = () => {
+    releaseAll();
+    measure();
+    const w = hero.offsetWidth;
+    const h = hero.offsetHeight;
+    const curve = (a, c, b, u) => (1 - u) ** 2 * a + 2 * u * (1 - u) * c + u ** 2 * b;
+    const steps = 60;
+    for (let i = 0; i <= steps; i++) {
+      const u = i / steps;
+      onMove({ pointerType: 'mouse', pageX: origin.x + w * curve(0.1, 0.45, 0.9, u), pageY: origin.y + h * curve(0.82, -0.15, 0.42, u), timeStamp: i * 16 });
+    }
+    pool.forEach((it) => { if (it.alive) it.fadeAt = Infinity; });
+    clock += IN;
+    frame(0);
+    stop?.();
+    stop = null;
+  };
+
   // Armed only while the hero is on screen; leaving it returns every picture to the pool and stops the ticker.
   let armed = null;
   build();
@@ -202,6 +195,7 @@ export default function mount(root, options, ctx) {
     armed = new AbortController();
     hero.addEventListener('pointermove', onMove, { passive: true, signal: armed.signal });
     hero.addEventListener('pointerleave', onLeave, { signal: armed.signal });
+    if (ctx.capture) (document.fonts?.ready || Promise.resolve()).then(() => { if (armed) layCaptureTrail(); });
   }, () => { armed?.abort(); armed = null; releaseAll(); }, { rootMargin: '0px' });
   observeResize(ctx, hero, () => { if (armed) measure(); });
   document.fonts?.ready.then(() => { if (armed) measure(); });

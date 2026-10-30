@@ -1,24 +1,23 @@
-// Media panel wipe — Signal's four stages as a deck of full-bleed media panels in a framed stage. Two media buffers
-// are double-buffered: the hidden one already holds the next stage's footage (a clip from media.videos when the set
-// has them, else a photo with a slow push-in standing in for footage). On a change the hidden buffer opens over the
-// visible one from a directional clip-path inset while a 1 px glowing seam rides the edge on the same plain-object
-// tween. Copy leaves first (.34 s power2.in), the gate opens at .12 s (1 s expo.inOut), copy rises over the last
+// Media panel wipe — Signal's four stages as a deck of full-bleed media panels (one name each) over a compact stage
+// list. Two media buffers are double-buffered: the hidden one already holds the next stage's footage (a clip from
+// media.videos whose tags match the stage, else a photo with a slow push-in standing in for footage). On a change the
+// hidden buffer opens over the visible one from a directional clip-path inset while a 1 px glowing seam rides the
+// edge on the same plain-object tween. Copy leaves first (.34 s power2.in), the gate opens at .12 s (1 s expo.inOut), copy rises over the last
 // third. The document never scrolls: stepped wheel (|deltaY| ≥ 18, locked 1 s + a 300 ms tail), swipe > 55 px,
 // arrow / Page / Home / End keys, prev / next and the stage list. Reduced: .2 s cross-fade, no seam, footage rests.
 import './demo.css';
 import { Observer } from 'gsap/Observer';
 import { gsap, useGsap } from '../../src/demo-kit/gsap.js';
-import { on, html, clamp, colour, photo, allPhotos, videos, credit, whileVisible, content, formatPrice } from '../../src/demo-kit/index.js';
+import { on, html, clamp, colour, photo, allPhotos, videos, credit, whileVisible, content } from '../../src/demo-kit/index.js';
 
 gsap.registerPlugin(Observer);
 
 const STAGES = [
-  { name: 'Harbour', kind: 'Open air', cap: '8,000 standing', tags: ['water'], body: 'The main stage, on the old ferry quay. Sets start at sunset and the last one ends at 01:00.', acts: ['Marlow Ash', 'The Low Tides', 'Odessa Rae'] },
-  { name: 'Hall 4', kind: 'Indoor', cap: '2,400 standing', tags: ['architecture'], body: 'A welding hall from 1962 under a roof of north lights. Long sets, loud and late.', acts: ['Kiri Tanaka', 'Black Pine', 'Sundial'] },
-  { name: 'The Crane', kind: 'Yard', cap: '1,200 standing', tags: ['city'], body: 'Built around the shipyard’s last crane. Electronic music from midnight until the sun is up.', acts: ['Juno Park', 'Aurelio Cano', 'Moss Theory'] },
-  { name: 'Greenhouse', kind: 'Seated', cap: '400 seated', tags: ['nature'], body: 'A glasshouse in the old nursery garden. Choirs and solo sets at noon, seated and quiet.', acts: ['Vesper Choir', 'Hana Ekström', 'Nils & the Weather'] },
+  { name: 'Harbour', tags: ['water'] },
+  { name: 'Hall 4', tags: ['architecture'] },
+  { name: 'The Crane', tags: ['city'] },
+  { name: 'Greenhouse', tags: ['nature'] },
 ];
-const DAYS = ['Fri', 'Sat', 'Sun'];
 const N = STAGES.length;
 
 const SEAM_AT = 0.12;   // s into the change: copy leaves first, then the gate opens
@@ -30,12 +29,12 @@ const SWIPE = 55;       // px of finger travel for one step
 const CEILING = 1200;   // ms a missed preload may hold a change before it wipes to whatever has painted
 const pad = (n) => String(n).padStart(2, '0');
 
-// One picture per stage, never the same one twice; a clip from the shared set when it has any.
+// One picture per stage, never the same one twice; a clip from the shared set only when its tags match the stage.
 function mediaFor() {
   const pool = allPhotos();
   const taken = new Set();
   return STAGES.map((s, i) => {
-    const clip = videos.length ? (videos.find((v) => s.tags.some((t) => v.tags?.includes(t)) && !taken.has(v.src)) || videos[i % videos.length]) : null;
+    const clip = videos.find((v) => s.tags.some((t) => v.tags?.includes(t)) && !taken.has(v.src)) || null;
     if (clip) { taken.add(clip.src); credit(clip); return { type: 'video', src: clip.src, poster: clip.poster }; }
     for (const tags of [[...s.tags, 'landscape-orientation'], s.tags]) {
       const hit = pool.find((p) => tags.every((t) => p.tags?.includes(t)) && !taken.has(p.id));
@@ -53,11 +52,6 @@ export default function mount(root, options, ctx) {
 
   root.className = 'vw';
   root.innerHTML = html`
-    <header class="ac-bar vw__bar">
-      <a class="ac-brand" href="#top">${festival.name}<span class="vw__edition">2027</span></a>
-      <nav aria-label="Festival"><a href="#lineup">Line-up</a><a href="#stages" aria-current="page">Stages</a><a href="#travel">Getting there</a></nav>
-      <a class="ac-btn ac-btn--sm ac-btn--accent" href="#tickets">Tickets from ${formatPrice(festival.tickets[0].price)}</a>
-    </header>
     <h1 class="sr-only">The four stages of ${festival.edition}</h1>
     <div class="vw__frame" data-frame>
       <div class="vw__media" aria-hidden="true">
@@ -68,15 +62,10 @@ export default function mount(root, options, ctx) {
       <div class="vw__deck" data-deck>
         ${STAGES.map((s, i) => html`
           <section class="vw__panel" aria-labelledby="vw-t${i}" data-panel="${i}">
-            <div class="vw__copy">
-              <p class="ac-label vw__kicker" data-rise>Stage ${pad(i + 1)} · ${s.kind}</p>
-              <h2 class="ac-display vw__title" id="vw-t${i}" data-rise>${s.name}</h2>
-              <p class="vw__body" data-rise>${s.body}</p>
-              <ul class="vw__acts" role="list" data-rise aria-label="Headliners">${s.acts.map((a, d) => html`<li><span class="ac-label">${DAYS[d]}</span>${a}</li>`)}</ul>
-            </div>
-            <p class="vw__cap ac-label" data-rise>${s.cap}</p>
+            <h2 class="ac-display vw__title" id="vw-t${i}" data-rise>${s.name}</h2>
           </section>`)}
       </div>
+      <p class="ac-stage__note ac-stage__note--media vw__note"><span>${festival.name} · stages page</span></p>
     </div>
     <nav class="vw__nav" aria-label="Stages" data-controls>
       <ol class="vw__tabs" role="list">
@@ -89,7 +78,6 @@ export default function mount(root, options, ctx) {
       </div>
     </nav>
     <p class="sr-only" aria-live="polite" data-live></p>`;
-  root.querySelectorAll('a[href^="#"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const frame = root.querySelector('[data-frame]');
   const seam = root.querySelector('[data-seam]');

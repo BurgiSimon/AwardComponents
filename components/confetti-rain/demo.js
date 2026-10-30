@@ -1,4 +1,4 @@
-// Sprite rain — Signal's ticket-confirmed page. One full-viewport canvas (aria-hidden, pointer-events: none): every
+// Sprite rain — Signal's ticket and its Celebrate button. One full-viewport canvas (aria-hidden, pointer-events: none): every
 // shape × colour is drawn once to an offscreen bitmap at the canvas DPR, then stamped with setTransform + rotate +
 // drawImage. Each sprite has gravity, drift and spin, all per-frame values at 60 fps scaled by f = dt × 60. The live
 // count is capped by the quality tier, sprites leave the array as they leave the screen, and the ticker subscription
@@ -37,24 +37,7 @@ export default function mount(root, options, ctx) {
 
   root.className = 'cr';
   root.innerHTML = html`
-    <header class="ac-bar cr__bar">
-      <a class="ac-brand cr__brand" href="#top">${festival.name}</a>
-      <nav aria-label="Festival"><a href="#top">Line-up</a><a href="#top">Tickets</a><a href="#top">Map</a></nav>
-      <span class="ac-label cr__when">${festival.dates}</span>
-    </header>
-    <main class="cr__page ac-wrap">
-      <section class="cr__copy" aria-labelledby="cr-title">
-        <p class="ac-label cr__order"><span class="cr__tick" aria-hidden="true"></span>Order SG27-0418 · paid</p>
-        <h1 class="ac-display" id="cr-title">You’re going to ${festival.name}.</h1>
-        <p class="ac-lede">Your ${pass.name.toLowerCase()} pass is below and in your inbox. Gates open at noon on Thursday 12 August; the camping field opens the evening before.</p>
-        <div class="cr__acts">
-          <a class="ac-btn ac-btn--lg" href="#top">Add to wallet</a>
-          <a class="ac-btn ac-btn--lg ac-btn--ghost" href="#top">Add to calendar</a>
-        </div>
-        <button class="cr__again" type="button" data-trigger aria-describedby="cr-status"><span aria-hidden="true">✶</span> Celebrate</button>
-        <p class="ac-small cr__status" id="cr-status" role="status" data-status></p>
-      </section>
-
+    <section class="ac-stage cr__stage" aria-label="Order confirmed">
       <article class="cr__ticket" aria-label="${pass.name} ticket for ${holder}">
         <div class="cr__main">
           <div class="cr__top"><span class="cr__word">${festival.name}</span><span class="cr__year">2027</span></div>
@@ -72,9 +55,13 @@ export default function mount(root, options, ctx) {
           <span class="ac-label">SG27-0418</span>
         </div>
       </article>
-    </main>
+      <div class="cr__act">
+        <button class="cr__again" type="button" data-trigger aria-describedby="cr-status"><span aria-hidden="true">✶</span> Celebrate</button>
+        <p class="ac-small cr__status" id="cr-status" role="status" data-status></p>
+      </div>
+      <p class="ac-stage__note"><span>${festival.name} · order confirmed</span></p>
+    </section>
     <canvas class="cr__rain" aria-hidden="true" data-rain></canvas>`;
-  root.querySelectorAll('a[href="#top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const canvas = root.querySelector('[data-rain]');
   const g = canvas.getContext('2d');

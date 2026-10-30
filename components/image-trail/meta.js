@@ -2,13 +2,13 @@ export default {
   id: 'image-trail',
   title: 'Image trail',
   category: 'cursors-buttons',
-  summary: 'A photographer’s hero where a moving mouse lays her pictures along its path, one every 80 px of travel; they grow in, hold, fade in order and never land on the words.',
+  summary: 'A photographer’s hero where a moving mouse lays her pictures along its path, one every 80 px of travel; they grow in, hold, fade in order and never land on her name.',
   recipe: 'image-trail-cursor',
   deps: [],
   tags: ['cursor', 'pointer', 'trail', 'images', 'hero', 'velocity', 'portfolio'],
   added: '2026-10-28',
   order: 30,
-  preview: { height: 620, hint: 'Move the mouse across the open ground', capture: { pointer: [0.82, 0.2], wait: 240 } },
+  preview: { height: 540, hint: 'Move the mouse across the open ground', capture: { wait: 600 } },
   useCases: [
     'The first screen of a photographer’s or an illustrator’s portfolio',
     'A studio or agency hero that wants the work to show before the first scroll',
@@ -17,7 +17,7 @@ export default {
   notes: [
     'The trail layer is aria-hidden, inert and never under the pointer; it holds no text or focusable element, so links and focus are untouched.',
     'The native cursor stays. The trail is armed only for a fine pointer with hover, in the full motion tier, while the hero is on screen.',
-    'Touch screens and reduced motion get the rest frame: three pictures placed by the design, which on a phone sit above the copy so they never cover it.',
+    'Touch screens and reduced motion get the rest frame: three pictures placed by the design, which on a phone sit above the name so they never cover it.',
   ],
   controls: [
     { id: 'spacing', label: 'Spacing', type: 'range', min: 40, max: 200, step: 10, default: 80, unit: 'px', group: 'Trail', help: 'Travel along the pointer’s path between two pictures.', prompt: 'Spacing: one picture every {value} of pointer travel, placed along the path (default {default})' },

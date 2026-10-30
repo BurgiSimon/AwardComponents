@@ -8,14 +8,14 @@ export default {
   tags: ['text', 'scroll', 'scrub', 'sticky', 'splittext', 'manifesto', 'gsap', 'lenis'],
   added: '2026-10-28',
   order: 20,
-  preview: { height: 640, scroll: true, hint: 'Scroll — the statement fills as you read', capture: { scroll: 0.2, wait: 1400 } },
+  preview: { height: 520, scroll: true, hint: 'Scroll — the statement fills as you read', capture: { scroll: 0.2, wait: 1400 } },
   useCases: [
     'A studio’s “what we believe” between the hero and the work',
     'A product’s one-sentence promise, read at the speed of the visitor’s hand',
     'A chapter opener in a long read or an annual report',
   ],
   notes: [
-    'The statement is a paragraph under a short visible heading; SplitText’s word spans are hidden and a visually hidden copy reads the sentence whole.',
+    'The statement is a paragraph under a visually hidden heading; SplitText’s word spans are hidden and a visually hidden copy reads the sentence whole.',
     'Unread words rest at half ink by default, about 3.3:1 at display size, so the statement is readable before it is scrolled.',
     'Under reduced motion and in the static tier nothing is split: the sentence sits at full ink from the first frame.',
   ],

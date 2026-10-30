@@ -1,35 +1,26 @@
-// Smooth scroll — a Fieldnote long read on the boot every scroll demo stands on. Lenis (lerp 0.1, autoRaf off) is
-// driven by gsap.ticker with lagSmoothing(0) and feeds ScrollTrigger on each scroll (useLenis does exactly that).
-// Text work waits for document.fonts.ready: the headline lines rise (yPercent 120 → 0, 1.4 s expo.out, stagger
-// 0.09), sections reveal once at 80 % of the viewport, and the reading bar is a linear scrub (the smoothing already
-// lives in Lenis). A readout samples velocity and progress while the page moves and sleeps when it rests.
-// Reduced motion: no Lenis (native scroll), the lines fade in 0.4 s; static: everything set at once.
+// Smooth scroll — a short Fieldnote long read (title, dek, four paragraphs, two pictures) on the boot every scroll
+// demo stands on. Lenis (lerp 0.1, autoRaf off) is driven by gsap.ticker with lagSmoothing(0) and feeds ScrollTrigger
+// on each scroll (useLenis does exactly that). Text work waits for document.fonts.ready: the headline lines rise
+// (yPercent 120 → 0, 1.4 s expo.out, stagger 0.09), sections reveal once at 80 % of the viewport, and the reading bar
+// is a linear scrub (the smoothing already lives in Lenis). A readout samples velocity and progress while the page
+// moves and sleeps when it rests. Reduced motion: no Lenis (native scroll), the lines fade in 0.4 s; static:
+// everything set at once.
 import './demo.css';
 import '../../src/demo-kit/serif.css';
-import { on, ticker, damp, clamp, html, raw, photos, imageHTML, content } from '../../src/demo-kit/index.js';
+import { on, ticker, damp, clamp, html, raw, photo, imageHTML, content } from '../../src/demo-kit/index.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
 import { useLenis } from '../../src/demo-kit/lenis.js';
 
 const EXPO_OUT = (t) => Math.min(1, 1.001 - 2 ** (-10 * t)); // Lenis' own default curve for duration mode
 const SPARK = 48;
 
-// The magazine's long read, extended: the shared copy plus the paragraphs a twelve-minute piece needs.
-const MORE = [
-  'The brine comes from a layer of groundwater under the meadows, three times saltier than the Kattegat. It is pumped into iron pans the size of a rowing boat and boiled for a day and a night, until the salt starts to grow at the edges like frost on a window.',
-  'In the twelfth century the island was nearly stripped of trees to feed those fires. The dunes that cover the south coast today are the price of that salt: once the forest went, the sand had nothing to hold on to.',
-  'Halden’s architects spent a winter on the island before drawing anything. Their first sketch was a single line, the horizon as seen from the pans, and it became the window.',
-  'On the last evening of the season Birthe lets the fire die on its own. She scrapes the final crust into a wooden box, writes the weight in the ledger and walks home along the beach in the dark.',
-];
-
 export default function mount(root, options, ctx) {
   const { magazine } = content;
   const story = magazine.articles[0];
-  const next = magazine.articles[3];
   const P = magazine.longRead;
-  const [lead] = photos({ tags: ['landscape'], count: 1, seed: 'ss-lead', orientation: 'portrait' });
-  const [wide] = photos({ tags: ['water'], not: ['art'], count: 1, seed: 'ss-wide', orientation: 'landscape' });
-  const pair = photos({ tags: ['texture'], count: 1, seed: 'ss-pair-a' }).concat(photos({ tags: ['architecture'], not: ['city'], count: 1, seed: 'ss-pair-b' }));
-  const [nextPic] = photos({ tags: ['water'], not: ['art'], count: 1, seed: 'ss-next-water' });
+  // Named, because the captions describe these two pictures.
+  const lead = photo('interior-concrete-hall', { fallbackTags: ['interior', 'architecture'] });
+  const wide = photo('land-overcast-sea', { fallbackTags: ['water', 'landscape'] });
   const fig = (p, cls, sizes, cap, eager = false) => html`<figure class="${cls}" data-reveal><span class="ac-media">${raw(imageHTML(p, { sizes, alt: '', eager }))}</span><figcaption class="ac-small">${cap}</figcaption></figure>`;
   let cfg = { ...options };
 
@@ -37,55 +28,24 @@ export default function mount(root, options, ctx) {
   root.innerHTML = html`
     <a class="ss__skip ac-btn ac-btn--sm" href="#ss-main">Skip to the article</a>
     <div class="ss__progress" aria-hidden="true"><span data-bar></span></div>
-    <header class="ac-bar ss__bar">
-      <a class="ss__brand" href="#top">${magazine.name}</a>
-      <span class="ss__issue ac-label">${magazine.issue}</span>
-      <nav aria-label="Sections">${['Places', 'Architecture', 'Craft', 'Culture'].map((s) => html`<a href="#top"${s === story.section ? raw(' aria-current="page"') : ''}>${s}</a>`)}</nav>
-      <a class="ac-btn ac-btn--sm ss__sub" href="#top">Subscribe</a>
-    </header>
     <main id="ss-main" tabindex="-1">
       <article class="ss__article" aria-labelledby="ss-title">
         <header class="ss__head ac-wrap">
           <div class="ss__titles">
-            <p class="ac-label">${story.section} · ${story.read} read</p>
             <h1 class="ss__title" id="ss-title"><span class="ss__mask"><span class="ss__line">Salt</span></span> <span class="ss__mask"><span class="ss__line"><em>and time</em></span></span></h1>
-            <p class="ac-lede ss__dek">${story.dek} Four months of fires, one ledger since 1788 and a building that lets the dune blow over it.</p>
-            <p class="ss__byline">Words by <strong>${story.author}</strong><span aria-hidden="true"> · </span>Photographs by <strong>Ellis Brandt</strong><time class="ac-label" datetime="2027-03-14">14 March 2027</time></p>
+            <p class="ac-lede ss__dek">${story.dek}</p>
           </div>
-          ${fig(lead, 'ss__lead', '(max-width: 760px) 100vw, 46vw', 'The boiling house at Vesterø Havn, lit in May.', true)}
+          ${fig(lead, 'ss__lead', '(max-width: 760px) 100vw, 46vw', 'The new archive, before the ledgers moved in.', true)}
         </header>
         <div class="ss__body">
           <p class="ss__p ss__p--first" data-reveal>${P[0]}</p>
-          <p class="ss__p" data-reveal>${P[1]}</p>
-          ${fig(wide, 'ss__wide', '(max-width: 1100px) 100vw, 1080px', 'Brine pans at the saltworks: iron, wood smoke and a day and a night per batch.')}
-          <h2 class="ss__h2" data-reveal><span class="ac-label">I</span>The pans</h2>
           <p class="ss__p" data-reveal>${P[2]}</p>
-          <p class="ss__p" data-reveal>${MORE[0]}</p>
-          <blockquote class="ss__quote" data-reveal data-quote>
-            <p>“A low roll means the water is too deep. A hiss means it is nearly done.”</p>
-            <footer class="ac-label">Birthe, thirty-one summers at the pans</footer>
-          </blockquote>
-          <p class="ss__p" data-reveal>${MORE[1]}</p>
-          <h2 class="ss__h2" data-reveal><span class="ac-label">II</span>The ledgers</h2>
+          ${fig(wide, 'ss__wide', '(max-width: 1100px) 100vw, 1080px', 'The Kattegat off the island’s north point, in September.')}
           <p class="ss__p" data-reveal>${P[3]}</p>
-          <div class="ss__pair" data-reveal>
-            ${fig(pair[0], 'ss__half', '(max-width: 760px) 50vw, 340px', 'Ledger, 1788.')}
-            ${fig(pair[1], 'ss__half', '(max-width: 760px) 50vw, 340px', 'The new reading room, half in the dune.')}
-          </div>
-          <p class="ss__p" data-reveal>${P[4]}</p>
-          <p class="ss__p" data-reveal>${MORE[2]}</p>
-          <p class="ss__p ss__p--last" data-reveal>${MORE[3]}</p>
+          <p class="ss__p ss__p--last" data-reveal>${P[4]}</p>
         </div>
       </article>
-      <aside class="ss__next ac-wrap" aria-labelledby="ss-next">
-        <p class="ac-label">Next in ${next.section}</p>
-        <a class="ss__next-link" href="#top">
-          <span class="ac-media">${raw(imageHTML(nextPic, { sizes: '(max-width: 760px) 100vw, 40vw', alt: '' }))}</span>
-          <span class="ss__next-copy"><strong class="ss__next-title" id="ss-next">${next.title}</strong><span class="ac-lede">${next.dek}</span><span class="ac-label">${next.author} · ${next.read}</span></span>
-        </a>
-      </aside>
     </main>
-    <footer class="ss__foot ac-wrap ac-small"><span>${magazine.name} · ${magazine.issue}</span><span>Printed twice a year in Aarhus</span></footer>
     <div class="ss__readout" aria-hidden="true" data-readout>
       <p class="ss__engine"><span class="ss__dot"></span><span data-engine></span></p>
       <dl>
@@ -102,7 +62,6 @@ export default function mount(root, options, ctx) {
   const velEl = root.querySelector('[data-vel]');
   const progEl = root.querySelector('[data-prog]');
   const spark = root.querySelector('[data-spark]');
-  root.querySelectorAll('a[href="#top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   // 1. One clock: useLenis puts Lenis on gsap.ticker (lagSmoothing 0) and wires lenis 'scroll' to ScrollTrigger.update.
   //    It returns null under reduced motion and static, where native scroll is the path.
@@ -213,7 +172,7 @@ export default function mount(root, options, ctx) {
       if (!cfg.readout) sleep();
     },
     action(id) {
-      if (id === 'glide') glideTo(root.querySelector('[data-quote]'), -Math.round(innerHeight * 0.3));
+      if (id === 'glide') glideTo(document.documentElement.scrollHeight);
       if (id === 'top') glideTo(0);
     },
   };

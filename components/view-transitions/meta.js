@@ -2,7 +2,7 @@ export default {
   id: 'view-transitions',
   title: 'View transitions',
   category: 'loaders-transitions',
-  summary: 'A shop grid that opens a product page with the browser’s View Transitions API: the picture and name morph into the hero while the rest of the page slides on.',
+  summary: 'A grid of four products that opens a product page with the browser’s View Transitions API: the picture and name morph into the hero while the rest of the page slides on.',
   description: 'The browser does the animation. Before the swap only the clicked tile’s picture and name get a view-transition-name; the product page carries the same two names on its hero, so the browser morphs one into the other while the rest of the page, everything without a name, slides out and in along the reading direction. Going back runs the mirror image and returns the picture to its tile.\n\nThis preview uses the same-document form, document.startViewTransition(), around a swap of the page’s content. On a site of real pages the same CSS runs between documents with one opt-in rule, @view-transition { navigation: auto; }, and the names set in the pageswap and pagereveal events. Browsers without the API simply swap the page.',
   recipe: 'view-transitions-mpa',
   deps: [],
@@ -10,7 +10,7 @@ export default {
   requires: ['view-transitions'],
   added: '2026-10-28',
   order: 50,
-  preview: { height: 640, scroll: true, hint: 'Open a product, then go back', capture: { wait: 900 } },
+  preview: { height: 600, hint: 'Open a product, then go back', capture: { wait: 900 } },
   useCases: [
     'A shop grid opening a product page, the product photo carried into the hero',
     'A portfolio or journal index where a thumbnail becomes the article’s lead image',
@@ -36,7 +36,7 @@ export default {
     target: 'the product grid and the product pages',
     brief: 'Use the View Transitions API: name only the clicked tile’s picture and title (view-transition-name) just before the swap, and give the product hero the same two names, so the picture and name morph (0.7 s, expo in-out, snapshots cropped with object-fit: cover) while the unnamed page body slides 6 % out and in along the reading direction, mirrored for back. For separate pages use @view-transition { navigation: auto; } inline in each head and set the names in pageswap and pagereveal.',
     keep: [
-      'plain links and real URLs, so modified clicks still open a new tab; focus moves to the new heading; the header holds still',
+      'plain links and real URLs, so modified clicks still open a new tab; focus moves to the new heading; chrome that should hold still (a header) gets its own name and no animation',
       'no transition under reduced motion or without the API, just the swap',
     ],
   },

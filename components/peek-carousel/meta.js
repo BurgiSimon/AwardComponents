@@ -9,7 +9,7 @@ export default {
   tags: ['carousel', 'drag', 'snap', 'blur', 'spring', 'pointer', 'keyboard'],
   added: '2026-10-28',
   order: 30,
-  preview: { height: 620, hint: 'Drag the cards, or flick them' },
+  preview: { height: 540, hint: 'Drag the cards, or flick them' },
   actions: [{ id: 'next', label: 'Next story', icon: 'arrowRight' }],
   useCases: [
     'An issue’s or a season’s stories on a magazine home page',

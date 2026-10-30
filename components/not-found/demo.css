@@ -11,7 +11,6 @@
   --nf-ridge: var(--line-2);
   min-height: 100svh;
   display: grid;
-  grid-template-rows: auto 1fr auto;
 }
 /* Moonrise: the scene becomes a window onto the night in both themes. */
 .nf[data-scene='moonrise'] {
@@ -24,27 +23,23 @@
 
 .nf-skip { position: absolute; z-index: 5; top: 8px; left: var(--gutter); padding: 10px 14px; background: var(--ink); color: var(--bg); font-weight: 600; text-decoration: none; transform: translateY(-160%); }
 .nf-skip:focus-visible { transform: none; }
-.nf-bar { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 12px max(var(--gutter), calc((100% - 1320px) / 2)); border-bottom: 1px solid var(--line); }
-.nf-bar .ac-brand { min-height: 44px; font-size: 1.125rem; }
 
 .nf-lost { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); row-gap: clamp(28px, 3.6vw, 52px); align-content: center; padding-block: clamp(32px, 4vw, 56px); }
-.nf-lead { grid-column: 1 / 6; grid-row: 1; align-self: center; display: grid; justify-items: start; gap: 20px; }
+.nf-lead { grid-column: 1 / 6; grid-row: 1; align-self: center; display: grid; justify-items: start; gap: 24px; }
 .nf-scene { grid-column: 7 / 13; grid-row: 1; min-width: 0; }
 .nf-routes { grid-column: 1 / 9; grid-row: 2; }
 .nf-find { grid-column: 9 / 13; grid-row: 2; min-width: 0; }
 
 .nf-title { max-width: 11ch; font-size: clamp(2.5rem, 1.4rem + 3.6vw, 4.9rem); font-weight: 740; font-stretch: var(--wide); letter-spacing: -0.04em; line-height: 0.95; text-wrap: balance; }
-.nf-voice { max-width: 38ch; color: var(--ink-2); font-size: var(--text-lg); line-height: 1.55; text-wrap: pretty; }
 .nf-home { display: inline-flex; align-items: center; gap: 12px; min-height: 48px; color: var(--accent-ink); font-size: var(--text-lg); font-weight: 650; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.3em; }
 .nf-home span, .nf-route a span { display: inline-block; transition: transform var(--dur-s) var(--ease-out); }
 .nf-home:is(:hover, :focus-visible) span, .nf-route a:is(:hover, :focus-visible) span { transform: translateX(4px); }
 
 .nf-routes h2 { margin-bottom: 10px; }
 .nf-routes__list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: var(--gutter); }
-.nf-route { display: grid; align-content: start; gap: 4px; padding: 6px 0 4px; border-top: 1px solid var(--line-2); }
+.nf-route { padding: 6px 0 4px; border-top: 1px solid var(--line-2); }
 .nf-route a { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 44px; font-size: 1.1875rem; font-weight: 640; letter-spacing: -0.01em; text-decoration: none; }
 .nf-route a:hover { color: var(--accent-ink); }
-.nf-route > span { color: var(--muted); font-size: var(--text-sm); line-height: 1.45; }
 
 .nf-find .ac-label { display: block; }
 .nf-find__row { display: flex; align-items: center; gap: 12px; margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--line-2); }
@@ -65,10 +60,6 @@
 .nf-glint { fill: var(--nf-orb); opacity: 0.55; transform-box: fill-box; transform-origin: center; }
 .nf-glint:nth-child(n + 3) { opacity: 0.35; }
 .nf-stars circle { fill: var(--nf-orb); opacity: 0; }
-.nf-scene__cap { display: flex; flex-wrap: wrap; gap: 6px 20px; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--line); font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
-.nf-scene__cap span:last-child { margin-left: auto; }
-
-.nf-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 24px; padding: 18px max(var(--gutter), calc((100% - 1320px) / 2)) 22px; border-top: 1px solid var(--line); font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.04em; color: var(--muted); }
 
 /* Motion, played once. Sunset: the zero sinks to a half-set sun, then the glints open across the water.
    Moonrise: the zero rises from the water into place between the fours while the stars come out. */
@@ -98,19 +89,15 @@
 @media (max-width: 1000px) {
   .nf-lead { grid-column: 1 / 7; }
   .nf-scene { grid-column: 7 / 13; align-self: center; }
-  .nf-scene__cap span:last-child { display: none; }
 }
 @media (max-width: 699px) {
   .nf-lost { grid-template-columns: minmax(0, 1fr); align-content: start; row-gap: 30px; padding-top: 24px; }
   .nf-lead, .nf-scene, .nf-routes, .nf-find { grid-column: 1; grid-row: auto; }
   .nf-scene { order: -1; }
-  .nf-scene__cap { margin-top: 10px; padding-top: 8px; }
   .nf-title { max-width: 14ch; }
   .nf-routes__list { grid-template-columns: minmax(0, 1fr); }
-  .nf-route { padding: 6px 0 12px; }
   .nf-find { max-width: 30rem; }
 }
 @media (max-width: 599px) {
-  .nf-bar__more, .nf-scene__cap span:last-child { display: none; }
   .nf-route a { font-size: 1.0625rem; }
 }

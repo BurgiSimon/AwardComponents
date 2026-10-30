@@ -1,4 +1,4 @@
-// Magnetic button — a studio's contact section with a primary disc, a pill in the header and three round contacts.
+// Magnetic button — a studio's contact disc and three round contacts, alone on the stage.
 // Each [data-magnet] leans toward a fine pointer inside a radius (smoothstep falloff to zero at the edge) through one
 // gsap.quickTo per axis; its label follows a share of that travel. Coarse pointers and reduced motion: no pull.
 import './demo.css';
@@ -16,30 +16,18 @@ export default function mount(root, options, ctx) {
   const { studio } = content;
   root.className = 'mb';
   root.innerHTML = html`
-    <header class="ac-bar mb__bar">
-      <a class="ac-brand" href="#top">${studio.name}</a>
-      <nav aria-label="Studio">${studio.nav.slice(0, 3).map((n) => html`<a href="#top">${n}</a>`)}</nav>
-      <a class="mb__pill" href="#contact" data-magnet><span class="mb__body"></span><span class="mb__label" data-magnet-label>Book a call</span></a>
-    </header>
-    <section class="mb__hero ac-wrap" id="contact" aria-labelledby="mb-title">
-      <div class="mb__copy">
-        <p class="ac-label">Contact — ${studio.city}</p>
-        <h1 class="ac-h1" id="mb-title">Have a building in mind? Tell us about the site.</h1>
-        <p class="ac-lede">We take on six projects a year, from cabins to libraries. The first conversation is free and usually happens on site.</p>
-      </div>
+    <section class="ac-stage mb__stage" id="contact" aria-label="Contact">
       <a class="mb__cta" href="mailto:${studio.email}" data-magnet data-primary>
         <span class="mb__body"></span>
-        <span class="mb__label" data-magnet-label>Start a<br>project<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+        <span class="mb__label" data-magnet-label>Start a <br>project<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
       </a>
-    </section>
-    <footer class="mb__foot ac-wrap">
-      <a class="ac-link" href="mailto:${studio.email}">${studio.email}</a>
       <ul class="mb__icons" role="list">
         <li><a class="mb__icon" href="mailto:${studio.email}" aria-label="Email" data-magnet><span class="mb__body"></span><span class="mb__label" data-magnet-label>${svg('mail')}</span></a></li>
         <li><a class="mb__icon" href="tel:${studio.phone.replace(/\s/g, '')}" aria-label="Call" data-magnet><span class="mb__body"></span><span class="mb__label" data-magnet-label>${svg('phone')}</span></a></li>
         <li><a class="mb__icon" href="#contact" aria-label="Find the studio" data-magnet><span class="mb__body"></span><span class="mb__label" data-magnet-label>${svg('pin')}</span></a></li>
       </ul>
-    </footer>`;
+      <p class="ac-stage__note"><span>${studio.name} · contact section</span></p>
+    </section>`;
   root.querySelectorAll('a[href^="#"], a[href^="mailto"], a[href^="tel"]').forEach((a) => a.addEventListener('click', (e) => e.preventDefault(), { signal: ctx.signal }));
 
   const primary = root.querySelector('[data-primary]');

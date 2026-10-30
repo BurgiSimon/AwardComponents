@@ -1,5 +1,5 @@
-// Infinite canvas — Halden's index: twenty-four projects on a plane you pan by drag, wheel, finger or keys. It wraps
-// on both axes without clones: the 24 <li>s are the list and the pool at once, each placed by
+// Infinite canvas — Halden's index alone: twenty-four projects on a full-bleed plane you pan by drag, wheel, finger or
+// keys. It wraps on both axes without clones: the 24 <li>s are the list and the pool at once, each placed by
 //   x = mod(c·pitch + x0 + offset + pitch, 6·pitch) − pitch   (and y on rows, odd columns half a row lower)
 // so every tile stays within [−pitch, span − pitch). The pitch is max(tile + gap, stage / (count − 1)): one sheet
 // always spans the stage plus a tile, so no hole opens at any size. A drag is direct; the release coasts by the exact
@@ -9,14 +9,17 @@
 import './demo.css';
 import { on, html, raw, ticker, photo, allPhotos, observeResize, content } from '../../src/demo-kit/index.js';
 
+// The sheet past the studio's own eight: each of these sixteen names the picture that suits it.
 const MORE = [
-  ['Moss Hut', 'Valdres, NO', 2021, 'Architecture'], ['Birch Room', 'Helsinki, FI', 2022, 'Interiors'], ['Quarry Steps', 'Larvik, NO', 2019, 'Landscape'],
-  ['Lantern Stool', 'Edition of 120', 2021, 'Furniture'], ['Harbour Baths', 'Ålesund, NO', 2022, 'Architecture'], ['Rye Bakery', 'Aarhus, DK', 2023, 'Interiors'],
-  ['Shore Path', 'Lofoten, NO', 2020, 'Landscape'], ['Nordnes School', 'Bergen, NO', 2019, 'Architecture'], ['Table Nine', 'Edition of 60', 2020, 'Furniture'],
-  ['Fog House', 'Shetland, UK', 2018, 'Architecture'], ['Cellar Room', 'Bordeaux, FR', 2021, 'Interiors'], ['Orchard Wall', 'Hardanger, NO', 2017, 'Landscape'],
-  ['Rink Pavilion', 'Lillehammer, NO', 2018, 'Architecture'], ['Ash Bench', 'Edition of 40', 2019, 'Furniture'], ['Wool Mill Lofts', 'Os, NO', 2017, 'Architecture'],
-  ['Ferry Shed', 'Stord, NO', 2016, 'Interiors'],
-].map(([title, place, year, discipline]) => ({ title, place, year, discipline, slug: title.toLowerCase().replace(/\s+/g, '-') }));
+  ['Moss Hut', 'Valdres, NO', 2021, 'Architecture', 'land-fog-forest'], ['Birch Room', 'Helsinki, FI', 2022, 'Interiors', 'interior-lamp-corner'],
+  ['Quarry Steps', 'Larvik, NO', 2019, 'Landscape', 'paint-cox-landscape'], ['Lantern Stool', 'Edition of 120', 2021, 'Furniture', 'obj-shaker-revolving-chair'],
+  ['Harbour Baths', 'Ålesund, NO', 2022, 'Architecture', 'land-overcast-sea'], ['Rye Bakery', 'Aarhus, DK', 2023, 'Interiors', 'paint-hammershoi-sunlight'],
+  ['Shore Path', 'Lofoten, NO', 2020, 'Landscape', 'paint-homer-cannon-rock'], ['Nordnes School', 'Bergen, NO', 2019, 'Architecture', 'tex-concrete-shadow'],
+  ['Table Nine', 'Edition of 60', 2020, 'Furniture', 'obj-gragg-side-chair'], ['Fog House', 'Shetland, UK', 2018, 'Architecture', 'land-above-clouds'],
+  ['Cellar Room', 'Bordeaux, FR', 2021, 'Interiors', 'tex-curtain-shadow'], ['Orchard Wall', 'Hardanger, NO', 2017, 'Landscape', 'land-fog-slope'],
+  ['Rink Pavilion', 'Lillehammer, NO', 2018, 'Architecture', 'land-lake-reflection'], ['Ash Bench', 'Edition of 40', 2019, 'Furniture', 'tex-wood-geometric'],
+  ['Wool Mill Lofts', 'Os, NO', 2017, 'Architecture', 'obj-wari-tunic'], ['Ferry Shed', 'Stord, NO', 2016, 'Interiors', 'tex-paper-sheets'],
+].map(([title, place, year, discipline, pic]) => ({ title, place, year, discipline, pic, slug: title.toLowerCase().replace(/\s+/g, '-') }));
 const TAGS = { Architecture: ['architecture'], Interiors: ['interior'], Landscape: ['landscape'], Furniture: ['furniture'] };
 
 const COLS = 6, ROWS = 4;      // the logical sheet; COLS stays even so the column stagger meets itself across the wrap
@@ -28,17 +31,20 @@ const V_STOP = 8;              // px/s: the coast ends below this
 const WHEEL_K = 16;            // 1/s: a wheel notch eases in over ≈ 150 ms (trackpad streams read as direct)
 const GLIDE = 0.42;            // s: arrow, Home, End, click and focus glides, expo-out
 const EDGE = 32;               // px a focused tile keeps from the stage edge
+const FADE = 96;               // px of the fade over the plane's foot (demo.css), kept clear as well
 const mod = (a, n) => ((a % n) + n) % n;
 const residue = (v, span) => mod(v + span / 2, span) - span / 2;   // the shortest way back round the wrap
 
-// One picture per project, by discipline, never twice; when a discipline runs out, an unused material or site
-// picture stands in (a blurred drawn field reads as an image that failed to load); drawn fields only after that.
+// One picture per project, never twice: a named one, else by discipline, never from the city set (towers and rooftops
+// abroad, not Halden's buildings); when a discipline runs out, an unused material or site picture stands in (a
+// blurred drawn field reads as an image that failed to load); drawn fields only after that.
 const NEAR = ['texture', 'landscape'];
 function pictures(projects) {
-  const pool = allPhotos();
-  const taken = new Set();
+  const pool = allPhotos().filter((m) => !m.tags?.includes('city'));
+  const taken = new Set(projects.map((p) => p.pic).filter(Boolean));
   const free = (tags) => pool.find((m) => tags.every((t) => m.tags?.includes(t)) && !taken.has(m.id));
   return projects.map((p) => {
+    if (p.pic) return photo(p.pic);
     let hit = free(TAGS[p.discipline] || []);
     for (const t of NEAR) hit ||= free([t]);
     if (hit) { taken.add(hit.id); return photo(hit.id); }
@@ -57,13 +63,9 @@ export default function mount(root, options, ctx) {
 
   root.className = `ic${live ? ' ic--live' : ' ic--static'}`;
   root.innerHTML = html`
-    <header class="ac-bar ic__bar">
-      <a class="ac-brand" href="#top">${studio.name}</a>
-      <p class="ic__where ac-label">Index · ${N} projects · 2016–2026</p>
-      <nav aria-label="Studio">${studio.nav.map((n, i) => html`<a href="#${n.toLowerCase()}"${i === 0 ? raw(' aria-current="page"') : ''}>${n}</a>`)}</nav>
-    </header>
     <a class="ic__skip sr-only" href="#ic-after">Skip past the projects</a>
-    <section class="ic__plane" aria-label="Projects, on a plane that wraps in every direction" aria-describedby="ic-help">
+    <section class="ic__plane" aria-label="${studio.name} projects, on a plane that wraps in every direction" aria-describedby="ic-help">
+      <p class="sr-only" id="ic-help">${live ? 'Drag, scroll or flick the plane. Tab and the arrow keys step between projects.' : 'Every project, in order.'}</p>
       <div class="ic__stage" data-stage>
         <ul class="ic__tiles" role="list" data-tiles>
           ${projects.map((p, i) => html`
@@ -71,23 +73,17 @@ export default function mount(root, options, ctx) {
               <a class="ic__link" href="#${p.slug}" draggable="false">
                 <span class="ic__plate ac-media">${raw(imgTag(art[i]))}</span>
                 <span class="ic__name">${p.title}</span>
-                <span class="ic__meta ac-label">${p.place} · ${p.year}</span>
               </a>
             </li>`)}
         </ul>
       </div>
     </section>
-    <footer class="ic__legend" id="ic-after" tabindex="-1">
-      <p class="ic__readout" data-readout></p>
-      <p class="ic__help ac-small" id="ic-help">${live ? raw('Drag, scroll or flick the plane. <span class="ic__keys">Tab and the arrow keys step between projects.</span>') : 'Every project, in order.'}</p>
-    </footer>`;
+    <p class="ac-stage__note ic__note" id="ic-after" tabindex="-1"><span>${studio.name} · project index</span></p>`;
 
   const stage = root.querySelector('[data-stage]');
   const list = root.querySelector('[data-tiles]');
   const items = [...list.children];
   const links = items.map((li) => li.querySelector('a'));
-  const readout = root.querySelector('[data-readout]');
-  on(ctx, root.querySelector('.ic__bar'), 'click', (e) => { if (e.target.closest('a')) e.preventDefault(); });
 
   const S = { ox: 0, oy: 0, vx: 0, vy: 0 };
   const G = { w: 0, h: 0, tw: 0, th: 0, px: 0, py: 0, sx: 1, sy: 1, x0: 0, y0: 0, hx: 0, hy: 0 };
@@ -102,12 +98,7 @@ export default function mount(root, options, ctx) {
   };
   apply();
 
-  // At rest: name the project nearest the middle of the stage (a plain line, not a live region: Tab announces each).
-  const nameAt = (i) => `${projects[i].title} · ${projects[i].place} · ${projects[i].year}`;
-  if (!live) {
-    readout.textContent = '';
-    return { update(next) { cfg = { ...next }; apply(); } };
-  }
+  if (!live) return { update(next) { cfg = { ...next }; apply(); } };
 
   function measure() {
     const before = { px: G.px, py: G.py };
@@ -158,37 +149,16 @@ export default function mount(root, options, ctx) {
     park();
     return [dx, dy];
   }
-  // The offset that puts tile i inside the stage, EDGE px clear of every side (and clear of the bars), moving least.
+  // The offset that puts tile i inside the stage, EDGE px clear of every side (and clear of the fade), moving least.
   function keepInside(i, ox, oy) {
     const [x, y] = place(i, ox, oy);
-    const top = EDGE + barH, bottom = G.h - EDGE - legendH;
+    const top = EDGE, bottom = G.h - EDGE - FADE;
     const dx = x < EDGE ? EDGE - x : x + G.tw > G.w - EDGE ? G.w - EDGE - (x + G.tw) : 0;
     const dy = y < top ? top - y : y + G.th > bottom ? bottom - (y + G.th) : 0;
     return [ox + dx, oy + dy];
   }
   const base = () => (glide ? { x: glide.tx, y: glide.ty } : { x: S.ox, y: S.oy });
   const moving = () => !!glide || S.vx !== 0 || S.vy !== 0 || wheel.x !== 0 || wheel.y !== 0;
-
-  let barH = 0, legendH = 0;
-  const measureChrome = () => {
-    barH = root.querySelector('.ic__bar').offsetHeight;
-    legendH = root.querySelector('.ic__legend').offsetHeight;
-  };
-
-  function settle() {
-    let best = 0, d = Infinity;
-    for (let i = 0; i < N; i++) {
-      const [x, y] = place(i, S.ox, S.oy);
-      const e = Math.hypot(x + G.tw / 2 - G.w / 2, y + G.th / 2 - G.h / 2);
-      if (e < d) { d = e; best = i; }
-    }
-    items.forEach((li, i) => li.classList.toggle('is-centre', i === best));
-    const text = nameAt(best);
-    if (readout.dataset.text !== text) {
-      readout.dataset.text = text;
-      readout.innerHTML = html`<span class="ac-label">At the centre</span> ${text}`;
-    }
-  }
 
   // One clock: the shared ticker, subscribed only while something moves.
   let ticking = false;
@@ -219,7 +189,7 @@ export default function mount(root, options, ctx) {
     }
     const busy = moving() || !!drag;
     render(S.ox, S.oy, !busy);
-    if (!busy) { settle(); sleep(); }
+    if (!busy) sleep();
   }
   // Stop where it is: a press or a wheel ends a coast or a glide in place.
   function halt({ keepWheel = false } = {}) {
@@ -228,7 +198,7 @@ export default function mount(root, options, ctx) {
   }
   function glideTo(tx, ty) {
     S.vx = S.vy = 0; wheel.x = wheel.y = 0;
-    if (tier !== 'full') { glide = null; S.ox = tx; S.oy = ty; render(S.ox, S.oy, true); settle(); return; }
+    if (tier !== 'full') { glide = null; S.ox = tx; S.oy = ty; render(S.ox, S.oy, true); return; }
     glide = { fx: S.ox, fy: S.oy, tx, ty, t: 0 };
     wake();
   }
@@ -355,7 +325,7 @@ export default function mount(root, options, ctx) {
     glideTo(b.x - scrolled[0], b.y - scrolled[1]);
   }, { passive: true });
 
-  const relayout = () => { measureChrome(); measure(); render(S.ox, S.oy, !moving()); settle(); };
+  const relayout = () => { measure(); render(S.ox, S.oy, !moving()); };
   relayout();
   root.classList.add('is-ready');
   observeResize(ctx, [stage, items[0]], relayout);

@@ -1,10 +1,10 @@
-// Line field hero — a speaker brand's first screen over a field of hairlines. Every point takes its angle from one
+// Line field hero — one centred headline over a full-bleed field of hairlines. Every point takes its angle from one
 // drifting Perlin sample (angle = noise × 12 rad, offset cos × 32 / sin × 16 px), so neighbouring lines move together
 // and never tangle. A fine pointer pushes the points it passes (radius max(175, pointer speed) px, (1 − d/R)²) and a
 // spring of 0.005 with damping 0.925 per 60 Hz frame, scaled to real frame time, brings them home. Every line is a
 // subpath of one <path>: one draw per frame. Reduced motion and static: the field drawn complete, held still.
 import './demo.css';
-import { on, onFrame, whileVisible, observeResize, html, raw, clamp, finePointer, colour, content, formatPrice } from '../../src/demo-kit/index.js';
+import { on, onFrame, whileVisible, observeResize, html, clamp, finePointer, colour, content } from '../../src/demo-kit/index.js';
 
 const WAVE = { turns: 12, ax: 32, ay: 16, driftX: 0.0125, driftY: 0.005, scaleX: 0.002, scaleY: 0.0015 };
 const PUSH = { radius: 175, maxRadius: 400, spring: 0.005, damping: 0.925, cap: 120 };
@@ -45,28 +45,11 @@ export default function mount(root, options, ctx) {
   const fine = finePointer();
   root.className = 'lf';
   root.innerHTML = html`
-    <section class="lf__hero" aria-labelledby="lf-title" data-hero>
+    <section class="ac-stage lf__hero" aria-labelledby="lf-title" data-hero>
       <svg class="lf__field" aria-hidden="true" focusable="false" data-field><path data-path/></svg>
-      <header class="ac-bar lf__bar">
-        <a class="ac-brand lf__tape" href="#top">${product.maker}</a>
-        <nav aria-label="Kova">${['Speakers', 'Room tuning', 'Support'].map((n) => html`<a class="lf__tape" href="#top">${n}</a>`)}</nav>
-      </header>
-      <div class="lf__copy ac-wrap">
-        <p class="ac-label lf__tape lf__kicker"><span class="lf__dot" aria-hidden="true"></span>${product.name} · ${product.kind}</p>
-        <h1 class="lf__title" id="lf-title">The room is part of the speaker.</h1>
-        <div class="lf__foot">
-          <p class="lf__lede lf__tape">Kova One listens to the space it stands in, the walls, the sofa, the window, and shapes its sound to fit. Eight seconds, once.</p>
-          <div class="lf__cta">
-            <a class="ac-btn ac-btn--accent ac-btn--lg" href="#top">Buy — ${formatPrice(product.price)}</a>
-            <a class="ac-btn ac-btn--ghost ac-btn--lg lf__ghost" href="#top">How tuning works</a>
-          </div>
-        </div>
-      </div>
-      <dl class="lf__specs ac-label" aria-label="Specifications">
-        ${[product.specs[1], product.specs[2], product.specs[3]].map(([k, v]) => html`<div class="lf__tape"><dt>${k}</dt><dd>${raw(v.replace(/,/g, ',<br>'))}</dd></div>`)}
-      </dl>
+      <h1 class="lf__title" id="lf-title">The room is part of the speaker.</h1>
+      <p class="ac-stage__note"><span class="lf__tape">${product.maker} · launch hero</span></p>
     </section>`;
-  root.querySelectorAll('a[href="#top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const hero = root.querySelector('[data-hero]');
   const svg = root.querySelector('[data-field]');

@@ -1,9 +1,10 @@
-// Contextual cursor — Halden's work page. A dot follows a fine pointer almost at once (lerp .75 per 60 fps frame)
-// and a ring trails it (lerp .22), both through damp() so the feel is the same at 60 and 144 Hz. Over links the ring
-// grows 1.35× and the dot shrinks 0.7×; over [data-cursor] targets the ring grows into a badge that names the
-// gesture (View, Play/Pause, Drag). The loop sleeps once both parts settle. Coarse pointers: never created.
+// Contextual cursor — one of each target from Halden's work page: a project tile, the reel and the workshop strip.
+// A dot follows a fine pointer almost at once (lerp .75 per 60 fps frame) and a ring trails it (lerp .22), both
+// through damp() so the feel is the same at 60 and 144 Hz. Over links the ring grows 1.35× and the dot shrinks 0.7×;
+// over [data-cursor] targets the ring grows into a badge that names the gesture (View, Play/Pause, Drag). The loop
+// sleeps once both parts settle. Coarse pointers: never created.
 import './demo.css';
-import { on, onFrame, damp, finePointer, colour, html, raw, photos, videos, credit, imageHTML, content } from '../../src/demo-kit/index.js';
+import { on, onFrame, damp, finePointer, colour, html, raw, photo, photos, video, imageHTML, content } from '../../src/demo-kit/index.js';
 
 const DOT_LERP = 0.75;
 const k = (lerp) => -Math.log(1 - lerp) * 60; // a per-frame lerp → a damping rate
@@ -15,81 +16,59 @@ const ICON = {
 };
 const LABEL = { view: 'View', play: 'Play', pause: 'Pause', drag: 'Drag' };
 const icon = (name) => raw(`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[name]}</svg>`);
-const WORKSHOP = ['Massing model, 1:200', 'Larch cladding samples', 'Site visit, Hardanger', 'Glaze tests for Kiln House', 'Window detail, 1:5', 'Arc Chair, steam-bending jig', 'Tern Library reading room'];
 
 export default function mount(root, options, ctx) {
   const { studio } = content;
-  const work = studio.projects;
-  const pics = photos({ tags: ['architecture'], count: 4, seed: 'cc-work' }).concat(photos({ tags: ['interior'], count: 2, seed: 'cc-int' }));
+  const lead = photo('city-helsinki-rooftops', { fallbackTags: ['city', 'architecture'] });
   const strip = photos({ tags: ['object'], count: 4, seed: 'cc-strip' }).concat(photos({ tags: ['texture'], count: 3, seed: 'cc-tex' }));
-  const reelPic = photos({ tags: ['landscape'], count: 1, seed: 'cc-reel' })[0];
-  const film = videos[0];
-  credit(film);
+  const film = video('video-desert-clouds');
+  const reelPic = film ? null : photos({ tags: ['landscape'], count: 1, seed: 'cc-reel' })[0];
   let cfg = { ...options };
 
-  const card = (p, pic, cls) => html`
-    <li class="cc__item ${cls}">
-      <a class="cc__card" href="#${p.slug}" data-cursor="view">
-        <span class="ac-media cc__media">${raw(imageHTML(pic, { sizes: '(max-width: 720px) 100vw, 50vw', alt: '' }))}</span>
-        <span class="cc__cap"><strong>${p.title}</strong><span>${p.place.replace(/, [A-Z]{2}$/, '')} · ${p.year}</span></span>
-      </a>
-    </li>`;
+  const p = studio.projects.find((x) => x.slug === 'granite-court');
 
   root.className = 'cc';
   root.innerHTML = html`
-    <header class="ac-bar cc__bar">
-      <a class="ac-brand" href="#top">${studio.name}</a>
-      <nav aria-label="Studio">${studio.nav.map((n, i) => html`<a href="#top"${i === 0 ? raw(' aria-current="page"') : ''}>${n}</a>`)}</nav>
-    </header>
-    <main class="ac-wrap cc__main">
-      <div class="cc__intro">
-        <h1 class="ac-h1">Selected work</h1>
-        <p class="ac-lede">Houses, a library, a bathing pavilion and one chair, from four years on the west coast.</p>
-      </div>
-      <ul class="cc__grid" role="list">
-        ${card(work[0], pics[0], 'cc__item--lead')}
-        <li class="cc__item cc__item--reel">
-          <button class="cc__reel" type="button" data-cursor="play" aria-pressed="false">
-            <span class="ac-media cc__media cc__media--reel">
-              ${film ? raw(`<video muted loop playsinline preload="none" poster="${film.poster}" src="${film.src}"></video>`) : raw(imageHTML(reelPic, { sizes: '40vw', alt: '' }))}
-              <span class="cc__reel-veil"></span>
-              <span class="cc__reel-copy">
-                <span class="ac-label">Showreel 2026</span>
-                <span class="cc__reel-title">Six buildings in one minute and forty-two seconds</span>
-                <span class="cc__reel-bar"><span class="cc__reel-play">${icon('play')}${icon('pause')}<span class="sr-only">Play the showreel</span></span><span class="cc__progress"><span></span></span><span class="ac-label cc__time">1:42</span></span>
+    <section class="ac-stage cc__stage" aria-label="${studio.name} work page">
+      <div class="cc__board">
+        <ul class="cc__grid" role="list">
+          <li class="cc__item cc__item--lead">
+            <a class="cc__card" href="#${p.slug}" data-cursor="view">
+              <span class="ac-media cc__media">${raw(imageHTML(lead, { sizes: '(max-width: 720px) 100vw, 50vw', alt: '' }))}</span>
+              <span class="cc__cap"><strong>${p.title}</strong><span>${p.place.replace(/, [A-Z]{2}$/, '')} · ${p.year}</span></span>
+            </a>
+          </li>
+          <li class="cc__item cc__item--reel">
+            <button class="cc__reel" type="button" data-cursor="play" aria-pressed="false">
+              <span class="ac-media cc__media cc__media--reel">
+                ${film ? raw(`<video muted loop playsinline preload="none" poster="${film.poster}" src="${film.src}"></video>`) : raw(imageHTML(reelPic, { sizes: '40vw', alt: '' }))}
+                <span class="cc__reel-veil"></span>
+                <span class="cc__reel-copy">
+                  <span class="ac-label">Showreel 2026</span>
+                  <span class="cc__reel-bar"><span class="cc__reel-play">${icon('play')}${icon('pause')}<span class="sr-only">Play the showreel</span></span><span class="cc__progress"><span></span></span><span class="ac-label cc__time">1:42</span></span>
+                </span>
               </span>
-            </span>
-          </button>
-          <span class="cc__cap"><strong>Showreel</strong><span>Filmed on site · 2022–26</span></span>
-        </li>
-        ${card(work[1], pics[1], '')}
-        ${card(work[2], pics[2], '')}
-        ${card(work[3], pics[4], '')}
-        ${card(work[4], pics[3], 'cc__item--wide')}
-        ${card(work[5], pics[5], 'cc__item--narrow')}
-      </ul>
-      <section class="cc__workshop" aria-labelledby="cc-ws">
-        <div class="cc__ws-head">
-          <h2 class="ac-h3" id="cc-ws">From the workshop</h2>
-          <p class="ac-small">Models, samples and site visits<span class="cc__touch-hint"> · swipe sideways</span>.</p>
+            </button>
+            <span class="cc__cap"><strong>Showreel</strong><span>Light studies · 2022–26</span></span>
+          </li>
+        </ul>
+        <div class="cc__strip" data-cursor="drag" tabindex="0" role="group" aria-label="From the workshop">
+          ${strip.map((pic) => html`<span class="ac-media cc__media cc__shot">${raw(imageHTML(pic, { sizes: '180px', alt: '' }).replace('<img ', '<img draggable="false" '))}</span>`)}
         </div>
-        <div class="cc__strip" data-cursor="drag" tabindex="0" role="group" aria-labelledby="cc-ws">
-          ${strip.map((pic, i) => html`<figure class="cc__shot"><span class="ac-media cc__media">${raw(imageHTML(pic, { sizes: '320px', alt: '' }).replace('<img ', '<img draggable="false" '))}</span><figcaption class="ac-small">${WORKSHOP[i]}</figcaption></figure>`)}
-        </div>
-      </section>
-      <footer class="cc__foot"><span class="ac-small">${studio.full} · ${studio.address[0]}, ${studio.city}</span><a class="ac-link ac-small" href="mailto:${studio.email}">${studio.email}</a></footer>
-    </main>`;
-  root.querySelectorAll('a[href^="#"], a[href^="mailto"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
+      </div>
+      <p class="ac-stage__note"><span>${studio.name} · work page</span></p>
+    </section>`;
+  root.querySelectorAll('a[href^="#"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   // The reel: a real toggle button. With a video in the media set it plays it; otherwise the still drifts.
   const reel = root.querySelector('.cc__reel');
-  const video = reel.querySelector('video');
+  const reelVideo = reel.querySelector('video');
   on(ctx, reel, 'click', () => {
     const playing = reel.getAttribute('aria-pressed') !== 'true';
     reel.setAttribute('aria-pressed', String(playing));
     reel.dataset.cursor = playing ? 'pause' : 'play';
     reel.querySelector('.sr-only').textContent = playing ? 'Pause the showreel' : 'Play the showreel';
-    if (video) (playing ? video.play().catch(() => {}) : video.pause());
+    if (reelVideo) (playing ? reelVideo.play().catch(() => {}) : reelVideo.pause());
     cursor?.refresh();
   });
 

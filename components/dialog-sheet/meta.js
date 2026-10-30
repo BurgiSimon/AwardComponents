@@ -8,7 +8,7 @@ export default {
   tags: ['dialog', 'overlay', 'lenis', 'bottom-sheet', 'drag', 'editorial', 'gsap'],
   added: '2026-10-28',
   order: 40,
-  preview: { height: 640, hint: 'Open the story, then scroll inside it', capture: { action: 'open', wait: 1200 } },
+  preview: { height: 560, hint: 'Open the story, then scroll inside it', capture: { action: 'open', wait: 1200 } },
   actions: [{ id: 'open', label: 'Open story' }],
   useCases: [
     'A full article, a case study or an interview read without leaving the index page',

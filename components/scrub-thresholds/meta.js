@@ -8,7 +8,7 @@ export default {
   tags: ['scroll', 'scrub', 'timeline', 'threshold', 'copy', 'sticky', 'scrolltrigger', 'gsap', 'lenis', 'product'],
   added: '2026-10-28',
   order: 90,
-  preview: { height: 660, scroll: true, hint: 'Scroll slowly, then fast: the words always arrive whole', capture: { scroll: 0.36, wait: 1600 } },
+  preview: { height: 620, scroll: true, hint: 'Scroll slowly, then fast: the words always arrive whole', capture: { scroll: 0.42, wait: 1600 } },
   useCases: [
     'A product launch scene where the picture follows the scroll and the claims must stay legible',
     'An explainer whose diagram scrubs while short captions appear at set beats',
@@ -30,7 +30,7 @@ export default {
     skill: 'component',
     ask: 'Play the copy in {target} at scroll thresholds instead of scrubbing it.',
     target: 'the scroll-driven product scene',
-    brief: 'One linear timeline scrubs the picture across a 400 svh sticky stage (scrub: true). The copy is never scrubbed: each block is a paused timeline (autoAlpha 0 → 1, yPercent 60 → 0, 0.7 s power3.out, stagger 0.12) and the scrub’s onUpdate only checks which side of its window the progress is on. On a change of side it plays (timeScale 1.5; 1.25 for the final line) or reverses faster (timeScale 3.5): first lines in [0.3, 0.6), the final line from 0.81 to the end. Once played, a line runs on its own clock, so it always arrives whole however fast the visitor scrolls. A state label flips with two 0.001 s tweens at 0.5.',
+    brief: 'One linear timeline scrubs the picture across a 400 svh sticky stage (scrub: true). The copy is never scrubbed: each block is a paused timeline (autoAlpha 0 → 1, yPercent 60 → 0, 0.7 s power3.out, stagger 0.12) and the scrub’s onUpdate only checks which side of its window the progress is on. On a change of side it plays (timeScale 1.5; 1.25 for the final line) or reverses faster (timeScale 3.5): first lines in [0.3, 0.6), the final line from 0.81 to the end. Once played, a line runs on its own clock, so it always arrives whole however fast the visitor scrolls.',
     keep: [
       'one call per crossing, not per frame; on refresh snap each line with progress(0|1); reduced motion fades without the rise, static sets each line.',
       'the copy is real DOM text, readable without script; the scrubbed picture is aria-hidden decoration.',
