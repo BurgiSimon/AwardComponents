@@ -1,15 +1,10 @@
 .fg { scrollbar-gutter: stable; }
 :root:has(.fg__detail[open]) { overflow: hidden; }
-.fg a { text-decoration: none; }
-.fg__bar nav a[aria-current] { color: var(--ink); }
-.fg__bag { font-size: var(--text-sm); font-weight: 600; }
-
-.fg__index { padding-bottom: 96px; }
-.fg__head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px 32px; padding-block: clamp(20px, 5vh, 56px) 28px; }
-.fg__heading { display: grid; gap: 10px; }
-.fg__tools { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
+/* Top-aligned: a filter or a view change alters the list's height, and the tools must not move while it flips. */
+.fg__stage { align-content: start; }
+.fg__index { display: grid; gap: clamp(20px, 3.5vh, 32px); width: min(100%, 1040px); }
+.fg__tools { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; }
 .fg__group { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
-.fg__status { flex-basis: 100%; }
 .fg__switch {
   display: inline-flex;
   align-items: center;
@@ -30,11 +25,12 @@
 .fg__view svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
 
 /* One list, two layouts: [data-view='list'] is another arrangement of the same nodes. */
-.fg__works { --cols: 4; position: relative; display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); gap: 40px clamp(16px, 2vw, 28px); margin: 0; }
-.fg__item { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; gap: 4px; border-top: 1px solid transparent; }
+.fg__works { --cols: 4; position: relative; display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); gap: 32px clamp(16px, 2vw, 28px); margin: 0; }
+/* A card: the picture across the top, the name and the price on one line under it. */
+.fg__item { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-content: start; align-items: baseline; gap: 4px 12px; border-top: 1px solid transparent; }
 .fg__item[hidden] { display: none; }
 /* The frame keeps its slot while the picture is in the detail view; its tone marks where it will land. */
-.fg__frame { position: relative; aspect-ratio: 1; border-radius: var(--radius-md); background: var(--bg-2); margin-bottom: 10px; }
+.fg__frame { grid-column: 1 / -1; position: relative; aspect-ratio: 1; border-radius: var(--radius-md); background: var(--bg-2); margin-bottom: 10px; }
 .fg__plate { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; background: var(--bg-2); }
 .fg__plate img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-l) var(--ease-out); }
 .fg__item:hover .fg__plate img { transform: scale(1.03); }
@@ -44,42 +40,33 @@
 .fg__open::after { content: ''; position: absolute; inset: 0; }
 .fg__item:hover .fg__open { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
 .fg__open:focus-visible { outline-offset: 4px; }
-.fg__meta { display: flex; justify-content: space-between; gap: 12px; font-size: var(--text-sm); color: var(--muted); }
-.fg__price { color: var(--ink); font-variant-numeric: tabular-nums; }
+.fg__price { font-size: var(--text-sm); color: var(--ink-2); font-variant-numeric: tabular-nums; }
 
 .fg__works[data-view='list'] { grid-template-columns: minmax(0, 1fr); gap: 0; }
-.fg__works[data-view='list'] .fg__item { grid-template-columns: 64px minmax(0, 1fr) minmax(0, 1.4fr); align-items: center; column-gap: clamp(16px, 3vw, 40px); padding-block: 12px; border-top-color: var(--line); }
-.fg__works[data-view='list'] .fg__frame { margin: 0; border-radius: var(--radius-sm); }
+.fg__works[data-view='list'] .fg__item { grid-template-columns: 64px minmax(0, 1fr) auto; align-items: center; column-gap: clamp(16px, 3vw, 40px); padding-block: 12px; border-top-color: var(--line); }
+.fg__works[data-view='list'] .fg__frame { grid-column: auto; margin: 0; border-radius: var(--radius-sm); }
 .fg__works[data-view='list'] .fg__name { font-size: var(--text-lg); }
-.fg__works[data-view='list'] .fg__meta { gap: 24px; }
+.fg__works[data-view='list'] .fg__price { font-size: var(--text-md); }
 
 /* The detail: a native modal dialog on the page ground. The picture is reparented into its frame. */
 .fg__detail { position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: transparent; color: var(--ink); overflow-y: auto; overscroll-behavior: contain; }
 .fg__detail::backdrop { background: transparent; }
 .fg__detail.is-flying { overflow: hidden; }
 .fg__ground { position: fixed; inset: 0; background: var(--bg); }
-.fg__dbar { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px var(--gutter); }
+.fg__dbar { position: relative; display: flex; align-items: center; padding: 14px var(--gutter); }
 .fg__dbar svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .fg__dbody { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 24px clamp(24px, 5vw, 80px); align-items: center; padding: 8px var(--gutter) 48px; }
 .fg__dframe { position: relative; width: min(44vw, calc(100svh - 150px)); aspect-ratio: 1; border-radius: var(--radius-lg); }
 .fg__dframe .fg__plate { border-radius: var(--radius-lg); }
 .fg__dcopy { display: grid; gap: 16px; max-width: 32rem; }
 .fg__dprice { font-size: var(--text-xl); font-variant-numeric: tabular-nums; }
-.fg__facts { display: grid; margin: 4px 0 0; }
-.fg__facts div { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: 16px; padding-block: 9px; border-top: 1px solid var(--line); font-size: var(--text-sm); }
-.fg__facts dt { padding-top: 2px; }
-.fg__facts dd { color: var(--ink-2); }
-.fg__buy { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 8px; }
 
 @media (max-width: 1100px) { .fg__works { --cols: 3; } }
 @media (max-width: 760px) {
-  .fg__bar nav { display: none; }
-  .fg__works { --cols: 2; gap: 28px 14px; }
+  .fg__works { --cols: 2; gap: 24px 14px; }
+  .fg__item { grid-template-columns: minmax(0, 1fr); }
   .fg__works[data-view='list'] .fg__item { grid-template-columns: 56px minmax(0, 1fr); row-gap: 2px; }
   .fg__works[data-view='list'] .fg__frame { grid-row: span 2; }
-  .fg__meta { flex-direction: column; gap: 2px; }
-  .fg__works[data-view='list'] .fg__meta { flex-direction: row; gap: 12px; }
   .fg__dbody { grid-template-columns: minmax(0, 1fr); align-items: start; }
   .fg__dframe { width: min(100%, 46svh); }
-  .fg__dbar .ac-label { display: none; }
 }

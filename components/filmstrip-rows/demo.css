@@ -1,23 +1,20 @@
 .fr { --fr-h: 120px; --fr-grow: 1.2; --fr-gap: 12px; overflow-x: clip; }
 .fr a { text-decoration: none; }
-.fr__bar nav a[aria-current] { color: var(--ink); }
-.fr__intro { display: flex; align-items: baseline; justify-content: space-between; gap: 12px 32px; flex-wrap: wrap; padding-block: clamp(24px, 6vh, 64px) clamp(20px, 3vh, 32px); }
+/* The strips run off the right edge, so the stage keeps no side padding; the rows carry the left gutter. */
+.fr__stage { padding-inline: 0; }
 
-.fr__rows { margin: 0; border-top: 1px solid var(--line); }
+.fr__rows { width: 100%; margin: 0; border-top: 1px solid var(--line); }
 .fr__row {
   display: grid;
-  grid-template-columns: minmax(230px, 28%) minmax(0, 1fr);
+  grid-template-columns: minmax(180px, 22%) minmax(0, 1fr);
   align-items: center;
   gap: clamp(20px, 3vw, 48px);
-  padding: 24px 0 24px var(--gutter);
+  padding: 20px 0 20px var(--gutter);
   border-bottom: 1px solid var(--line);
 }
-.fr__cap a { display: grid; gap: 6px; justify-items: start; color: var(--ink); border-radius: var(--radius-xs); }
-.fr__name { font-size: var(--text-xl); font-weight: 680; font-stretch: var(--wide); letter-spacing: -0.02em; line-height: 1.1; }
-.fr__line { font-size: var(--text-sm); color: var(--ink-2); max-width: 34ch; text-wrap: pretty; }
-.fr__view { color: var(--accent-ink); white-space: nowrap; opacity: 0; transition: opacity var(--dur-s); }
-.fr__view::after { content: ' →'; }
-.fr__row.is-hover .fr__view, .fr__cap a:focus-visible .fr__view { opacity: 1; }
+.fr__cap a { display: inline-block; color: var(--ink); border-radius: var(--radius-xs); }
+.fr__name { font-size: var(--text-xl); font-weight: 680; font-stretch: var(--wide); letter-spacing: -0.02em; line-height: 1.1; transition: color var(--dur-s); }
+.fr__row.is-hover .fr__name, .fr__cap a:focus-visible .fr__name { color: var(--accent-ink); }
 .fr__cap a:focus-visible { outline-offset: 8px; }
 
 /* Clip sideways only, so the grow spills into the row's padding with no layout shift; the left edge fades. */
@@ -37,16 +34,12 @@
 .fr__row:is(.is-hover, :focus-within) .fr__grow { transform: scale(var(--fr-grow)); }
 .fr__row.is-hover .fr__clip { opacity: 1; }
 
-.fr__foot { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; padding-block: 32px 48px; font-size: var(--text-sm); }
-
 /* Reduced motion and static: every reel at rest, nothing grows. */
 .fr--still .fr__track, .fr--still .fr__grow { animation: none !important; transform: none !important; }
 
 @media (max-width: 760px) {
-  .fr__bar nav { display: none; }
-  .fr__row { grid-template-columns: minmax(0, 1fr); gap: 18px; padding-block: 22px 26px; }
+  .fr__row { grid-template-columns: minmax(0, 1fr); gap: 14px; padding-block: 18px 20px; }
   .fr__reel { order: -1; }
   .fr__still { height: min(var(--fr-h), 104px); }
   .fr__cap { padding-right: var(--gutter); }
-  .fr__view { display: none; }
 }

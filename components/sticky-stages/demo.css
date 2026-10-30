@@ -1,9 +1,4 @@
 .ss { --hold: 390svh; --pad-x: max(var(--gutter), calc((100% - 1320px) / 2)); position: relative; overflow-x: clip; }
-.ss a { text-decoration: none; }
-
-.ss__bar { position: absolute; inset: 0 0 auto; z-index: 3; }
-.ss__bag { display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 14px; border: 1px solid var(--line-2); border-radius: var(--radius-pill); font-size: var(--text-sm); font-weight: 600; }
-.ss__bag span { display: inline-grid; place-items: center; min-width: 20px; height: 20px; border-radius: 10px; background: var(--ink); color: var(--bg); font-size: 11px; }
 
 /* The rails are tall and invisible; their sticky child is the stage. Nothing is pinned. */
 .ss__rail { position: relative; }
@@ -11,25 +6,8 @@
 .ss__rail--steps { height: var(--hold); }
 .ss__stage { position: sticky; top: 0; height: 100svh; overflow: clip; padding-inline: var(--pad-x); }
 
-/* Hero: the card hinges on its bottom-left corner; the line behind it is what the swing reveals. */
-.ss__stage--hero { display: grid; padding-block: 76px clamp(40px, 8svh, 80px); }
-.ss__behind {
-  position: absolute;
-  right: var(--pad-x);
-  bottom: calc(clamp(40px, 8svh, 80px) + 28px);
-  display: grid;
-  justify-items: end;
-  gap: 8px;
-  max-width: 22ch;
-  text-align: right;
-  font-size: var(--text-2xl);
-  font-weight: 680;
-  font-stretch: 108%;
-  line-height: 1.08;
-  letter-spacing: -0.02em;
-  text-wrap: balance;
-}
-.ss__behind .ac-label { color: var(--accent-ink); }
+/* Hero: the card hinges on its bottom-left corner and swings off the stage. */
+.ss__stage--hero { display: grid; padding-block: clamp(40px, 8svh, 80px); }
 
 .ss__panel {
   position: relative;
@@ -46,15 +24,7 @@
   transform-origin: 0% 100%;
   will-change: transform;
 }
-.ss__copy { align-self: end; display: grid; gap: clamp(14px, 2svh, 20px); padding: clamp(6px, 1.6vw, 20px); }
-.ss__kicker { color: color-mix(in oklab, var(--bg) 58%, var(--ink)); }
-.ss__copy .ac-display { color: var(--bg); font-size: clamp(2.8rem, 1rem + 6vw, 7rem); }
-.ss__lede { max-width: 32ch; font-size: var(--text-lg); line-height: 1.5; color: color-mix(in oklab, var(--bg) 76%, var(--ink)); text-wrap: pretty; }
-.ss__buy { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; margin-top: 6px; }
-.ss__btn { --btn-bg: var(--bg); --btn-fg: var(--ink); }
-.ss__btn:hover { --btn-bg: color-mix(in oklab, var(--bg) 84%, var(--ink)); }
-.ss__more { font-size: var(--text-sm); font-weight: 600; color: var(--bg); text-decoration: underline; text-decoration-color: color-mix(in oklab, var(--bg) 40%, transparent); text-underline-offset: 0.25em; }
-.ss__more:hover { text-decoration-color: currentColor; }
+.ss__title { align-self: end; padding: clamp(6px, 1.6vw, 20px); color: var(--bg); font-size: clamp(2.8rem, 1rem + 6vw, 7rem); }
 
 .ss__photo { position: relative; min-height: 0; margin: 0; }
 .ss__photo .ac-media { display: block; height: 100%; aspect-ratio: auto; border-radius: var(--radius-lg); }
@@ -80,9 +50,7 @@
 
 /* Steps: each card owns a slice of the rail — rise, hold, settle. */
 .ss__stage--steps { display: grid; align-content: center; gap: clamp(36px, 7svh, 64px); padding-block: 64px 32px; }
-.ss__head { display: flex; align-items: end; justify-content: space-between; gap: 24px; }
-.ss__head > div { display: grid; gap: 10px; }
-.ss__head .ac-h2 { max-width: 20ch; }
+.ss__head { display: flex; justify-content: flex-end; }
 .ss__count { display: grid; justify-items: end; gap: 10px; white-space: nowrap; }
 .ss__count b { font-weight: inherit; color: var(--ink); }
 .ss__meter { position: relative; display: block; width: 132px; height: 2px; border-radius: 2px; background: var(--line-2); overflow: hidden; }
@@ -96,44 +64,32 @@
 .ss__k { transition: color var(--dur-s); }
 .ss__card.is-up .ss__k { color: var(--accent-ink); }
 .ss__t { font-size: var(--text-xl); font-weight: 650; font-stretch: 110%; line-height: 1.15; letter-spacing: -0.015em; }
-.ss__b { max-width: 34ch; font-size: var(--text-sm); color: var(--ink-2); text-wrap: pretty; }
-
-.ss__close { min-height: 80svh; display: grid; place-content: center; justify-items: center; gap: 14px; padding-block: 80px; text-align: center; border-top: 1px solid var(--line); }
-.ss__close .ac-h1 { max-width: 16ch; }
-.ss__close .ac-btn { margin-top: 10px; }
 
 /* Reduced motion and static: the rails collapse to their content; the card stays flat, every step at full opacity. */
 .ss--still .ss__rail { height: auto; }
 .ss--still .ss__stage { position: relative; height: auto; overflow: visible; }
 .ss--still .ss__stage--hero { min-height: 100svh; }
-.ss--still .ss__behind { display: none; }
 .ss--still .ss__stage--steps { padding-block: 72px; }
 
 @media (max-width: 900px) {
   .ss__panel { grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr); }
-  .ss__lede { font-size: var(--text-md); }
   .ss__card .ss__t { font-size: var(--text-lg); }
 }
 
 @media (max-width: 640px) {
-  .ss__bar nav { display: none; }
   .ss__rail--hero { height: 160svh; }
-  .ss__stage--hero { padding-block: 68px 92px; }
+  .ss__stage--hero { padding-block: 40px 72px; }
   .ss__panel { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) auto; gap: 8px; }
   .ss__photo { order: -1; }
-  .ss__copy { gap: 12px; padding: 6px 6px 4px; }
-  .ss__copy .ac-display { font-size: clamp(2.6rem, 1rem + 8vw, 3.4rem); }
+  .ss__title { padding: 6px 6px 4px; font-size: clamp(2.6rem, 1rem + 8vw, 3.4rem); }
   .ss__seal { left: auto; right: 12px; bottom: 12px; width: 78px; }
   .ss__seal small { font-size: 8.5px; }
-  .ss__behind { left: var(--pad-x); right: var(--pad-x); bottom: 24px; max-width: none; justify-items: start; text-align: left; font-size: var(--text-lg); }
-  .ss__behind span:last-child { max-width: 24ch; }
 
   .ss__stage--steps { padding-block: 64px 24px; gap: 18px; }
-  .ss__head { flex-direction: column; align-items: start; gap: 14px; }
+  .ss__head { justify-content: flex-start; }
   .ss__count { justify-items: start; }
   .ss__cards { grid-template-columns: 1fr; gap: 10px; }
   .ss__card figure { grid-template-columns: 34% minmax(0, 1fr); align-items: center; gap: 14px; }
   .ss__shot { height: auto; aspect-ratio: 1; }
   .ss__card .ss__t { font-size: var(--text-md); }
-  .ss__b { font-size: var(--text-xs); line-height: 1.45; }
 }

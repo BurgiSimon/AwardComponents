@@ -1,6 +1,6 @@
-// Flip grid — Ostra's shop index, rearranged three ways with GSAP Flip: a grid that becomes a list, a category filter
-// that re-flows what is left, and a product whose picture travels from its card into a detail dialog and back. Every
-// change is the same three steps: Flip.getState() records where things are, a class, a hidden attribute or a parent
+// Flip grid — Ostra's products (name and price) with their filter and view switches, rearranged three ways with
+// GSAP Flip: a grid that becomes a list, a category filter that re-flows what is left, and a product whose picture
+// travels from its card into a detail dialog and back. Every change is the same three steps: Flip.getState() records where things are, a class, a hidden attribute or a parent
 // changes, and Flip.from() animates from the record to the new layout. The DOM is never rebuilt, so listeners, focus
 // and the accessibility tree survive each change. Reduced and static: the same changes land on the next frame.
 import './demo.css';
@@ -56,17 +56,8 @@ export default function mount(root, options, ctx) {
 
   root.className = 'fg';
   root.innerHTML = html`
-    <header class="ac-bar fg__bar">
-      <a class="ac-brand" href="#top">${shop.name}</a>
-      <nav aria-label="Shop"><a href="#shop" aria-current="page">Shop</a><a href="#makers">Makers</a><a href="#care">Care</a></nav>
-      <a class="fg__bag" href="#bag">Bag (0)</a>
-    </header>
-    <section class="fg__index ac-wrap" aria-labelledby="fg-title">
-      <div class="fg__head">
-        <div class="fg__heading">
-          <p class="ac-label">Autumn objects</p>
-          <h1 class="ac-h1" id="fg-title">The shop</h1>
-        </div>
+    <section class="ac-stage fg__stage" aria-label="${shop.name} shop">
+      <div class="fg__index">
         <div class="fg__tools">
           <div class="fg__group" role="group" aria-label="Filter by category">
             <button type="button" class="fg__switch" data-filter="all" aria-pressed="true">All<span class="fg__n">${products.length}</span></button>
@@ -76,22 +67,22 @@ export default function mount(root, options, ctx) {
             ${['grid', 'list'].map((v) => html`<button type="button" class="fg__switch fg__view" data-view="${v}" aria-pressed="${v === 'grid'}"><svg viewBox="0 0 24 24" aria-hidden="true">${raw(VIEW_ICONS[v])}</svg><span>${v === 'grid' ? 'Grid' : 'List'}</span></button>`)}
           </div>
         </div>
-        <p class="fg__status ac-label" role="status" data-status>${products.length} of ${products.length} objects, as a grid</p>
+        <p class="sr-only" role="status" data-status>${products.length} of ${products.length} objects, as a grid</p>
+        <ul class="fg__works" role="list" data-view="grid" data-works>
+          ${products.map((p, i) => html`
+            <li class="fg__item" data-item="${p.id}" data-cat="${catOf(p.id)?.id || ''}">
+              <div class="fg__frame" data-part><div class="fg__plate" data-plate>${raw(imgTag(art[i]))}</div></div>
+              <h3 class="fg__name" data-part><button type="button" class="fg__open" data-open aria-haspopup="dialog">${p.name}</button></h3>
+              <p class="fg__price" data-part>${formatPrice(p.price)}</p>
+            </li>`)}
+        </ul>
       </div>
-      <ul class="fg__works" role="list" data-view="grid" data-works>
-        ${products.map((p, i) => html`
-          <li class="fg__item" data-item="${p.id}" data-cat="${catOf(p.id)?.id || ''}">
-            <div class="fg__frame" data-part><div class="fg__plate" data-plate>${raw(imgTag(art[i]))}</div></div>
-            <h3 class="fg__name" data-part><button type="button" class="fg__open" data-open aria-haspopup="dialog">${p.name}</button></h3>
-            <p class="fg__meta" data-part><span class="fg__material">${p.material.split(/,| with /)[0]} · ${p.colour}</span><span class="fg__price">${formatPrice(p.price)}</span></p>
-          </li>`)}
-      </ul>
+      <p class="ac-stage__note"><span>${shop.name} · shop index</span></p>
     </section>
     <dialog class="fg__detail" aria-labelledby="fg-dtitle" data-detail>
       <div class="fg__ground" data-ground></div>
       <div class="fg__dbar">
         <button type="button" class="ac-btn ac-btn--ghost ac-btn--sm" data-close><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg>Back to the shop</button>
-        <p class="ac-label" data-where></p>
       </div>
       <div class="fg__dbody">
         <div class="fg__dframe" data-slot aria-hidden="true"></div>
@@ -99,12 +90,9 @@ export default function mount(root, options, ctx) {
           <h2 class="ac-h1" id="fg-dtitle" data-dtitle></h2>
           <p class="fg__dprice" data-dprice></p>
           <p class="ac-body" data-dtext></p>
-          <dl class="fg__facts" data-facts></dl>
-          <div class="fg__buy"><a class="ac-btn ac-btn--lg" href="#bag">Add to bag</a><span class="ac-small">Ships from Os in 2–4 days</span></div>
         </div>
       </div>
     </dialog>`;
-  root.querySelectorAll('a[href^="#"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const list = root.querySelector('[data-works]');
   const items = [...list.children];
@@ -171,13 +159,9 @@ export default function mount(root, options, ctx) {
   // picture back in its card and flies it home over the page.
   function fill(li) {
     const p = products.find((x) => x.id === li.dataset.item);
-    dialog.querySelector('[data-where]').textContent = `${shop.name} / ${catOf(p.id)?.label || 'Objects'}`;
     dialog.querySelector('[data-dtitle]').textContent = p.name;
     dialog.querySelector('[data-dprice]').textContent = formatPrice(p.price);
     dialog.querySelector('[data-dtext]').textContent = NOTES[p.id] || '';
-    dialog.querySelector('[data-facts]').innerHTML = html`${[
-      ['Material', p.material], ['Size', `${p.dims.h} × ${p.dims.d} ${p.dims.unit}`], ['Weight', p.weight], ['Colours', p.colours.join(', ')],
-    ].map(([k, v]) => html`<div><dt class="ac-label">${k}</dt><dd>${v}</dd></div>`)}`;
   }
 
   function openDetail(li, opener) {

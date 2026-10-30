@@ -1,7 +1,7 @@
-// Tilt cards — Parallel's plans, each as the physical card that comes with it. The face turns toward a mouse
-// pointer (rotateY = max × nx, rotateX = −max × ny, so the corner under the pointer sinks); a shine twice the face
-// follows the pointer by translate and a shade gathers on the raised side. The link carries the perspective and is
-// measured; only the face rotates. One quickTo per property. Scrolling locks every card until 140 ms of quiet.
+// Tilt cards — Parallel's three plan cards, alone, with each plan's name and price under its card. The face turns
+// toward a mouse pointer (rotateY = max × nx, rotateX = −max × ny, so the corner under the pointer sinks); a shine
+// twice the face follows the pointer by translate and a shade gathers on the raised side. The link carries the
+// perspective and is measured; only the face rotates. One quickTo per property. Scrolling locks every card until 140 ms of quiet.
 // Mouse only, full motion only: touch, keyboard and reduced motion get flat cards.
 import './demo.css';
 import { on, finePointer, clamp, html, raw, content, formatPrice } from '../../src/demo-kit/index.js';
@@ -9,13 +9,12 @@ import { useGsap } from '../../src/demo-kit/gsap.js';
 
 const UNLOCK_MS = 140;
 const CARDS = [
-  { id: 'solo', holder: 'Aino Lehto', last: '4021', features: ['One current account', 'Invoices and reminders', 'A tax pot that fills itself'] },
-  { id: 'studio', holder: 'Halden Arkitekter', last: '7718', features: ['Cards for up to eight people', 'Limits per project', 'Three accounts, one view'] },
-  { id: 'practice', holder: 'Fable & Co', last: '0356', features: ['Up to twenty people', 'Approvals and an audit log', 'Exports for your accountant'] },
+  { id: 'solo', holder: 'Aino Lehto', last: '4021' },
+  { id: 'studio', holder: 'Halden Arkitekter', last: '7718' },
+  { id: 'practice', holder: 'Fable & Co', last: '0356' },
 ];
 const CHIP = '<svg viewBox="0 0 40 30" aria-hidden="true"><rect x="0.5" y="0.5" width="39" height="29" rx="6"/><path d="M0 10h12M0 20h12M28 10h12M28 20h12M12 0v30M28 0v30M12 15h16"/></svg>';
 const WAVES = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M8 8.5a5 5 0 0 1 0 7M11.5 6a8.5 8.5 0 0 1 0 12M15 3.5a12 12 0 0 1 0 17"/></svg>';
-const TICK = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3.5 8.5 3 3 6-7"/></svg>';
 
 export default function mount(root, options, ctx) {
   const { app } = content;
@@ -23,20 +22,12 @@ export default function mount(root, options, ctx) {
 
   root.className = 'tc';
   root.innerHTML = html`
-    <header class="ac-bar tc__bar">
-      <a class="ac-brand tc__brand" href="#top"><span class="tc__mark" aria-hidden="true"></span>${app.name}</a>
-      <nav aria-label="Main"><a href="#top">Features</a><a href="#top" aria-current="page">Plans</a><a href="#top">Log in</a></nav>
-    </header>
-    <section class="ac-wrap tc__plans" aria-labelledby="tc-title">
-      <div class="tc__head">
-        <p class="ac-label">Plans · ${app.tagline}</p>
-        <h1 class="ac-h1" id="tc-title">Every plan comes with a card worth keeping.</h1>
-      </div>
+    <section class="ac-stage tc__plans" aria-label="${app.name} plans">
       <ul class="tc__grid" role="list">
         ${app.plans.map((plan, i) => {
           const c = CARDS[i];
           return html`
-          <li class="tc__plan${i === 1 ? ' tc__plan--pick' : ''}">
+          <li class="tc__plan">
             <a class="tc__card" href="#${c.id}" data-tilt aria-label="${plan.name} card: see the details">
               <span class="tc__face tc__face--${c.id}" data-face>
                 <span class="tc__row"><span class="tc__wordmark"><span class="tc__mark" aria-hidden="true"></span>${app.name}</span><span class="tc__tier">${plan.name}</span></span>
@@ -46,16 +37,11 @@ export default function mount(root, options, ctx) {
                 <span class="tc__shine" data-shine aria-hidden="true"></span>
               </span>
             </a>
-            <div class="tc__info">
-              <p class="tc__name"><strong>${plan.name}</strong>${i === 1 ? html`<span class="ac-chip ac-chip--accent">Most chosen</span>` : ''}</p>
-              <p class="tc__price"><span class="ac-num">${formatPrice(plan.price)}</span><span class="ac-small">${plan.price ? 'a month, billed yearly' : 'for good'}</span></p>
-              <p class="ac-small">${plan.note}</p>
-              <ul class="tc__features" role="list">${c.features.map((f) => html`<li>${raw(TICK)}<span>${f}</span></li>`)}</ul>
-              <a class="ac-btn ${i === 1 ? 'ac-btn--accent' : 'ac-btn--ghost'}" href="#top">Choose ${plan.name}</a>
-            </div>
+            <p class="tc__info"><strong class="tc__name">${plan.name}</strong><span class="tc__price"><span class="ac-num">${formatPrice(plan.price)}</span> a month</span></p>
           </li>`;
         })}
       </ul>
+      <p class="ac-stage__note"><span>${app.name} · plans</span></p>
     </section>`;
   root.querySelectorAll('a[href^="#"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 

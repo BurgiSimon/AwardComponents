@@ -2,7 +2,7 @@ export default {
   id: 'section-switcher',
   title: 'Section switcher',
   category: 'scroll',
-  summary: 'A full-screen deck of case studies where the page never scrolls: the wheel fills a ring that commits one project at a threshold, and keys, swipes and buttons step the same deck.',
+  summary: 'A full-screen deck of projects, one picture and name per screen, where the page never scrolls: the wheel fills a ring that commits one step at a threshold; keys, swipes and buttons step too.',
   recipe: 'section-switcher-wheel-commit',
   deps: ['gsap'],
   tags: ['deck', 'wheel', 'observer', 'fullscreen', 'case-study', 'gsap', 'keyboard'],
@@ -15,7 +15,7 @@ export default {
     'A launch page that tells its story in a fixed number of steps',
   ],
   notes: [
-    'Every road reaches every panel: wheel, swipe, arrow and Page keys, Home and End, Prev and Next, and the project index. Each change is announced once in a polite live region.',
+    'Every road reaches every panel: wheel, swipe, arrow and Page keys, Home and End, and Prev and Next. Each change is announced once in a polite live region.',
     'Only the active panel is reachable; the others are inert. Prev and Next use aria-disabled at the ends so a focused button keeps focus.',
     'Under reduced motion the wheel, keys and swipe still step, the panels swap in place and the ring jumps instead of easing.',
   ],

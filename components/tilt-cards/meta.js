@@ -8,7 +8,7 @@ export default {
   tags: ['tilt', 'pointer', 'hover', 'shine', 'cards', 'quickto', 'pricing'],
   added: '2026-10-28',
   order: 30,
-  preview: { height: 640, hint: 'Move the mouse over a card', capture: { pointer: [0.46, 0.5], wait: 1100 } },
+  preview: { height: 500, hint: 'Move the mouse over a card', capture: { pointer: [0.58, 0.4], wait: 1100 } },
   useCases: [
     'A pricing section where each plan comes with a physical card',
     'Product, membership or ticket cards that should feel like objects',

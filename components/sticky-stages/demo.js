@@ -1,17 +1,18 @@
-// Sticky stages — a ceramics shop launches a vase. Two tall rails each hold a CSS-sticky stage; ScrollTrigger only
-// reads their progress (never pin: true). Across the hero rail the card hinges on its bottom-left corner
-// (x −10 %, −15°) while the seal on it turns harder and starts a beat later; across the second rail each step card
-// rises, holds and settles in turn. Reduced motion: the rails collapse to their content and nothing moves.
+// Sticky stages — a vase's hero card and its making-of steps (title and picture each). Two tall rails each hold a
+// CSS-sticky stage; ScrollTrigger only reads their progress (never pin: true). Across the hero rail the card hinges
+// on its bottom-left corner (x −10 %, −15°) while the seal on it turns harder and starts a beat later; across the
+// second rail each step card rises, holds and settles in turn. Reduced motion: the rails collapse to their content
+// and nothing moves.
 import './demo.css';
-import { on, html, raw, clamp, photo, photos, imageHTML, content, formatPrice } from '../../src/demo-kit/index.js';
+import { on, html, raw, clamp, photo, photos, imageHTML, content } from '../../src/demo-kit/index.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
 import { useLenis } from '../../src/demo-kit/lenis.js';
 
 const STEPS = [
-  { k: 'Thrown', t: 'On the wheel', b: 'Each vase starts as 2.2 kg of stoneware, thrown in one pull and left to stiffen overnight.', id: 'obj-jian-tea-bowl', tags: ['ceramic'] },
-  { k: 'Glazed', t: 'Dipped twice', b: 'An oat glaze mixed in the workshop; the foot is wiped back so the bare clay shows.', id: 'obj-grueby-vase', tags: ['ceramic', 'cool'] },
-  { k: 'Fired', t: '1,280 °C', b: 'Fourteen hours in a reduction kiln. The flame decides the last tenth of the colour.', id: 'obj-roman-oil-lamp', tags: ['ceramic', 'warm'] },
-  { k: 'Packed', t: 'Paper, not foam', b: 'Wrapped in moulded pulp and sent within three days, with the potter’s initials on the base.', id: 'tex-paper-sheets', tags: ['texture'] },
+  { t: 'Thrown on the wheel', id: 'obj-jian-tea-bowl', tags: ['ceramic'] },
+  { t: 'Glazed twice', id: 'obj-grueby-vase', tags: ['ceramic', 'cool'] },
+  { t: 'Fired at 1,280 °C', id: 'obj-roman-oil-lamp', tags: ['ceramic', 'warm'] },
+  { t: 'Packed in paper', id: 'tex-paper-sheets', tags: ['texture'] },
 ];
 
 // A named picture when the shared set has it, else a pick by tag (the set may change; a demo never depends on one file).
@@ -28,25 +29,10 @@ export default function mount(root, options, ctx) {
 
   root.className = 'ss';
   root.innerHTML = html`
-    <header class="ss__bar ac-bar">
-      <a class="ac-brand" href="#top">${shop.name}</a>
-      <nav aria-label="Shop"><a href="#top">Vases</a><a href="#top">Tableware</a><a href="#top">Journal</a></nav>
-      <a class="ss__bag" href="#top">Bag <span class="ac-num">0</span></a>
-    </header>
-
     <section class="ss__rail ss__rail--hero" data-rail="hero" aria-labelledby="ss-title">
       <div class="ss__stage ss__stage--hero">
-        <p class="ss__behind" aria-hidden="true"><span class="ac-label">Next</span><span>How a Tide Vase is made, in ${count} steps</span></p>
         <article class="ss__panel" data-hinge>
-          <div class="ss__copy">
-            <p class="ac-label ss__kicker">${shop.name} · Spring firing 2027</p>
-            <h1 class="ac-display" id="ss-title">${vase.name}</h1>
-            <p class="ss__lede">Thrown, glazed and fired by hand in a run of 120. ${vase.dims.h} cm tall, in oat, iron or celadon.</p>
-            <div class="ss__buy">
-              <a class="ac-btn ac-btn--lg ss__btn" href="#bag">Add to bag — ${formatPrice(vase.price)}</a>
-              <a class="ss__more" href="#ss-making" data-jump>See how it is made</a>
-            </div>
-          </div>
+          <h1 class="ac-display ss__title" id="ss-title">${vase.name}</h1>
           <figure class="ss__photo">
             <span class="ac-media">${raw(imageHTML(hero, { sizes: '(max-width: 700px) 90vw, 40vw', eager: true, alt: `${vase.name} in ${vase.colour.toLowerCase()}` }))}</span>
             <span class="ss__seal" data-hinge-child aria-hidden="true"><b>120</b><small>pieces<br>this run</small></span>
@@ -55,13 +41,10 @@ export default function mount(root, options, ctx) {
       </div>
     </section>
 
-    <section class="ss__rail ss__rail--steps" data-rail="steps" id="ss-making" aria-labelledby="ss-making-title">
+    <section class="ss__rail ss__rail--steps" data-rail="steps" aria-labelledby="ss-making-title">
       <div class="ss__stage ss__stage--steps">
         <div class="ss__head">
-          <div>
-            <p class="ac-label">How it is made</p>
-            <h2 class="ac-h2" id="ss-making-title">From wet clay to your shelf in a week.</h2>
-          </div>
+          <h2 class="sr-only" id="ss-making-title">How a ${vase.name} is made</h2>
           <p class="ss__count ac-label"><span><b data-count>Step 1</b> of ${count}</span><span class="ss__meter" aria-hidden="true"><span data-meter></span></span></p>
         </div>
         <ol class="ss__cards" role="list" style="--n:${count}">
@@ -70,24 +53,14 @@ export default function mount(root, options, ctx) {
               <figure>
                 <span class="ac-media ss__shot">${raw(imageHTML(shots[i], { sizes: '(max-width: 700px) 40vw, 30vw', alt: '' }))}</span>
                 <figcaption>
-                  <span class="ac-label ss__k">${String(i + 1).padStart(2, '0')} · ${s.k}</span>
+                  <span class="ac-label ss__k">${String(i + 1).padStart(2, '0')}</span>
                   <strong class="ss__t">${s.t}</strong>
-                  <span class="ss__b">${s.b}</span>
                 </figcaption>
               </figure>
             </li>`)}
         </ol>
       </div>
-    </section>
-
-    <section class="ss__close ac-wrap" aria-label="Buy">
-      <p class="ac-label">${vase.material}</p>
-      <p class="ac-h1">${vase.name}, ${formatPrice(vase.price)}.</p>
-      <p class="ac-small">${vase.dims.h} × ${vase.dims.d} cm · ${vase.weight} · Ships in three days</p>
-      <a class="ac-btn ac-btn--lg" href="#bag">Add to bag</a>
     </section>`;
-
-  root.querySelectorAll('a[href^="#"]:not([data-jump])').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const heroRail = root.querySelector('[data-rail="hero"]');
   const stepRail = root.querySelector('[data-rail="steps"]');
@@ -109,16 +82,8 @@ export default function mount(root, options, ctx) {
     cards.forEach((c, i) => c.classList.toggle('is-up', i < up && p > 0));
   };
 
-  const lenis = useLenis(ctx);
+  useLenis(ctx);
   const { gsap, ScrollTrigger, context } = useGsap(ctx, root);
-  on(ctx, root.querySelector('[data-jump]'), 'click', (e) => {
-    e.preventDefault();
-    const y = stepRail.getBoundingClientRect().top + scrollY;
-    if (lenis) lenis.scrollTo(y, { duration: 1.4 });
-    else scrollTo({ top: y });
-    stepRail.querySelector('h2').setAttribute('tabindex', '-1');
-    stepRail.querySelector('h2').focus({ preventScroll: true });
-  });
 
   if (ctx.motion !== 'full') {
     root.classList.add('ss--still');

@@ -9,7 +9,7 @@ export default {
   added: '2026-10-28',
   featured: true,
   order: 10,
-  preview: { height: 620, scroll: true },
+  preview: { height: 540, scroll: true, hint: 'Scroll: the rows speed up with you' },
   useCases: [
     'A “trusted by” row of client marks under a hero',
     'A strip of recent work or press quotes that moves without asking for attention',

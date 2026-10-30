@@ -1,7 +1,8 @@
-// Section switcher — Halden's selected work as a full-screen deck; the document never scrolls. GSAP Observer sums
+// Section switcher — Halden's selected work as a full-screen deck of pictures and project names; the document never
+// scrolls. GSAP Observer sums
 // wheel deltas (deltaMode normalised) into a visible ring that commits one step at `threshold`, then swallows the
 // wheel for `lock` ms; an idle second drains it and reversing starts a fresh sum. Swipe (> 55 px on release), arrow
-// and Page keys, Home/End, Prev/Next and the project index step the same index; each change is announced once.
+// and Page keys, Home/End and Prev/Next step the same index; each change is announced once.
 // Reduced/static: every input still steps, panels swap in place and the ring jumps.
 import './demo.css';
 import { Observer } from 'gsap/Observer';
@@ -25,27 +26,14 @@ export default function mount(root, options, ctx) {
 
   root.className = 'sw';
   root.innerHTML = html`
-    <header class="sw__bar">
-      <a class="ac-brand" href="#top">${studio.name}</a>
-      <p class="ac-label sw__where">Selected work · 2023–2026</p>
-      <nav aria-label="Studio"><a href="#top">Studio</a><a href="#top">Contact</a></nav>
-    </header>
-    <main class="sw__stage" data-stage>
+    <main class="sw__stage" data-stage aria-label="${studio.name} selected work">
       ${projects.map((p, i) => html`
         <section class="sw__panel" aria-labelledby="sw-t${i}" data-panel>
           <span class="ac-media sw__photo">${raw(imageHTML(pics[i], { sizes: '100vw', alt: '', eager: i < 2 }))}</span>
           <span class="sw__veil" aria-hidden="true"></span>
-          <div class="sw__copy">
-            <p class="ac-label" data-rise>${pad(i + 1)} — ${p.discipline} · ${p.place}</p>
-            <h2 class="ac-display" id="sw-t${i}" data-rise>${p.title}</h2>
-            <p class="sw__sum" data-rise>${p.summary}</p>
-            <p class="sw__meta" data-rise><span>${p.year}</span><span>${p.size}</span><a class="sw__link" href="#${p.slug}">View the project<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg></a></p>
-          </div>
+          <h2 class="ac-display sw__name" id="sw-t${i}" data-rise>${p.title}</h2>
         </section>`)}
     </main>
-    <ol class="sw__index" role="list" aria-label="Projects">
-      ${projects.map((p, i) => html`<li><button type="button" data-go="${i}"><span class="ac-num">${pad(i + 1)}</span><span>${p.title}</span></button></li>`)}
-    </ol>
     <nav class="sw__controls" aria-label="Projects deck">
       <div class="sw__keys">
         <button type="button" class="sw__key" data-prev aria-label="Previous project"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 12.5V3.5M4 7.5l4-4 4 4"/></svg></button>
@@ -58,7 +46,6 @@ export default function mount(root, options, ctx) {
       <p class="ac-label sw__count" aria-hidden="true" data-count>01 / 05</p>
     </nav>
     <p class="sr-only" aria-live="polite" data-live></p>`;
-  root.querySelectorAll('a[href^="#"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const html_ = document.documentElement;
   const stage = root.querySelector('[data-stage]');
@@ -69,7 +56,6 @@ export default function mount(root, options, ctx) {
   const arc = root.querySelector('[data-arc]');
   const count = root.querySelector('[data-count]');
   const live = root.querySelector('[data-live]');
-  const goBtns = [...root.querySelectorAll('[data-go]')];
   const full = ctx.motion === 'full';
   const { context } = useGsap(ctx, root);
 
@@ -103,7 +89,6 @@ export default function mount(root, options, ctx) {
     if (announce) live.textContent = `Project ${index + 1} of ${N}: ${projects[index].title}`;
     prevBtn.setAttribute('aria-disabled', String(index === 0)); // aria-disabled, not disabled: focus stays put
     nextBtn.setAttribute('aria-disabled', String(index === N - 1));
-    goBtns.forEach((b, i) => (i === index ? b.setAttribute('aria-current', 'step') : b.removeAttribute('aria-current')));
   };
 
   const goTo = (to) => {
@@ -192,7 +177,6 @@ export default function mount(root, options, ctx) {
   });
   on(ctx, prevBtn, 'click', () => goTo(index - 1));
   on(ctx, nextBtn, 'click', () => goTo(index + 1));
-  goBtns.forEach((b, i) => on(ctx, b, 'click', () => goTo(i)));
 
   sync(false); // announce changes, not the first panel on load
   if (ctx.capture && cfg.ring) gsap.set(arc, { strokeDashoffset: 0.38, autoRound: false }); // the thumbnail shows a gesture under way

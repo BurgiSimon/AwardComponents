@@ -1,6 +1,7 @@
-// Logo marquee — a banking app's "trusted by" band: a row of client marks and, running the other way, a row of
-// their work. One clock (the shared ticker) moves both tracks; each wraps at one copy's width, adds a damped share
-// of the Lenis velocity, pauses on hover and focus, and stops off-screen. Reduced motion: a still, wrapped grid.
+// Logo marquee — a banking app's "trusted by" rows alone on a sticky stage: a row of client marks and, running the
+// other way, a row of their work. One clock (the shared ticker) moves both tracks; each wraps at one copy's width,
+// adds a damped share of the Lenis velocity (the page scrolls under the sticky stage, so the boost can be felt),
+// pauses on hover and focus, and stops off-screen. Reduced motion: a still, wrapped grid.
 import './demo.css';
 import '../../src/demo-kit/serif.css';
 import { onFrame, on, whileVisible, damp, html, raw, photos, imageHTML, content } from '../../src/demo-kit/index.js';
@@ -30,11 +31,7 @@ export default function mount(root, options, ctx) {
   const work = photos({ tags: ['architecture'], count: 4, seed: 'lm-arch' }).concat(photos({ tags: ['interior'], count: 3, seed: 'lm-int' }));
   root.className = 'lm';
   root.innerHTML = html`
-    <section class="lm__band" aria-labelledby="lm-title">
-      <div class="ac-wrap lm__head">
-        <p class="ac-label">${app.name} · customers</p>
-        <h1 class="ac-h1" id="lm-title">Two hundred studios run their books on ${app.name}.</h1>
-      </div>
+    <section class="ac-stage lm__stage" aria-label="${app.name} customers">
       <div class="lm__row" data-row="logos" aria-label="Customers">
         <ul class="lm__track" role="list">${app.clients.map(logo)}</ul>
       </div>
@@ -43,13 +40,8 @@ export default function mount(root, options, ctx) {
           ${work.map((p, i) => html`<li class="lm__card"><a href="#work" class="lm__card-link"><span class="lm__media">${raw(imageHTML(p, { sizes: '320px', alt: '' }))}</span><span class="lm__cap"><strong>${studio.projects[i % studio.projects.length].title}</strong><span>${app.clients[(i * 3) % app.clients.length]}</span></span></a></li>`)}
         </ul>
       </div>
-    </section>
-    <section class="ac-wrap lm__after">
-      <div><strong class="ac-num">4.9</strong><span>average rating from studio owners</span></div>
-      <div><strong class="ac-num">11 min</strong><span>to open an account, ID included</span></div>
-      <div><strong class="ac-num">€0</strong><span>to send invoices in 32 currencies</span></div>
-    </section>
-    <p class="lm__hint ac-label">Scroll — the rows speed up with you</p>`;
+      <p class="ac-stage__note"><span>${app.name} · customers</span></p>
+    </section>`;
   root.querySelectorAll('a[href="#work"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const lenis = useLenis(ctx);
@@ -119,20 +111,12 @@ export default function mount(root, options, ctx) {
     row.querySelectorAll('img').forEach((img) => img.addEventListener('load', refill, { once: true, signal: ctx.signal }));
   });
   on(ctx, window, 'resize', () => rows.forEach((r) => r.track?.refill()));
-  // The fixed hint steps aside once the figures below reach it (at rest on a phone, or after a little scroll).
-  const hint = root.querySelector('.lm__hint');
-  const after = root.querySelector('.lm__after');
-  const placeHint = () => hint.classList.toggle('is-gone', after.getBoundingClientRect().top < innerHeight - 64);
-  on(ctx, window, 'scroll', placeHint, { passive: true });
-  on(ctx, window, 'resize', placeHint);
   apply();
-  placeHint();   // after apply: hiding the work row lifts the figures
-  document.fonts?.ready.then(placeHint);
 
   return {
     update(next, changed) {
       cfg = { ...next };
-      if (changed.some((k) => k === 'fade' || k === 'rows')) { apply(); placeHint(); }
+      if (changed.some((k) => k === 'fade' || k === 'rows')) apply();
     },
   };
 }

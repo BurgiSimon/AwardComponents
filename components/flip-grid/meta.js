@@ -17,7 +17,7 @@ export default {
     'Any index where readers change the arrangement more often than the content',
   ],
   notes: [
-    'Filters and views are aria-pressed buttons in labelled groups with counts; a status line says “4 of 8 objects, as a grid” after each change, and focus stays on the pressed control.',
+    'Filters and views are aria-pressed buttons in labelled groups with counts; a polite status, read to screen readers, says “4 of 8 objects, as a grid” after each change, and focus stays on the pressed control.',
     'Each product’s name is a button inside its heading; the detail is a native modal dialog, Escape runs the authored close and focus returns to the product that opened it.',
     'Under reduced motion and static every change lands on the next frame with no Flip and no fade.',
   ],

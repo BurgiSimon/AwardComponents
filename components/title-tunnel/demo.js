@@ -1,6 +1,6 @@
-// Title tunnel — an architecture studio's work section. The "Work" heading sits in a capsule; a scrubbed timeline
-// grows the capsule as cover^k (k linear 0 → 1) until its straight part covers the stage, while the viewport-sized
-// scene inside is counter-scaled by 1/s so the projects stay 1:1 behind the growing doorway. The title is not
+// Title tunnel — a studio's "Work" capsule and the projects inside it, alone on the stage. A scrubbed timeline grows
+// the capsule as cover^k (k linear 0 → 1) until its straight part covers the stage, while the viewport-sized scene
+// inside is counter-scaled by 1/s so the projects stay 1:1 behind the growing doorway. The title is not
 // counter-scaled, so it grows past you and fades. The projects wait at translate3d(x, y, −i × gap) under a 900 px
 // perspective, and only the list moves in z. Reduced motion: the heading and a flat grid, no 3D, no scrub.
 import './demo.css';
@@ -30,17 +30,8 @@ export default function mount(root, options, ctx) {
 
   root.className = 'tt';
   root.innerHTML = html`
-    <header class="ac-bar tt__bar">
-      <a class="ac-brand" href="#top">${studio.name}</a>
-      <nav aria-label="Studio">${studio.nav.map((n, i) => html`<a href="#top" ${i === 0 ? raw('aria-current="page"') : ''}>${n}</a>`)}</nav>
-    </header>
     <section class="tt__tunnel" data-tunnel data-mode="flat" aria-labelledby="tt-work">
       <div class="tt__stage" data-stage>
-        <div class="tt__lead" data-lead>
-          <p class="ac-label">${studio.full} · ${studio.city}</p>
-          <h1 class="tt__h1" id="tt-title">${studio.tagline}</h1>
-          <p class="tt__cue ac-label" aria-hidden="true">Scroll into the work</p>
-        </div>
         <div class="tt__mask" data-mask>
           <h2 class="tt__title" id="tt-work" data-title>Work</h2>
           <div class="tt__inner" data-inner>
@@ -50,18 +41,13 @@ export default function mount(root, options, ctx) {
                   <a href="#top" class="tt__link">
                     <span class="ac-media tt__media">${raw(imageHTML(shots[i], { sizes: '(max-width: 640px) 46vw, 22vw', eager: true, alt: '' }))}</span>
                     <span class="tt__name">${p.title}</span>
-                    <span class="ac-label tt__meta">${p.year} · ${p.discipline} · ${p.place}</span>
                   </a>
                 </li>`)}
             </ol>
           </div>
         </div>
+        <p class="ac-stage__note tt__note"><span>${studio.name} · work section</span></p>
       </div>
-    </section>
-
-    <section class="tt__outro ac-wrap" aria-labelledby="tt-outro">
-      <h2 class="ac-h2" id="tt-outro">${studio.projects.length} buildings, one coast. The archive goes back to 1976.</h2>
-      <a class="ac-btn ac-btn--lg" href="#top">Open the archive</a>
     </section>`;
   root.querySelectorAll('a[href="#top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
@@ -71,7 +57,6 @@ export default function mount(root, options, ctx) {
   const inner = root.querySelector('[data-inner]');
   const scene = root.querySelector('[data-scene]');
   const title = root.querySelector('[data-title]');
-  const lead = root.querySelector('[data-lead]');
   const items = [...scene.children];
 
   if (ctx.motion !== 'full') {
@@ -89,7 +74,7 @@ export default function mount(root, options, ctx) {
   let tl = null;
   const build = () => {
     if (tl) { tl.scrollTrigger?.kill(); tl.kill(); }
-    gsap.set([mask, inner, scene, title, lead], { clearProps: 'transform,opacity' });
+    gsap.set([mask, inner, scene, title], { clearProps: 'transform,opacity' });
     scene.style.setProperty('--gap', `${cfg.gap}px`);
     const depth = count * cfg.gap; // the flight ends with the last project at z 0
     let cover = coverScale();
@@ -112,7 +97,6 @@ export default function mount(root, options, ctx) {
         },
       });
       tl.to(zoom, { k: 1, duration: ZOOM, onUpdate: applyZoom }, 0)
-        .to(lead, { opacity: 0, duration: 0.12 }, 0.02)
         .to(title, { opacity: 0, duration: 0.5 }, 0.35)
         .fromTo(scene, { z: 0 }, { z: depth, duration: TRAVEL }, TRAVEL_AT);
       tl.depth = depth;

@@ -21,29 +21,12 @@
 :root[data-theme='dark'] .oi[data-ink='moss'] { --oi-ink: var(--moss); }
 :root[data-theme='dark'] .oi[data-ink='sky'] { --oi-ink: var(--sky); }
 
-/* ---- Bar and intro ---- */
-.oi__bar nav a[aria-current] { color: var(--ink); }
-.oi__ed { margin-left: 0.45em; font-family: var(--font-mono); font-size: 0.68em; font-weight: 500; font-stretch: 100%; letter-spacing: 0.02em; color: var(--muted); }
-
-.oi__intro { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 25rem); align-items: end; gap: 18px clamp(24px, 4vw, 48px); padding-block: clamp(8px, 2.5vh, 28px) clamp(20px, 4vh, 40px); }
-.oi__heading { display: grid; gap: 14px; }
-.oi__heading .ac-display { font-size: clamp(2.6rem, 1.4rem + 5vw, 6rem); }
-.oi__about { display: grid; gap: 10px; padding-bottom: 0.35em; }
-.oi__dates { font-size: var(--text-lg); font-weight: 680; font-stretch: var(--wide); letter-spacing: -0.015em; }
-.oi__lede { max-width: 46ch; font-size: var(--text-sm); line-height: 1.55; color: var(--ink-2); text-wrap: pretty; }
-.oi__legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 4px; font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-2); }
-.oi__legend li { display: inline-flex; align-items: center; gap: 7px; }
-.oi__swatch { width: 16px; height: 10px; border-radius: 1px; background: var(--m); }
-
 /* ---- The index ----
    Its own stacking context with its own ground, so the blend meets the paper and the plates inside it and nothing
    else on the page. Order inside: ground (-1) < plates (1) < marker (2) < words (3). The ground bleeds as far as the
    marker does, so the bar's ends are blended too. */
-.oi__index { position: relative; isolation: isolate; padding-bottom: clamp(40px, 7vw, 88px); }
+.oi__index { position: relative; isolation: isolate; width: min(100%, 1180px); }
 .oi__index::before { content: ''; position: absolute; z-index: -1; inset: 0 -12px; background: var(--oi-paper); pointer-events: none; }
-
-.oi__meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 24px; padding-bottom: 6px; }
-.oi__status { color: var(--ink-2); }
 
 .oi__head,
 .oi__link { display: grid; grid-template-columns: var(--oi-cols); column-gap: clamp(14px, 2vw, 28px); align-items: center; }
@@ -110,35 +93,14 @@ button.oi__h:hover { color: var(--ink); text-decoration-color: currentColor; }
 .oi__marker.is-on { opacity: 1; }
 .oi[data-overprint='off'] .oi__marker { mix-blend-mode: normal; }
 
-/* ---- Tickets and footer ---- */
-.oi__tickets { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr); gap: 20px 48px; padding-block: clamp(40px, 6vw, 72px); border-top: 1px solid var(--line-2); }
-.oi__tickets-head { display: grid; align-content: start; gap: 10px; }
-.oi__passes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-.oi__pass { display: grid; grid-template-rows: auto 1fr auto; gap: 6px; height: 100%; padding: 18px 18px 16px; border: 1px solid var(--line-2); border-radius: var(--radius-md); background: var(--surface); transition: border-color var(--dur-s) var(--ease-out); }
-.oi__pass:hover { border-color: var(--ink); }
-.oi__pass-name { font-weight: 680; font-stretch: 108%; }
-.oi__pass-note { font-size: var(--text-sm); color: var(--muted); }
-.oi__pass-price { margin-top: 10px; font-family: var(--font-mono); font-size: var(--text-lg); }
-.oi__foot { display: flex; flex-wrap: wrap; gap: 6px 28px; padding-block: 22px 40px; border-top: 1px solid var(--line); }
-
 /* ---- Narrower screens ---- */
 @media (max-width: 1100px) {
   .oi { --oi-cols: var(--oi-plate-w) minmax(0, 1fr) minmax(0, 6.6rem) minmax(0, 6.4rem) 3.2rem calc(var(--oi-size) * 0.9); }
   .oi__stage, .oi__day, .oi__time { font-size: var(--text-xs); }
 }
-@media (max-width: 960px) {
-  .oi__intro { grid-template-columns: minmax(0, 1fr) minmax(0, 21rem); }
-  .oi__about { gap: 8px; }
-  .oi__dates { font-size: var(--text-md); }
-  .oi__tickets { grid-template-columns: minmax(0, 1fr); }
-}
-@media (max-width: 680px) {
-  .oi__intro { grid-template-columns: minmax(0, 1fr); align-items: start; }
-}
 /* Phones: the plate as a block beside two lines, the name over stage, day and time. */
 @media (max-width: 640px) {
   .oi { --oi-plate-w: calc(var(--oi-size) * 2.3); }
-  .oi__bar nav a:not([aria-current]) { display: none; }
   .oi__head { display: flex; flex-wrap: wrap; column-gap: 18px; }
   .oi__h--time { display: none; }
   .oi__link { grid-template-columns: var(--oi-plate-w) auto auto minmax(0, 1fr); grid-template-areas: 'plate name name name' 'plate stage day time'; column-gap: 12px; row-gap: 4px; padding-block: 10px; }
@@ -149,7 +111,6 @@ button.oi__h:hover { color: var(--ink); text-decoration-color: currentColor; }
   .oi__time { grid-area: time; justify-self: end; }
   .oi__go { display: none; }
   .oi__link:focus-visible::after { inset: 3px -4px; }
-  .oi__passes { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* Forced colours drop blends and backgrounds: the marker would vanish or paint over the words, so the marked row

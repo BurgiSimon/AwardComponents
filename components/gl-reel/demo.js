@@ -1,6 +1,6 @@
-// Endless reel — Signal's past editions as a reel that never ends. The document does not scroll: wheel, touch and
-// keys move a virtual offset (in items, so a resize never loses the place), and one canvas draws every edition as a
-// segmented sheet on a modulo-wrapped belt: d = mod(i − offset + N/2, N) − N/2, so 2019 follows 2026. A wheel burst
+// Endless reel — Signal's past editions as a full-bleed reel that never ends, with a row of year labels under it.
+// The document does not scroll: wheel, touch and keys move a virtual offset (in items, so a resize never loses the
+// place), and one canvas draws every edition as a segmented sheet on a modulo-wrapped belt: d = mod(i − offset + N/2, N) − N/2, so 2019 follows 2026. A wheel burst
 // (≥ 40 px after a 30 ms gap, 500 ms after the last) is doubled and released over frames; a trackpad stream moves the
 // target directly. 200 ms after the last input the target rounds to an edition, the drawn offset follows by
 // damp(k = 6), and its velocity drives one uniform, uBend = clamp(v / 4) · sin(π·p): the sheets twist and fold in
@@ -122,17 +122,10 @@ export default function mount(root, options, ctx) {
 
   root.className = `rl${reel ? ' rl--reel' : ' rl--list'}`;
   root.innerHTML = html`
-    <header class="ac-bar rl__bar">
-      <a class="ac-brand" href="#top">${festival.name}</a>
-      <nav aria-label="Festival"><a href="#lineup">Line-up</a><a href="#archive" aria-current="page">Archive</a><a href="#tickets">Tickets</a></nav>
-    </header>
     <section class="rl__reel" aria-labelledby="rl-title">
+      <h2 class="sr-only" id="rl-title">${festival.name} editions, ${EDITIONS[N - 1].year}–${EDITIONS[0].year}</h2>
       <div class="rl__stage" data-stage></div>
-      <div class="rl__intro ac-wrap">
-        <h1 class="rl__title" id="rl-title">Eight summers on the harbour</h1>
-        <p class="rl__lede ac-small">${reel ? 'Wheel, swipe or use the arrow keys. The reel wraps, so 2019 follows 2026.' : 'Every edition since the first summer on Refshaleøen.'}</p>
-      </div>
-      <p class="rl__counter ac-label ac-num" aria-live="polite" data-counter></p>
+      <p class="sr-only" aria-live="polite" data-counter></p>
       <nav class="rl__index ac-wrap" aria-label="Editions">
         <ol class="rl__works" role="list">
           ${EDITIONS.map((e, i) => (reel
@@ -140,6 +133,7 @@ export default function mount(root, options, ctx) {
     : html`<li><a class="rl__work" href="#signal-${e.year}" data-work="${i}"><span class="rl__thumb ac-media" aria-hidden="true">${raw(pics[i] ? `<img src="${pics[i].srcSm || pics[i].src}" alt="" loading="lazy" decoding="async">` : '')}</span><span class="rl__n ac-label">${e.year} · ${e.head}</span><span class="rl__t">${e.title}</span></a></li>`))}
         </ol>
       </nav>
+      <p class="ac-stage__note rl__note"><span>${festival.name} · archive</span></p>
     </section>`;
   root.querySelectorAll('a[href^="#"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));   // the demo has no routes
 
@@ -255,8 +249,8 @@ export default function mount(root, options, ctx) {
   const card = { w: 0, h: 0, pitch: 1, cy: 0 };
   let W = 1, H = 1;
   const layoutCard = () => {
-    const top = root.querySelector('.rl__bar').offsetHeight + root.querySelector('.rl__intro').offsetHeight + 16;
-    const bottom = root.querySelector('.rl__index').offsetHeight + root.querySelector('.rl__counter').offsetHeight + 24;
+    const top = 24;
+    const bottom = root.querySelector('.rl__index').offsetHeight + 24;
     const room = Math.max(160, H - top - bottom);
     S.axis = cfg.orientation === 'auto' ? (W > H * 0.9 ? 'x' : 'y') : cfg.orientation === 'vertical' ? 'y' : 'x';
     if (S.axis === 'x') {
