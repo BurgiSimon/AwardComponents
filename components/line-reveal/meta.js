@@ -9,7 +9,7 @@ export default {
   added: '2026-10-28',
   featured: true,
   order: 10,
-  preview: { height: 560, capture: { wait: 2400 } },
+  preview: { height: 560, capture: { wait: 900 } },
   useCases: [
     'The opener of a long read: headline, dek and byline set in order',
     'Chapter headings and pull quotes on a studio or magazine site',

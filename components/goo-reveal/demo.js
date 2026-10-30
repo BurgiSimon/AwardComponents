@@ -34,6 +34,7 @@ export default function mount(root, options, ctx) {
       <header class="gr__open">
         <h1 class="gr__title" id="gr-title" data-goo>${article.title}</h1>
         <p class="gr__dek">${article.dek}</p>
+        <p class="ac-stage__note"><span>${magazine.name} · feature</span></p>
       </header>
       ${sections.map(([h, p], i) => html`<section class="gr__sec" aria-labelledby="gr-h${i}"><h2 class="gr__h2" id="gr-h${i}" data-goo>${h}</h2><p>${p}</p></section>`)}
     </article>

@@ -54,6 +54,7 @@ export default function mount(root, options, ctx) {
           </div>
         </figure>
         <div class="ps__rail" aria-hidden="true"><span class="ps__rail-fill" data-rail></span>${STEPS.map((_, i) => raw(`<span class="ps__tick" style="--at:${i / BEATS}" data-tick="${i}"></span>`))}</div>
+        <p class="ac-stage__note"><span>${product.maker} · how it works</span></p>
       </div>
     </section>`;
 

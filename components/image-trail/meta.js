@@ -8,7 +8,7 @@ export default {
   tags: ['cursor', 'pointer', 'trail', 'images', 'hero', 'velocity', 'portfolio'],
   added: '2026-10-28',
   order: 30,
-  preview: { height: 580, hint: 'Move the mouse across the open ground', capture: { wait: 600 } },
+  preview: { height: 540, hint: 'Move the mouse across the open ground', capture: { wait: 600 } },
   useCases: [
     'The first screen of a photographer’s or an illustrator’s portfolio',
     'A studio or agency hero that wants the work to show before the first scroll',

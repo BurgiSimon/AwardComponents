@@ -14,7 +14,7 @@ const SCROLL_KEYS = new Set(['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home
 export default function mount(root, options, ctx) {
   const { studio } = content;
   const project = studio.projects[1];
-  const [cover, a] = photos({ tags: ['architecture'], count: 2, seed: 'ss-tern' });
+  const [cover, a] = photos({ tags: ['architecture'], not: ['city'], count: 2, seed: 'ss-tern' });
   let cfg = { ...options };
 
   root.className = 'ss';
@@ -28,7 +28,7 @@ export default function mount(root, options, ctx) {
     <section class="ss__story ac-wrap" id="story" aria-labelledby="ss-story">
       <h2 class="ac-h1" id="ss-story">A reading room for a city that is dark for two months of the year.</h2>
       <p class="ac-body">Tromsø asked for a library that would be used in the polar night as much as in the midnight sun. The answer is one long room on the waterfront, under a roof that steps down toward the sound, with a single window forty-two metres long.</p>
-      <span class="ac-media ss__pic">${raw(imageHTML(a, { sizes: '100vw', alt: 'The long window from the reading room' }))}</span>
+      <span class="ac-media ss__pic">${raw(imageHTML(a, { sizes: '100vw', alt: 'Daylight falling down a concrete light well' }))}</span>
     </section>
     <div class="ss__gauge" aria-hidden="true" data-gauge>
       <span class="ss__rail"><span class="ss__mid"></span><span class="ss__dead ss__dead--top"></span><span class="ss__dead ss__dead--end"></span><span class="ss__dot" data-dot></span></span>

@@ -8,7 +8,7 @@ export default {
   tags: ['text', 'scroll', 'scrub', 'sticky', 'splittext', 'manifesto', 'gsap', 'lenis'],
   added: '2026-10-28',
   order: 20,
-  preview: { height: 640, scroll: true, hint: 'Scroll — the statement fills as you read', capture: { scroll: 0.2, wait: 1400 } },
+  preview: { height: 520, scroll: true, hint: 'Scroll — the statement fills as you read', capture: { scroll: 0.2, wait: 1400 } },
   useCases: [
     'A studio’s “what we believe” between the hero and the work',
     'A product’s one-sentence promise, read at the speed of the visitor’s hand',

@@ -1,5 +1,5 @@
 /* The slot: every view starts one bar plus one gap from the top. The exit reads this padding to aim the rise. */
-.se { --bar: 56px; --slot-gap: 24px; min-height: 100svh; overflow-x: clip; }
+.se { --bar: 56px; --slot-gap: 24px; position: relative; min-height: 100svh; overflow-x: clip; }
 .se a { text-decoration: none; }
 
 .se__bar {

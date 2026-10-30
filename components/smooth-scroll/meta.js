@@ -18,7 +18,7 @@ export default {
   notes: [
     'Keyboard, scrollbar and find-in-page scrolling stay native; Lenis only smooths wheel input (and touch when asked).',
     'Under reduced motion Lenis is not created at all: the page scrolls natively and the headline fades in instead of rising.',
-    'A skip link, landmarks and real headings; the readout and the progress bar are decorative and hidden from assistive tech.',
+    'A skip link, landmarks and a real heading; the readout and the progress bar are decorative and hidden from assistive tech.',
   ],
   controls: [
     { id: 'mode', label: 'Smoothing', type: 'select', options: [{ value: 'lerp', label: 'Lerp (chase)' }, { value: 'duration', label: 'Duration + easing' }], default: 'lerp', group: 'Lenis', help: 'A lerp chases the target a share per frame; a duration plays a fixed curve to it.', prompt: (v) => (v === 'duration' ? 'Smooth each wheel gesture over a fixed duration with an expo-out curve instead of a lerp, 1.2 s unless a duration is given below (default: lerp 0.1)' : 'Smooth with a lerp') },

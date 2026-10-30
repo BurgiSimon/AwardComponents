@@ -13,7 +13,7 @@ import { useLenis } from '../../src/demo-kit/lenis.js';
 gsap.registerPlugin(SplitText);
 
 export default async function mount(root, options, ctx) {
-  const { people } = content;
+  const { studio, people } = content;
   const [portrait] = photos({ tags: ['portrait'], count: 1, seed: 'swf-face' });
   let cfg = { ...options };
 
@@ -27,6 +27,7 @@ export default async function mount(root, options, ctx) {
           <span class="swf__face ac-media">${raw(imageHTML(portrait, { sizes: '48px', alt: '' }))}</span>
           <p><strong>${people[0].name}</strong><span>${people[0].role}</span></p>
         </div>
+        <p class="ac-stage__note"><span>${studio.name} · studio statement</span></p>
       </div>
     </section>`;
 

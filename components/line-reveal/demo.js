@@ -14,6 +14,9 @@ gsap.registerPlugin(SplitText);
 
 // Per-unit stagger as a share of the line stagger (the recipe's .1 for lines, .03 for words).
 const STEP = { lines: 1, words: 0.3, chars: 0.12 };
+// The thumbnail's moment, in seconds from the start: the headline set, the dek's last line and the paragraph's first
+// still rising out of their masks.
+const HOLD = 1.05;
 
 export default async function mount(root, options, ctx) {
   const { magazine } = content;
@@ -93,7 +96,7 @@ export default async function mount(root, options, ctx) {
           charsClass: 'lr-char',
           onSplit(self) {
             const targets = unit === 'lines' ? self.lines : unit === 'words' ? self.words : self.chars;
-            return gsap.from(targets, {
+            const tween = gsap.from(targets, {
               yPercent: from,
               duration: cfg.duration,
               ease: cfg.ease,
@@ -101,6 +104,8 @@ export default async function mount(root, options, ctx) {
               delay: below ? 0 : 0.12 + Number(el.dataset.delay || 0),
               scrollTrigger: below ? { trigger: el, start: 'top 85%', once: true } : undefined,
             });
+            if (ctx.capture && !below) tween.pause(Math.max(0, HOLD - tween.delay()));
+            return tween;
           },
         });
         built.push({ revert: () => { split.revert(); copy?.remove(); } });

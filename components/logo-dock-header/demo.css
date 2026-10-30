@@ -4,7 +4,7 @@
   --mark: 28px;
   overflow-x: clip;
 }
-.ld a:not(.ac-btn) { color: inherit; text-decoration: none; }
+.ld a { color: inherit; text-decoration: none; }
 
 /* The bar: fixed, clear over the hero, a translucent ground once the name has docked. */
 .ld__bar { position: fixed; inset: 0 0 auto; z-index: 20; display: flex; align-items: center; gap: 28px; height: var(--bar); padding-inline: var(--edge); }

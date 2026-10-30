@@ -4,21 +4,21 @@
 // trapped in the overlay (its Close button sits where the toggle is), Escape and links close, focus returns.
 // Reduced: no wipe.
 import './demo.css';
-import { on, html, raw, photos, imageHTML, content } from '../../src/demo-kit/index.js';
+import { on, html, raw, photo, imageHTML, content } from '../../src/demo-kit/index.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
 import { useLenis } from '../../src/demo-kit/lenis.js';
 
 const LINKS = [
-  { label: 'Work', count: 8, unit: 'projects', tag: 'architecture', note: 'Fjordhus, Hardanger' },
-  { label: 'Studio', count: null, tag: 'interior', note: 'The drawing room, Strandkaien' },
-  { label: 'Journal', count: 23, unit: 'entries', tag: 'landscape', note: 'Field notes from Læsø' },
-  { label: 'Contact', count: null, tag: 'city', note: 'Bergen, from the harbour' },
+  { label: 'Work', count: 8, unit: 'projects', photo: 'arch-marble-stair', note: 'Tern Library, Tromsø' },
+  { label: 'Studio', count: null, photo: 'interior-butterfly-chair', note: 'The drawing room, Strandkaien' },
+  { label: 'Journal', count: 23, unit: 'entries', photo: 'land-fog-forest', note: 'Field notes from Læsø' },
+  { label: 'Contact', count: null, photo: 'city-helsinki-rooftops', note: 'Bergen, from the studio roof' },
 ];
 const SOCIALS = ['Instagram', 'LinkedIn', 'Are.na'];
 
 export default function mount(root, options, ctx) {
   const { studio } = content;
-  const pics = LINKS.map((l, i) => photos({ tags: [l.tag], count: 1, seed: `fm-${i}` })[0]);
+  const pics = LINKS.map((l) => photo(l.photo));
   let cfg = { ...options };
 
   root.className = 'fm';
@@ -115,8 +115,9 @@ export default function mount(root, options, ctx) {
     if (v) lenis?.stop(); else lenis?.start();
   };
 
-  // `keyboard` decides whether the moved focus shows its ring: a mouse or the toolbar opening it should not.
-  function open({ keyboard = false } = {}) {
+  // `keyboard` decides whether the moved focus shows its ring: a mouse opening it should not. The toolbar passes
+  // `focus: false` and leaves focus where it is (the Tab trap picks it up from outside the overlay).
+  function open({ keyboard = false, focus = true } = {}) {
     if (state.open || state.animating) return;
     state.open = true;
     menu.hidden = false;
@@ -126,7 +127,7 @@ export default function mount(root, options, ctx) {
     setActive(0);
     state.animating = true;
     tl?.kill();
-    const done = () => { state.animating = false; links[0].focus({ preventScroll: true, focusVisible: keyboard }); };
+    const done = () => { state.animating = false; if (focus) links[0].focus({ preventScroll: true, focusVisible: keyboard }); };
     if (!full) {
       gsap.set(menu, { clipPath: 'none' });
       gsap.set([...words, ...rise], { yPercent: 0, opacity: 1 });
@@ -184,8 +185,8 @@ export default function mount(root, options, ctx) {
     },
     action(id) {
       if (id !== 'open') return;
-      if (state.open) close({ restoreFocus: false, then: open });
-      else open();
+      if (state.open) close({ restoreFocus: false, then: () => open({ focus: false }) });
+      else open({ focus: false });
     },
   };
 }

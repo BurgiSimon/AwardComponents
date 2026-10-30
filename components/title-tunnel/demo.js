@@ -4,7 +4,7 @@
 // counter-scaled, so it grows past you and fades. The projects wait at translate3d(x, y, −i × gap) under a 900 px
 // perspective, and only the list moves in z. Reduced motion: the heading and a flat grid, no 3D, no scrub.
 import './demo.css';
-import { on, html, raw, photos, imageHTML, content } from '../../src/demo-kit/index.js';
+import { on, html, raw, photo, photos, imageHTML, content } from '../../src/demo-kit/index.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
 import { useLenis } from '../../src/demo-kit/lenis.js';
 
@@ -24,7 +24,16 @@ export default function mount(root, options, ctx) {
   let cfg = { ...options };
   const count = Math.max(2, Math.min(studio.projects.length, Math.round(cfg.count)));
   const projects = studio.projects.slice(0, count);
-  const shots = projects.map((p, i) => photos({ tags: p.tags, count: 1, seed: `tt-${p.slug}-${i}` })[0]);
+  // Picked in order, each excluding the pictures before it, so no two projects share one. The city block is pinned to
+  // the snowy Helsinki roofs: the other city pictures show the Eiffel Tower and Manhattan.
+  const used = [];
+  const shots = projects.map((p, i) => {
+    const [s] = p.slug === 'granite-court'
+      ? [photo('city-helsinki-rooftops')]
+      : photos({ tags: p.tags, not: ['city'], exclude: used, count: 1, seed: `tt-${p.slug}-${i}` });
+    used.push(s.id);
+    return s;
+  });
   // The last project ends the flight at z 0, so it sits in the middle of the frame.
   const spot = (i) => (i === count - 1 ? [0, 0] : SPOTS[i % SPOTS.length]);
 

@@ -23,11 +23,6 @@
 .adh__frame, .adh__frame picture { position: absolute; inset: 0; display: block; }
 .adh__frame img { width: 100%; height: 100%; object-fit: cover; object-position: var(--fx) var(--fy); }
 
-/* The crop label names the composition on screen; it follows the same 48rem switch as the picture's source. */
-.adh__cap { position: absolute; z-index: 2; right: 16px; bottom: 14px; padding: 6px 10px; border-radius: var(--radius-pill); background: color-mix(in oklab, var(--night) 55%, transparent); color: var(--on-photo); backdrop-filter: blur(8px); }
-.adh__crop-tall, .adh[data-layout='split'] .adh__crop-wide { display: none; }
-.adh[data-layout='split'] .adh__crop-tall { display: inline; }
-
 .adh__note { z-index: 2; }
 
 /* The tuning aid: object-position maps the picture's x %/y % onto the frame's x %/y %, so the mark is exact. */
@@ -59,12 +54,9 @@
 .adh[data-layout='overlay'][data-side='right'] .adh__media::after { --dir: 270deg; }
 .adh[data-layout='overlay'][data-side='bottom'] .adh__media::after { --dir: 0deg; }
 .adh[data-layout='overlay'] .adh__copy { position: relative; z-index: 2; max-width: 38rem; color: var(--on-photo); }
-.adh[data-layout='overlay'] .adh__cap { right: var(--gutter); bottom: 22px; }
 .adh[data-layout='overlay'][data-side='right'] .adh__copy { justify-self: end; }
-.adh[data-layout='overlay'][data-side='right'] .adh__cap { right: auto; left: var(--gutter); }
 .adh[data-layout='overlay'][data-side='right'] .adh__note { justify-content: flex-end; }
 .adh[data-layout='overlay'][data-side='bottom'] .adh__copy { align-self: end; }
-.adh[data-layout='overlay'][data-side='bottom'] .adh__cap { bottom: auto; top: 22px; }
 
 /* Split: the headline and a portrait frame side by side. */
 .adh[data-layout='split'] .adh__hero {
@@ -83,14 +75,11 @@
 
 /* Phones: every layout takes the portrait composition, the headline first, then the picture (or low on it). */
 @media (max-width: 47.999rem) {
-  .adh__crop-wide { display: none; }
-  .adh__crop-tall { display: inline; }
   .adh[data-layout] .adh__hero { display: grid; grid-template-columns: 1fr; min-height: 0; gap: 24px; padding: 32px var(--gutter) 56px; }
   .adh[data-layout] .adh__media { position: relative; inset: auto; height: auto; width: 100%; aspect-ratio: 4 / 5; border-radius: var(--radius-lg); }
   .adh[data-layout='overlay'] .adh__hero { min-height: 100svh; padding: 0; align-items: end; }
   .adh[data-layout='overlay'] .adh__media { position: absolute; inset: 0; aspect-ratio: auto; border-radius: 0; }
   .adh[data-layout='overlay'] .adh__media::after { --dir: 0deg; background: linear-gradient(0deg, var(--c) 0%, var(--c) 44%, var(--c2) 64%, transparent 86%); }
   .adh[data-layout='overlay'] .adh__copy { align-self: end; justify-self: stretch; padding: 24px var(--gutter) 64px; }
-  .adh[data-layout='overlay'] .adh__cap { top: 14px; bottom: auto; right: 14px; left: auto; }
   .adh[data-layout='overlay'][data-side='right'] .adh__note { justify-content: flex-start; }
 }

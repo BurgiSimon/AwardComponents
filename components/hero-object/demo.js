@@ -140,6 +140,7 @@ export default function mount(root, options, ctx) {
     on(ctx, document, 'pointerleave', () => { s.tx = 0; s.ty = 0; pointerAway = true; dirty = true; });
   }
   if (moving) {
+    root.classList.add('ho--turn');
     useLenis(ctx);
     const { ScrollTrigger } = useGsap(ctx, root);
     const st = ScrollTrigger.create({ trigger: root.querySelector('.ho__track'), start: 'top top', end: 'bottom bottom', onUpdate: (self) => { s.turn = self.progress; dirty = true; } });

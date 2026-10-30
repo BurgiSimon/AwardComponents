@@ -5,7 +5,7 @@
 // <head> script, before first paint). Reduced motion: every state changes, nothing tweens.
 import './demo.css';
 import { gsap, useGsap } from '../../src/demo-kit/gsap.js';
-import { on, html, raw, photos, imageHTML, content } from '../../src/demo-kit/index.js';
+import { on, html, raw, photo, imageHTML, content } from '../../src/demo-kit/index.js';
 
 const KEYS = { theme: 'halden:theme', grid: 'halden:grid' };
 const store = {
@@ -26,7 +26,8 @@ const TILES = [
 export default function mount(root, options, ctx) {
   const { studio } = content;
   let cfg = { ...options };
-  const pics = photos({ tags: ['architecture'], not: ['city', 'interior'], count: 3, seed: 'dm-arch' });
+  // By id: buildings whose credits name no other place, landscape first for the 4:3 tile.
+  const pics = ['arch-concrete-slab', 'arch-bauhaus-facade', 'arch-light-shaft'].map((id) => photo(id, { fallbackTags: ['architecture'] }));
   const docEl = document.documentElement;
   root.className = 'dm';
   root.innerHTML = html`

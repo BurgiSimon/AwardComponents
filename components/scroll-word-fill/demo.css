@@ -30,10 +30,12 @@
 .swf__face { --ratio: 1; width: 40px; border-radius: 50%; flex: none; }
 .swf__sign p { display: grid; font-size: var(--text-sm); line-height: 1.35; }
 .swf__sign p span { color: var(--muted); }
+/* The stage is an .ac-wrap, already inside the gutter: the plate line lines up with it and sticks with it. */
+.swf__stage > .ac-stage__note { left: 0; right: 0; }
 
 /* Reduced motion and static: no stage, no fill. Also before the script runs under prefers-reduced-motion. */
 .swf--still .swf__fill { height: auto; }
-.swf--still .swf__stage { position: static; height: auto; min-height: 100svh; }
+.swf--still .swf__stage { position: relative; height: auto; min-height: 100svh; }
 @media (prefers-reduced-motion: reduce) {
   .swf .swf-word, .swf .swf-char { opacity: 1 !important; }
 }

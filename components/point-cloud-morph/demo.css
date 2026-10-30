@@ -5,10 +5,10 @@
 .pcm__stage { position: sticky; top: 0; height: 100svh; overflow: hidden; }
 .pcm__canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: pan-y; }
 
-/* The feature names under the cloud: one row of buttons, the active one marked by its rule. */
+/* The feature names under the cloud: one row of buttons, the active one marked by its rule, clear of the plate line. */
 .pcm__ui {
   position: absolute;
-  inset: auto 0 clamp(24px, 6vh, 56px);
+  inset: auto 0 clamp(48px, 9vh, 80px);
   z-index: 1;
   display: grid;
   justify-items: center;

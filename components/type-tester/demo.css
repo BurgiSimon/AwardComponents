@@ -4,7 +4,7 @@
 /* The tester: one big editable line and its axes. */
 .tt__tester {
   display: grid;
-  width: min(100%, 1040px);
+  width: min(100%, 1320px);
   gap: 16px;
   padding: clamp(18px, 2.4vw, 28px);
   background: var(--surface);

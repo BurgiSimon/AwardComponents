@@ -6,9 +6,10 @@
 
 /* The opener fills the first screen, so the title condenses in the middle of it; each section below reveals as it
    scrolls in. */
-.gr__open { display: grid; align-content: center; gap: 22px; min-height: 100svh; padding-block: 48px; }
-.gr__title { max-width: 8ch; font-family: var(--font-serif); font-variation-settings: 'opsz' 36; font-size: clamp(3.6rem, 1rem + 10vw, 9rem); font-weight: 560; line-height: 0.86; letter-spacing: -0.04em; }
-.gr__dek { max-width: 28ch; font-family: var(--font-serif); font-style: italic; font-size: clamp(1.35rem, 1rem + 1.2vw, 2rem); line-height: 1.2; color: var(--ink-2); }
+.gr__open { position: relative; display: grid; align-content: center; gap: 22px; min-height: 100svh; padding-block: 48px; }
+.gr__open > .ac-stage__note { left: 0; right: 0; }
+.gr__title { font-family: var(--font-serif); font-variation-settings: 'opsz' 36; font-size: clamp(3.6rem, 1rem + 10vw, 9rem); font-weight: 560; line-height: 0.86; letter-spacing: -0.04em; }
+.gr__dek { font-family: var(--font-serif); font-style: italic; font-size: clamp(1.35rem, 1rem + 1.2vw, 2rem); line-height: 1.2; color: var(--ink-2); text-wrap: pretty; }
 
 .gr__article { padding-bottom: clamp(80px, 30vh, 280px); }
 .gr__sec { padding-top: clamp(64px, 14vh, 140px); }

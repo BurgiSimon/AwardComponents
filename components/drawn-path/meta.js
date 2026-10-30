@@ -8,7 +8,7 @@ export default {
   tags: ['scroll', 'svg', 'path', 'stroke-dashoffset', 'timeline', 'scrub', 'scrolltrigger', 'gsap', 'lenis'],
   added: '2026-10-28',
   order: 80,
-  preview: { height: 680, scroll: true, hint: 'Scroll to draw the line', capture: { scroll: 0.26, wait: 1200 } },
+  preview: { height: 680, scroll: true, hint: 'Scroll to draw the line', capture: { scroll: 0.34, wait: 1200 } },
   useCases: [
     'A company history or a project timeline where the milestones are the content',
     'A route: a hike, a delivery journey, a ferry line, a supply chain',

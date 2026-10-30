@@ -11,14 +11,17 @@ import { on, html, raw, photo, allPhotos, imageHTML, content } from '../../src/d
 import { useGsap } from '../../src/demo-kit/gsap.js';
 
 const PHONE = '(max-width: 48rem)';
-// One different picture per item: its own tag first, then the fallbacks, then a drawn stand-in. photo(id) marks only
-// the pictures actually shown, so the component page credits exactly those.
-function uniquePictures(keys, tagsOf, fallbacks) {
+// Pinned by id where the tag pick lands on a painting, a landmark, or a credit naming another place.
+const PINNED = { stillwater: 'land-overcast-sea', 'granite-court': 'arch-concrete-slab', saltworks: 'land-dunes' };
+
+// One different picture per item: a pinned id, else its own tag first, then the fallbacks, then a drawn stand-in.
+// photo(id) marks only the pictures actually shown, so the component page credits exactly those.
+function uniquePictures(keys, tagsOf, fallbacks, pinned = {}) {
   const pool = allPhotos();
-  const used = new Set();
+  const used = new Set(Object.values(pinned));
   const take = (tags) => pool.find((m) => !used.has(m.id) && tags.every((t) => m.tags?.includes(t)));
   return Object.fromEntries(keys.map((k) => {
-    const m = [tagsOf(k), ...fallbacks].reduce((hit, tags) => hit || take(tags), null);
+    const m = pinned[k] ? { id: pinned[k] } : [tagsOf(k), ...fallbacks].reduce((hit, tags) => hit || take(tags), null);
     if (m) used.add(m.id);
     return [k, photo(m ? m.id : `pick-${k}`)];
   }));
@@ -32,7 +35,7 @@ export default function mount(root, options, ctx) {
   const startTitle = document.title;
   const urlFor = (slug) => { const u = new URL(location.href); if (slug) u.searchParams.set('p', slug); else u.searchParams.delete('p'); u.hash = ''; return u.href; };
   const slugOf = (url) => new URL(url, location.href).searchParams.get('p');
-  const pics = uniquePictures(projects.map((p) => p.slug), (slug) => projects.find((p) => p.slug === slug).tags.slice(0, 1), [['architecture'], ['interior'], ['landscape']]);
+  const pics = uniquePictures(projects.map((p) => p.slug), (slug) => projects.find((p) => p.slug === slug).tags.slice(0, 1), [['architecture'], ['interior'], ['landscape']], PINNED);
   const num = (i) => String(i + 1).padStart(2, '0');
 
   // One row layout for both pages, so the chosen row and the project page's heading line up exactly.
@@ -67,7 +70,8 @@ export default function mount(root, options, ctx) {
       <a class="ac-brand" href="${urlFor(null)}" data-pt="${uid}">${studio.name}</a>
       <a class="se__back" href="${urlFor(null)}" data-pt="${uid}" data-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>All work</a>
     </header>
-    <main data-taxi>${firstSlug ? caseView(projects.find((p) => p.slug === firstSlug), projects.findIndex((p) => p.slug === firstSlug)) : indexView}</main>`;
+    <main data-taxi>${firstSlug ? caseView(projects.find((p) => p.slug === firstSlug), projects.findIndex((p) => p.slug === firstSlug)) : indexView}</main>
+    <p class="ac-stage__note"><span>${studio.name} · selected work</span></p>`;
 
   const back = root.querySelector('[data-back]');
   const full = ctx.motion === 'full';

@@ -70,7 +70,7 @@
 .ap__toast {
   position: fixed;
   left: 50%;
-  bottom: 18px;
+  top: 18px; /* the title and the plate line hold the foot */
   translate: -50% 0;
   z-index: 10;
   display: flex;

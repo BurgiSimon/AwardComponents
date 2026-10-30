@@ -12,7 +12,7 @@
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr) auto;
   gap: clamp(14px, 3svh, 32px);
-  padding-block: clamp(32px, 7svh, 64px) clamp(20px, 4svh, 40px);
+  padding-block: clamp(32px, 7svh, 64px) clamp(48px, 9svh, 72px); /* the foot row clears the plate line */
   overflow: clip;
 }
 /* Under the track: the progress on the left, the counter and the arrows on the right. */
@@ -39,7 +39,7 @@
 .hr__viewport { min-height: 0; overflow: clip; }
 /* The track is max-content wide, so a % padding would be cyclic: demo.js copies the foot's padding in px. */
 .hr .hr__track { position: relative; display: flex; gap: var(--gap); width: max-content; height: 100%; margin: 0; padding: 0 var(--pad-px, var(--gutter)); will-change: transform; }
-.hr__card { flex: none; width: min(var(--card), calc((100svh - 240px) * 1.15)); min-width: 180px; height: 100%; }
+.hr__card { flex: none; width: min(var(--card), calc((100svh - 280px) * 1.15)); min-width: 180px; height: 100%; }
 .hr__link { display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 14px; height: 100%; }
 .hr__media { --ratio: auto; height: 100%; border-radius: var(--radius-md); }
 .hr__media img { transition: transform var(--dur-l) var(--ease-out); }

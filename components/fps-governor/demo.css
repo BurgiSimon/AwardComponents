@@ -1,9 +1,16 @@
 .fg { overflow-x: clip; }
 .fg [hidden] { display: none !important; }
 
-/* The stage: the map fills it edge to edge; the governor card sits in the middle. */
+/* The stage: the map fills it edge to edge and clears at the foot, under the plate line; the governor card sits in
+   the middle. */
 .fg__hero { isolation: isolate; overflow: clip; }
-.fg__stage { position: absolute; inset: 0; z-index: -2; }
+.fg__stage {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  -webkit-mask-image: linear-gradient(to top, transparent 32px, #000 160px);
+  mask-image: linear-gradient(to top, transparent 32px, #000 160px);
+}
 .fg__still {
   position: absolute;
   inset: 0;

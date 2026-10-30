@@ -153,7 +153,6 @@ export default function mount(root, options, ctx) {
   const reflect = () => {
     button.setAttribute('aria-pressed', String(state.sound !== 'off'));
     label.textContent = state.sound === 'on' ? 'Sound on' : state.sound === 'armed' ? 'Sound on · press anywhere' : 'Sound off';
-    root.dataset.audio = state.sound;
     const want = state.sound === 'on' && ctx.motion === 'full';
     if (want && !looping) { looping = true; ticker.add(paint); }
     if (!want && looping) { looping = false; ticker.remove(paint); }

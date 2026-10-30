@@ -7,7 +7,7 @@
 // everything set at once.
 import './demo.css';
 import '../../src/demo-kit/serif.css';
-import { on, ticker, damp, clamp, html, raw, photos, imageHTML, content } from '../../src/demo-kit/index.js';
+import { on, ticker, damp, clamp, html, raw, photo, imageHTML, content } from '../../src/demo-kit/index.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
 import { useLenis } from '../../src/demo-kit/lenis.js';
 
@@ -18,8 +18,9 @@ export default function mount(root, options, ctx) {
   const { magazine } = content;
   const story = magazine.articles[0];
   const P = magazine.longRead;
-  const [lead] = photos({ tags: ['landscape'], count: 1, seed: 'ss-lead', orientation: 'portrait' });
-  const [wide] = photos({ tags: ['water'], not: ['art'], count: 1, seed: 'ss-wide', orientation: 'landscape' });
+  // Named, because the captions describe these two pictures.
+  const lead = photo('interior-concrete-hall', { fallbackTags: ['interior', 'architecture'] });
+  const wide = photo('land-overcast-sea', { fallbackTags: ['water', 'landscape'] });
   const fig = (p, cls, sizes, cap, eager = false) => html`<figure class="${cls}" data-reveal><span class="ac-media">${raw(imageHTML(p, { sizes, alt: '', eager }))}</span><figcaption class="ac-small">${cap}</figcaption></figure>`;
   let cfg = { ...options };
 
@@ -34,12 +35,12 @@ export default function mount(root, options, ctx) {
             <h1 class="ss__title" id="ss-title"><span class="ss__mask"><span class="ss__line">Salt</span></span> <span class="ss__mask"><span class="ss__line"><em>and time</em></span></span></h1>
             <p class="ac-lede ss__dek">${story.dek}</p>
           </div>
-          ${fig(lead, 'ss__lead', '(max-width: 760px) 100vw, 46vw', 'The boiling house at Vesterø Havn, lit in May.', true)}
+          ${fig(lead, 'ss__lead', '(max-width: 760px) 100vw, 46vw', 'The new archive, before the ledgers moved in.', true)}
         </header>
         <div class="ss__body">
           <p class="ss__p ss__p--first" data-reveal>${P[0]}</p>
           <p class="ss__p" data-reveal>${P[2]}</p>
-          ${fig(wide, 'ss__wide', '(max-width: 1100px) 100vw, 1080px', 'Brine pans at the saltworks: iron, wood smoke and a day and a night per batch.')}
+          ${fig(wide, 'ss__wide', '(max-width: 1100px) 100vw, 1080px', 'The Kattegat off the island’s north point, in September.')}
           <p class="ss__p" data-reveal>${P[3]}</p>
           <p class="ss__p ss__p--last" data-reveal>${P[4]}</p>
         </div>

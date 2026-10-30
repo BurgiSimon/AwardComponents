@@ -145,7 +145,8 @@ export default function mount(root, options, ctx) {
       p: 1,
       ease: 'none', // the reading pace is the easing
       onUpdate: () => render(state.p),
-      scrollTrigger: { trigger: route, start: 'top 70%', end: 'bottom bottom', scrub: cfg.scrub > 0 ? cfg.scrub : true, invalidateOnRefresh: true },
+      // clamp(): the route opens the page, so its top never reaches 70 %; the draw starts at scroll 0 instead.
+      scrollTrigger: { trigger: route, start: 'clamp(top 70%)', end: 'bottom bottom', scrub: cfg.scrub > 0 ? cfg.scrub : true, invalidateOnRefresh: true },
     }));
   };
   arm();

@@ -4,7 +4,7 @@
 // cover; then the cover fades and is hidden. One proxy drives either the GL quad or, without WebGL, a CSS
 // clip-path circle. A press mid-cover reverses the same tween. Reduced and static: an instant swap, no GL context.
 import './demo.css';
-import { on, later, html, raw, photos, imageHTML, content } from '../../src/demo-kit/index.js';
+import { on, later, html, raw, photo, imageHTML, content } from '../../src/demo-kit/index.js';
 import { gsap } from '../../src/demo-kit/gsap.js';
 import { THREE, useRenderer, webglAvailable } from '../../src/demo-kit/three.js';
 
@@ -52,8 +52,9 @@ const fragmentShader = /* glsl */ `
 
 export default function mount(root, options, ctx) {
   const { studio } = content;
-  const [project] = studio.projects;
-  const [pic] = photos({ tags: ['architecture'], count: 1, seed: 'tw-card' });
+  // The card pairs the light well with the half-buried archive it could light; the picture keeps its own alt.
+  const project = studio.projects.find((p) => p.slug === 'saltworks');
+  const pic = photo('arch-light-shaft', { fallbackTags: ['architecture'] });
   const doc = document.documentElement;
   let cfg = { ...options };
   root.className = 'tw';
@@ -62,7 +63,7 @@ export default function mount(root, options, ctx) {
       <div class="tw__unit">
         <button class="tw__switch" type="button" aria-pressed="false" data-switch><span class="tw__track" aria-hidden="true"><span class="tw__knob"></span></span>Dark theme</button>
         <figure class="tw__card ac-card">
-          <div class="ac-media tw__pic">${raw(imageHTML(pic, { eager: true, sizes: '360px', alt: `${project.title}, ${project.place}` }))}</div>
+          <div class="ac-media tw__pic">${raw(imageHTML(pic, { eager: true, sizes: '360px' }))}</div>
           <figcaption class="tw__title">${project.title}</figcaption>
         </figure>
       </div>
@@ -206,13 +207,15 @@ export default function mount(root, options, ctx) {
 
   if (ctx.motion === 'full') later(ctx, ensureGL, 300);
 
-  // The thumbnail: a wipe from the switch held early, its ragged edge crossing the card.
+  // The thumbnail: a wipe pressed at the switch's lower left end, held early with a fixed seed, so its ragged edge
+  // dips into the card while the "Dark theme" label stays clear of it.
   if (ctx.capture && ctx.motion === 'full') {
     document.fonts.ready.then(() => {
       const r = toggle.getBoundingClientRect();
       S.requested = S.theme === 'dark' ? 'light' : 'dark';
-      start(S.requested, { x: Math.round(r.left + r.width * 0.2), y: Math.round(r.top + r.height / 2) }).pause();
-      proxy.p = 0.2;
+      start(S.requested, { x: Math.round(r.left + r.width * 0.04), y: Math.round(r.top + r.height * 0.8) }).pause();
+      if (S.surface === 'gl') gl.uniforms.uSeed.value = 10;
+      proxy.p = 0.12;
       paint();
     });
   }

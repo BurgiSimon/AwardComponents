@@ -5,30 +5,22 @@
 // its own name and holds still. Back names the tile being returned to inside the update and clears it once captured.
 // No library. Reduced motion, static and browsers without the API: a plain swap; focus moves either way.
 import './demo.css';
-import { on, html, raw, photo, allPhotos, imageHTML, content, formatPrice } from '../../src/demo-kit/index.js';
+import { on, html, raw, photo, imageHTML, content, formatPrice } from '../../src/demo-kit/index.js';
 
 const NAMES = { media: 'ostra-media', title: 'ostra-title' };
 
-// One different picture per item: its own tag first, then the fallbacks, then a drawn stand-in. photo(id) marks only
-// the pictures actually shown, so the component page credits exactly those.
-function uniquePictures(keys, tagsOf, fallbacks) {
-  const pool = allPhotos();
-  const used = new Set();
-  const take = (tags) => pool.find((m) => !used.has(m.id) && tags.every((t) => m.tags?.includes(t)));
-  return Object.fromEntries(keys.map((k) => {
-    const m = [tagsOf(k), ...fallbacks].reduce((hit, tags) => hit || take(tags), null);
-    if (m) used.add(m.id);
-    return [k, photo(m ? m.id : `pick-${k}`)];
-  }));
-}
+// Four products and the picture from the shared set that shows each: the tea bowl with its iron glaze stands in for
+// the cup, the bentwood side chair for the steam-bent one. photo(id) marks only the pictures actually shown, so the
+// component page credits exactly those; a missing id falls back to the product's own tag, then to a drawn stand-in.
+const PICS = { 'tide-vase': 'obj-celadon-vase', 'ember-cup': 'obj-jian-tea-bowl', 'luma-lamp': 'interior-lamp-corner', 'arc-chair': 'obj-gragg-side-chair' };
 
 export default function mount(root, options, ctx) {
   const { shop } = content;
-  const products = shop.products.slice(0, 4);
+  const products = Object.keys(PICS).map((id) => shop.products.find((p) => p.id === id));
   let cfg = { ...options };
   const html$ = document.documentElement;
   const startTitle = document.title;
-  const pics = uniquePictures(products.map((p) => p.id), (id) => products.find((p) => p.id === id).tags.slice(0, 1), [['product'], ['object']]);
+  const pics = Object.fromEntries(products.map((p) => [p.id, photo(PICS[p.id], { fallbackTags: p.tags.slice(0, 1) })]));
   const urlFor = (id) => { const u = new URL(location.href); if (id) u.searchParams.set('product', id); else u.searchParams.delete('product'); u.hash = ''; return u.href; };
   const idOf = (url) => { const id = new URL(url, location.href).searchParams.get('product'); return products.some((p) => p.id === id) ? id : null; };
 
@@ -53,7 +45,7 @@ export default function mount(root, options, ctx) {
           <p class="vt__price ac-num">${formatPrice(p.price)}</p>
           <p class="vt__line">${p.material}</p>
         </div>
-        <div class="ac-media vt__hero">${raw(imageHTML(pics[p.id], { eager: true, sizes: '(max-width: 760px) 100vw, 50vw', alt: `${p.name} in ${p.colour}` }))}</div>
+        <div class="ac-media vt__hero">${raw(imageHTML(pics[p.id], { eager: true, sizes: '(max-width: 760px) 100vw, 50vw' }))}</div>
       </div>
     </section>`;
 

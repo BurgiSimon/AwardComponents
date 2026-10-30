@@ -4,7 +4,7 @@
 // the title follows. Scroll is locked and the hero inert for the gate and hand-off only. A sessionStorage flag skips
 // it on repeat visits. Reduced: the curtain fades. Static: one cut once the signals land.
 import './demo.css';
-import { on, html, photos, image, content } from '../../src/demo-kit/index.js';
+import { on, html, photo, image, content } from '../../src/demo-kit/index.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
 
 const KEY = 'halden:aperture';
@@ -16,7 +16,8 @@ const remember = (on) => { try { if (on) sessionStorage.setItem(KEY, '1'); else 
 export default function mount(root, options, ctx) {
   const { studio } = content;
   const [project] = studio.projects;
-  const [hero] = photos({ tags: ['architecture'], count: 1, seed: 'ap-hero', orientation: 'landscape' });
+  // By id: a landscape building whose credit names no real place, so it can stand for the project.
+  const hero = photo('arch-concrete-slab', { fallbackTags: ['architecture'] });
   let cfg = { ...options };
   root.className = 'ap';
   root.innerHTML = html`

@@ -113,7 +113,7 @@ export default function mount(root, options, ctx) {
   root.innerHTML = html`
     <div class="ac-stage ol__stage">
       <section class="ol__panel" role="dialog" aria-modal="true" aria-labelledby="ol-title" aria-describedby="ol-desc">
-        <div class="ol__head"><p class="ac-label">Export · Year 2026</p><button class="ol__x" type="button" aria-label="Cancel the export"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+        <p class="ac-label">Export · Year 2026</p>
         <h1 class="ol__title" id="ol-title" data-title>Preparing your export</h1>
         <p class="ac-small" id="ol-desc">Everything your accountant asked for, in one file. It takes about a minute.</p>
         <figure class="ol__loader" data-stage>

@@ -9,7 +9,7 @@ export default {
   requires: ['webgl'],
   added: '2026-10-28',
   order: 60,
-  preview: { height: 600, scroll: true, hint: 'Move the pointer, then scroll', capture: { pointer: [0.85, 0.25], wait: 1400 } },
+  preview: { height: 540, scroll: true, hint: 'Move the pointer, then scroll', capture: { pointer: [0.85, 0.25], wait: 1400 } },
   useCases: [
     'A cover or campaign photograph that should feel like a place, not a print',
     'A painting or illustration in an exhibition or shop page, with its layers drawn as a depth pass',

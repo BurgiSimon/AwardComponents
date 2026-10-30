@@ -86,7 +86,7 @@ export default async function mount(root, options, ctx) {
       <div class="wr__gl" data-gl></div>
       <div class="wr__scrim" aria-hidden="true"></div>
       <div class="wr__copy ac-wrap">
-        <h1 class="wr__title" id="wr-title">A house for the dark half of the year.</h1>
+        <h1 class="wr__title" id="wr-title">The view ${project.title} was built around.</h1>
         <button class="wr__toggle" type="button" aria-pressed="false" data-toggle><span class="wr__sun">${svg('sun')}</span><span class="wr__moon">${svg('moon')}</span><span data-toggle-label>Night</span></button>
       </div>
       <p class="ac-stage__note ac-stage__note--media"><span>${studio.name} · project hero</span></p>

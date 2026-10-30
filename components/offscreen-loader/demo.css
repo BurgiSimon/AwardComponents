@@ -14,10 +14,6 @@
   background: var(--raised);
   box-shadow: var(--shadow-3);
 }
-.ol__head { display: flex; justify-content: space-between; align-items: center; }
-.ol__x { display: grid; place-items: center; width: 34px; height: 34px; margin: -6px -8px -6px 0; border: 0; border-radius: 50%; background: transparent; color: var(--ink-2); }
-.ol__x:hover { background: var(--bg-2); color: var(--ink); }
-.ol__x svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
 .ol__title { font-size: var(--text-2xl); font-weight: 700; font-stretch: var(--wide); line-height: 1.08; letter-spacing: -0.025em; }
 
 .ol__loader { display: grid; gap: 8px; margin: 2px 0 0; padding: 10px 0 12px; border-radius: var(--radius-lg); background: var(--bg-2); }
@@ -58,6 +54,12 @@
   .ol__loader { padding: 8px 0; }
   .ol__loader canvas { height: clamp(88px, 14vh, 200px); }
   .ol__steps li { padding-block: 6px; }
+}
+
+/* The in-page preview (620 px): less air above and between, so the panel fits with the plate line clear below it. */
+@media (max-height: 680px) {
+  .ol__stage { padding-block: 24px 52px; }
+  .ol__panel { gap: 6px; }
 }
 
 @media (max-width: 720px) {

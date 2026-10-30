@@ -22,11 +22,9 @@
 /* The list of words, shown only under reduced motion, where the slot holds the first word still. */
 .rw .rw__steps { display: none; flex-wrap: wrap; justify-content: center; gap: 8px 22px; margin: 0; }
 .rw--list .rw__steps { display: flex; }
-.rw__steps li { display: inline-flex; align-items: center; gap: 8px; color: var(--faint); transition: color var(--dur-s); }
+.rw__steps li { display: inline-flex; align-items: center; gap: 8px; color: var(--ink-2); }
 .rw__steps li::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-.rw__steps li.is-on { color: var(--ink); }
 .rw__steps li.is-on::before { background: var(--accent); }
-.rw--list .rw__steps li { color: var(--ink-2); }
 
 @media (max-width: 760px) {
   /* The slot keeps the widest word's width; on a narrow line it ends the line, so that space never shows. */

@@ -13,7 +13,14 @@ const ARROW = (d) => raw(`<svg viewBox="0 0 24 24" fill="none" stroke="currentCo
 export default function mount(root, options, ctx) {
   const { studio } = content;
   const projects = studio.projects;
-  const shots = projects.map((p, i) => photos({ tags: p.tags, count: 1, seed: `hr-${p.slug}-${i}` })[0]);
+  // Picked in order, each excluding the pictures before it, so no two cards share one; city pictures only for a city
+  // project.
+  const used = [];
+  const shots = projects.map((p, i) => {
+    const [s] = photos({ tags: p.tags, not: p.tags.includes('city') ? [] : ['city'], exclude: used, count: 1, seed: `hr-${p.slug}-${i}` });
+    used.push(s.id);
+    return s;
+  });
   const n = projects.length;
   const pad = (i) => String(i).padStart(2, '0');
   let cfg = { ...options };
@@ -50,6 +57,7 @@ export default function mount(root, options, ctx) {
             <button class="hr__arrow" type="button" data-step="1" aria-label="Next project">${ARROW('next')}</button>
           </div>
         </div>
+        <p class="ac-stage__note"><span>${studio.name} · selected work</span></p>
       </div>
     </section>`;
   root.querySelectorAll('a[href="#top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));

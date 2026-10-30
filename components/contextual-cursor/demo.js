@@ -4,7 +4,7 @@
 // over [data-cursor] targets the ring grows into a badge that names the gesture (View, Play/Pause, Drag). The loop
 // sleeps once both parts settle. Coarse pointers: never created.
 import './demo.css';
-import { on, onFrame, damp, finePointer, colour, html, raw, photos, videos, credit, imageHTML, content } from '../../src/demo-kit/index.js';
+import { on, onFrame, damp, finePointer, colour, html, raw, photo, photos, video, imageHTML, content } from '../../src/demo-kit/index.js';
 
 const DOT_LERP = 0.75;
 const k = (lerp) => -Math.log(1 - lerp) * 60; // a per-frame lerp → a damping rate
@@ -19,14 +19,13 @@ const icon = (name) => raw(`<svg viewBox="0 0 24 24" fill="none" stroke="current
 
 export default function mount(root, options, ctx) {
   const { studio } = content;
-  const [lead] = photos({ tags: ['architecture'], count: 1, seed: 'cc-work' });
+  const lead = photo('city-helsinki-rooftops', { fallbackTags: ['city', 'architecture'] });
   const strip = photos({ tags: ['object'], count: 4, seed: 'cc-strip' }).concat(photos({ tags: ['texture'], count: 3, seed: 'cc-tex' }));
-  const reelPic = photos({ tags: ['landscape'], count: 1, seed: 'cc-reel' })[0];
-  const film = videos[0];
-  credit(film);
+  const film = video('video-desert-clouds');
+  const reelPic = film ? null : photos({ tags: ['landscape'], count: 1, seed: 'cc-reel' })[0];
   let cfg = { ...options };
 
-  const p = studio.projects[0];
+  const p = studio.projects.find((x) => x.slug === 'granite-court');
 
   root.className = 'cc';
   root.innerHTML = html`
@@ -50,7 +49,7 @@ export default function mount(root, options, ctx) {
                 </span>
               </span>
             </button>
-            <span class="cc__cap"><strong>Showreel</strong><span>Filmed on site · 2022–26</span></span>
+            <span class="cc__cap"><strong>Showreel</strong><span>Light studies · 2022–26</span></span>
           </li>
         </ul>
         <div class="cc__strip" data-cursor="drag" tabindex="0" role="group" aria-label="From the workshop">
@@ -63,13 +62,13 @@ export default function mount(root, options, ctx) {
 
   // The reel: a real toggle button. With a video in the media set it plays it; otherwise the still drifts.
   const reel = root.querySelector('.cc__reel');
-  const video = reel.querySelector('video');
+  const reelVideo = reel.querySelector('video');
   on(ctx, reel, 'click', () => {
     const playing = reel.getAttribute('aria-pressed') !== 'true';
     reel.setAttribute('aria-pressed', String(playing));
     reel.dataset.cursor = playing ? 'pause' : 'play';
     reel.querySelector('.sr-only').textContent = playing ? 'Pause the showreel' : 'Play the showreel';
-    if (video) (playing ? video.play().catch(() => {}) : video.pause());
+    if (reelVideo) (playing ? reelVideo.play().catch(() => {}) : reelVideo.pause());
     cursor?.refresh();
   });
 

@@ -33,7 +33,7 @@ export default {
     skill: 'webgl',
     ask: 'Give {target} a single 3D object that leans toward the pointer.',
     target: 'the product hero',
-    brief: 'One object, lit by a generated studio environment (RoomEnvironment through PMREM, no HDR file), leans up to 18° toward a fine pointer (60 % of that vertically) on a damped spring, a = k·(target − angle) − c·v with k = 16 and c = 5.5, so it overshoots and settles instead of easing in. Scrolling the hero out of view adds a 120° turn. Colour swatches in the DOM repaint its material live, and it renders only while the spring is settling or something has changed.',
+    brief: 'One object, lit by a generated studio environment (RoomEnvironment through PMREM, no HDR file), leans up to 18° toward a fine pointer (60 % of that vertically) on a damped spring, a = k·(target − angle) − c·v with k = 16 and c = 5.5, so it overshoots and settles instead of easing in. Scrolling through the hero adds a 120° turn. Colour swatches in the DOM repaint its material live, and it renders only while the spring is settling or something has changed.',
     keep: [
       'the finish choice and any copy around the object stay HTML (the swatches a real radio group); the canvas is aria-hidden.',
       'a drawn still in the canvas’s place without WebGL; a held three-quarter view under reduced motion (no pointer follow, no scroll turn); pointer tilt for fine pointers only.',

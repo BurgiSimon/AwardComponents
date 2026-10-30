@@ -4,7 +4,7 @@ export default {
   title: 'Cell curtain',
   category: 'loaders-transitions',
   summary: 'Kova One’s three-page site behind one curtain of cells: the bars weave shut from a corner on arrival and on every route, the page swaps behind them, and they weave open again.',
-  description: 'One curtain does the arrival and every route change. A fixed grid of cells, rebuilt to the viewport at about 72 × 75 px each, grows from hairlines into solid bars, swept by grid distance from the bottom-right cell, so the page seems to weave shut, change behind the weave and weave open again.\n\nThe curtain is shut from the first paint. The arrival waits for the type and the decode of every picture on the page, holds at least 0.9 s on a first visit (0.25 s on a repeat visit in this session) and never more than 4 s; turn on the stalled request and press Replay arrival to see the ceiling open the page. Overview, Sound and Buy are hash routes: a route asked for while the curtain is still shut waits for it, the page swaps only once every cell is shut, and back and forward bring the scroll back to where the page was left.',
+  description: 'One curtain does the arrival and every route change. A fixed grid of cells, rebuilt to the viewport at about 72 × 75 px each, grows from hairlines into solid bars, swept by grid distance from the bottom-right cell, so the page seems to weave shut, change behind the weave and weave open again.\n\nThe curtain is shut from the first paint. The arrival waits for the type and the decode of every picture on the page, holds at least 0.9 s on a first visit (0.25 s on a repeat visit in this session) and never more than 4 s; turn on the stalled request and press Replay arrival to see the ceiling open the page. Overview, Sound and Buy are hash routes: a route asked for while the curtain is still shut waits for it, the page swaps only once every cell is shut, and back and forward route through the same curtain.',
   recipe: 'dither-cell-transition',
   deps: ['gsap'],
   tags: ['transition', 'router', 'preloader', 'gsap', 'stagger', 'loading', 'grid', 'history', 'storage', 'accessibility'],
@@ -20,7 +20,6 @@ export default {
   notes: [
     'The curtain is hidden from assistive tech and the page behind it is inert while it is up, so no Tab stop hides under the cells and no key press routes mid-sweep.',
     'After a route change focus moves to the new page’s heading, the title names the page and a polite live region announces it. The skip link’s fragment is an in-page target, never a route.',
-    'Back and forward bring the scroll back to where a page was left; following a link opens it at the top.',
     'Under reduced motion the shut grid fades in and out in 0.2 s instead of weaving; static motion cuts. The gate, the queue and the focus rules stay the same.',
   ],
   controls: [

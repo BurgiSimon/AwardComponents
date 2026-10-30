@@ -80,7 +80,7 @@
 .cp__toast {
   position: fixed;
   left: 50%;
-  bottom: 18px;
+  bottom: 56px; /* clear of the plate line */
   translate: -50% 0;
   z-index: 10;
   display: flex;

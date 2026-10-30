@@ -54,10 +54,12 @@
 .ps__tick { position: absolute; left: 50%; top: calc(var(--at) * 100%); width: 10px; height: 10px; translate: -50% -50%; border-radius: 50%; background: var(--bg); border: 2px solid var(--line-2); transition: border-color var(--dur-s), background-color var(--dur-s); }
 .ps__tick.is-done { border-color: var(--ink); background: var(--ink); }
 .ps--no-rail .ps__rail { display: none; }
+/* The plate line sits on the steps' left edge: the stage is already inset by .ac-wrap. */
+.ps__stage > .ac-stage__note { left: 0; right: 0; }
 
 /* Reduced motion: no stage; every step in order with its settled diagram once. */
 .ps--still .ps__chapter { height: auto; }
-.ps--still .ps__stage { position: static; height: auto; grid-template-areas: 'steps fig'; padding-block: 64px; align-items: start; }
+.ps--still .ps__stage { position: relative; height: auto; grid-template-areas: 'steps fig'; padding-block: 64px; align-items: start; }
 .ps--still .ps__steps { gap: 32px; }
 .ps--still .ps__step { grid-area: auto; opacity: 1; transform: none; }
 .ps--still .ps__rail { display: none; }
@@ -67,4 +69,5 @@
   .ps__room { max-height: 38svh; }
   .ps__eq { display: none; }
   .ps__rail { right: 6px; }
+  .ps--still .ps__stage { grid-template-areas: 'fig' 'steps'; }
 }

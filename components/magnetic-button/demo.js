@@ -19,7 +19,7 @@ export default function mount(root, options, ctx) {
     <section class="ac-stage mb__stage" id="contact" aria-label="Contact">
       <a class="mb__cta" href="mailto:${studio.email}" data-magnet data-primary>
         <span class="mb__body"></span>
-        <span class="mb__label" data-magnet-label>Start a<br>project<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+        <span class="mb__label" data-magnet-label>Start a <br>project<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
       </a>
       <ul class="mb__icons" role="list">
         <li><a class="mb__icon" href="mailto:${studio.email}" aria-label="Email" data-magnet><span class="mb__body"></span><span class="mb__label" data-magnet-label>${svg('mail')}</span></a></li>

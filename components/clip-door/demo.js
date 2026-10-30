@@ -39,7 +39,7 @@ export default function mount(root, options, ctx) {
     <section class="cd__door" data-door aria-labelledby="cd-title">
       <div class="cd__stage" data-stage>
         <div class="cd__room">
-          <span class="cd__photo">${raw(imageHTML(room, { sizes: '100vw', eager: true, alt: `${project.title}: the reading room and its long window` }))}</span>
+          <span class="cd__photo">${raw(imageHTML(room, { sizes: '100vw', eager: true, alt: `${project.title}: daylight falling down a concrete light well` }))}</span>
           <h1 class="cd__title" id="cd-title">${project.title}</h1>
         </div>
         <div class="cd__veil" data-veil aria-hidden="true">

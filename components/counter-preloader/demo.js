@@ -5,7 +5,7 @@
 // skips it on repeat visits. Reduced: the count and a 300 ms hold, then a fade with the lines in place. Static: no
 // panel at all.
 import './demo.css';
-import { on, html, raw, photos, image, content, colour } from '../../src/demo-kit/index.js';
+import { on, html, raw, allPhotos, image, content, colour } from '../../src/demo-kit/index.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
 
 const KEY = 'signal:preloaded';
@@ -18,7 +18,9 @@ export default function mount(root, options, ctx) {
   const { festival } = content;
   let cfg = { ...options };
   // The site's first pictures, decoded off the page: what a real first visit would wait for before the hero shows.
-  const pics = photos({ tags: ['night'], count: 1, seed: 'cp-hero' }).concat(photos({ tags: ['people'], count: 3, seed: 'cp-days' }));
+  // Taken from allPhotos(), which records nothing: they are never shown, so the component page does not credit them.
+  const pool = allPhotos();
+  const pics = pool.filter((m) => m.tags?.includes('night')).slice(0, 1).concat(pool.filter((m) => m.tags?.includes('people')).slice(0, 3));
   root.className = 'cp';
   root.innerHTML = html`
     <main class="ac-stage cp__stage" data-page>

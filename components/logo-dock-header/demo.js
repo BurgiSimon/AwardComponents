@@ -6,20 +6,20 @@
 // Reduced/static: the link sits in the bar; an aria-hidden copy fills the hero and fades; the underline jumps.
 import './demo.css';
 import '../../src/demo-kit/serif.css';
-import { on, onFrame, observeResize, clamp, lerp, html, raw, photos, imageHTML, content } from '../../src/demo-kit/index.js';
+import { on, onFrame, observeResize, clamp, lerp, html, raw, photo, imageHTML, content } from '../../src/demo-kit/index.js';
 import { useLenis } from '../../src/demo-kit/lenis.js';
 
 const cubicInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 const CHAPTERS = [
-  { id: 'shop', label: 'Shop', title: 'The spring run', tag: 'object', alt: 'Pieces from the spring run' },
-  { id: 'process', label: 'Process', title: 'Two kilns, fired forty times a year.', tag: 'interior', alt: 'The glazing room' },
-  { id: 'visit', label: 'Visit', title: 'The studio shop is open on Saturdays.', tag: 'landscape', alt: 'The coast at Os' },
+  { id: 'shop', label: 'Shop', title: 'The spring run', photo: 'obj-grueby-vase', alt: 'A tall vase in a matte leaf-green glaze, with raised leaves from foot to rim' },
+  { id: 'process', label: 'Process', title: 'Two kilns, fired forty times a year.', photo: 'obj-celadon-vase', alt: 'A pale celadon bottle vase with a round body and a slender neck' },
+  { id: 'visit', label: 'Visit', title: 'The studio shop is open on Saturdays.', photo: 'land-overcast-sea', alt: 'Surf around a low rocky islet off the coast at Os' },
 ];
 
 export default function mount(root, options, ctx) {
   const { shop } = content;
-  const lead = photos({ tags: ['ceramic'], count: 1, seed: 'ld-lead' })[0];
-  const pics = CHAPTERS.map((c) => photos({ tags: [c.tag], count: 1, seed: `ld-${c.id}` })[0]);
+  const lead = photo('obj-jian-tea-bowl', { fallbackTags: ['ceramic'] });
+  const pics = CHAPTERS.map((c) => photo(c.photo));
   let cfg = { ...options };
   const full = ctx.motion === 'full';
 
@@ -35,9 +35,10 @@ export default function mount(root, options, ctx) {
     </header>
     <a class="ld__mark" href="#top" data-mark><span class="ld__word" data-word></span></a>
 
-    <section class="ld__hero ac-wrap" aria-label="${shop.name}" data-hero>
+    <section class="ld__hero ac-wrap" aria-labelledby="ld-title" data-hero>
+      <h1 class="sr-only" id="ld-title" data-title></h1>
       <div class="ld__ref" aria-hidden="true" data-ref><span class="ld__word ld__copy" data-copy></span></div>
-      <figure class="ac-media ld__lead">${raw(imageHTML(lead, { sizes: '100vw', alt: 'A stoneware vase in an oat glaze', eager: true }))}</figure>
+      <figure class="ac-media ld__lead">${raw(imageHTML(lead, { sizes: '100vw', alt: 'A stoneware tea bowl in a dark streaked glaze', eager: true }))}</figure>
     </section>
     ${CHAPTERS.map((c, i) => html`
       <section class="ld__chapter ac-wrap" id="${c.id}" data-chapter="${c.id}" aria-labelledby="ld-${c.id}">
@@ -147,6 +148,7 @@ export default function mount(root, options, ctx) {
     const word = cfg.word.trim() || 'Ostra';
     root.querySelectorAll('[data-word], [data-copy]').forEach((el) => { el.textContent = word; });
     mark.setAttribute('aria-label', `${word}, back to the top`);
+    root.querySelector('[data-title]').textContent = `${word}. ${shop.tagline}`;
     root.dataset.face = cfg.face;
   };
   const refresh = () => { measure(); lastTransform = ''; placeMark(); placeLine(0, true); };

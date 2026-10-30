@@ -1,8 +1,10 @@
 .dp { --on-photo: var(--bg); overflow-x: clip; }
 :root[data-theme='dark'] .dp { --on-photo: var(--ink); }
 
-/* The cover holds still while the page scrolls under it, so the scroll drift has room to show. */
+/* The cover holds still while the page scrolls under it, so the scroll drift has room to show. The flat photograph
+   (reduced motion, static, no WebGL) has no drift, so its track is just the cover. */
 .dp__track { height: 170svh; }
+.dp:not(.dp--gl) .dp__track { height: auto; }
 
 /* The photograph (and the canvas that draws it with depth), a scrim, then the masthead. */
 .dp__hero { position: sticky; top: 0; height: 100svh; display: grid; align-content: start; overflow: hidden; color: var(--on-photo); background: var(--night); }

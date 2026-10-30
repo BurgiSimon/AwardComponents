@@ -23,7 +23,7 @@ export default {
     { id: 'sample', label: 'Sample text', type: 'text', default: 'Sound you can stop noticing.', maxLength: 80, group: 'Tester', prompt: false },
     { id: 'weight', label: 'Weight', type: 'range', min: 200, max: 900, step: 10, default: 760, group: 'Tester', prompt: 'Tester weight: {value} (default {default})' },
     { id: 'width', label: 'Width', type: 'range', min: 75, max: 125, step: 1, default: 118, unit: '%', group: 'Tester', prompt: 'Tester width: {value} (default {default})' },
-    { id: 'size', label: 'Size', type: 'range', min: 16, max: 160, step: 2, default: 96, unit: 'px', group: 'Tester', help: 'Capped by the viewport on narrow screens; the readout shows the size actually set.', prompt: 'Tester size: {value}, capped at 10 % of the box width + 12 px (default {default})' },
+    { id: 'size', label: 'Size', type: 'range', min: 16, max: 160, step: 2, default: 96, unit: 'px', group: 'Tester', help: 'Capped at 10 % of the card width + 12 px; the readout shows the size actually set.', prompt: 'Tester size: {value}, capped at 10 % of the box width + 12 px (default {default})' },
   ],
   prompt: {
     skill: 'component',

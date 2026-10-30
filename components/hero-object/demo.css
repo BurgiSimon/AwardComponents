@@ -1,7 +1,8 @@
 .ho { overflow-x: clip; background: radial-gradient(60% 60% at 50% 44%, color-mix(in oklab, var(--accent) 7%, var(--bg-2)), var(--bg) 70%); }
 
-/* The stage holds still while the page scrolls under it; that scroll is what turns the object. */
-.ho__track { height: 170svh; }
+/* The stage holds still while the page scrolls under it; that scroll is what turns the object. Without the turn
+   (reduced motion, no WebGL) the track is just the stage. */
+.ho--turn .ho__track { height: 170svh; }
 .ho__pin { position: sticky; top: 0; --stage-gap: clamp(12px, 2.5vh, 24px); }
 
 .ho__stage { position: relative; width: min(100%, 560px); height: min(58svh, 540px); min-height: 240px; }
@@ -12,10 +13,11 @@
 .ho__swatches { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 0; padding: 0; border: 0; }
 .ho__swatches legend { width: 100%; margin-bottom: 12px; padding: 0; text-align: center; }
 .ho__swatches legend span { color: var(--ink); }
-.ho__sw { position: relative; width: 34px; height: 34px; border-radius: 50%; background: var(--sw); box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.15); cursor: pointer; transition: transform var(--dur-s) var(--ease-spring); }
+/* The edge reads on both grounds (3:1 for Graphite on the dark stage), so every swatch shows where it is. */
+.ho__sw { --sw-edge: color-mix(in oklab, var(--ink) 30%, transparent); position: relative; width: 34px; height: 34px; border-radius: 50%; background: var(--sw); box-shadow: inset 0 0 0 1px var(--sw-edge); cursor: pointer; transition: transform var(--dur-s) var(--ease-spring); }
 .ho__sw:hover { transform: scale(1.08); }
 .ho__sw input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
-.ho__sw:has(input:checked) { box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.15), 0 0 0 3px var(--bg), 0 0 0 5px var(--ink); }
+.ho__sw:has(input:checked) { box-shadow: inset 0 0 0 1px var(--sw-edge), 0 0 0 3px var(--bg), 0 0 0 5px var(--ink); }
 .ho__sw:has(input:focus-visible) { box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--focus); }
 
 @media (max-width: 760px) {

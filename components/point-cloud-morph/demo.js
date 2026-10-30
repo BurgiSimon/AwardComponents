@@ -46,6 +46,7 @@ export default async function mount(root, options, ctx) {
             ${features.map((f, i) => html`<li><button type="button" class="pcm__item" data-item="${i}"><span class="ac-label">0${i + 1}</span><span class="pcm__t">${f.title}</span></button></li>`)}
           </ol>
         </div>
+        <p class="ac-stage__note"><span>${product.maker} · features</span></p>
       </div>
     </section>`;
 

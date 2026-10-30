@@ -1,5 +1,5 @@
 .im { overflow-x: clip; }
-.im a:not(.ac-btn) { color: inherit; text-decoration: none; }
+.im a { color: inherit; text-decoration: none; }
 
 /* The header across the top of an empty stage, and its Shop disclosure. */
 .im__bar { position: absolute; inset: 0 0 auto; z-index: 30; background: var(--bg); border-bottom: 1px solid var(--line); }
