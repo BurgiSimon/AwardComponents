@@ -10,14 +10,14 @@ export default {
   requires: ['webgl2'],
   added: '2026-10-28',
   order: 41,
-  preview: { height: 640, hint: 'Drag across the sand', capture: { action: 'stroke', wait: 4200 } },
+  preview: { height: 600, hint: 'Drag across the sand', capture: { action: 'stroke', wait: 4200 } },
   useCases: [
     'A project or place page whose subject is hidden under a surface: sand, snow, salt, soil',
     'A campaign hero that rewards play while the headline and the button stay untouched',
     'A reveal of a drawing, map or second photograph under a textured cover',
   ],
   notes: [
-    'The canvas is aria-hidden; the headline, facts and buttons are real HTML, and the brush has no force over them.',
+    'The canvas is aria-hidden; the headline and the reset button are real HTML, and the brush has no force over them.',
     '“Smooth the sand” is a real button. On touch the canvas keeps vertical swipes for scrolling; horizontal swipes brush.',
     'Under reduced motion no grain flies: the brush uncovers the plan in place and the reset fades it. Static draws the sand once.',
     'Without WebGL 2 (or a renderable state format) the hero keeps a drawn sand ground and the copy card.',

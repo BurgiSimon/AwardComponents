@@ -1,7 +1,8 @@
-// Grain field — the hero of a project page for an archive half buried in a dune. Every grain of sand keeps its own
-// displacement (RG) and velocity (BA), in CSS pixels, in one texel of a float render target that is read and
-// rewritten each frame (ping-pong). The pointer brushes a capsule from its last position to the current one
-// (falloff 1 − r³, delta clamped to 24 px a frame); a protect mask drawn from the copy card's rectangle scales the
+// Grain field — a project hero for an archive half buried in a dune: the sand, the plan under it and a small copy
+// card (headline and reset), full-bleed with no page around it. Every grain of sand keeps its own displacement (RG)
+// and velocity (BA), in CSS pixels, in one texel of a float render target that is read and rewritten each frame
+// (ping-pong). The pointer brushes a capsule from its last position to the current one (falloff 1 − r³, delta
+// clamped to 24 px a frame); a protect mask drawn from the copy card's and the plate line's rectangles scales the
 // force to zero there. Two points passes draw the plan drawing under every grain that moved, then the grains at
 // home + displacement, coloured from the sand image at their home. The loop leaves the ticker 150 frames after the
 // last input. Reduced motion: no grain flies, the brush only uncovers the plan in place. Static: the sand, once.
@@ -255,47 +256,27 @@ const RIPPLE_BG = 'repeating-linear-gradient(-22deg, transparent 0 14px, color-m
 
 export default function mount(root, options, ctx) {
   const { studio } = content;
-  const project = studio.projects.find((p) => p.slug === 'saltworks');
   let cfg = { ...options };
   root.className = 'gf';
   root.innerHTML = html`
-    <header class="ac-bar gf__bar">
-      <a class="ac-brand" href="#top">${studio.name}</a>
-      <nav aria-label="Studio">${studio.nav.map((n, i) => html`<a href="#top"${i === 0 ? ' aria-current="page"' : ''}>${n}</a>`)}</nav>
-    </header>
     <section class="gf__hero" data-field aria-labelledby="gf-title" style="--ripples:${RIPPLE_BG}">
       <div class="gf__canvas" data-stage></div>
       <div class="gf__copy ac-wrap">
         <div class="gf__card" data-protect>
-          <p class="ac-label">${project.title} · ${project.place.replace(', ', ' · ')}</p>
           <h1 class="ac-h1" id="gf-title">Half buried, so the dune can keep moving.</h1>
-          <p class="gf__lede">An archive for a salt-making island, set into the sand with one long slot facing the horizon. The plan is under the dune: brush the sand aside to find it.</p>
-          <dl class="gf__facts">
-            <div><dt class="ac-label">Year</dt><dd>${project.year}</dd></div>
-            <div><dt class="ac-label">Area</dt><dd>${project.size}</dd></div>
-            <div><dt class="ac-label">Client</dt><dd>Læsø Kommune</dd></div>
-          </dl>
-          <div class="gf__actions">
-            <a class="ac-btn" href="#story">Read the case study</a>
-            <button type="button" class="ac-btn ac-btn--ghost" data-reset>
-              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3.5 10a6.5 6.5 0 1 0 2-4.7"/><path d="M3.5 3.5v3.2h3.2"/></svg>
-              Smooth the sand
-            </button>
-          </div>
+          <button type="button" class="ac-btn" data-reset>
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3.5 10a6.5 6.5 0 1 0 2-4.7"/><path d="M3.5 3.5v3.2h3.2"/></svg>
+            Smooth the sand
+          </button>
         </div>
       </div>
-    </section>
-    <section class="gf__story ac-wrap" id="story" aria-label="Project notes">
-      <p class="ac-label">The brief</p>
-      <p class="ac-h3">Every ledger since 1788 — weights, weather, the names of the boys who carried peat — in a room that will not flood, overheat or block the view of the pans.</p>
-      <p class="ac-body">The building sits two metres into the dune. Wind keeps moving the sand across its roof; inside, one slot at eye height follows the horizon from the boiling house to the sea.</p>
+      <p class="ac-stage__note"><span data-protect>${studio.name} · project hero</span></p>
     </section>`;
-  root.querySelectorAll('a[href^="#"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const hero = root.querySelector('[data-field]');
   const stage = root.querySelector('[data-stage]');
   const resetBtn = root.querySelector('[data-reset]');
-  const protect = [root.querySelector('[data-protect]')];
+  const protect = [...root.querySelectorAll('[data-protect]')]; // the card first (freeZone reads it), then the plate line
   // The part of the hero the copy card leaves free (top-down field px): right of the card on wide screens, above
   // it on narrow ones. The plan is drawn there and the scripted stroke sweeps it.
   const freeZone = () => {
@@ -372,7 +353,7 @@ export default function mount(root, options, ctx) {
     grains.geometry.dispose();
   });
 
-  // Protect mask at field resolution from the copy card's rectangle (+12 px); white = no force.
+  // Protect mask at field resolution from the copy card's and plate line's rectangles (+12 px); white = no force.
   const drawMask = () => {
     const field = hero.getBoundingClientRect();
     const c = makeCanvas(f.cols, f.rows);

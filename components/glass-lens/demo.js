@@ -1,10 +1,11 @@
-// Glass lens — a magazine's "Weather" issue with a hailstone of glass that reads the page. The words and hairlines
-// around the glass are painted again into a square 2D canvas (only that square, snapped to 48 px, repainted at
-// most every 30 ms); a back-face pass writes the glass's exit normals into a small target; the front face refracts
-// in through its own normal and out through the back one at twelve wavelengths (six on touch), weighted into red,
-// green and blue, then adds a Fresnel reflection of an analytic studio. Each section names an anchor; the glass
-// follows their weighted mean on a stiff spring (46, damped just under critical) from the hero to the footer.
-// Reduced motion: placed at the anchor, no travel or spin, still refracting. Static or no WebGL: no glass.
+// Glass lens — a magazine's "Weather" cover word and a hailstone of glass that reads it, alone on the stage, with two
+// more words below for the glass to travel to. The words and hairlines around the glass are painted again into a
+// square 2D canvas (only that square, snapped to 48 px, repainted at most every 30 ms); a back-face pass writes the
+// glass's exit normals into a small target; the front face refracts in through its own normal and out through the
+// back one at twelve wavelengths (six on touch), weighted into red, green and blue, then adds a Fresnel reflection
+// of an analytic studio. Each word's stage names an anchor; the glass follows their weighted mean on a stiff spring
+// (46, damped just under critical). Reduced motion: placed at the anchor, no travel or spin, still refracting.
+// Static or no WebGL: no glass.
 import './demo.css';
 import * as THREE from 'three';
 import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry.js';
@@ -102,42 +103,19 @@ function glassGeometry(shape) {
 export default function mount(root, options, ctx) {
   const { magazine } = content;
   let cfg = { ...options };
-  const stories = magazine.articles;
   root.className = 'gk';
   root.innerHTML = html`
     <div class="gk__cols" aria-hidden="true">${Array.from({ length: 12 }, () => html`<i></i>`)}</div>
-    <header class="ac-bar gk__bar">
-      <a class="ac-brand" href="#top">${magazine.name}</a>
-      <nav aria-label="Magazine"><a href="#top">Issues</a><a href="#top">Stories</a><a href="#top">Subscribe</a></nav>
-    </header>
-    <main>
-      <section class="gk__block gk__hero ac-wrap" data-anchor="0.76,0.6,0.34" data-anchor-sm="0.72,0.45,0.3" aria-labelledby="gk-title">
-        <p class="ac-label" data-paint>Issue 14 · Autumn 2026 · 112 pages</p>
-        <h1 class="gk__display" id="gk-title" data-paint>Weather</h1>
-        <p class="gk__dek" data-paint>Six stories about the sky over the north: salt boiled from the sea, a library built around one window, and the potters who read a kiln like a forecast.</p>
-      </section>
-      <section class="gk__block gk__contents ac-wrap" data-anchor="0.11,0.52,0.22" data-anchor-sm="0.74,0.2,0.26" aria-labelledby="gk-contents">
-        <div class="gk__contents-head">
-          <h2 class="gk__h2" id="gk-contents" data-paint>In this issue</h2>
-          <p class="gk__count" aria-hidden="true" data-paint>06</p>
-        </div>
-        <ol class="gk__list" role="list">
-          ${stories.map((a, i) => html`<li><a href="#${a.slug}"><span class="ac-label" data-paint>${String(i + 1).padStart(2, '0')} · ${a.section}</span><span class="gk__title" data-paint>${a.title}</span><span class="ac-small" data-paint>${a.author} · ${a.read}</span></a></li>`)}
-        </ol>
-      </section>
-      <section class="gk__block gk__quote ac-wrap" data-anchor="0.66,0.46,0.22" data-anchor-sm="0.76,0.2,0.24" aria-label="From the issue">
-        <blockquote>
-          <p class="gk__pull" data-paint>“She reads the pan by sound: a low roll means the water is too deep, a hiss means it is nearly done.”</p>
-          <footer class="ac-label" data-paint>From “Salt and time”, by Ingrid Vold</footer>
-        </blockquote>
-      </section>
-    </main>
-    <footer class="gk__block gk__foot ac-wrap" data-anchor="0.74,0.36,0.2" data-anchor-sm="0.72,0.24,0.26">
-      <p class="gk__display gk__display--sm" data-paint>Four a year.</p>
-      <p class="ac-lede" data-paint>Printed in Bergen on uncoated paper, posted in a card sleeve. €48 a year, delivery included.</p>
-      <a class="ac-btn ac-btn--lg" href="#subscribe">Subscribe</a>
-    </footer>`;
-  root.querySelectorAll('a[href^="#"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
+    <section class="ac-stage gk__block" data-anchor="0.74,0.5,0.34" data-anchor-sm="0.72,0.5,0.3" aria-labelledby="gk-title">
+      <h1 class="gk__display" id="gk-title" data-paint>Weather</h1>
+      <p class="ac-stage__note"><span data-paint>${magazine.name} · issue cover</span></p>
+    </section>
+    <section class="ac-stage gk__block" data-anchor="0.37,0.5,0.24" data-anchor-sm="0.34,0.5,0.26">
+      <h2 class="gk__display" data-paint>Salt</h2>
+    </section>
+    <section class="ac-stage gk__block" data-anchor="0.63,0.5,0.24" data-anchor-sm="0.66,0.5,0.26">
+      <h2 class="gk__display" data-paint>Light</h2>
+    </section>`;
 
   if (ctx.motion === 'static' || !webglAvailable()) {
     root.classList.add('gk--dom');

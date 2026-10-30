@@ -1,52 +1,37 @@
 .gf { overflow-x: clip; }
-.gf a { text-decoration: none; }
-.gf__bar nav a[aria-current] { color: var(--ink); }
 
 /* The field fills the hero under the copy. Without WebGL the hero keeps a drawn sand ground. */
 .gf__hero {
   position: relative;
-  height: calc(100svh - 64px);
-  min-height: 520px;
+  height: 100svh;
+  min-height: 480px;
   display: grid;
   align-items: end;
   overflow: hidden;
   background: var(--ripples), linear-gradient(160deg, var(--sand), color-mix(in oklab, var(--sand), var(--clay) 38%));
 }
 .gf__canvas { position: absolute; inset: 0; user-select: none; -webkit-user-select: none; }
-.gf__copy { position: relative; z-index: 1; padding-block: clamp(24px, 6vh, 56px); pointer-events: none; } /* the wrapper spans the gutters; only the card takes the pointer */
+.gf__copy { position: relative; z-index: 1; padding-block: clamp(24px, 6vh, 56px) calc(clamp(14px, 3vh, 24px) + 36px); pointer-events: none; } /* the wrapper spans the gutters; only the card takes the pointer */
 
 .gf__card {
   pointer-events: auto;
   display: grid;
-  gap: 16px;
-  max-width: 30rem;
-  padding: clamp(22px, 2.6vw, 32px);
+  justify-items: start;
+  gap: 20px;
+  max-width: 24rem;
+  padding: clamp(22px, 2.6vw, 30px);
   border-radius: var(--radius-lg);
   background: var(--surface);
   color: var(--ink);
   box-shadow: var(--shadow-3);
 }
-.gf__card .ac-h1 { font-size: clamp(1.9rem, 1.2rem + 2.2vw, 3rem); }
-.gf__lede { color: var(--ink-2); text-wrap: pretty; }
-.gf__facts { display: grid; grid-template-columns: repeat(3, auto); justify-content: start; gap: 6px 28px; margin: 0; padding-top: 14px; border-top: 1px solid var(--line); }
-.gf__facts div { display: grid; gap: 2px; }
-.gf__facts dd { margin: 0; font-size: var(--text-sm); font-weight: 560; }
-.gf__actions { display: flex; flex-wrap: wrap; gap: 10px; }
-.gf__actions svg { width: 16px; height: 16px; }
+.gf__card .ac-h1 { font-size: clamp(1.75rem, 1.1rem + 1.8vw, 2.6rem); }
+.gf__card .ac-btn svg { width: 16px; height: 16px; }
 
-.gf__story { display: grid; gap: 18px; max-width: 760px; padding-block: clamp(56px, 10vh, 112px); margin-inline: auto; }
-.gf__story .ac-h3 { font-size: var(--text-2xl); font-weight: 600; line-height: 1.2; text-wrap: pretty; }
+/* The plate line sits on the sand in both themes, so it takes dark ink; the brush leaves it alone (protected). */
+.gf .ac-stage__note { z-index: 1; color: color-mix(in oklab, var(--night) 72%, transparent); }
 
-@media (max-width: 860px) and (min-width: 721px) {
-  .gf__card { max-width: 25rem; gap: 12px; }
-  .gf__lede { font-size: var(--text-sm); }
-}
 @media (max-width: 720px) {
-  .gf__bar nav { gap: 14px; }
-  .gf__bar nav a:nth-child(n+3) { display: none; }
-  .gf__hero { height: auto; min-height: calc(100svh - 64px); }
-  .gf__copy { padding-block: 40vh 16px; }
-  .gf__card { gap: 12px; }
-  .gf__lede { font-size: var(--text-sm); }
-  .gf__facts { gap: 6px 20px; }
+  .gf__hero { height: auto; min-height: 100svh; }
+  .gf__copy { padding-top: 46vh; }
 }

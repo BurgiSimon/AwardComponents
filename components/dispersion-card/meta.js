@@ -11,14 +11,14 @@ export default {
   added: '2026-10-28',
   featured: true,
   order: 46,
-  preview: { height: 600, capture: { wait: 1600 } },
+  preview: { height: 520, capture: { wait: 1600 } },
   useCases: [
     'A premium card, plan or membership shown as a physical object',
     'A banner or hero slab with a liquid-metal finish behind a mask',
     'Any surface that should read as metal without a texture or an environment map',
   ],
   notes: [
-    'The card is a figure with a text description; its canvas and drawn details are aria-hidden, and the plan’s facts and buttons are ordinary HTML.',
+    'The card is a figure with a text description; its canvas and drawn details (mark, chip, number, name) are aria-hidden.',
     'The drift is slow, continuous and never flashes. Under reduced motion and static the card holds one still frame and stands straight.',
     'Without WebGL 2, or if the shader fails, the card keeps a CSS brushed-metal face in the same finish.',
   ],

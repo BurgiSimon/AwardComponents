@@ -1,15 +1,13 @@
 .gk { position: relative; overflow-x: clip; }
-.gk a { text-decoration: none; }
 
 /* Twelve hairlines, fixed: the glass bends them, which is how the eye reads the refraction. */
 .gk__cols { position: fixed; inset: 0; display: grid; grid-template-columns: repeat(12, 1fr); width: min(100% - 2 * var(--gutter), 1320px); margin-inline: auto; pointer-events: none; z-index: 0; }
 .gk__cols i { border-left: 1px solid var(--line); }
 .gk__cols i:last-child { border-right: 1px solid var(--line); }
 .gk__gl { position: fixed; inset: 0; pointer-events: none; z-index: 3; }
-.gk__bar, .gk main, .gk__foot { position: relative; z-index: 1; }
 
-.gk__block { min-height: 108svh; display: grid; grid-template-columns: minmax(0, 1fr); align-content: center; gap: 22px; padding-block: 64px; }
-.gk__hero { min-height: calc(100svh - 64px); align-content: end; padding-block: 24px clamp(40px, 9vh, 96px); }
+/* One stage per word; each names where the glass settles (data-anchor). */
+.gk__block { z-index: 1; }
 .gk__display {
   font-size: clamp(4.4rem, 21vw, 21rem);
   font-weight: 780;
@@ -18,32 +16,9 @@
   letter-spacing: -0.06em;
   margin-left: -0.05em;
 }
-.gk__display--sm { font-size: clamp(3.2rem, 11vw, 10rem); }
-.gk__dek { max-width: min(38ch, 56vw); font-size: var(--text-xl); line-height: 1.4; color: var(--ink-2); text-wrap: pretty; }
-
-.gk__contents { grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); align-items: center; column-gap: clamp(24px, 5vw, 80px); }
-.gk__contents-head { display: grid; gap: 8px; align-self: center; }
-.gk__h2 { font-size: clamp(2.4rem, 1.4rem + 3.6vw, 5rem); font-weight: 740; font-stretch: 118%; line-height: 0.95; letter-spacing: -0.04em; max-width: 7ch; }
-.gk__count { font-family: var(--font-mono); font-size: clamp(4rem, 10vw, 9rem); font-weight: 300; line-height: 1; color: var(--faint); letter-spacing: -0.04em; }
-.gk__list { margin: 0; border-top: 1px solid var(--line-2); }
-.gk__list li { border-bottom: 1px solid var(--line-2); }
-.gk__list a { display: grid; gap: 4px; padding: 16px 0; transition: padding var(--dur-m) var(--ease-out); }
-.gk__list a:hover, .gk__list a:focus-visible { padding-left: 10px; }
-.gk__title { font-size: var(--text-xl); font-weight: 640; letter-spacing: -0.015em; }
-
-.gk__quote blockquote { margin: 0; display: grid; gap: 20px; max-width: min(100%, 900px); }
-.gk__pull { font-size: clamp(2rem, 1.2rem + 3vw, 4.2rem); font-weight: 680; font-stretch: 112%; line-height: 1.02; letter-spacing: -0.035em; text-wrap: balance; }
-
-.gk__foot { align-content: center; justify-items: start; }
-.gk__foot .ac-lede { max-width: 40ch; }
 
 @media (max-width: 760px) {
   .gk__cols { grid-template-columns: repeat(4, 1fr); }
   .gk__cols i:nth-child(n + 5) { display: none; }
-  .gk__bar nav { display: none; }
   .gk__display { font-size: 20vw; }
-  .gk__hero { align-content: center; }
-  .gk__hero .gk__dek { margin-top: 24px; }
-  .gk__contents { grid-template-columns: minmax(0, 1fr); row-gap: 28px; }
-  .gk__dek { max-width: none; font-size: var(--text-lg); }
 }

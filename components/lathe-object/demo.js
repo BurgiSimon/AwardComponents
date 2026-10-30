@@ -1,9 +1,10 @@
-// Turned object — a ceramics shop's "shape your vase" configurator. The vase is built, not downloaded: one profile
-// (a foot, a belly, a neck and a lip, plus throwing rings as a cosine ripple faded by sin πt so the ends stay put)
-// is spun by LatheGeometry with a wall thickness and an open top. Its normal and roughness maps come from one
-// self-contained builder run in an inline Blob worker, with a same-thread fallback if the worker throws, errors or
-// misses a 1.5 s deadline. After a 250 ms dwell a mouse gets exactly one quantised revolution, set to a whole turn
-// on its last frame so repeated hovers never drift. Frames render only on change or during a turn.
+// Turned object — a ceramics shop's "shape your vase" configurator: the vase, its sliders, glaze swatches and the
+// live price, on their own. The vase is built, not downloaded: one profile (a foot, a belly, a neck and a lip, plus
+// throwing rings as a cosine ripple faded by sin πt so the ends stay put) is spun by LatheGeometry with a wall
+// thickness and an open top. Its normal and roughness maps come from one self-contained builder run in an inline
+// Blob worker, with a same-thread fallback if the worker throws, errors or misses a 1.5 s deadline. After a 250 ms
+// dwell a mouse gets exactly one quantised revolution, set to a whole turn on its last frame so repeated hovers
+// never drift. Frames render only on change or during a turn.
 // Reduced motion: the hover tints instead of turning. No WebGL: an SVG silhouette drawn from the same profile.
 import './demo.css';
 import * as THREE from 'three';
@@ -119,24 +120,25 @@ export default function mount(root, options, ctx) {
 
   root.className = 'lo';
   root.innerHTML = html`
-    <section class="lo__wrap ac-wrap" aria-labelledby="lo-title">
-      <figure class="lo__stage" data-stage>
-        <div class="lo__still" data-still hidden></div>
-        <figcaption class="lo__dims ac-label" data-dims></figcaption>
-      </figure>
-      <form class="lo__panel" data-form>
-        <p class="ac-label">${shop.name} · Made to order</p>
-        <h1 class="ac-h1" id="lo-title">Shape your ${vase.name.split(' ')[0]} vase</h1>
-        <p class="ac-small lo__note">Thrown to your profile within ±3 mm in ${vase.material.split(',')[0].toLowerCase()}, then glazed and fired twice.</p>
-        <div class="lo__sliders">
-          ${SHAPE.map((c) => html`<label class="lo__row"><span class="lo__name">${c.label}</span><output class="ac-num" data-out="${c.id}"></output><input type="range" name="${c.id}" min="${c.min}" max="${c.max}" step="${c.step}" value="${c.value}"></label>`)}
-        </div>
-        <fieldset class="lo__glaze">
-          <legend class="ac-label">Glaze — <span data-glaze-name></span></legend>
-          ${GLAZES.map((g) => html`<label class="lo__sw" style="--sw:var(--${g.id})"><input type="radio" name="glaze" value="${g.id}"><span class="sr-only">${g.name}</span></label>`)}
-        </fieldset>
-        <div class="lo__buy"><button type="button" class="ac-btn ac-btn--lg" data-order>Order this shape · <span class="ac-num" data-price></span></button><span class="ac-small">Ready in three weeks</span></div>
-      </form>
+    <section class="ac-stage" aria-labelledby="lo-title">
+      <h2 class="sr-only" id="lo-title">Shape your ${vase.name.split(' ')[0]} vase</h2>
+      <div class="lo__layout">
+        <figure class="lo__stage" data-stage>
+          <div class="lo__still" data-still hidden></div>
+          <figcaption class="lo__dims ac-label" data-dims></figcaption>
+        </figure>
+        <form class="lo__panel" data-form>
+          <div class="lo__sliders">
+            ${SHAPE.map((c) => html`<label class="lo__row"><span class="lo__name">${c.label}</span><output class="ac-num" data-out="${c.id}"></output><input type="range" name="${c.id}" min="${c.min}" max="${c.max}" step="${c.step}" value="${c.value}"></label>`)}
+          </div>
+          <fieldset class="lo__glaze">
+            <legend class="ac-label">Glaze — <span data-glaze-name></span></legend>
+            ${GLAZES.map((g) => html`<label class="lo__sw" style="--sw:var(--${g.id})"><input type="radio" name="glaze" value="${g.id}"><span class="sr-only">${g.name}</span></label>`)}
+          </fieldset>
+          <button type="button" class="ac-btn ac-btn--lg lo__order" data-order>Order this shape · <span class="ac-num" data-price></span></button>
+        </form>
+      </div>
+      <p class="ac-stage__note"><span>${shop.name} · made to order</span></p>
     </section>`;
 
   const stage = root.querySelector('[data-stage]');

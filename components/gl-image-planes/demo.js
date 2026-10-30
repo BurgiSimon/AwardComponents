@@ -1,5 +1,5 @@
-// WebGL image planes — Halden's work index. HTML lays out, WebGL renders: every picture stays an <img> with alt
-// text inside a real link, and one absolute canvas, moved to the scroll each frame, draws a plane exactly over each
+// WebGL image planes — Halden's work index, the photo grid alone. HTML lays out, WebGL renders: every picture stays
+// an <img> with alt text inside a real link, and one absolute canvas, moved to the scroll each frame, draws a plane exactly over each
 // image's rectangle (a camera whose distance makes one unit one pixel). The planes bulge with the damped Lenis
 // velocity (z −= (sin πv + sin πu) · |speed| · strength) and lie flat at rest; hover or focus colours a plane in
 // from grey. Touch: the plane nearest the middle of the screen colours in. The loop sleeps when nothing moves.
@@ -79,32 +79,21 @@ export default function mount(root, options, ctx) {
   let cfg = { ...options };
   const projects = studio.projects;
   const pics = photos({ tags: ['architecture'], count: projects.length, seed: 'gp-work' });
-  const counts = studio.disciplines.map((d) => [d, projects.filter((p) => p.discipline === d).length]);
 
   root.className = 'gp';
   root.innerHTML = html`
-    <header class="ac-bar gp__bar">
-      <a class="ac-brand" href="#top">${studio.name}</a>
-      <nav aria-label="Studio">${studio.nav.map((n, i) => html`<a href="#top"${raw(i === 0 ? ' aria-current="page"' : '')}>${n}</a>`)}</nav>
-    </header>
-    <main class="gp__page ac-wrap">
-      <section class="gp__intro" aria-labelledby="gp-title">
-        <p class="ac-label">Work · 2022–2026</p>
-        <h1 class="ac-h1" id="gp-title">Eight projects, most of them in the rain.</h1>
-        <p class="ac-lede">Houses, a library, a bathing pavilion and one chair. Every project here was drawn, built and lived in along the west coast.</p>
-        <ul class="gp__counts" role="list">${counts.map(([d, n]) => html`<li><span>${d}</span><span class="ac-num">${String(n).padStart(2, '0')}</span></li>`)}</ul>
-        <p class="gp__hint ac-label" data-hint>Scroll fast — the pictures bend with you</p>
-      </section>
+    <section class="gp__page ac-wrap" aria-labelledby="gp-title">
+      <h2 class="sr-only" id="gp-title">${studio.name} work</h2>
       <ol class="gp__grid" role="list" aria-label="Projects">
         ${projects.map((p, i) => html`<li class="gp__fig">
           <a href="#${p.slug}" class="gp__link" data-plane-link="${i}">
             <span class="gp__media">${raw(imageHTML(pics[i], { sizes: '(max-width: 760px) 92vw, 30vw', eager: true, className: 'gp__img', alt: `${p.title}, ${p.place}` }))}</span>
-            <span class="gp__cap"><span class="gp__title">${p.title}</span><span class="ac-label">${p.place} · ${p.year}</span></span>
-            <span class="gp__sum ac-small">${p.summary}</span>
+            <span class="gp__title">${p.title}</span>
           </a>
         </li>`)}
       </ol>
-    </main>
+    </section>
+    <p class="ac-stage__note"><span>${studio.name} · work index</span></p>
     <div class="gp__gl" data-gl aria-hidden="true"></div>`;
   root.querySelectorAll('a[href^="#"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 

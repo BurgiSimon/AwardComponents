@@ -11,33 +11,22 @@
 }
 .cr__gl { position: absolute; inset: 0; width: 100%; height: 100%; }
 
-/* The product card sits on its own surface, so the copy reads over any part of the cloth. */
-.cr__card {
+/* A low scrim at the stage's foot keeps the dial and the plate line legible over grey or dyed cloth. */
+.cr__stage::after {
+  content: '';
   position: absolute;
-  left: var(--gutter);
-  top: var(--gutter);
-  z-index: 1;
-  display: grid;
-  gap: 10px;
-  max-width: min(440px, calc(100% - 2 * var(--gutter)));
-  padding: 22px 24px 20px;
-  border-radius: var(--radius-lg);
-  background: color-mix(in oklab, var(--surface) 86%, transparent);
-  backdrop-filter: blur(14px);
-  box-shadow: var(--shadow-2);
+  inset: auto 0 0;
+  height: 200px;
+  background: var(--media-scrim);
+  pointer-events: none;
 }
-.cr__card .ac-h1 { font-size: clamp(1.8rem, 1.1rem + 2vw, 3rem); }
-.cr__way { font-size: var(--text-md); color: var(--ink-2); }
-.cr__way strong { color: var(--ink); font-weight: 640; }
-.cr__hint { display: inline-flex; align-items: center; gap: 8px; }
-.cr__hint::before { content: ''; width: 18px; height: 1px; background: currentColor; }
-:root[data-capture] .cr__hint { visibility: hidden; }
+.cr__stage > .ac-stage__note { z-index: 1; }
 
 /* The DOM anchor: the circle's centre and starting radius are read from this element's rect every frame. */
 .cr__dial {
   position: absolute;
   left: var(--gutter);
-  bottom: var(--gutter);
+  bottom: calc(clamp(14px, 3vh, 24px) + 34px);
   z-index: 1;
   width: 92px;
   aspect-ratio: 1;
@@ -53,13 +42,6 @@
 .cr__dial span { font-family: var(--font-mono); font-size: 1.5rem; font-weight: 500; line-height: 1; }
 .cr__dial small { font-family: var(--font-mono); font-size: 0.625rem; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.8; }
 
-.cr__after { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 28px 64px; align-items: end; padding-block: 96px 120px; }
-.cr__after .ac-h2 { margin-top: 12px; max-width: 24ch; }
-.cr__facts { display: grid; gap: 14px; margin: 0; }
-.cr__facts div { display: grid; gap: 4px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
-.cr__facts dd { margin: 0; color: var(--ink-2); font-size: var(--text-sm); }
-.cr__after .ac-btn { justify-self: start; }
-
 /* No WebGL: the weave as CSS stripes, turning from grey to colour with the same scroll progress. */
 .cr--dom .cr__stage {
   --a: var(--sky); --b: var(--night); --c: var(--sand);
@@ -71,10 +53,8 @@
 }
 .cr--dom[data-colourway='madder'] .cr__stage { --a: var(--clay); --b: var(--plum); }
 .cr--dom[data-colourway='moss'] .cr__stage { --a: var(--moss); --b: var(--night); }
-.cr--dom .cr__card, .cr--dom .cr__dial { filter: none; }
+.cr--dom .cr__dial { filter: none; }
 
 @media (max-width: 760px) {
-  .cr__card { padding: 18px; }
   .cr__dial { width: 80px; }
-  .cr__after { grid-template-columns: 1fr; padding-block: 64px 96px; }
 }

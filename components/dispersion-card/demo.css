@@ -1,22 +1,12 @@
-.dc { min-height: 100svh; display: grid; grid-template-rows: auto 1fr; overflow-x: clip; }
-.dc a { text-decoration: none; }
-.dc__bar nav a[aria-current] { color: var(--ink); }
-
-.dc__main { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); align-items: center; gap: clamp(32px, 6vw, 96px); padding-block: clamp(16px, 4vh, 48px) clamp(32px, 6vh, 64px); }
-.dc__copy { display: grid; gap: 20px; max-width: 32rem; }
-.dc__specs { display: grid; grid-template-columns: repeat(3, auto); justify-content: start; gap: 4px 32px; margin: 4px 0 0; padding-top: 16px; border-top: 1px solid var(--line); }
-.dc__specs div { display: grid; gap: 4px; }
-.dc__specs dd { margin: 0; font-size: var(--text-sm); font-weight: 600; }
-.dc__buy { display: flex; align-items: center; flex-wrap: wrap; gap: 14px 22px; }
-.dc__compare { font-size: var(--text-sm); font-weight: 600; }
+.dc { overflow-x: clip; }
 
 /* The card: ISO ID-1 proportions (85.6 × 54 mm), its face type sized from its own width (container units). */
-.dc__figure { margin: 0; display: grid; place-items: center; padding: 6% 0; }
+.dc__figure { width: min(100%, 600px); margin: 0; }
 .dc__card {
   --dc-ink: color-mix(in oklab, var(--sky) 10%, white);
   --dc-ink-2: color-mix(in oklab, var(--sky) 25%, white);
   position: relative;
-  width: min(100%, 600px);
+  width: 100%;
   aspect-ratio: 85.6 / 54;
   container-type: inline-size;
   border-radius: 4.73cqw; /* the shader's 0.075 × the short side (54 / 85.6 of the width) */
@@ -53,14 +43,3 @@
 .dc__name small { font-size: 1.9cqw; color: var(--dc-ink-2); }
 .dc__network { grid-column: 2; grid-row: 5; width: 13cqw; align-self: end; }
 .dc__network svg { width: 100%; height: auto; fill: none; stroke: currentColor; stroke-width: 1.6; opacity: 0.85; }
-
-@media (max-width: 900px) {
-  .dc__main { gap: 28px; }
-  .dc__specs { gap: 4px 20px; }
-}
-@media (max-width: 720px) {
-  .dc__main { grid-template-columns: 1fr; gap: 12px; }
-  .dc__figure { order: -1; padding: 6% 4%; }
-  .dc__bar nav a:not([aria-current]) { display: none; }
-  .dc__specs { gap: 4px 22px; }
-}

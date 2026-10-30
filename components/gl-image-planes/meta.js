@@ -10,7 +10,7 @@ export default {
   requires: ['webgl'],
   added: '2026-10-28',
   order: 20,
-  preview: { height: 680, scroll: true, hint: 'Scroll fast, then hover a project', capture: { pointer: [0.63, 0.45], wait: 3000 } },
+  preview: { height: 640, scroll: true, hint: 'Scroll fast, then hover a project', capture: { pointer: [0.5, 0.5], wait: 3000 } },
   useCases: [
     'A portfolio or work index where the pictures should feel physical without losing their alt text',
     'A product grid in a shop that brightens the item under the pointer',

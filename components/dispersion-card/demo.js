@@ -1,11 +1,11 @@
-// Dispersion card — a banking app's metal card, its face a liquid-metal stripe field in one fullscreen triangle of
-// raw WebGL2 (no library). The stripe phase is a rotated ramp bent by a radial bump and 2D simplex noise; red and
+// Dispersion card — a banking app's metal card, alone on the stage, its face a liquid-metal stripe field in one
+// fullscreen triangle of raw WebGL2 (no library). The stripe phase is a rotated ramp bent by a radial bump and 2D simplex noise; red and
 // blue read the same stripe at a shifted phase, so every edge splits into colour while the flats stay neutral. Edges
 // are anti-aliased from the phase (fwidth re-threshold, guarded against zero); tone mapping, gamma and dither run
 // inline. The card's chip, mark, number and name are DOM on top. Full motion: the phase drifts while the card is on
 // screen. Reduced and static: one still frame. No WebGL 2: a CSS brushed-metal face.
 import './demo.css';
-import { on, onFrame, whileVisible, observeResize, html, raw, readToken, content, formatPrice } from '../../src/demo-kit/index.js';
+import { on, onFrame, whileVisible, observeResize, html, raw, readToken, content, webgl2Available } from '../../src/demo-kit/index.js';
 
 // The recipe's own values; stripe count, dispersion, drift and edge softness come from the controls.
 const P = { angle: 0.35, bump: 0.22, distortion: 0.12, exposure: 1.1, radius: 0.075, stillTime: 1.5, dprCap: 2, budget: 4e6 };
@@ -94,25 +94,7 @@ export default function mount(root, options, ctx) {
   let cfg = { ...options };
   root.className = 'dc';
   root.innerHTML = html`
-    <header class="ac-bar dc__bar">
-      <a class="ac-brand" href="#top">${app.name}</a>
-      <nav aria-label="Product"><a href="#top">Features</a><a href="#top" aria-current="page">Pricing</a><a href="#top">Sign in</a></nav>
-    </header>
-    <main class="dc__main ac-wrap">
-      <section class="dc__copy" aria-labelledby="dc-title">
-        <p class="ac-label">${plan.name} plan · ${formatPrice(plan.price)} a month</p>
-        <h1 class="ac-h1" id="dc-title">A card cut from one sheet of steel.</h1>
-        <p class="ac-lede">${plan.note} Every card in the practice is metal, with its own limit per project and a freeze switch in the app.</p>
-        <dl class="dc__specs">
-          <div><dt class="ac-label">Weight</dt><dd>18 g</dd></div>
-          <div><dt class="ac-label">Finish</dt><dd data-finish-name></dd></div>
-          <div><dt class="ac-label">Cards</dt><dd>Up to 20</dd></div>
-        </dl>
-        <div class="dc__buy">
-          <a class="ac-btn ac-btn--lg" href="#order">Choose ${plan.name}</a>
-          <a class="ac-link dc__compare" href="#plans">Compare plans</a>
-        </div>
-      </section>
+    <section class="ac-stage dc__stage" aria-label="${app.name} ${plan.name} card">
       <figure class="dc__figure">
         <div class="dc__card" data-card>
           <canvas class="dc__gl" aria-hidden="true"></canvas>
@@ -128,20 +110,16 @@ export default function mount(root, options, ctx) {
         </div>
         <figcaption class="sr-only">The ${plan.name} card: metal with a drifting stripe finish, the ${app.name} mark, a chip and the cardholder’s name.</figcaption>
       </figure>
-    </main>`;
-  root.querySelectorAll('a[href^="#"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
+      <p class="ac-stage__note"><span>${app.name} · practice plan</span></p>
+    </section>`;
 
   const card = root.querySelector('[data-card]');
   const canvas = card.querySelector('canvas');
-  const finishName = root.querySelector('[data-finish-name]');
-  const applyFinish = () => {
-    card.dataset.finish = cfg.finish;
-    finishName.textContent = cfg.finish === 'graphite' ? 'Graphite PVD' : 'Brushed steel';
-  };
+  const applyFinish = () => { card.dataset.finish = cfg.finish; };
   applyFinish();
 
   let gl = null;
-  try { gl = canvas.getContext('webgl2', { antialias: false, premultipliedAlpha: true }); } catch { gl = null; }
+  try { gl = webgl2Available() ? canvas.getContext('webgl2', { antialias: false, premultipliedAlpha: true }) : null; } catch { gl = null; }
   if (!gl) {
     card.classList.add('dc--still');
     return { update(next) { cfg = { ...next }; applyFinish(); } };

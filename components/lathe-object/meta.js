@@ -11,7 +11,7 @@ export default {
   added: '2026-10-28',
   featured: true,
   order: 70,
-  preview: { height: 660, hint: 'Drag the sliders, then rest the mouse on the vase', capture: { wait: 2400 } },
+  preview: { height: 620, hint: 'Drag the sliders, then rest the mouse on the vase', capture: { wait: 2400 } },
   useCases: [
     'A made-to-order product page where the customer sets the proportions',
     'Any turned form a brand would rather generate than download: a bottle, a lamp base, a spool, a cup',

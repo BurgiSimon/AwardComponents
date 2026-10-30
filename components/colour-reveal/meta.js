@@ -10,14 +10,14 @@ export default {
   requires: ['webgl'],
   added: '2026-10-28',
   order: 80,
-  preview: { height: 660, scroll: true, hint: 'Scroll to dye the cloth', capture: { scroll: 0.5, wait: 2400 } },
+  preview: { height: 660, scroll: true, hint: 'Scroll to dye the cloth', capture: { scroll: 0.66, wait: 2400 } },
   useCases: [
     'A product colourway launch: the plain version turning into the new one',
     'A before and after told by the scroll, anchored to a counter or a button on the page',
     'A section hand-off where the outgoing object gives way to the incoming one through the same mask',
   ],
   notes: [
-    'The canvas is aria-hidden. The product copy is DOM on its own surface, and the dial is role="img" with a label that states the progress.',
+    'The canvas is aria-hidden. A visually hidden heading names the throw and its colourway, and the dial is role="img" with a label that states the progress.',
     'Under reduced motion there is no circle and no sway: the whole cloth mixes evenly from grey to colour with the scroll. The static tier shows it settled in colour.',
     'Without WebGL the weave is drawn in CSS stripes and still turns from grey to colour with the same scroll progress.',
   ],

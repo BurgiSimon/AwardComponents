@@ -1,4 +1,5 @@
-// Colour reveal — a wool throw's new colourway, dyed by the scroll. One generated cloth wears one stock
+// Colour reveal — a wool throw's new colourway, dyed by the scroll: the cloth full-bleed and the dial it dyes from,
+// nothing else on the stage. One generated cloth wears one stock
 // MeshStandardMaterial patched through onBeforeCompile: a luma mix after <map_fragment> turns its woven map grey
 // or (saturation-boosted) colour, and a grained circular discard after <clipping_planes_fragment> splits the cloth
 // between two layers that share one geometry, the grey keeping the outside of the circle, the colour the inside.
@@ -7,7 +8,7 @@
 // Reduced motion: no circle, the whole cloth mixes evenly with the scroll. Static: settled colour. No WebGL: CSS.
 import './demo.css';
 import * as THREE from 'three';
-import { on, onFrame, whileVisible, html, readToken, content, formatPrice } from '../../src/demo-kit/index.js';
+import { on, onFrame, whileVisible, html, readToken, content } from '../../src/demo-kit/index.js';
 import { useRenderer, webglAvailable } from '../../src/demo-kit/three.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
 import { useLenis } from '../../src/demo-kit/lenis.js';
@@ -101,26 +102,10 @@ export default function mount(root, options, ctx) {
   root.innerHTML = html`
     <section class="cr__scene" data-scene aria-labelledby="cr-title">
       <div class="cr__stage" data-stage>
-        <div class="cr__card">
-          <p class="ac-label">${shop.name} · New colourway</p>
-          <h1 class="ac-h1" id="cr-title">${throwItem.name}, dyed</h1>
-          <p class="cr__way"><span data-way-from>Undyed lambswool</span> → <strong data-way-to></strong></p>
-          <p class="ac-small cr__hint" data-hint>Scroll to put it in the dye bath</p>
-        </div>
+        <h2 class="sr-only" id="cr-title">${throwItem.name}, dyed <span data-way-to></span></h2>
         <div class="cr__dial" data-anchor role="img" aria-label="Dyed 0 per cent"><span class="ac-num" data-dial>00</span><small>% dyed</small></div>
+        <p class="ac-stage__note ac-stage__note--media"><span>${shop.name} · new colourway</span></p>
       </div>
-    </section>
-    <section class="cr__after ac-wrap" aria-labelledby="cr-after">
-      <div>
-        <p class="ac-label">${formatPrice(throwItem.price)} · ${throwItem.sizes[0]} cm</p>
-        <h2 class="ac-h2" id="cr-after">Dyed in Os with madder, indigo and nettle, then woven on the same loom.</h2>
-      </div>
-      <dl class="cr__facts">
-        <div><dt class="ac-label">Wool</dt><dd>${throwItem.material}</dd></div>
-        <div><dt class="ac-label">Weight</dt><dd>${throwItem.weight}</dd></div>
-        <div><dt class="ac-label">Care</dt><dd>Air it outside; wash cold by hand twice a year.</dd></div>
-      </dl>
-      <button type="button" class="ac-btn ac-btn--lg">Add to bag</button>
     </section>`;
 
   const scene = root.querySelector('[data-scene]');

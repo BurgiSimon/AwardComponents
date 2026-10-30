@@ -2,15 +2,15 @@ export default {
   id: 'glass-lens',
   title: 'Glass lens',
   category: 'webgl',
-  summary: 'A faceted piece of glass that refracts the page’s own type and hairlines, split into colour at its rims, and travels between section anchors on a stiff spring.',
-  description: 'There is no environment map and no photograph: the glass bends the page itself. The words and hairlines around it are painted again into a small square canvas, and the glass refracts that canvas in through its front faces and out through its back ones at twelve wavelengths, so the type it covers shows inside it, bent and fringed with colour.\n\nEach section names a place for the glass. The section nearest the middle of the screen weighs most, and the glass follows the weighted target on a stiff spring that arrives without drifting past.',
+  summary: 'A faceted piece of glass that refracts the big cover word and hairlines behind it, split into colour at its rims, and travels from word to word on a stiff spring.',
+  description: 'There is no environment map and no photograph: the glass bends the page itself. The words and hairlines around it are painted again into a small square canvas, and the glass refracts that canvas in through its front faces and out through its back ones at twelve wavelengths, so the type it covers shows inside it, bent and fringed with colour.\n\nEach word’s section names a place for the glass. The section nearest the middle of the screen weighs most, and the glass follows the weighted target on a stiff spring that arrives without drifting past.',
   recipe: 'gl-dom-refraction-lens',
   deps: ['three'],
   tags: ['webgl', 'three', 'shader', 'refraction', 'glass', 'dispersion', 'scroll', 'spring'],
   requires: ['webgl'],
   added: '2026-10-28',
   order: 50,
-  preview: { height: 680, scroll: true, hint: 'Scroll: the glass moves to each section', capture: { wait: 2400, pointer: [0.6, 0.45] } },
+  preview: { height: 540, scroll: true, hint: 'Scroll: the glass moves to each word', capture: { wait: 2400, pointer: [0.6, 0.45] } },
   useCases: [
     'A signature object for a magazine, a studio or a brand site that should feel made of something',
     'A scroll companion that marks each chapter by settling beside its heading',
@@ -19,7 +19,7 @@ export default {
   notes: [
     'The canvas is aria-hidden and ignores the pointer, so every link under the glass still works; the words it covers stay in the DOM, unchanged.',
     'Anchors keep the glass on headings and empty columns, never on body copy or form fields that must be read at rest.',
-    'Under reduced motion the glass is placed at the current anchor with no travel and no spin, and still refracts. The static tier and browsers without WebGL show the page without it.',
+    'Under reduced motion the glass is placed at the current anchor with no travel and no spin, and still refracts. The static tier and browsers without WebGL show the words and hairlines without it.',
   ],
   controls: [
     { id: 'ior', label: 'Index of refraction', type: 'range', min: 1.05, max: 1.7, step: 0.01, default: 1.31, group: 'Glass', help: 'How strongly the glass bends what is behind it.', prompt: 'IOR: {value} (default {default})' },
