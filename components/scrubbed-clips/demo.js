@@ -1,4 +1,4 @@
-// Scrubbed clips — a ceramics shop's autumn collection, three forms grown by the scroll. Each form carries one
+// Scrubbed clips — three ceramic forms grown by the scroll, with their names as the only copy. Each form carries one
 // AnimationClip built in code from position, rotation and scale keyframe tracks on named children. One paused GSAP
 // timeline of nine units gives each form a slot of three: a hand-off that slides the rail, a growth proxy that becomes
 // mixer.setTime(proxy × duration) and a glaze tone. ScrollTrigger scrubs that timeline across a sticky track, so the
@@ -26,11 +26,11 @@ const GROW = { at: 0.25, dur: 1.75, ease: 'sine.inOut' };
 const TONE = { at: 1, dur: 1.25, ease: 'sine.inOut' };
 const slotAt = (time) => clamp(Math.floor(time / SLOT), 0, 2);
 
-// The collection: copy, price and glaze per form; the order comes from the control.
+// The collection: name, price and glaze per form; the order comes from the control.
 const FORMS = {
-  bloom: { title: 'Bloom', line: 'A centrepiece of eight thrown petals that open from a bud.', price: 220, glaze: ['--moss', '--sky', 0.3], glazeName: 'Celadon' },
-  stack: { title: 'Stack', line: 'Seven plates that nest into one column, each a size smaller.', price: 168, glaze: ['--sand', '--clay', 0.25], glazeName: 'Oat' },
-  coil: { title: 'Coil', line: 'A vase built from fourteen coils, laid one turn at a time.', price: 184, glaze: ['--clay'], glazeName: 'Rust' },
+  bloom: { title: 'Bloom', price: 220, glaze: ['--moss', '--sky', 0.3], glazeName: 'Celadon' },
+  stack: { title: 'Stack', price: 168, glaze: ['--sand', '--clay', 0.25], glazeName: 'Oat' },
+  coil: { title: 'Coil', price: 184, glaze: ['--clay'], glazeName: 'Rust' },
 };
 const ORDERS = { 'bloom-stack-coil': ['bloom', 'stack', 'coil'], 'stack-coil-bloom': ['stack', 'coil', 'bloom'], 'coil-bloom-stack': ['coil', 'bloom', 'stack'] };
 
@@ -139,35 +139,25 @@ export default function mount(root, options, ctx) {
   const beats = order.map((id) => ({ id, ...FORMS[id] }));
   root.className = 'sc';
   root.innerHTML = html`
-    <section class="sc__track" data-track aria-labelledby="sc-title">
+    <section class="sc__track" data-track aria-label="${shop.name} autumn forms">
       ${beats.map((b, i) => html`<span class="sc__marker" id="sc-${b.id}" style="--p:${((i * SLOT + SETTLE) / UNITS).toFixed(4)}"></span>`)}
       <div class="sc__stage" data-stage>
-        <header class="ac-bar sc__bar">
-          <a class="ac-brand" href="#top">${shop.name}</a>
-          <nav aria-label="Shop"><a href="#top" aria-current="page">Autumn forms</a><a href="#top">Objects</a><a href="#top">Bag</a></nav>
-        </header>
-        <div class="sc__intro ac-wrap">
-          <p class="ac-label">${shop.name} · Autumn kiln, 2026</p>
-          <h1 class="ac-h1" id="sc-title">Three forms from the autumn kiln.</h1>
-          <p class="ac-lede sc__lede">Scroll to watch each one take shape.</p>
-          <a class="ac-link ac-small sc__skip" href="#sc-after">Skip to the collection</a>
-        </div>
+        <a class="ac-link ac-small sc__skip" href="#sc-after">Skip to the collection</a>
         <div class="sc__still" data-still hidden aria-hidden="true">${raw(STILL)}</div>
-        <nav class="sc__beats ac-wrap" aria-label="The three forms">
+        <nav class="sc__beats" aria-label="The three forms">
           <ol class="sc__list" role="list">
-            ${beats.map((b, i) => html`<li class="sc__beat" data-beat="${i}"><a href="#sc-${b.id}" data-seek="${i}">${b.title}</a><p>${b.line}</p></li>`)}
+            ${beats.map((b, i) => html`<li class="sc__beat" data-beat="${i}"><a href="#sc-${b.id}" data-seek="${i}">${b.title}</a></li>`)}
           </ol>
         </nav>
-        <p class="ac-label sc__readout" aria-hidden="true" data-readout></p>
+        <p class="ac-stage__note"><span>${shop.name} · autumn collection</span><span class="sc__readout" aria-hidden="true" data-readout></span></p>
       </div>
     </section>
     <section class="sc__after ac-wrap" id="sc-after" aria-labelledby="sc-after-title">
-      <h2 class="ac-h2" id="sc-after-title">The autumn forms</h2>
+      <h2 class="ac-h3" id="sc-after-title">The autumn forms</h2>
       <ul class="sc__shop" role="list">
-        ${beats.map((b) => html`<li><span class="sc__dot" style="--glaze:${raw(b.glaze[1] ? `color-mix(in oklab, var(${b.glaze[0]}), ${b.glaze[1] === 'white' ? 'white' : `var(${b.glaze[1]})`} ${Math.round(b.glaze[2] * 100)}%)` : `var(${b.glaze[0]})`)}"></span><strong>${b.title}</strong><span class="ac-small">${b.glazeName} glaze · stoneware</span><span class="ac-num">${formatPrice(b.price)}</span><a class="ac-btn ac-btn--sm ac-btn--ghost" href="#bag">Add to bag</a></li>`)}
+        ${beats.map((b) => html`<li><span class="sc__dot" style="--glaze:${raw(b.glaze[1] ? `color-mix(in oklab, var(${b.glaze[0]}), ${b.glaze[1] === 'white' ? 'white' : `var(${b.glaze[1]})`} ${Math.round(b.glaze[2] * 100)}%)` : `var(${b.glaze[0]})`)}"></span><strong>${b.title}</strong><span class="ac-small">${b.glazeName} glaze · stoneware</span><span class="ac-num">${formatPrice(b.price)}</span></li>`)}
       </ul>
     </section>`;
-  root.querySelectorAll('a[href="#top"], a[href="#bag"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const track = root.querySelector('[data-track]');
   const stage = root.querySelector('[data-stage]');
@@ -222,7 +212,7 @@ export default function mount(root, options, ctx) {
   const setClip = (f, time) => { f.action.paused = false; f.mixer.setTime(time); };
   const { gsap, ScrollTrigger } = useGsap(ctx, root);
   const tl = gsap.timeline({ paused: true, defaults: { ease: 'none' }, onUpdate: () => apply() });
-  // The DOM mirror: the active form's link carries aria-current, its line shows; the readout is decoration.
+  // The DOM mirror: the active form's link carries aria-current; the readout is decoration.
   const syncBeats = () => {
     const slot = slotAt(tl.time());
     if (slot !== shownSlot) {
@@ -324,16 +314,14 @@ export default function mount(root, options, ctx) {
   ctx.onCleanup(() => { disposeScene(scene); env.dispose(); });
   const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 60);
 
-  // Wide: the form sits right of centre, beside the copy, as far right as the open bloom allows. Portrait: centred.
+  // The form stands centred over the names; portrait stages back off and widen the lens so the open bloom fits.
   onResize(({ width, height }) => {
     const portrait = width < height;
     camera.aspect = width / height;
     camera.fov = portrait ? 40 : 30;
     const z = portrait ? 9.4 : 7.4;
-    const halfW = z * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.aspect;
-    const dx = portrait ? 0 : -clamp(halfW - 1.55, 0, 1.6);
-    camera.position.set(dx, portrait ? 1.7 : 1.8, z);
-    camera.lookAt(dx, portrait ? 0.7 : 0.9, 0);
+    camera.position.set(0, portrait ? 1.7 : 1.8, z);
+    camera.lookAt(0, portrait ? 0.7 : 0.75, 0);
     camera.updateProjectionMatrix();
     dirty = true;
   });

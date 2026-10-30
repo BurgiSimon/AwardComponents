@@ -1,4 +1,4 @@
-// Scene cuts — a festival trailer hero. Three procedural day-scenes share one fixed canvas and one scene target, and
+// Scene cuts — a festival trailer, full-bleed with its scene label and transport. Three procedural day-scenes share one fixed canvas and one scene target, and
 // every cut between them lives in the last pass, the one that already grades the frame: a blur dip (full, half,
 // then quarter resolution, ending in a flat colour; the scene swaps under it) or a frozen-frame iris (the outgoing
 // scene is rendered once into a cache, and the new one opens inside a growing diamond while the still stays
@@ -7,16 +7,16 @@
 // Reduced motion: no clocks, no autoplay, every cut a hard switch. Static or no WebGL: CSS gradients per scene.
 import './demo.css';
 import * as THREE from 'three';
-import { on, onFrame, html, raw, clamp, mapRange, readToken, whileVisible, content, formatPrice } from '../../src/demo-kit/index.js';
+import { on, onFrame, html, raw, clamp, mapRange, readToken, whileVisible, content } from '../../src/demo-kit/index.js';
 import { useRenderer, webglAvailable } from '../../src/demo-kit/three.js';
 
 const LIFT = 0.06; // the diamonds sit a little above the middle, in viewport heights
 const fit = (v, a, b, c, d) => clamp(mapRange(v, a, b, c, d), Math.min(c, d), Math.max(c, d));
 
 const DAYS = [
-  { day: 'Thursday 12 August', stage: 'The Harbour', name: 'Dusk', acts: 'Marlow Ash, Kiri Tanaka and The Low Tides from seven, as the sun drops behind the cranes.', tokens: ['--plum', '--clay', '--sand'] },
-  { day: 'Friday 13 August', stage: 'Hall 4', name: 'Tide', acts: 'Odessa Rae, Nils & the Weather and Juno Park in the old ship hall, doors at eight.', tokens: ['--night', '--sky', '--sand'] },
-  { day: 'Saturday 14 August', stage: 'The Greenhouse', name: 'Moss', acts: 'Vesper Choir and Aurelio Cano under glass, then Moss Theory to close the festival.', tokens: ['--night', '--moss', '--sand'] },
+  { day: 'Thursday 12 August', stage: 'The Harbour', name: 'Dusk', tokens: ['--plum', '--clay', '--sand'] },
+  { day: 'Friday 13 August', stage: 'Hall 4', name: 'Tide', tokens: ['--night', '--sky', '--sand'] },
+  { day: 'Saturday 14 August', stage: 'The Greenhouse', name: 'Moss', tokens: ['--night', '--moss', '--sand'] },
 ];
 
 const VERT = /* glsl */ `varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }`;
@@ -105,18 +105,11 @@ export default function mount(root, options, ctx) {
   root.className = 'sc';
   root.innerHTML = html`
     <div class="sc__gl" data-gl aria-hidden="true"><canvas class="sc__outline" data-outline></canvas></div>
-    <section class="sc__hero" aria-roledescription="carousel" aria-labelledby="sc-title">
-      <header class="ac-bar sc__bar">
-        <a class="ac-brand" href="#top">${festival.name}</a>
-        <nav aria-label="Festival"><a href="#top">Line-up</a><a href="#top">Stages</a><a href="#top">Travel</a></nav>
-        <a class="ac-btn ac-btn--sm sc__buy" href="#tickets">Tickets</a>
-      </header>
-      <h1 class="sr-only" id="sc-title">${festival.edition}: three days, three stages</h1>
+    <section class="sc__hero" aria-roledescription="carousel" aria-label="${festival.name} trailer">
       <div class="sc__slides ac-wrap" aria-live="off" data-slides>
         ${DAYS.map((d, i) => html`<article class="sc__slide sc__slide--${i}" aria-roledescription="slide" aria-label="${d.name}, ${i + 1} of ${DAYS.length}" data-slide="${i}">
-          <p class="ac-label">${d.day} · ${d.stage}</p>
           <h2 class="sc__name">${d.name}</h2>
-          <p class="sc__acts">${d.acts}</p>
+          <p class="ac-label">${d.day} · ${d.stage}</p>
         </article>`)}
       </div>
       <div class="sc__controls ac-wrap">
@@ -129,17 +122,11 @@ export default function mount(root, options, ctx) {
           <button type="button" class="sc__btn" data-next aria-label="Next day">${raw('<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>')}</button>
         </div>
       </div>
+      <p class="ac-stage__note ac-stage__note--media"><span>${festival.name} · trailer</span></p>
     </section>
-    <footer class="sc__foot" id="tickets" data-footer>
-      <div class="sc__foot-inner ac-wrap">
-        <p class="ac-label">${festival.dates} · ${festival.place}</p>
-        <p class="sc__close">Three days, four stages, one ferry home.</p>
-        <div class="sc__tickets">
-          ${festival.tickets.map((t) => html`<a class="sc__ticket" href="#tickets"><span>${t.name}</span><strong class="ac-num">${formatPrice(t.price)}</strong></a>`)}
-        </div>
-      </div>
+    <footer class="sc__foot" data-footer>
+      <p class="sc__close ac-wrap">Three days, four stages, one ferry home.</p>
     </footer>`;
-  root.querySelectorAll('a[href^="#"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const slides = [...root.querySelectorAll('[data-slide]')];
   const steps = [...root.querySelectorAll('[data-go]')];

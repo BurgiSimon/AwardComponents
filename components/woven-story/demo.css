@@ -27,12 +27,6 @@
   border-bottom: 1px solid var(--line);
 }
 .ws-mark { flex: none; display: inline-flex; align-items: center; min-height: 44px; font-family: var(--font-serif); font-style: italic; font-weight: 520; font-size: 1.625rem; letter-spacing: -0.02em; text-decoration: none; }
-.ws-nav { flex: 1 1 auto; min-width: 0; display: flex; gap: clamp(14px, 2.2vw, 28px); font-size: var(--text-sm); }
-.ws-nav a { display: inline-flex; align-items: center; min-height: 44px; color: var(--ink-2); text-decoration: none; }
-.ws-nav a[aria-current] { color: var(--ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.4em; }
-.ws-nav a:hover { color: var(--ink); }
-/* --ink-2, not --muted: the bar is translucent, and over a dark band the label still needs 4.5:1. */
-.ws-issue { flex: none; color: var(--ink-2); }
 
 /* The page-level pause: shown in the full tier once the compositor runs, since only there does footage play. */
 .ws-pause {
@@ -67,19 +61,13 @@
 .ws-cap__credit { flex-basis: 100%; font-family: var(--font-mono); font-size: 0.625rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
 
 /* ---------- Type ---------- */
-.ws-kicker { font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent-ink); }
-.ws-band .ws-kicker, .ws-band .ws-num { color: var(--accent); }
-.ws-title { margin-top: 18px; font-family: var(--font-serif); font-weight: 440; font-size: clamp(3.4rem, 1.2rem + 7.6vw, 9.5rem); line-height: 0.88; letter-spacing: -0.035em; text-wrap: balance; }
+.ws-band .ws-num { color: var(--accent); }
+.ws-title { font-family: var(--font-serif); font-weight: 440; font-size: clamp(3.4rem, 1.2rem + 7.6vw, 9.5rem); line-height: 0.88; letter-spacing: -0.035em; text-wrap: balance; }
 .ws-dek { margin-top: clamp(18px, 2vw, 26px); max-width: 22ch; font-family: var(--font-serif); font-style: italic; font-size: clamp(1.25rem, 0.95rem + 1vw, 1.75rem); line-height: 1.25; color: var(--ink-2); text-wrap: pretty; }
-.ws-byline { margin-top: 18px; }
-.ws-byline span { color: var(--ink); }
-.ws-begin { display: inline-flex; align-items: center; gap: 0.6em; min-height: 44px; margin-top: 14px; color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--line-2); }
-.ws-begin:hover { border-color: currentColor; }
 .ws-num { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.1em; color: var(--accent-ink); }
 .ws-h2 { margin-top: 10px; font-family: var(--font-serif); font-weight: 460; font-size: clamp(2.4rem, 1.2rem + 3.6vw, 4.8rem); line-height: 0.95; letter-spacing: -0.03em; text-wrap: balance; }
 .ws-p { color: var(--ink-2); font-size: 1.0625rem; line-height: 1.7; max-width: 60ch; text-wrap: pretty; hyphens: auto; }
 .ws-h2 + .ws-p { margin-top: clamp(20px, 2.4vw, 32px); }
-.ws-p + .ws-p { margin-top: 1.1em; }
 .ws-p--first::first-letter { float: left; margin: 0.06em 0.12em 0 0; font-family: var(--font-serif); font-weight: 460; font-size: 4.4em; line-height: 0.8; color: var(--ink); }
 .ws-p--last::after { content: ''; display: inline-block; width: 0.55em; height: 0.55em; margin-left: 0.4em; background: var(--accent); }
 
@@ -107,9 +95,6 @@
 .ws-season button:hover { color: var(--ink); }
 .ws-season button[aria-pressed='true'] { background: var(--ink); color: var(--bg); }
 
-.ws-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: clamp(28px, 3.4vw, 44px); padding-top: 16px; border-top: 1px solid var(--line-2); }
-.ws-facts dd { margin: 6px 0 0; font-family: var(--font-serif); font-size: clamp(1.25rem, 1rem + 0.8vw, 1.75rem); line-height: 1.1; letter-spacing: -0.01em; }
-
 /* ---------- Interlude: the quote stands over the empty side of the glyph field ---------- */
 .ws-interlude { padding-block: clamp(48px, 8vw, 112px); }
 .ws-interlude__grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--ws-gap); align-items: center; }
@@ -127,19 +112,9 @@
 .ws-close__grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--ws-gap); margin-top: clamp(40px, 6vw, 80px); }
 .ws-close__head { grid-column: 1 / span 4; }
 .ws-close__text { grid-column: 6 / -1; }
-.ws-filed { margin-top: 28px; }
-
-/* ---------- More from the issue ---------- */
-.ws-more { padding-block: clamp(48px, 7vw, 96px); border-top: 1px solid var(--line); }
-.ws-more__list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: clamp(20px, 2.4vw, 32px); margin-top: 20px; }
-.ws-story { display: grid; gap: 8px; height: 100%; padding-top: 14px; border-top: 1px solid var(--ink); text-decoration: none; }
-.ws-story__title { font-family: var(--font-serif); font-weight: 460; font-size: clamp(1.4rem, 1.1rem + 0.8vw, 1.8rem); line-height: 1.05; letter-spacing: -0.015em; transition: color var(--dur-s) var(--ease-out); }
-.ws-story:hover .ws-story__title, .ws-story:focus-visible .ws-story__title { color: var(--accent-ink); }
-.ws-story__dek { color: var(--ink-2); font-size: var(--text-sm); line-height: 1.5; }
-.ws-colophon { margin-top: clamp(40px, 5vw, 64px); max-width: 70ch; }
 
 /* ---------- The compositor readout: a developer's line in the top bar, so it never covers the article ---------- */
-.ws-gl { flex: 0 1 auto; min-width: 0; font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.02em; color: var(--ink-2); }
+.ws-gl { flex: 0 1 auto; min-width: 0; margin-left: auto; font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.02em; color: var(--ink-2); }
 .ws-gl summary { display: flex; align-items: center; gap: 8px; min-height: 32px; padding: 0 12px; border: 1px solid var(--line-2); border-radius: var(--radius-pill); cursor: pointer; list-style: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ws-gl summary::-webkit-details-marker { display: none; }
 .ws-gl summary:hover, .ws-gl[open] summary { background: var(--bg-2); }
@@ -163,14 +138,6 @@
 .ws--still .ws-band .ws-still { mix-blend-mode: screen; }
 
 /* ---------- Tablet ---------- */
-/* The bar keeps the mark, the sections, the readout and the pause: the issue label goes first, then the readout's tail. */
-@media (max-width: 1279px) {
-  .ws-issue { display: none; }
-}
-@media (max-width: 1059px) {
-  .ws-gl__rest { display: none; }
-  .ws-gl__line { display: block; }
-}
 @media (max-width: 1000px) {
   .ws-hero__copy { grid-column: 1 / span 7; }
   .ws-ch__text, .ws-ch--flip .ws-ch__text { grid-column: 1 / -1; grid-row: 1; }
@@ -179,10 +146,12 @@
   .ws-quote { grid-column: 1 / span 7; }
 }
 
-/* ---------- Phone: one column in reading order; the pictures follow their text ---------- */
+/* ---------- Phone: one column in reading order; the pictures follow their text. The bar keeps the mark, the
+   readout and the pause; the readout's tail goes into its panel. ---------- */
 @media (max-width: 759px) {
-  .ws-nav { display: none; }
-  .ws-gl { margin-left: auto; font-size: 0.625rem; }
+  .ws-gl { font-size: 0.625rem; }
+  .ws-gl__rest { display: none; }
+  .ws-gl__line { display: block; }
   .ws-pause { padding: 0; width: 44px; height: 44px; justify-content: center; }
   .ws-pause__label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .ws-hero__copy, .ws-fig--hero { grid-column: 1 / -1; }
@@ -198,7 +167,6 @@
   .ws-close__head, .ws-close__text { grid-column: 1 / -1; }
   .ws-close__text { margin-top: 20px; }
   .ws-fig--close .ws-fig__media { height: auto; aspect-ratio: 16 / 10; }
-  .ws-facts { grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
 }
 
-:root[data-motion='reduced'] .ws-story__title, :root[data-motion='reduced'] .ws-pause { transition: none; }
+:root[data-motion='reduced'] .ws-pause { transition: none; }

@@ -1,4 +1,5 @@
-// Studio lighting — a ceramics shop's product viewer. A forged candle holder and a glazed cup take every
+// Studio lighting — a ceramics shop's product viewer on its own: the scene, its lighting switch, light slider and
+// finish swatches. A forged candle holder and a glazed cup take every
 // highlight from a studio built in code and baked once into a PMREM environment: a room of emissive panels
 // (fromScene, half-float, so a strip at 8 stays a hard glint after the rough mips blur) or a window gradient
 // painted on a canvas (fromEquirectangular, 8-bit, so the scene's environmentIntensity carries the punch).
@@ -7,7 +8,7 @@
 // Reduced motion and static: lighting is not motion, so it still renders, held. No WebGL: a drawn still.
 import './demo.css';
 import * as THREE from 'three';
-import { on, onFrame, whileVisible, html, raw, readToken, colour, content, formatPrice } from '../../src/demo-kit/index.js';
+import { on, onFrame, whileVisible, html, raw, readToken, colour, content } from '../../src/demo-kit/index.js';
 import { useRenderer, webglAvailable, disposeScene } from '../../src/demo-kit/three.js';
 
 // [width, height, position, value, tint]: the lighting design, placed like a photo studio.
@@ -108,29 +109,21 @@ export default function mount(root, options, ctx) {
   let cfg = { ...options };
   root.className = 'sl';
   root.innerHTML = html`
-    <section class="sl__hero ac-wrap" aria-labelledby="sl-title">
-      <div class="sl__copy">
-        <p class="ac-label">${shop.name} · Candle holders</p>
-        <h1 class="ac-h1" id="sl-title">${holder.name}</h1>
-        <p class="sl__price ac-num">${formatPrice(holder.price)} <span class="ac-small">· shown with the ${cup.name}, ${formatPrice(cup.price)}</span></p>
-        <p class="ac-lede">Forged one at a time in Ålesund. Brass darkens to a soft bronze within a year; iron is waxed and stays black.</p>
+    <section class="ac-stage sl__ground" aria-label="${holder.name} with the ${cup.name}">
+      <div class="sl__stage" data-stage><div class="sl__still" data-still hidden>${raw(STILL)}</div></div>
+      <div class="sl__bar">
+        <div class="sl__lights" role="group" aria-label="Lighting">
+          ${Object.entries(LIGHTS).map(([id, name]) => html`<button type="button" class="sl__light" data-light="${id}" aria-pressed="false">${name}</button>`)}
+        </div>
         <fieldset class="sl__finish">
-          <legend class="ac-label">Finish — <span data-finish-name></span></legend>
+          <legend class="sr-only">Holder finish</legend>
           ${Object.entries(FINISHES).map(([id, f]) => html`<label class="sl__sw" style="--sw:${f.swatch}"><input type="radio" name="sl-finish" value="${id}"><span class="sr-only">${f.name}</span></label>`)}
+          <span class="ac-label sl__finish-name" aria-hidden="true" data-finish-name></span>
         </fieldset>
-        <div class="sl__buy"><a class="ac-btn ac-btn--lg" href="#bag">Add to bag</a><span class="ac-small">Ships in 3–5 days · ${holder.dims.h} × ${holder.dims.d} cm</span></div>
+        <label class="sl__angle"><span class="ac-label">Light</span><input type="range" min="0" max="360" step="1" value="0" data-angle aria-label="Light angle in degrees"></label>
       </div>
-      <figure class="sl__figure">
-        <div class="sl__stage" data-stage><div class="sl__still" data-still hidden>${raw(STILL)}</div></div>
-        <figcaption class="sl__bar">
-          <div class="sl__lights" role="group" aria-label="Lighting">
-            ${Object.entries(LIGHTS).map(([id, name]) => html`<button type="button" class="sl__light" data-light="${id}" aria-pressed="false">${name}</button>`)}
-          </div>
-          <label class="sl__angle"><span class="ac-label">Light</span><input type="range" min="0" max="360" step="1" value="0" data-angle aria-label="Light angle in degrees"></label>
-        </figcaption>
-      </figure>
+      <p class="ac-stage__note"><span>${shop.name} · product viewer</span></p>
     </section>`;
-  on(ctx, root.querySelector('a[href="#bag"]'), 'click', (e) => e.preventDefault());
 
   const stage = root.querySelector('[data-stage]');
   const still = root.querySelector('[data-still]');
@@ -254,7 +247,8 @@ export default function mount(root, options, ctx) {
   onResize(({ width, height }) => {
     camera.aspect = width / height;
     const portrait = width / height < 1;
-    camera.position.set(0, portrait ? 2.4 : 2, portrait ? 13 : 9.6);
+    const wide = width / height > 1.6; // a wide stage: step in so the pair fills its height
+    camera.position.set(0, portrait ? 2.4 : 2, portrait ? 13 : wide ? 8.6 : 9.6);
     camera.lookAt(target);
     camera.updateProjectionMatrix();
     dirty = true;

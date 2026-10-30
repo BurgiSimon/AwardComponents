@@ -1,5 +1,5 @@
-// Woven long-read — Fieldnote's weather issue, "Salt and time", where every picture on the page is a dither woven by
-// ONE raw-WebGL context on a detached canvas (pool.js). Five scenes (the hero, two chapters, a glyph interlude and
+// Woven long-read — Fieldnote's weather issue, "Salt and time", cut to the copy that keeps its five pictures in flow.
+// Every picture on the page is a dither woven by ONE raw-WebGL context on a detached canvas (pool.js). Five scenes (the hero, two chapters, a glyph interlude and
 // the close) are ordinary 2D canvases inside their sections, so they scroll natively and sit under the section's
 // text: the pool draws a scene into the top-left slice of its shared buffer and drawImage()s that slice across in the
 // same task. Three shared clips and one drawn sleet stream are pooled: one texture each, uploaded at most once per
@@ -58,8 +58,7 @@ const luminance = ([r, g, b]) => 0.2126 * r + 0.7152 * g + 0.0722 * b;
 export default function mount(root, options, ctx) {
   const { magazine } = content;
   const article = magazine.articles[0];
-  const more = magazine.articles.slice(1);
-  const [p1, p2, p3, p4, p5] = magazine.longRead;
+  const [p1, , p3, p4] = magazine.longRead;
   let cfg = { ...options };
   // Full: the clock runs and the footage plays. Reduced, static and the thumbnail capture: one still per scene.
   const full = ctx.motion === 'full' && !ctx.capture;
@@ -86,7 +85,6 @@ export default function mount(root, options, ctx) {
   root.innerHTML = html`
     <header class="ws-bar">
       <a class="ws-mark" href="#ws-top" aria-label="${magazine.name}, front page">${magazine.name}</a>
-      <nav class="ws-nav" aria-label="Sections"><a href="#ws-top" aria-current="page">Places</a><a href="#ws-top">Architecture</a><a href="#ws-top">Craft</a><a href="#ws-top">Culture</a></nav>
       <details class="ws-gl" data-readout>
         <summary><span class="ws-gl__dot" aria-hidden="true"></span><span class="sr-only">Compositor readout: </span><span data-gl-ctx>contexts 0</span><span class="ws-gl__rest" data-gl-rest></span></summary>
         <div class="ws-gl__panel">
@@ -98,7 +96,6 @@ export default function mount(root, options, ctx) {
           </table>
         </div>
       </details>
-      <p class="ws-issue ac-label">${magazine.issue}</p>
       <button class="ws-pause" type="button" data-pause aria-pressed="false" hidden><span class="ws-pause__icon" aria-hidden="true"></span><span class="ws-pause__label">Pause footage</span></button>
     </header>
 
@@ -107,11 +104,8 @@ export default function mount(root, options, ctx) {
         <section class="ws-sec ws-hero">
           <div class="ws-hero__grid ac-wrap">
             <header class="ws-hero__copy">
-              <p class="ws-kicker">${article.section} · ${article.read} read</p>
               <h1 class="ws-title" id="ws-title">${article.title}</h1>
               <p class="ws-dek">${article.dek}</p>
-              <p class="ws-byline ac-label">Words by <span>${article.author}</span></p>
-              <a class="ws-begin ac-label" href="#ws-ch1" data-begin>Begin reading <span aria-hidden="true">↓</span></a>
             </header>
             ${figure('hero', 'earth', 'hero', { eager: true })}
           </div>
@@ -121,9 +115,8 @@ export default function mount(root, options, ctx) {
           <div class="ws-ch__grid ac-wrap">
             <div class="ws-ch__text">
               <p class="ws-num">I</p>
-              <h2 class="ws-h2" id="ws-ch1" tabindex="-1">The kilns</h2>
+              <h2 class="ws-h2" id="ws-ch1">The kilns</h2>
               <p class="ws-p ws-p--first">${p1}</p>
-              <p class="ws-p">${p2}</p>
               <div class="ws-season" role="group" aria-label="Season in figure 2" data-season-group hidden>
                 <button type="button" data-season="summer" aria-pressed="true">Summer</button>
                 <button type="button" data-season="winter" aria-pressed="false">Winter</button>
@@ -139,11 +132,6 @@ export default function mount(root, options, ctx) {
               <p class="ws-num">II</p>
               <h2 class="ws-h2" id="ws-ch2">Reading the pan</h2>
               <p class="ws-p">${p3}</p>
-              <dl class="ws-facts">
-                <div><dt class="ac-label">At the pans</dt><dd>31 summers</dd></div>
-                <div><dt class="ac-label">Oldest pans</dt><dd>12th century</dd></div>
-                <div><dt class="ac-label">First ledger</dt><dd>1788</dd></div>
-              </dl>
             </div>
             ${figure('pan', 'orbit', 'pan')}
           </div>
@@ -164,40 +152,14 @@ export default function mount(root, options, ctx) {
           <div class="ws-close__grid ac-wrap">
             <div class="ws-close__head"><p class="ws-num">III</p><h2 class="ws-h2" id="ws-ch3">The ledgers</h2></div>
             <div class="ws-close__text">
-              <p class="ws-p">${p4}</p>
-              <p class="ws-p ws-p--last">${p5}</p>
-              <p class="ws-filed ac-label">Filed from Læsø, August · ${magazine.issue}</p>
+              <p class="ws-p ws-p--last">${p4}</p>
             </div>
           </div>
         </section>
       </article>
-
-      <section class="ws-sec ws-more" aria-labelledby="ws-more-title">
-        <div class="ac-wrap">
-          <h2 class="ws-more__title ac-label" id="ws-more-title">More from ${magazine.issue}</h2>
-          <ol class="ws-more__list" role="list">
-            ${more.map((a) => html`<li><a class="ws-story" href="#ws-top">
-              <span class="ac-label">${a.section} · ${a.read}</span>
-              <span class="ws-story__title">${a.title}</span>
-              <span class="ws-story__dek">${a.dek}</span>
-              <span class="ws-story__by ac-label">${a.author}</span>
-            </a></li>`)}
-          </ol>
-          <p class="ws-colophon ac-small" data-colophon>Every picture in this story is woven from public-domain footage (NASA, the US National Park Service) and one drawn sleet loop, by a single compositor in your browser.</p>
-        </div>
-      </section>
     </main>`;
 
   const $ = (sel) => root.querySelector(sel);
-  root.querySelectorAll('a[href="#ws-top"]:not(.ws-mark)').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
-  // Begin reading: to the first chapter, and focus its heading so a screen reader continues from there (the ring
-  // shows only when it was pressed with a key).
-  on(ctx, $('[data-begin]'), 'click', (e) => {
-    e.preventDefault();
-    const heading = $('#ws-ch1');
-    heading.closest('.ws-sec').scrollIntoView({ behavior: full ? 'smooth' : 'auto', block: 'start' });
-    heading.focus({ preventScroll: true, focusVisible: e.detail === 0 });
-  });
 
   const pauseBtn = $('[data-pause]');
   const seasonGroup = $('[data-season-group]');
@@ -279,7 +241,6 @@ export default function mount(root, options, ctx) {
     rows.innerHTML = '';
     stillCaptions = true;
     applyLook();
-    $('[data-colophon]').textContent = 'Every picture in this story is public-domain footage (NASA, the US National Park Service). Without WebGL each figure shows the clip’s poster; with it, one compositor weaves them all.';
   };
   if (!pool) {
     stillPage();

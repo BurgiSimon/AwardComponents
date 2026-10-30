@@ -1,4 +1,4 @@
-// Scroll film — "Inside Kova One" as a scroll-driven film. One value owns it: the scroll position inside a tall track
+// Scroll film — "Inside Kova One" as a scroll-driven film with short captions. One value owns it: the scroll position inside a tall track
 // is a raw 0–1; a piecewise-linear map turns raw into progress so two stretch bands cost more scroll; a clock follows
 // that target at no more than K × dt / FILM_SECONDS per frame, so a flick cannot skip a beat; and five scene windows
 // read the clock, each switched on half-way into the one before and off half-way into the next (toggled, never
@@ -7,7 +7,7 @@
 import './demo.css';
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
-import { on, whileVisible, html, raw, clamp, readToken, content } from '../../src/demo-kit/index.js';
+import { whileVisible, html, clamp, readToken, content } from '../../src/demo-kit/index.js';
 import { gsap } from '../../src/demo-kit/gsap.js';
 import { useLenis } from '../../src/demo-kit/lenis.js';
 import { useRenderer, webglAvailable, disposeScene } from '../../src/demo-kit/three.js';
@@ -45,11 +45,11 @@ export default function mount(root, options, ctx) {
   let cfg = { ...options };
   // Five beats, five windows of 0.2. Tuning keeps the drivers live a little longer (dropPrevAt) as the camera turns.
   const BEATS = [
-    { name: 'Housing', title: 'One piece of recycled aluminium', body: 'Spun from a single 1.2 mm sheet and anodised. No seams for sound to leak through.' },
-    { name: 'Drivers', title: 'Two tweeters, one long-throw woofer', body: '19 mm domes either side; a 120 mm woofer fires down into the base and out all round.' },
-    { name: 'Grille', title: 'A wool-blend sleeve', body: 'Knitted as one tube on a sock machine in Porto. It slides off for cleaning.' },
-    { name: 'Tuning', title: 'Four microphones listen to the room', body: product.features[0].body },
-    { name: 'Assembled', title: 'Eight screws, no glue', body: product.features[3].body },
+    { name: 'Housing', title: 'One piece of recycled aluminium' },
+    { name: 'Drivers', title: 'Two tweeters, one long-throw woofer' },
+    { name: 'Grille', title: 'A wool-blend sleeve' },
+    { name: 'Tuning', title: 'Four microphones listen to the room' },
+    { name: 'Assembled', title: 'Eight screws, no glue' },
   ].map((b, i) => ({ ...b, from: i * 0.2, to: (i + 1) * 0.2, ...(i === 3 ? { dropPrevAt: 0.75 } : {}) }));
   const N = BEATS.length;
   const mid = (i) => (BEATS[i].from + BEATS[i].to) / 2;
@@ -62,23 +62,18 @@ export default function mount(root, options, ctx) {
 
   root.className = 'sw';
   root.innerHTML = html`
-    <section class="sw__film" data-film aria-labelledby="sw-title">
+    <section class="sw__film" data-film aria-label="Inside ${product.name}">
       <div class="sw__stage" data-stage>
-        <header class="ac-bar sw__bar">
-          <a class="ac-brand" href="#top">${product.maker}</a>
-          <nav aria-label="Product"><a href="#top" aria-current="page">${product.name}</a><a href="#top">Specs</a><a href="#top">Buy</a></nav>
-        </header>
         <div class="sw__still" data-still hidden aria-hidden="true"><span data-still-num>01</span></div>
         <div class="sw__hud ac-wrap">
           <div class="sw__panel">
-            <p class="ac-label"><span id="sw-title">Inside ${product.name}</span> · <span data-beat-label>01 · Housing</span></p>
-            <h1 class="ac-h1 sw__title" data-beat-title aria-hidden="true">${BEATS[0].title}</h1>
-            <p class="sw__body" data-beat-body aria-hidden="true">${BEATS[0].body}</p>
+            <p class="ac-label" data-beat-label>01 · Housing</p>
+            <p class="sw__title" data-beat-title aria-hidden="true">${BEATS[0].title}</p>
             <a class="ac-link ac-small sw__skip" href="#sw-beats">Skip the film, read the five steps</a>
           </div>
         </div>
         <div class="sw__rail ac-wrap" aria-hidden="true">
-          <p class="ac-label sw__rail-label"><span data-beat-short>01 · Housing</span><span class="ac-num" data-progress>000</span></p>
+          <p class="ac-label sw__rail-label"><span>Inside ${product.name}</span><span class="ac-num" data-progress>000</span></p>
           <div class="sw__track" data-rail><span class="sw__fill" data-fill></span></div>
         </div>
       </div>
@@ -86,10 +81,9 @@ export default function mount(root, options, ctx) {
     <section class="sw__beats ac-wrap" id="sw-beats" aria-labelledby="sw-beats-title">
       <h2 class="ac-label" id="sw-beats-title">Inside ${product.name}, in five steps</h2>
       <ol class="sw__list" role="list">
-        ${BEATS.map((b, i) => html`<li><span class="ac-label">${String(i + 1).padStart(2, '0')} · ${b.name}</span><h3 class="ac-h2">${b.title}</h3><p class="ac-body">${b.body}</p></li>`)}
+        ${BEATS.map((b, i) => html`<li><span class="ac-label">${String(i + 1).padStart(2, '0')} · ${b.name}</span><h3 class="ac-h3">${b.title}</h3></li>`)}
       </ol>
     </section>`;
-  root.querySelectorAll('a[href="#top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const film = root.querySelector('[data-film]');
   const stage = root.querySelector('[data-stage]');
@@ -97,9 +91,7 @@ export default function mount(root, options, ctx) {
   const fill = root.querySelector('[data-fill]');
   const els = {
     label: root.querySelector('[data-beat-label]'),
-    short: root.querySelector('[data-beat-short]'),
     title: root.querySelector('[data-beat-title]'),
-    body: root.querySelector('[data-beat-body]'),
     progress: root.querySelector('[data-progress]'),
     still: root.querySelector('[data-still]'),
     stillNum: root.querySelector('[data-still-num]'),
@@ -143,11 +135,8 @@ export default function mount(root, options, ctx) {
     const b = beatAt(p);
     if (b !== S.beat) {
       S.beat = b;
-      const label = `${String(b + 1).padStart(2, '0')} · ${BEATS[b].name}`;
-      els.label.textContent = label;
-      els.short.textContent = label;
+      els.label.textContent = `${String(b + 1).padStart(2, '0')} · ${BEATS[b].name}`;
       els.title.textContent = BEATS[b].title;
-      els.body.textContent = BEATS[b].body;
       els.stillNum.textContent = String(b + 1).padStart(2, '0');
       stage.dataset.beat = String(b);
     }
@@ -329,18 +318,16 @@ export default function mount(root, options, ctx) {
   });
   ctx.onCleanup(() => { disposeScene(scene); env.dispose(); });
 
-  // Framing: on wide stages the camera aims left of the scene so it sits about 70% across, beside the HUD; on
-  // narrow ones it backs off and frames the scene above the HUD panel.
-  const frame = { shift: 0, dist: 6.2, lookDrop: 0.1 };
+  // Framing: on wide stages the scene sits centred above the caption; on narrow ones the camera backs off and frames
+  // the scene above the caption panel.
+  const frame = { dist: 6.2, lookDrop: 0.1 };
   onResize(({ width, height }) => {
     const aspect = width / height;
     const narrow = width < 760;
     camera.aspect = aspect;
     camera.fov = narrow ? 50 : 40;
     frame.dist = narrow ? 8.6 : 6.2;
-    const halfW = frame.dist * Math.tan((camera.fov * Math.PI) / 360) * aspect;
-    frame.shift = narrow ? 0 : 0.4 * halfW;
-    frame.lookDrop = narrow ? 1.5 : 0.35;
+    frame.lookDrop = narrow ? 1.5 : 0.75;
     const scale = narrow ? 0.9 : aspect < 1.5 ? 0.8 : 0.88;
     groups.forEach((g) => { g.scale.setScalar(scale); g.position.y = 0.1; });
     camera.updateProjectionMatrix();
@@ -369,8 +356,8 @@ export default function mount(root, options, ctx) {
     const f = b - k;
     const travel = Math.min(1, Math.max(0, (Math.abs(f) - 0.18) / 0.32));
     const beat = k + Math.sign(f) * 0.5 * travel * travel * (3 - 2 * travel);
-    camera.position.set(-frame.shift + Math.sin(beat * 1.3) * 0.6, 0.6, frame.dist - beat * SPACING);
-    camera.lookAt(-frame.shift, 0.1 - frame.lookDrop, -beat * SPACING - 4);
+    camera.position.set(Math.sin(beat * 1.3) * 0.6, 0.6, frame.dist - beat * SPACING);
+    camera.lookAt(0, 0.1 - frame.lookDrop, -beat * SPACING - 4);
     renderer.render(scene, camera);
     dirty = false;
   };

@@ -10,7 +10,7 @@ export default {
   requires: ['webgl'],
   added: '2026-10-28',
   order: 40,
-  preview: { height: 620, hint: 'Drag across the stage to move the light', capture: { wait: 2600 } },
+  preview: { height: 560, hint: 'Drag across the stage to move the light', capture: { wait: 2600 } },
   useCases: [
     'A product page for anything metal, glazed or lacquered, where the highlights sell the material',
     'A configurator that swaps finishes and needs them to read correctly under the same light',
@@ -19,7 +19,7 @@ export default {
   notes: [
     'The finish swatches are radio buttons, the lighting switch is two aria-pressed buttons and the light angle is a native range input; the canvas is aria-hidden.',
     'Lighting is not motion: under reduced motion the scene still renders lit, just held without the slow orbit.',
-    'Without WebGL a drawn still of the two objects takes the stage, and the product copy and buttons stand alone.',
+    'Without WebGL a drawn still of the two objects takes the stage and the light slider is hidden.',
   ],
   controls: [
     { id: 'environment', label: 'Environment', type: 'select', options: [{ value: 'panels', label: 'Panel room' }, { value: 'painted', label: 'Painted window' }], default: 'panels', group: 'Light', prompt: (v) => (v === 'panels' ? 'Start in the panel room (PMREM fromScene)' : 'Start in the painted window gradient (PMREM fromEquirectangular, environmentIntensity 2.2)') },

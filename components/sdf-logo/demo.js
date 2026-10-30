@@ -1,11 +1,11 @@
-// Extruded logo — a festival's identity page, its mark given a body. The mark (a dot and three arcs each side) is a
+// Extruded logo — a festival's mark given a body, alone with its finish switch. The mark (a dot and three arcs each side) is a
 // 2D signed distance; one fullscreen triangle of raw WebGL 2 extrudes it with a depth and a rounded bevel and
 // raymarches it inside its bounding box with a fixed step budget. Shading is reflection only: a procedural studio
 // environment (dark ahead, a bright ring at grazing angles, one soft key), four-tap normals and occlusion, a Schlick
 // tint, inline ACES and gamma. Intro: depth grows out of the flat mark while the yaw settles, then a slow sway.
 // Reduced motion, static, no WebGL 2 and a lost context all keep an SVG stroke still of the same mark.
 import './demo.css';
-import { on, onFrame, whileVisible, observeResize, html, raw, readToken, content } from '../../src/demo-kit/index.js';
+import { on, onFrame, whileVisible, observeResize, html, raw, readToken, content, webgl2Available } from '../../src/demo-kit/index.js';
 
 // The recipe's own values; depth, bevel, finish and sway come from the controls. Units: the outer arc's radius is .74.
 const P = { steps: 80, hit: 5e-4, exposure: 1.15, camDist: 3.2, focal: 2.6, introDepth: 0.9, introTurn: 1.6, swayRate: 0.55, dprCap: 2, budget: 2e6 };
@@ -109,7 +109,6 @@ function markSVG() {
   return (cls, width) => `<g class="${cls}" stroke-width="${width}"><circle r="${MARK.dot / 2}" stroke-width="${MARK.dot}"/>${arcs}</g>`;
 }
 const STROKES = markSVG();
-const FLAT = `<svg viewBox="-0.9 -0.9 1.8 1.8" aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round">${STROKES('', MARK.half * 2)}</svg>`;
 
 // Finishes as Schlick F0 tints, from the palette: chrome is near-neutral, brass leans on sand, vermilion on the accent.
 const toLinear = (c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
@@ -123,6 +122,7 @@ const FINISH = {
   brass: () => hexLinear(readToken('--sand')).map((v, i) => Math.min(1, v * [1.25, 1.12, 0.78][i])),
   vermilion: () => hexLinear(readToken('--accent')).map((v) => 0.12 + v * 0.85),
 };
+const FINISH_NAMES = { chrome: 'Chrome', brass: 'Brass', vermilion: 'Vermilion' };
 const easeOut = (x) => 1 - (1 - Math.min(1, Math.max(0, x))) ** 3;
 
 export default function mount(root, options, ctx) {
@@ -130,39 +130,38 @@ export default function mount(root, options, ctx) {
   let cfg = { ...options };
   root.className = 'sl';
   root.innerHTML = html`
-    <header class="ac-bar sl__bar">
-      <a class="ac-brand sl__brand" href="#top"><span class="sl__mini">${raw(FLAT)}</span>${festival.name}</a>
-      <nav aria-label="Festival"><a href="#top">Line-up</a><a href="#top">Tickets</a><a href="#top" aria-current="page">Press</a></nav>
-    </header>
-    <main class="sl__main ac-wrap">
-      <section class="sl__copy" aria-labelledby="sl-title">
-        <p class="ac-label">${festival.edition} · Identity</p>
-        <h1 class="ac-display" id="sl-title">One dot, three arcs.</h1>
-        <p class="ac-lede">The mark is a transmitter: a point and the signal leaving it. It holds at sixteen pixels, cuts cleanly from steel for the gate signs and turns up on every wristband.</p>
-        <ul class="sl__uses" role="list" aria-label="The flat mark">
-          <li><span class="sl__tile">${raw(FLAT)}</span><span class="ac-label">Positive</span></li>
-          <li><span class="sl__tile sl__tile--rev">${raw(FLAT)}</span><span class="ac-label">Reversed</span></li>
-          <li><span class="sl__tile sl__tile--small">${raw(FLAT)}</span><span class="ac-label">16 px</span></li>
-        </ul>
-        <div class="sl__buy">
-          <a class="ac-btn" href="#download">Download the mark</a>
-          <a class="ac-link sl__more" href="#guide">Brand guidelines, 24 pages</a>
-        </div>
-      </section>
-      <div class="sl__stage" role="img" aria-label="The Signal mark, a dot with three arcs on each side, rendered as polished metal" data-stage>
+    <section class="ac-stage sl__ground" aria-label="${festival.name} identity">
+      <div class="sl__stage" role="img" aria-label="The ${festival.name} mark, a dot with three arcs on each side, rendered as polished metal" data-stage>
         <svg class="sl__still" viewBox="-1 -1 2 2" aria-hidden="true" focusable="false" fill="none" stroke-linecap="round">${raw(STROKES('sl__edge', MARK.half * 2 + 0.06))}${raw(STROKES('sl__face', MARK.half * 2))}</svg>
         <canvas class="sl__gl" aria-hidden="true"></canvas>
       </div>
-    </main>`;
-  root.querySelectorAll('a[href^="#"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
+      <div class="sl__switch" role="group" aria-label="Finish">
+        ${Object.entries(FINISH_NAMES).map(([id, label]) => html`<button type="button" data-finish="${id}" aria-pressed="false">${label}</button>`)}
+      </div>
+      <p class="ac-stage__note"><span>${festival.name} · identity</span></p>
+    </section>`;
 
   const stage = root.querySelector('[data-stage]');
   const canvas = stage.querySelector('canvas');
-  // Reduced and static keep the SVG still: no context is created at all.
-  if (ctx.motion !== 'full') return { update(next) { cfg = { ...next }; } };
+  // The finish switch: real buttons with aria-pressed. The panel's control sets where it starts; the buttons and the
+  // still's stroke follow the one value the shader reads.
+  const buttons = [...root.querySelectorAll('[data-finish]')];
+  let finish = cfg.finish;
+  let draw = () => {};
+  const choose = (id) => {
+    finish = id;
+    buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.finish === id)));
+    root.dataset.finish = id;
+    draw();
+  };
+  buttons.forEach((b) => on(ctx, b, 'click', () => choose(b.dataset.finish)));
+  choose(finish);
+  const keepStill = { update(next, changed) { cfg = { ...next }; if (changed.includes('finish')) choose(cfg.finish); } };
+  // Reduced and static keep the SVG still: no context is created at all. So does a browser without WebGL 2 (or ?nogl).
+  if (ctx.motion !== 'full' || !webgl2Available()) return keepStill;
   let gl = null;
   try { gl = canvas.getContext('webgl2', { antialias: true, premultipliedAlpha: true }); } catch { gl = null; }
-  if (!gl) return { update(next) { cfg = { ...next }; } };
+  if (!gl) return keepStill;
 
   let prog;
   try {
@@ -180,7 +179,7 @@ export default function mount(root, options, ctx) {
     if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
   } catch (e) {
     console.warn('extruded logo: keeping the SVG still', e);
-    return { update(next) { cfg = { ...next }; } };
+    return keepStill;
   }
   gl.useProgram(prog);
   const vao = gl.createVertexArray();
@@ -206,7 +205,7 @@ export default function mount(root, options, ctx) {
     const sway = (cfg.sway * Math.PI) / 180;
     return { yaw: (-Math.PI / 2) * (1 - turn) + sway * turn * Math.sin(Math.max(0, t - P.introTurn) * P.swayRate), depth: d };
   };
-  const draw = () => {
+  draw = () => {
     if (!live) return;
     const { yaw, depth } = pose(time);
     const bevel = Math.min(cfg.bevel, cfg.depth - 0.004, MARK.half - 0.004);
@@ -214,7 +213,7 @@ export default function mount(root, options, ctx) {
     gl.uniform1f(U.yaw, yaw);
     gl.uniform1f(U.depth, minDepth + (cfg.depth - minDepth) * depth);
     gl.uniform1f(U.bevel, Math.max(0, bevel));
-    gl.uniform3fv(U.tint, FINISH[cfg.finish]());
+    gl.uniform3fv(U.tint, FINISH[finish]());
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
@@ -240,7 +239,7 @@ export default function mount(root, options, ctx) {
   whileVisible(ctx, stage, () => { off = onFrame(ctx, (dt) => { time += dt; draw(); }); }, () => { off?.(); off = null; });
 
   return {
-    update(next) { cfg = { ...next }; draw(); return true; },
+    update(next, changed) { cfg = { ...next }; if (changed.includes('finish')) choose(cfg.finish); else draw(); return true; },
     action(id) { if (id === 'replay') { time = 0; draw(); } },
   };
 }

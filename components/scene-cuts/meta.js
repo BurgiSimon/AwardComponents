@@ -10,7 +10,7 @@ export default {
   requires: ['webgl'],
   added: '2026-10-28',
   order: 60,
-  preview: { height: 640, scroll: true, hint: 'Next, or scroll to the footer', capture: { action: 'iris', wait: 1400 } },
+  preview: { height: 560, scroll: true, hint: 'Next, or scroll to the footer', capture: { action: 'iris', wait: 1400 } },
   useCases: [
     'A trailer-like hero for an event, a film or a launch with a few chapters to show',
     'Chapter changes on a scroll story, cut in post instead of with overlaid panels',

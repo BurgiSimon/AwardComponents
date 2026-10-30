@@ -1,4 +1,4 @@
-// Post-processing presets — a festival's night-programme hero. A dark stage set into the page holds a neon signal
+// Post-processing presets — a festival's after-dark neon, full-bleed on its own. A night stage holds a neon signal
 // mark, its reflection in a wet floor and a chase of truss lights. The postprocessing composer runs render → bloom +
 // grain (one merged EffectPass) → SMAA, on half-float buffers (bytes on the low tier, which skips post entirely).
 // The look is one of three fixed presets — hero 1.5, chapter 0.5, quiet 0.25 — chosen with real buttons, never a
@@ -6,7 +6,7 @@
 import './demo.css';
 import * as THREE from 'three';
 import { EffectComposer, RenderPass, EffectPass, BloomEffect, NoiseEffect, SMAAEffect, BlendFunction } from 'postprocessing';
-import { on, onFrame, whileVisible, html, raw, readToken, content, formatPrice, qualityTier } from '../../src/demo-kit/index.js';
+import { on, onFrame, whileVisible, html, raw, readToken, content, qualityTier } from '../../src/demo-kit/index.js';
 import { useRenderer, webglAvailable, disposeScene } from '../../src/demo-kit/three.js';
 
 // Fixed presets: the three looks a multi-scene site needs (hero, a chapter, a quiet section).
@@ -33,30 +33,17 @@ export default function mount(root, options, ctx) {
   let cfg = { ...options };
   root.className = 'pp';
   root.innerHTML = html`
-    <header class="ac-bar pp__bar">
-      <a class="ac-brand" href="#top">${festival.name}</a>
-      <nav aria-label="Festival"><a href="#top">Line-up</a><a href="#top" aria-current="page">Stages</a><a href="#top">Tickets</a></nav>
-    </header>
-    <section class="pp__stage" aria-labelledby="pp-title">
+    <section class="pp__stage" aria-label="${festival.name} after-dark hero">
       <div class="pp__gl" data-stage></div>
       <div class="pp__still" data-still hidden>${raw(MARK_SVG)}</div>
-      <div class="pp__copy">
-        <p class="ac-label pp__label">${festival.edition} · Hall 4</p>
-        <h1 class="ac-display" id="pp-title">After dark<br>in Hall 4.</h1>
-        <p class="pp__lede">Three nights of live sets under the old crane hall’s roof, ${festival.dates.replace(' 2027', '')}. Doors at 21:00, last set at 03:30.</p>
-        <div class="pp__buy">
-          <a class="ac-btn ac-btn--accent ac-btn--lg" href="#tickets">Night ticket — ${formatPrice(festival.tickets[0].price)}</a>
-          <a class="pp__link" href="#lineup">See who plays</a>
-        </div>
-      </div>
       <div class="pp__looks">
         <div class="pp__switch" role="group" aria-label="Post-processing look">
           ${Object.entries(PRESETS).map(([id, p]) => html`<button type="button" data-preset="${id}" aria-pressed="false">${p.label}<span class="ac-num">${p.bloom}</span></button>`)}
         </div>
         <p class="ac-label pp__read" data-read aria-live="polite"></p>
       </div>
+      <p class="ac-stage__note ac-stage__note--media"><span>${festival.name} · after-dark hero</span></p>
     </section>`;
-  root.querySelectorAll('a[href^="#"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const host = root.querySelector('[data-stage]');
   const still = root.querySelector('[data-still]');
@@ -185,38 +172,24 @@ export default function mount(root, options, ctx) {
   };
   choose(preset);
 
-  // Three stage shapes: wide (mark right of the copy, reflected in the floor), mid (a smaller mark pushed right) and
-  // narrow (the mark above the copy, no floor). The camera backs off until the whole mark fits.
+  // The mark stands centred over its reflection in the wet floor. The camera backs off until the whole mark fits
+  // the width, so a tall, narrow stage shows the same sign smaller with more floor under it.
   const TAN = Math.tan((17.5 * Math.PI) / 180);
   onResize(({ width, height }) => {
     const aspect = width / height;
     camera.aspect = aspect;
     const reach = ARCS[2] + 0.12;
-    let scale = 1;
-    let x = 0;
-    let y = 0.6;
-    let lookY = 0.05;
-    camera.position.set(0, 0.6, 7);
-    if (aspect > 1.5) {
-      x = Math.min(TAN * 7 * aspect * 0.5, 2.4);
-    } else if (aspect > 1.1) {
-      scale = 0.78;
-      x = TAN * 7 * aspect - reach * scale - 0.3;
-      y = 0.85;
-    } else {
-      scale = 0.85;
-      camera.position.set(0, 0.3, Math.max(7, (reach * scale + 0.3) / (TAN * aspect)));
-      lookY = 0.3;
-      y = lookY + TAN * camera.position.z * 0.42;
-    }
-    mark.position.set(x, y, 0);
+    const scale = aspect > 1.1 ? 1 : 0.85;
+    const y = 0.75;
+    const lookY = 0.2;
+    camera.position.set(0, 0.6, Math.max(8.6, (reach * scale + 0.3) / (TAN * aspect)));
+    mark.position.set(0, y, 0);
     mark.scale.setScalar(scale);
     // The floor sits just under the lowest arc tip, so the reflection starts where the tubes end.
     const floorY = y - (ARCS[2] * Math.sin(ARC_SPAN / 2) + 0.1) * scale;
     floor.position.y = floorY;
-    reflection.position.set(x, 2 * floorY - y, 0);
+    reflection.position.set(0, 2 * floorY - y, 0);
     reflection.scale.set(scale, -scale, scale);
-    floor.visible = reflection.visible = aspect > 1.1;
     lamps.position.y = lookY + TAN * (camera.position.z + 3) * 0.8 - 2.4;
     lampLine.position.y = lamps.position.y + 2.46;
     camera.lookAt(0, lookY, 0);

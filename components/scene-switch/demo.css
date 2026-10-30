@@ -2,46 +2,26 @@
   --ss-dur: 1s;
   --ss-ease: cubic-bezier(0.645, 0.045, 0.355, 1);
   min-height: 100svh;
-  display: grid;
-  grid-template-rows: auto 1fr;
   overflow-x: clip;
 }
-.ss a { text-decoration: none; }
-.ss__bar nav a[aria-current] { color: var(--ink); }
 
-/* Split screen: the copy on the page ground (tinted toward the current set), the stage flush to the right edge. */
-.ss__main { display: grid; grid-template-columns: minmax(340px, 0.82fr) minmax(0, 1fr); min-height: calc(100svh - 64px); }
-.ss__copy {
-  display: grid;
-  align-items: center;
-  padding: clamp(24px, 4vw, 56px) clamp(20px, 3.4vw, 56px) clamp(24px, 4vw, 56px) var(--gutter);
+/* The stage ground takes a faint tint of the current set, on the same beat as the scene. */
+.ss__ground {
+  --stage-gap: clamp(18px, 3.4vh, 28px);
   background: color-mix(in oklab, var(--ss-ground, var(--bg)) 9%, var(--bg));
   transition: background-color var(--ss-dur) var(--ss-ease);
 }
-.ss__inner { display: grid; gap: 22px; max-width: 30rem; }
-.ss__inner .ac-h1 { font-size: clamp(1.8rem, 1.1rem + 2vw, 2.9rem); }
 
-.ss__finish { display: grid; gap: 8px; padding-top: 20px; border-top: 1px solid var(--line); }
-.ss__name { display: flex; align-items: center; gap: 12px; font-size: var(--text-2xl); font-weight: 680; font-stretch: 108%; letter-spacing: -0.02em; line-height: 1.1; }
-.ss__dot { width: 14px; height: 14px; border-radius: 50%; background: var(--ss-body); box-shadow: inset 0 0 0 1px var(--line-2); transition: background-color var(--ss-dur) var(--ss-ease); }
-.ss__count { margin-left: auto; }
-.ss__note { color: var(--ink-2); max-width: 40ch; min-height: 3em; text-wrap: pretty; }
-
-.ss__swatches { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; border: 0; }
-.ss__sw { position: relative; display: inline-flex; align-items: center; gap: 10px; height: 44px; padding: 0 16px 0 8px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--surface); font-size: var(--text-sm); font-weight: 600; cursor: pointer; transition: border-color var(--dur-s), box-shadow var(--dur-s); }
-.ss__sw input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
-.ss__sw-chip { width: 28px; height: 28px; border-radius: 50%; background: var(--sw); box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.14); }
-.ss__sw:hover { border-color: var(--ink-2); }
-.ss__sw:has(input:checked) { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
-.ss__sw:has(input:focus-visible) { outline: 2px solid var(--focus); outline-offset: 3px; }
-
-.ss__buy { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-top: 4px; }
-.ss__steps { display: flex; gap: 8px; }
-.ss__step { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line-2); background: var(--surface); color: var(--ink); }
-.ss__step:hover { border-color: var(--ink-2); }
-.ss__step svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-
-.ss__stage { position: relative; min-height: 420px; background: var(--ss-ground, var(--bg-2)); transition: background-color var(--ss-dur) var(--ss-ease); }
+/* The scene: one framed panel, wide on a desk, tall on a phone. */
+.ss__stage {
+  position: relative;
+  width: min(100%, 920px);
+  height: clamp(240px, 60svh, 560px);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  background: var(--ss-ground, var(--bg-2));
+  transition: background-color var(--ss-dur) var(--ss-ease);
+}
 .ss__stage canvas { position: absolute; inset: 0; }
 .ss__still { position: absolute; inset: 0; }
 .ss__still[hidden] { display: none; }
@@ -49,16 +29,25 @@
 .ss__still-ground { fill: var(--ss-ground); transition: fill var(--ss-dur) var(--ss-ease); }
 .ss__still-body { fill: var(--ss-body); transition: fill var(--ss-dur) var(--ss-ease); }
 
-@media (max-width: 760px) {
-  .ss__bar nav a:not([aria-current]) { display: none; }
-  .ss__main { grid-template-columns: 1fr; grid-template-rows: auto auto; }
-  .ss__stage { order: -1; min-height: 0; height: 46svh; }
-  .ss__copy { padding: 24px var(--gutter) 32px; }
-  .ss__inner { gap: 18px; }
-  .ss__note { min-height: 0; }
-}
-@media (max-width: 1080px) and (min-width: 761px) {
-  .ss__sw { gap: 8px; height: 40px; padding: 0 12px 0 6px; font-size: 0.8125rem; }
-  .ss__sw-chip { width: 24px; height: 24px; }
-  .ss__swatches { gap: 6px; }
+/* The picker: previous, the three finishes as radios, next. */
+.ss__picker { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.ss__swatches { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 0; padding: 0; border: 0; }
+.ss__sw { position: relative; display: inline-flex; align-items: center; gap: 10px; height: 44px; padding: 0 16px 0 8px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--surface); font-size: var(--text-sm); font-weight: 600; cursor: pointer; transition: border-color var(--dur-s), box-shadow var(--dur-s); }
+.ss__sw input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+.ss__sw-chip { width: 28px; height: 28px; border-radius: 50%; background: var(--sw); box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.14); }
+.ss__sw:hover { border-color: var(--ink-2); }
+.ss__sw:has(input:checked) { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.ss__sw:has(input:focus-visible) { outline: 2px solid var(--focus); outline-offset: 3px; }
+
+.ss__step { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line-2); background: var(--surface); color: var(--ink); }
+.ss__step:hover { border-color: var(--ink-2); }
+.ss__step svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Narrow: the swatches take their own row, the arrows sit under them. */
+@media (max-width: 560px) {
+  .ss__stage { height: clamp(240px, 56svh, 520px); }
+  .ss__picker { flex-wrap: wrap; }
+  .ss__swatches { order: -1; flex-basis: 100%; gap: 6px; }
+  .ss__sw { gap: 8px; height: 42px; padding: 0 12px 0 6px; }
+  .ss__sw-chip { width: 26px; height: 26px; }
 }

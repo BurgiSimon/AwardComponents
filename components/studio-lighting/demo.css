@@ -1,28 +1,11 @@
-.sl { --sl-glaze: var(--clay); min-height: 100svh; display: grid; align-items: center; overflow-x: clip; background: var(--bg); }
-
-.sl__hero { display: grid; grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr); align-items: center; gap: clamp(24px, 4.5vw, 72px); padding-block: 32px; }
-.sl__copy { display: grid; gap: 18px; align-content: center; }
-.sl__copy .ac-h1 { font-size: clamp(2.4rem, 1.4rem + 3vw, 4.4rem); }
-.sl__price { font-size: var(--text-xl); font-weight: 620; line-height: 1.25; text-wrap: balance; }
-.sl__price .ac-small { font-weight: 400; }
-.sl__copy .ac-lede { font-size: var(--text-md); }
-
-.sl__finish { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 4px 0 0; padding: 0; border: 0; }
-.sl__finish legend { width: 100%; margin-bottom: 10px; padding: 0; }
-.sl__finish legend span { color: var(--ink); }
-.sl__sw { position: relative; width: 36px; height: 36px; border-radius: 50%; background: var(--sw); box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.18); cursor: pointer; transition: transform var(--dur-s) var(--ease-spring); }
-.sl__sw:hover { transform: scale(1.08); }
-.sl__sw input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
-.sl__sw:has(input:checked) { box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.18), 0 0 0 3px var(--bg), 0 0 0 5px var(--ink); }
-.sl__sw:has(input:focus-visible) { box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--focus); }
-.sl__buy { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 6px; }
+.sl { --sl-glaze: var(--clay); min-height: 100svh; overflow-x: clip; background: var(--bg); }
+.sl__ground { --stage-gap: clamp(14px, 2.6vh, 22px); }
 
 /* The stage: a photographer's sweep, lighter at the back, with a soft floor where the objects stand. */
-.sl__figure { display: grid; gap: 12px; margin: 0; }
 .sl__stage {
   position: relative;
-  height: min(72svh, 640px);
-  min-height: 340px;
+  width: min(100%, 960px);
+  height: clamp(280px, 60svh, 600px);
   border-radius: var(--radius-xl);
   overflow: hidden;
   touch-action: pan-y;
@@ -40,16 +23,27 @@
 .sl--still .sl__stage { cursor: default; }
 .sl--still .sl__angle { display: none; }
 
-.sl__bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+/* The controls under the stage: the lighting switch, the holder's finish, the light's angle. */
+.sl__bar { display: flex; align-items: center; justify-content: space-between; gap: 14px 24px; flex-wrap: wrap; width: min(100%, 960px); }
 .sl__lights { display: inline-flex; padding: 3px; border: 1px solid var(--line-2); border-radius: var(--radius-pill); background: var(--surface); }
 .sl__light { min-height: 36px; padding: 0 16px; border: 0; border-radius: var(--radius-pill); background: transparent; color: var(--ink-2); font-size: var(--text-sm); font-weight: 560; transition: background-color var(--dur-s) var(--ease-out), color var(--dur-s) var(--ease-out); }
 .sl__light[aria-pressed='true'] { background: var(--ink); color: var(--bg); }
+
+.sl__finish { display: flex; align-items: center; gap: 10px; margin: 0; padding: 0; border: 0; }
+.sl__finish-name { min-width: 6.5em; margin-left: 4px; color: var(--ink-2); }
+.sl__sw { position: relative; width: 30px; height: 30px; border-radius: 50%; background: var(--sw); box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.18); cursor: pointer; transition: transform var(--dur-s) var(--ease-spring); }
+.sl__sw:hover { transform: scale(1.08); }
+.sl__sw input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+.sl__sw:has(input:checked) { box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.18), 0 0 0 3px var(--bg), 0 0 0 5px var(--ink); }
+.sl__sw:has(input:focus-visible) { box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--focus); }
+
 .sl__angle { display: inline-flex; align-items: center; gap: 12px; }
 .sl__angle input { width: clamp(120px, 16vw, 200px); accent-color: var(--ink); }
 
 @media (max-width: 760px) {
-  .sl__hero { grid-template-columns: 1fr; padding-top: 16px; }
-  .sl__figure { order: -1; }
-  .sl__stage { height: 48svh; }
+  .sl__stage { height: 46svh; }
   .sl__light { min-height: 44px; }
+  .sl__finish-name { display: none; }
+  .sl__angle { flex-basis: 100%; }
+  .sl__angle input { flex: 1; width: auto; }
 }

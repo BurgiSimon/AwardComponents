@@ -10,16 +10,16 @@ export default {
   requires: ['webgl'],
   added: '2026-10-28',
   order: 48,
-  preview: { height: 680, scroll: true, hint: 'Scroll through the film', capture: { scroll: 0.2, wait: 3400 } },
+  preview: { height: 620, scroll: true, hint: 'Scroll through the film', capture: { scroll: 0.2, wait: 3400 } },
   useCases: [
     'A product’s “what’s inside” told as one continuous film',
     'Any scroll-driven WebGL story with more than two scenes',
     'A case study or launch page where some beats need more scroll than others',
   ],
   notes: [
-    'The five steps are real headings in a list after the film, reached by a skip link in the HUD; the canvas and the rail are aria-hidden.',
+    'The five steps are real headings in a list after the film, reached by a skip link that shows on keyboard focus; the canvas and the rail are aria-hidden.',
     'Under reduced motion and static Lenis is off, nothing spins or glides, and the stage shows one settled frame per beat.',
-    'Without WebGL the HUD, the beat copy and the rail still run on the same clock.',
+    'Without WebGL the captions and the rail still run on the same clock.',
   ],
   controls: [
     { id: 'track', label: 'Scroll length', type: 'range', min: 500, max: 1600, step: 50, default: 900, unit: 'svh', group: 'Progress line', help: 'The track’s height: the film’s whole scroll budget (78% of it on phones).', prompt: 'Track: {value} of scroll for the whole film (default {default})' },

@@ -1,19 +1,20 @@
-// Scene switch — a speaker's finish picker. Each finish is its own scene (its own set, light and ground), rendered
-// into a render target; choosing another finish blends the outgoing and incoming targets on one fullscreen plane with
-// a feathered wipe, a noise dissolve or an iris, plus a touch of zoom. Only the two scenes involved render during a
-// switch, one at rest, none when nothing moves. The copy column's tint changes in the same beat (same duration, same
-// ease). Radios, arrow keys and prev/next switch; reduced motion swaps at once. No WebGL: drawn stills.
+// Scene switch — a speaker's finish picker on its own: the scene and its swatches. Each finish is its own scene (its
+// own set, light and ground), rendered into a render target; choosing another finish blends the outgoing and incoming
+// targets on one fullscreen plane with a feathered wipe, a noise dissolve or an iris, plus a touch of zoom. Only the
+// two scenes involved render during a switch, one at rest, none when nothing moves. The stage's tint changes in the
+// same beat (same duration, same ease). Radios, arrow keys and prev/next switch; reduced motion swaps at once. No
+// WebGL: drawn stills.
 import './demo.css';
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
-import { on, onFrame, whileVisible, html, raw, readToken, qualityTier, content, formatPrice } from '../../src/demo-kit/index.js';
+import { on, onFrame, whileVisible, html, readToken, qualityTier, content } from '../../src/demo-kit/index.js';
 import { useRenderer, webglAvailable, disposeScene } from '../../src/demo-kit/three.js';
 
 // Grounds are token mixes so the sets stay in the library's palette: [token, other, share of the other].
 const FINISHES = [
-  { id: 'chalk', note: 'A warm white that sits back against plaster, pale oak and linen.', ground: ['--sand', 'white', 0.55], set: 'stone' },
-  { id: 'graphite', note: 'Anodised near-black with a charcoal grille, for dark shelves and late rooms.', ground: ['--night', '--sky', 0.06], set: 'studio' },
-  { id: 'clay', note: 'Fired-earth orange, the colour of the foam in the first prototype.', ground: ['--clay', '--sand', 0.42], set: 'arch' },
+  { id: 'chalk', ground: ['--sand', 'white', 0.55], set: 'stone' },
+  { id: 'graphite', ground: ['--night', '--sky', 0.06], set: 'studio' },
+  { id: 'clay', ground: ['--clay', '--sand', 0.42], set: 'arch' },
 ];
 const MODES = { wipe: 0, noise: 1, iris: 2 };
 const ease = (t) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2); // the theme's in-out curve, sampled
@@ -48,8 +49,8 @@ const compositeFrag = /* glsl */ `
     #include <colorspace_fragment>
   }`;
 
-// The no-WebGL still: the same speaker drawn flat, its colours on the custom properties the copy column uses.
-const STILL = '<svg viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect class="ss__still-ground" width="400" height="400"/><ellipse cx="200" cy="318" rx="120" ry="18" fill="rgb(0 0 0 / 0.14)"/><rect class="ss__still-body" x="140" y="96" width="120" height="214" rx="52"/><ellipse cx="200" cy="108" rx="54" ry="11" fill="rgb(255 255 255 / 0.5)"/></svg>';
+// The no-WebGL still: the same speaker drawn flat, its colours on the custom properties the stage's tint uses.
+const STILL = '<svg viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><rect class="ss__still-ground" width="400" height="400"/><ellipse cx="200" cy="318" rx="120" ry="18" fill="rgb(0 0 0 / 0.14)"/><rect class="ss__still-body" x="140" y="96" width="120" height="214" rx="52"/><ellipse cx="200" cy="108" rx="54" ry="11" fill="rgb(255 255 255 / 0.5)"/></svg>';
 
 function knit() {
   const c = document.createElement('canvas');
@@ -79,50 +80,31 @@ export default function mount(root, options, ctx) {
 
   root.className = 'ss';
   root.innerHTML = html`
-    <header class="ac-bar ss__bar">
-      <a class="ac-brand" href="#top">${product.maker}</a>
-      <nav aria-label="Product"><a href="#top" aria-current="page">${product.name}</a><a href="#top">Specs</a><a href="#top">Support</a></nav>
-    </header>
-    <main class="ss__main">
-      <section class="ss__copy" aria-labelledby="ss-title">
-        <div class="ss__inner">
-          <p class="ac-label">${product.name} · Finishes</p>
-          <h1 class="ac-h1" id="ss-title">One speaker, three rooms it was made for.</h1>
-          <div class="ss__finish" aria-live="polite">
-            <p class="ss__name"><span class="ss__dot" data-dot></span><span data-name></span><span class="ac-label ss__count" data-count></span></p>
-            <p class="ss__note" data-note></p>
-          </div>
-          <fieldset class="ss__swatches">
-            <legend class="sr-only">Finish</legend>
-            ${finishes.map((f) => html`<label class="ss__sw" style="--sw:${f.hex}"><input type="radio" name="ss-finish" value="${f.id}"><span class="ss__sw-chip"></span><span class="ss__sw-label">${f.name}</span></label>`)}
-          </fieldset>
-          <div class="ss__buy">
-            <a class="ac-btn ac-btn--lg" href="#buy">Pre-order — ${formatPrice(product.price)}</a>
-            <div class="ss__steps">
-              <button type="button" class="ss__step" data-prev aria-label="Previous finish"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12 4 6 10l6 6"/></svg></button>
-              <button type="button" class="ss__step" data-next aria-label="Next finish"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m8 4 6 6-6 6"/></svg></button>
-            </div>
-          </div>
-        </div>
-      </section>
+    <section class="ac-stage ss__ground" aria-label="${product.name} finishes">
       <div class="ss__stage" data-stage><div class="ss__still" data-still hidden></div></div>
-    </main>`;
-  root.querySelectorAll('a[href^="#"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
+      <div class="ss__picker">
+        <button type="button" class="ss__step" data-prev aria-label="Previous finish"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12 4 6 10l6 6"/></svg></button>
+        <fieldset class="ss__swatches">
+          <legend class="sr-only">Finish</legend>
+          ${finishes.map((f) => html`<label class="ss__sw" style="--sw:${f.hex}"><input type="radio" name="ss-finish" value="${f.id}"><span class="ss__sw-chip"></span><span class="ss__sw-label">${f.name}</span></label>`)}
+        </fieldset>
+        <button type="button" class="ss__step" data-next aria-label="Next finish"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m8 4 6 6-6 6"/></svg></button>
+      </div>
+      <p class="sr-only" aria-live="polite" data-live></p>
+      <p class="ac-stage__note"><span>${product.maker} · finish picker</span></p>
+    </section>`;
 
   const stage = root.querySelector('[data-stage]');
   const still = root.querySelector('[data-still]');
   const radios = [...root.querySelectorAll('input[name="ss-finish"]')];
-  const nameEl = root.querySelector('[data-name]');
-  const noteEl = root.querySelector('[data-note]');
-  const countEl = root.querySelector('[data-count]');
+  const liveEl = root.querySelector('[data-live]');
 
-  // The DOM half of the switch: names, radios and the column's tint, on the same duration and ease as the GL.
+  // The DOM half of the switch: the radios, the announcement and the stage's tint, on the same duration and ease as
+  // the GL.
   const showCopy = (i) => {
     const f = finishes[i];
     radios.forEach((r) => { r.checked = r.value === f.id; });
-    nameEl.textContent = f.name;
-    noteEl.textContent = f.note;
-    countEl.textContent = `${String(i + 1).padStart(2, '0')} / ${String(finishes.length).padStart(2, '0')}`;
+    liveEl.textContent = `${f.name}, ${i + 1} of ${finishes.length}`;
     root.style.setProperty('--ss-ground', cssGround(f.ground));
     root.style.setProperty('--ss-body', f.hex);
   };
@@ -274,7 +256,7 @@ export default function mount(root, options, ctx) {
     targets.forEach((t) => t.setSize(size.x, size.y));
     const aspect = width / height;
     camera.aspect = aspect;
-    camera.position.set(0, 0.8, aspect < 0.9 ? 15.5 : aspect < 1.2 ? 13.5 : 12.5);
+    camera.position.set(0, 0.8, aspect < 0.9 ? 15.5 : aspect < 1.2 ? 13.5 : 11.2);
     camera.lookAt(0, -0.45, 0);
     camera.updateProjectionMatrix();
     composite.uniforms.uAspect.value = aspect;

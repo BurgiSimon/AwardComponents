@@ -1,47 +1,28 @@
-.sl { min-height: 100svh; display: grid; grid-template-rows: auto 1fr; overflow-x: clip; }
-.sl a { text-decoration: none; }
-.sl__bar nav a[aria-current] { color: var(--ink); }
-.sl__brand { gap: 0.45em; }
-.sl__mini { display: inline-block; width: 1.5em; color: var(--accent); }
-.sl__mini svg { width: 100%; height: auto; }
+.sl { min-height: 100svh; overflow-x: clip; }
+.sl__ground { --stage-gap: clamp(16px, 3vh, 28px); }
 
-.sl__main { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); align-items: center; gap: clamp(24px, 5vw, 80px); padding-block: clamp(12px, 3vh, 40px) clamp(28px, 5vh, 56px); }
-.sl__copy { display: grid; gap: 20px; max-width: 32rem; }
-.sl__copy .ac-display { font-size: clamp(2.6rem, 1.4rem + 4vw, 5.4rem); }
-
-/* The flat mark in use: three small tiles, the same strokes the shader extrudes. */
-.sl__uses { display: grid; grid-template-columns: repeat(3, minmax(0, 92px)); gap: 12px; margin: 4px 0 0; }
-.sl__uses li { display: grid; gap: 8px; }
-.sl__tile { display: grid; place-items: center; aspect-ratio: 1; border-radius: var(--radius-md); background: var(--surface); border: 1px solid var(--line); color: var(--accent); }
-.sl__tile svg { width: 58%; height: auto; }
-.sl__tile--rev { background: var(--ink); border-color: transparent; color: var(--bg); }
-.sl__tile--small svg { width: 16px; color: var(--ink); }
-.sl__buy { display: flex; align-items: center; flex-wrap: wrap; gap: 14px 22px; }
-.sl__more { font-size: var(--text-sm); font-weight: 600; }
-
-/* The stage: the SVG still is the default; the canvas takes over only once a context exists and has drawn. */
+/* The stage: a soft pool of light under the mark. The SVG still is the default; the canvas takes over only once a
+   context exists and has drawn. */
 .sl__stage {
   position: relative;
+  width: min(100%, 62svh, 560px);
   aspect-ratio: 1;
-  max-height: calc(100svh - 120px);
-  justify-self: center;
-  width: 100%;
-  border-radius: var(--radius-xl);
   background:
-    radial-gradient(60% 50% at 50% 46%, color-mix(in oklab, var(--surface) 90%, transparent), transparent 72%),
-    radial-gradient(90% 70% at 50% 100%, color-mix(in oklab, var(--ink) 7%, transparent), transparent 70%),
-    var(--bg-2);
+    radial-gradient(50% 46% at 50% 48%, color-mix(in oklab, var(--surface) 90%, transparent), transparent 72%),
+    radial-gradient(38% 9% at 50% 86%, color-mix(in oklab, var(--ink) 9%, transparent), transparent);
 }
 .sl__still, .sl__gl { position: absolute; inset: 0; width: 100%; height: 100%; }
 .sl__still { padding: 14%; }
 .sl__edge { stroke: var(--line-2); }
-.sl__face { stroke: var(--ink); }
+.sl__face { stroke: var(--ink); transition: stroke var(--dur-s); }
+.sl[data-finish='brass'] .sl__face { stroke: color-mix(in oklab, var(--sand), var(--ink) 35%); }
+.sl[data-finish='vermilion'] .sl__face { stroke: var(--accent); }
 .sl__gl { display: none; }
 .sl--gl .sl__gl { display: block; }
 .sl--gl .sl__still { display: none; }
 
-@media (max-width: 760px) {
-  .sl__bar nav a:not([aria-current]) { display: none; }
-  .sl__main { grid-template-columns: minmax(0, 1fr); gap: 20px; padding-top: 4px; }
-  .sl__stage { order: -1; width: 100%; max-height: none; aspect-ratio: 1 / 0.86; }
-}
+/* The finish switch: a segmented control under the mark. */
+.sl__switch { display: inline-flex; padding: 4px; gap: 2px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); }
+.sl__switch button { min-height: 38px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; color: var(--ink-2); font-size: var(--text-sm); font-weight: 600; transition: background-color var(--dur-s), color var(--dur-s); }
+.sl__switch button:hover { color: var(--ink); }
+.sl__switch button[aria-pressed='true'] { background: var(--ink); color: var(--bg); }
