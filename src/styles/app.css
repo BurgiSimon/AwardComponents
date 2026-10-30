@@ -136,6 +136,9 @@ code { font-size: 0.88em; }
 .main-col { min-width: 0; display: flex; flex-direction: column; }
 .main { flex: 1; outline: none; }
 .shell[data-layout='library'] .main { padding: 28px clamp(20px, 3.4vw, 56px) 72px; max-width: 1240px; width: 100%; }
+/* A component page grows with the window: the bench, the prompt and the details use the room on wide screens,
+   up to a cap that keeps an ultrawide screen from stretching it into a strip. */
+.shell[data-layout='library'] .main:has(> .cpage) { max-width: 1920px; margin-inline: auto; }
 
 /* ===================== Sidebar ===================== */
 
@@ -415,8 +418,9 @@ code { font-size: 0.88em; }
 .notice .icon { color: var(--warn); margin-top: 2px; }
 
 .workbench {
-  --stage-max: clamp(320px, 100svh - var(--top) - 81px, 760px);
-  --panel-w: 320px;
+  --stage-max: clamp(320px, 100svh - var(--top) - 81px, 960px);
+  --panel-w: clamp(300px, 14vw + 120px, 380px);
+  container: bench / inline-size;
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) var(--panel-w);
@@ -454,7 +458,7 @@ code { font-size: 0.88em; }
 .pv-toggle__n { min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: var(--accent); color: var(--on-accent); font: 650 10.5px/18px var(--font-mono); text-align: center; }
 
 /* Preview */
-.preview { display: flex; flex-direction: column; height: 100%; container: preview / inline-size; }
+.preview { display: flex; flex-direction: column; height: 100%; }
 /* One row: viewport · hint (takes what is left and truncates) · actions · tools · end slot. */
 .preview__bar {
   position: relative; z-index: 3;
@@ -473,7 +477,7 @@ code { font-size: 0.88em; }
 .preview.has-hint-row .preview__hint { order: 9; flex: 1 1 100%; margin: 0 -10px -8px; padding: 7px 14px 8px; border-top: 1px solid var(--line); background: var(--surface-2); }
 .preview.has-hint-row .preview__hint > span { white-space: normal; }
 /* Phone widths: actions, tools and the toggle wrap as whole groups, without the dividers. */
-@container preview (max-width: 520px) {
+@container bench (max-width: 520px) {
   .preview__bar { flex-wrap: wrap; }
   .preview__actions { flex-wrap: wrap; }
   .preview__actions + .preview__tools { padding-left: 0; margin-left: 0; border-left: 0; }
@@ -507,7 +511,10 @@ code { font-size: 0.88em; }
 .preview__stage {
   --device-w: 100%;
   position: relative;
-  height: min(var(--stage-h), var(--stage-max, 760px));
+  /* The author's height, taller on a wide bench (45 % of its width, so a big screen gets a big stage rather
+     than a letterbox), and never taller than the window. cqi reads the bench, so opening or closing the panel
+     does not change the height. */
+  height: min(max(var(--stage-h), 45cqi), var(--stage-max, 760px));
   display: flex; justify-content: center; align-items: flex-start;
   background:
     radial-gradient(circle at 1px 1px, var(--line) 1px, transparent 0) 0 0 / 18px 18px,
@@ -559,7 +566,7 @@ code { font-size: 0.88em; }
 }
 .tw-info, .tw-reset { display: inline-grid; place-items: center; flex: none; width: 22px; height: 22px; padding: 0; border: 0; border-radius: 6px; background: transparent; color: var(--muted); }
 .tw-info:hover, .tw-reset:hover { background: var(--bg-2); color: var(--ink); }
-.tw-info[aria-expanded='true'] { color: var(--accent-ink); background: var(--accent-soft); }
+.tw-info.is-on { color: var(--accent-ink); background: var(--accent-soft); }
 .tw-reset { opacity: 0; transition: opacity var(--dur-s); }
 .tw-row[data-changed] .tw-reset { opacity: 1; }
 .tw-row:not([data-changed]) .tw-reset { visibility: hidden; }
@@ -574,8 +581,26 @@ code { font-size: 0.88em; }
 .tw-num:hover { border-color: var(--line-2); }
 .tw-num:focus { outline: 0; border-color: var(--focus); background: var(--surface-2); }
 .tw-unit { color: var(--muted); }
-.tw-help { margin: 8px 0 2px; padding: 8px 10px; border-radius: 8px; background: var(--bg-2); color: var(--ink-2); font-size: 12px; line-height: 1.45; }
-.tw-row--toggle .tw-help { margin-top: 6px; }
+/* The help popover: placed by controls.js against the row (fixed, so the panel's scroll box does not clip it),
+   with an arrow under the info button. z-index keeps it below the sticky top bar. */
+.tw-help {
+  --arrow-x: 24px;
+  position: fixed; z-index: 35; margin: 0;
+  padding: 9px 12px 10px;
+  border: 1px solid var(--line-2); border-radius: 10px;
+  background: var(--raised); color: var(--ink-2);
+  box-shadow: var(--shadow-3);
+  font-size: 12.5px; line-height: 1.45; text-wrap: pretty;
+  animation: tip-in var(--dur-xs) var(--ease-out);
+}
+.tw-help::before {
+  content: ''; position: absolute; left: calc(var(--arrow-x) - 5px); top: -6px;
+  width: 10px; height: 10px; background: inherit;
+  border: 1px solid var(--line-2); border-right: 0; border-bottom: 0;
+  transform: rotate(45deg);
+}
+.tw-help[data-side='above']::before { top: auto; bottom: -6px; transform: rotate(225deg); }
+@keyframes tip-in { from { opacity: 0; translate: 0 3px; } }
 
 .tw-range {
   --fill: 50%;
@@ -644,6 +669,14 @@ code { font-size: 0.88em; }
 /* Prompt */
 .prompt-panel { margin-top: 48px; }
 .prompt-panel__head { margin-bottom: 18px; }
+.cpage > [data-slot='prompt'] { container: prompt / inline-size; }
+/* Wide: heading, lede and the target field on the left, the prompt on the right, so its lines stay readable. */
+@container prompt (min-width: 1320px) {
+  .prompt-panel { display: grid; grid-template-columns: minmax(280px, 1fr) minmax(0, 2.4fr); grid-template-rows: auto 1fr; column-gap: 48px; align-items: start; }
+  .prompt-panel__head, .prompt-panel__target { grid-column: 1; }
+  .prompt-panel__target { margin-bottom: 0; }
+  .prompt-box { grid-column: 2; grid-row: 1 / span 2; }
+}
 .prompt-panel__lede { margin-top: 6px; color: var(--ink-2); font-size: 14px; max-width: 64ch; }
 .prompt-panel__lede a { color: var(--ink); }
 .prompt-panel__target { display: grid; gap: 7px; margin-bottom: 12px; }
@@ -674,7 +707,7 @@ code { font-size: 0.88em; }
 .prompt-panel--compact .prompt-box__text { max-height: 260px; font-size: 12px; }
 
 /* Details */
-.details { margin-top: 48px; }
+.details { margin-top: 48px; container: details / inline-size; }
 .tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); margin-bottom: 24px; }
 .tabs [role='tab'] {
   position: relative; height: 40px; padding: 0 14px;
@@ -688,6 +721,13 @@ code { font-size: 0.88em; }
 .overview h3 { margin: 26px 0 10px; font-size: 13px; font-weight: 700; letter-spacing: 0.01em; }
 .overview h3:first-child { margin-top: 0; }
 .overview__side h3:first-child { margin-top: 0; }
+.overview__main > .prose + .overview__lists { margin-top: 26px; }
+.overview__lists > [data-slot='credits']:not(:first-child) > h3:first-child { margin-top: 26px; }
+@container details (min-width: 1240px) {
+  .overview { grid-template-columns: minmax(0, 1fr) 320px; gap: 56px; }
+  .overview__main:has(> .prose) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 48px; align-items: start; }
+  .overview__main > .prose + .overview__lists { margin-top: 0; }
+}
 .ticks { list-style: none; padding: 0; display: grid; gap: 8px; }
 .ticks li { position: relative; padding-left: 22px; color: var(--ink-2); font-size: 14.5px; line-height: 1.5; max-width: 70ch; }
 .ticks li::before { content: ''; position: absolute; left: 3px; top: 0.62em; width: 8px; height: 8px; border-radius: 2px; background: var(--accent); transform: rotate(45deg) scale(0.75); }
@@ -834,6 +874,7 @@ code { font-size: 0.88em; }
 .steps h3 { font-size: 15px; font-weight: 700; }
 .steps p { margin-top: 3px; color: var(--ink-2); font-size: 13.5px; line-height: 1.5; }
 .how__bench {
+  container: bench / inline-size;
   display: grid; grid-template-columns: minmax(0, 1.25fr) 300px; grid-template-rows: auto auto;
   border: 1px solid var(--line-2); border-radius: 20px; overflow: hidden;
   background: var(--surface); box-shadow: var(--shadow-2);

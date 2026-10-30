@@ -1,6 +1,7 @@
 // The tweak panel: one consistent UI for every component's meta.controls. Native inputs underneath (range, radio,
 // select, switch button, colour, text) so keyboard and screen readers work without extra code. A control's help
-// opens under it from the info button beside its label, and is always its input's accessible description.
+// shows beside the info button next to its label while that button is hovered or keyboard-focused (a tap on touch
+// screens), and is always its input's accessible description.
 // Demo actions live in the preview toolbar, not here.
 // createControls(c, values, { onChange(values, id), footer }) → { el, set(values), values }
 import { html, raw, escapeHTML } from '../dom.js';
@@ -25,8 +26,8 @@ function useSegmented(control) {
 function row(control, value, id) {
   const changed = !same(value, control.default);
   const reset = html`<button class="tw-reset" type="button" data-reset="${control.id}" title="Reset to ${formatValue(control, control.default)}" aria-label="Reset ${control.label} to ${formatValue(control, control.default)}">${raw(icon('reset', { size: 12 }))}</button>`;
-  const help = control.help ? html`<p class="tw-help" id="${id}-help" hidden>${control.help}</p>` : '';
-  const info = control.help ? html`<button class="tw-info" type="button" aria-expanded="false" aria-controls="${id}-help" aria-label="About ${control.label}" data-help>${raw(icon('info', { size: 14 }))}</button>` : '';
+  const help = control.help ? html`<p class="tw-help" id="${id}-help" role="tooltip" hidden>${control.help}</p>` : '';
+  const info = control.help ? html`<button class="tw-info" type="button" aria-label="About ${control.label}" aria-describedby="${id}-help" data-help="${id}-help">${raw(icon('info', { size: 14 }))}</button>` : '';
   const described = control.help ? ` aria-describedby="${id}-help"` : '';
   let body = '';
   let head = '';
@@ -94,6 +95,88 @@ export function createControls(c, initial, { onChange, footer = '' } = {}) {
     ${footer ? raw(`<footer class="tweaks__foot">${footer}</footer>`) : ''}`;
 
   const byId = new Map(controls.map((x) => [x.id, x]));
+
+  // Help popover. It opens while the pointer rests on an info button (or the button has keyboard focus), stays
+  // while the pointer moves onto it, and closes on leaving, Escape, a scroll or a tap elsewhere (WCAG 1.4.13).
+  // Touch has no hover, so a tap toggles it. It is fixed-positioned, clear of the panel's scroll box, but the text
+  // stays in its row, so it remains the input's description.
+  let tip = null; // { btn, box }
+  let showTimer = 0;
+  let hideTimer = 0;
+  let lastPointer = 'mouse';
+  const place = ({ btn, box }) => {
+    const row = btn.closest('.tw-row').getBoundingClientRect();
+    const head = btn.closest('.tw-row__head').getBoundingClientRect();
+    const b = btn.getBoundingClientRect();
+    box.style.left = `${row.left}px`;
+    box.style.width = `${row.width}px`;
+    const h = box.offsetHeight;
+    const minTop = document.fullscreenElement ? 8 : 68; // under the sticky top bar
+    const below = head.bottom + 8;
+    const up = below + h > innerHeight - 8 && head.top - 8 - h >= minTop;
+    box.style.top = `${up ? head.top - 8 - h : below}px`;
+    box.dataset.side = up ? 'above' : 'below';
+    box.style.setProperty('--arrow-x', `${b.left + b.width / 2 - row.left}px`);
+  };
+  const onKey = (e) => { if (e.key === 'Escape') { e.stopPropagation(); closeTip(); } };
+  const onAway = (e) => { if (tip && !tip.btn.contains(e.target) && !tip.box.contains(e.target)) closeTip(); };
+  function closeTip() {
+    clearTimeout(showTimer);
+    clearTimeout(hideTimer);
+    if (!tip) return;
+    tip.box.hidden = true;
+    tip.btn.classList.remove('is-on');
+    tip = null;
+    document.removeEventListener('keydown', onKey, true);
+    document.removeEventListener('pointerdown', onAway, true);
+    window.removeEventListener('scroll', closeTip, true);
+    window.removeEventListener('resize', closeTip);
+  }
+  function openTip(btn) {
+    clearTimeout(showTimer);
+    clearTimeout(hideTimer);
+    if (tip?.btn === btn || !btn.isConnected) return;
+    closeTip();
+    const box = el.querySelector(`#${btn.dataset.help}`);
+    if (!box) return;
+    tip = { btn, box };
+    box.hidden = false;
+    btn.classList.add('is-on');
+    place(tip);
+    document.addEventListener('keydown', onKey, true);
+    document.addEventListener('pointerdown', onAway, true);
+    // Capture, so a scroll of the panel's own body closes it as well as the page's.
+    window.addEventListener('scroll', closeTip, true);
+    window.addEventListener('resize', closeTip);
+  }
+  const inTip = (node) => !!tip && !!node && (tip.btn.contains(node) || tip.box.contains(node));
+  el.addEventListener('pointerdown', (e) => { lastPointer = e.pointerType; });
+  el.addEventListener('pointerover', (e) => {
+    if (e.pointerType === 'touch') return;
+    const btn = e.target.closest('[data-help]');
+    if (btn) {
+      clearTimeout(hideTimer);
+      if (tip?.btn !== btn) {
+        clearTimeout(showTimer);
+        // A short rest before the first one opens, so sweeping across the panel does not flash popovers.
+        showTimer = setTimeout(() => openTip(btn), tip ? 0 : 90);
+      }
+    } else if (inTip(e.target)) clearTimeout(hideTimer);
+  });
+  el.addEventListener('pointerout', (e) => {
+    if (e.pointerType === 'touch') return;
+    const from = e.target.closest('[data-help]') || (inTip(e.target) ? e.target : null);
+    if (!from || inTip(e.relatedTarget) || from.contains(e.relatedTarget)) return;
+    clearTimeout(showTimer);
+    if (tip && !tip.btn.matches(':focus-visible')) hideTimer = setTimeout(closeTip, 160);
+  });
+  el.addEventListener('focusin', (e) => {
+    const btn = e.target.closest?.('[data-help]');
+    if (btn?.matches(':focus-visible')) openTip(btn);
+  });
+  el.addEventListener('focusout', (e) => {
+    if (tip && e.target === tip.btn && !tip.btn.matches(':hover')) closeTip();
+  });
 
   const sync = () => {
     for (const control of controls) {
@@ -174,9 +257,9 @@ export function createControls(c, initial, { onChange, footer = '' } = {}) {
     if (sw) { set(sw.dataset.input, sw.getAttribute('aria-checked') !== 'true'); return; }
     const info = e.target.closest('[data-help]');
     if (info) {
-      const open = info.getAttribute('aria-expanded') !== 'true';
-      info.setAttribute('aria-expanded', String(open));
-      el.querySelector(`#${info.getAttribute('aria-controls')}`).hidden = !open;
+      // Hover already shows it; a tap on a touch screen toggles it.
+      if (lastPointer === 'touch' && tip?.btn === info) closeTip();
+      else openTip(info);
       return;
     }
     const r = e.target.closest('[data-reset]');

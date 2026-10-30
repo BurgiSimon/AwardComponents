@@ -88,9 +88,11 @@ export default async function componentPage({ params, query }) {
         <div class="overview">
           <div class="overview__main">
             ${c.description ? raw(`<div class="prose">${c.description.split(/\n\n+/).map((p) => `<p>${escapeHTML(p)}</p>`).join('')}</div>`) : ''}
-            ${c.useCases?.length ? raw(`<h3>Where it fits</h3>${list(c.useCases)}`) : ''}
-            ${c.notes?.length ? raw(`<h3>Accessibility &amp; motion</h3>${list(c.notes)}`) : ''}
-            <div data-slot="credits"></div>
+            <div class="overview__lists">
+              ${c.useCases?.length ? raw(`<h3>Where it fits</h3>${list(c.useCases)}`) : ''}
+              ${c.notes?.length ? raw(`<h3>Accessibility &amp; motion</h3>${list(c.notes)}`) : ''}
+              <div data-slot="credits"></div>
+            </div>
           </div>
           <aside class="overview__side">
             <h3>Built from</h3>
