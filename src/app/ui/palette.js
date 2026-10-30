@@ -1,5 +1,5 @@
 // Command palette (⌘K / Ctrl+K, or "/" on wide pages): search every component by name, category, tag or recipe,
-// jump to pages, switch the theme. Results are a listbox driven from the input (aria-activedescendant), with the
+// the docs, the plugin's skills and showcase builds, jump to pages, switch the theme. Results are a listbox driven from the input (aria-activedescendant), with the
 // active component's frame shown beside the list on wide screens.
 import { components, categories, byId, featured } from '../../registry/index.js';
 import { prefs } from '../prefs.js';
@@ -9,9 +9,13 @@ import { icon } from '../icons.js';
 import { frameSrc } from '../frames.js';
 import { navigate } from '../router.js';
 import { toggleTheme } from '../theme.js';
+import { DOCS, docPath } from '../../registry/docs.js';
+import { loadPlugin } from '../../registry/plugin.js';
 
 let dialog = null;
 let state = { items: [], active: 0 };
+// The plugin's skills and builds join the results once its facts have loaded (the first opening asks for them).
+let plugin = null;
 
 export function scoreComponent(c, q) {
   if (!q) return 1;
@@ -41,11 +45,16 @@ function subsequence(hay, needle) {
 }
 
 const PAGES = [
-  { kind: 'page', id: 'home', title: 'Home', hint: 'Welcome page', to: '/', icon: 'sparkle' },
+  { kind: 'page', id: 'home', title: 'Home', hint: 'The plugin and the library', to: '/', icon: 'sparkle' },
+  { kind: 'page', id: 'docs', title: 'Docs', hint: 'Install, skills, the jury, the audit', to: '/docs/', icon: 'book' },
   { kind: 'page', id: 'all', title: 'All components', hint: 'Browse and filter', to: '/components/', icon: 'grid' },
-  { kind: 'page', id: 'docs', title: 'Getting started', hint: 'Install the plugin, use a prompt', to: '/docs/', icon: 'book' },
-  { kind: 'page', id: 'changelog', title: 'Changelog', hint: 'What changed, newest first', to: '/changelog/', icon: 'clock' },
+  { kind: 'page', id: 'library', title: 'The library', hint: 'How a component becomes a prompt', to: '/library/', icon: 'layers' },
+  { kind: 'page', id: 'recipes', title: 'Recipes', hint: 'Every recipe in the plugin', to: '/recipes/', icon: 'flask' },
+  { kind: 'page', id: 'showcase', title: 'Showcase', hint: 'Builds and their verdicts', to: '/showcase/', icon: 'scale' },
+  { kind: 'page', id: 'changelog', title: 'Changelog', hint: 'Plugin releases and library changes', to: '/changelog/', icon: 'clock' },
 ];
+const DOC_ITEMS = DOCS.filter((d) => d.slug).map((d) => ({ kind: 'page', id: `doc-${d.slug}`, title: d.title, hint: 'Docs', to: docPath(d.slug), icon: 'book', search: `${d.title} ${d.description}`.toLowerCase() }));
+const hits = (text, q) => q.toLowerCase().split(/\s+/).filter(Boolean).every((t) => text.includes(t));
 const ACTIONS = [
   { kind: 'action', id: 'theme', title: 'Switch theme', hint: 'Light or dark', icon: 'moon', run: toggleTheme },
 ];
@@ -75,24 +84,32 @@ function results(q) {
     .slice(0, q ? 40 : 12)
     .map(({ c }) => ({ kind: 'component', id: c.id, title: c.title, hint: c.categoryTitle, to: `/components/${c.id}/`, c }));
   const match = (x) => !q || `${x.title} ${x.hint}`.toLowerCase().includes(q.toLowerCase());
+  const docs = DOC_ITEMS.filter((d) => hits(d.search, q)).slice(0, 6);
+  const skills = (plugin?.skills || []).filter((x) => hits(`awards:${x.id} ${x.id} ${x.short}`.toLowerCase(), q)).slice(0, 6)
+    .map((x) => ({ kind: 'page', id: `skill-${x.id}`, title: `awards:${x.id}`, hint: 'Skill', to: `/docs/skills/${x.id}/`, icon: 'terminal' }));
+  const builds = (plugin?.builds || []).filter((b) => hits(`${b.name} ${b.what} ${b.last.word}`.toLowerCase(), q)).slice(0, 4)
+    .map((b) => ({ kind: 'page', id: `build-${b.id}`, title: b.name, hint: `Showcase · ${b.last.word}`, to: `/showcase/${b.id}/`, icon: 'scale' }));
+  const recipeSearch = { kind: 'action', id: 'recipes-q', title: `Search the recipes for “${q}”`, hint: 'Recipes', to: `/recipes/?q=${encodeURIComponent(q)}`, icon: 'flask' };
   const cats = q ? categories.filter((cat) => cat.title.toLowerCase().includes(q.toLowerCase())).map((cat) => ({ kind: 'page', id: `cat-${cat.id}`, title: cat.title, hint: 'Category', to: `/components/?cat=${cat.id}`, icon: cat.icon })) : [];
   return [
     ...comps.length ? [{ group: q ? 'Components' : 'Suggested' }, ...comps] : [],
     ...cats.length ? [{ group: 'Categories' }, ...cats] : [],
+    ...docs.length || skills.length ? [{ group: 'Docs' }, ...skills, ...docs] : [],
+    ...builds.length ? [{ group: 'Showcase' }, ...builds] : [],
     ...PAGES.filter(match).length ? [{ group: 'Pages' }, ...PAGES.filter(match)] : [],
-    ...ACTIONS.filter(match).length ? [{ group: 'Actions' }, ...ACTIONS.filter(match)] : [],
+    { group: 'Actions' }, recipeSearch, ...ACTIONS.filter(match),
   ];
 }
 
 function build() {
   dialog = document.createElement('dialog');
   dialog.className = 'palette';
-  dialog.setAttribute('aria-label', 'Search components');
+  dialog.setAttribute('aria-label', 'Search the site');
   dialog.innerHTML = html`
     <div class="palette__box">
       <div class="palette__search">
         ${raw(icon('search', { size: 18 }))}
-        <input type="text" role="combobox" aria-expanded="true" aria-controls="palette-list" aria-autocomplete="list" placeholder="Search components, categories, tags…" autocomplete="off" spellcheck="false">
+        <input type="text" role="combobox" aria-expanded="true" aria-controls="palette-list" aria-autocomplete="list" placeholder="Search components, docs, skills, builds…" autocomplete="off" spellcheck="false">
         <kbd class="kbd">Esc</kbd>
       </div>
       <div class="palette__body">
@@ -129,7 +146,7 @@ function render(q) {
       ? `<img class="palette__thumb" src="${frameSrc(item.id, { size: 'sm' })}" alt="" loading="lazy" decoding="async" data-frame="${item.id}">`
       : `<span class="palette__icon">${icon(item.icon, { size: 16 })}</span>`;
     return `<li role="option" id="pal-${index}" data-index="${index}" aria-selected="false">${lead}<span class="palette__t">${escapeHTML(item.title)}</span><span class="palette__h">${escapeHTML(item.hint)}</span>${icon('arrowRight', { size: 14, className: 'palette__go' })}</li>`;
-  }).join('') || '<li class="palette__none" role="presentation">Nothing matches. Try a tag like “scroll”, “cursor” or “webgl”.</li>';
+  }).join('') || '<li class="palette__none" role="presentation">Nothing matches. Try a tag like “scroll”, “cursor” or “webgl”, or a skill like “jury”.</li>';
   state.options = state.items.filter((x) => !x.group);
   setActive(0, false);
 }
@@ -175,6 +192,7 @@ export function openPalette(query = '') {
   const input = dialog.querySelector('input');
   input.value = query;
   render(query);
+  if (!plugin) loadPlugin().then((core) => { plugin = core; if (dialog.open) render(input.value.trim()); }).catch(() => {});
   dialog.showModal();
   document.documentElement.classList.add('palette-open');
   input.focus();

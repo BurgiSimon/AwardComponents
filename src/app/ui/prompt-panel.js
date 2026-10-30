@@ -36,7 +36,7 @@ export function createPromptPanel(c, getValues, { compact = false } = {}) {
     : html`
     <div class="prompt-panel__head">
       <h2 class="section-title">Prompt</h2>
-      <p class="prompt-panel__lede">Paste it into Claude Code or Codex inside your project, with the <a href="${href('/docs/')}">awards plugin</a> installed. Only the settings you changed are written in.</p>
+      <p class="prompt-panel__lede">Paste it into Claude Code or Codex inside your project, with the <a href="${href('/docs/install/')}">awards plugin</a> installed. Only the settings you changed are written in.</p>
     </div>
     <div class="prompt-panel__target">
       <label for="target-${c.id}">Where does it go? <span>Optional — names your element in the prompt</span></label>

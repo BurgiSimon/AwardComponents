@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { loadComponents } from './components.js';
 import { site } from '../../src/registry/site.js';
+import { DOCS } from '../../src/registry/docs.js';
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 
@@ -46,12 +47,19 @@ export function routes({ base = '/', siteUrl = '' } = {}) {
         fs.writeFileSync(file, html);
       };
 
+      // The plugin's pages read the same snapshot the shell does (scripts/sync-plugin.mjs).
+      const plugin = JSON.parse(fs.readFileSync(path.resolve(import.meta.dirname, '../../src/registry/plugin.json'), 'utf8'));
       const list = [
-        ['/', `${site.name} — award-league components you can prompt`, site.description],
+        ['/', `${site.name} — the awards plugin and its component library`, site.description],
+        ['/library/', `The library — ${site.name}`, `${components.length} award-league components, each with live controls and a prompt that rebuilds it in your project with the awards plugin.`],
         ['/components/', `All components — ${site.name}`, `${components.length} components with live demos, controls and a prompt for the awards plugin.`],
-        ['/docs/', `Getting started — ${site.name}`, 'Install the awards plugin, tune a component and paste its prompt into Claude Code or Codex.'],
-        ['/changelog/', `Changelog — ${site.name}`, 'Every component added or changed, newest first.'],
+        ['/recipes/', `Recipes — ${site.name}`, `All ${plugin.counts.recipes} recipes in the awards plugin, each a verified Vite page, with the component built on it.`],
+        ['/showcase/', `Showcase — ${site.name}`, `${plugin.builds.length} sites the awards plugin built from a brief, and what its jury said about each, round by round.`],
+        ['/changelog/', `Changelog — ${site.name}`, 'The awards plugin’s release notes and every component added to or changed in the library, newest first.'],
       ];
+      for (const d of DOCS) list.push([d.slug ? `/docs/${d.slug}/` : '/docs/', d.slug ? `${d.title} · Docs — ${site.name}` : `Docs — ${site.name}`, d.description]);
+      for (const sk of plugin.skills) list.push([`/docs/skills/${sk.id}/`, `awards:${sk.id} · Skills — ${site.name}`, sk.short]);
+      for (const b of plugin.builds) list.push([`/showcase/${b.id}/`, `${b.name} · Showcase — ${site.name}`, `${b.what} Judged ${b.rounds} times by the awards jury; last verdict ${b.last.word}, ${b.last.w} weighted.`, b.frame || undefined]);
       for (const c of components) {
         list.push([`/components/${c.id}/`, `${c.title} — ${site.name}`, c.summary, `frames/${c.id}-light.webp`, metaChunk.get(c.id)]);
       }
