@@ -1,7 +1,7 @@
 // A component page: header, the workbench (live preview + tweak panel), the prompt, details and code.
 import { components, loadComponent } from '../../registry/index.js';
 import { categoryById } from '../../registry/categories.js';
-import { resolve, fromParams, toParams } from '../../registry/options.js';
+import { resolve, fromParams, toParams, changedControls } from '../../registry/options.js';
 import { features, unsupported } from '../../registry/features.js';
 import { TECH_LABELS } from '../../registry/normalize.js';
 import { site } from '../../registry/site.js';
@@ -68,15 +68,13 @@ export default async function componentPage({ params, query }) {
       <div class="cpage__meta">
         ${c.tech.map((t) => raw(`<span class="tech">${TECH_LABELS[t] || t}</span>`))}
         ${c.recipes.map((r) => raw(html`<a class="tech tech--link" href="${site.awards.recipesPath}/${r}" target="_blank" rel="noopener" data-external>${raw(icon('book', { size: 12 }))}${r}</a>`))}
-        <a class="tech tech--link" href="#prompt">${raw(icon('sparkle', { size: 12 }))}Prompt</a>
       </div>
       ${missing.length ? raw(`<p class="notice">${icon('info', { size: 15 })}<span>${missing.map((k) => escapeHTML(features[k].note)).join(' ')}</span></p>`) : ''}
     </header>
 
     <section class="workbench${hasPanel ? '' : ' workbench--solo'}" style="--stage-h:${c.preview.height}px" data-panel="${hasPanel && panelOpen ? 'open' : 'closed'}" aria-label="Live demo">
       <div class="workbench__stage" data-slot="preview"></div>
-      ${hasPanel ? raw('<div class="workbench__panel" data-slot="controls"></div>') : ''}
-      ${hasPanel ? raw(html`<button class="workbench__toggle" type="button" aria-expanded="${panelOpen}" data-panel-toggle>${raw(icon('sliders', { size: 15 }))}<span>${panelOpen ? 'Hide controls' : 'Customize'}</span></button>`) : ''}
+      ${hasPanel ? raw('<div class="workbench__panel" id="workbench-panel" data-slot="controls"></div>') : ''}
     </section>
 
     <div data-slot="prompt"></div>
@@ -126,7 +124,15 @@ export default async function componentPage({ params, query }) {
   const myPath = strip(location.pathname);
   const syncUrl = debounce(() => setQuery(toParams(c, values), { path: myPath }), 250);
 
+  const bench = node.querySelector('.workbench');
+  // The panel toggle sits at the end of the preview toolbar: an icon while the panel is open beside it, a labelled
+  // "Customize" (with the number of changed settings) while it is closed.
+  const panelToggle = hasPanel
+    ? `<button class="pv-toggle" type="button" aria-controls="workbench-panel" aria-expanded="${panelOpen}" data-panel-toggle${panelOpen ? ' data-tip="Hide controls"' : ''}>${icon('panelRight', { size: 16 })}<span class="pv-toggle__t">Customize</span><span class="pv-toggle__n" data-toggle-count hidden></span></button>`
+    : '';
   const preview = createPreview(c, () => values, {
+    end: panelToggle,
+    fullscreen: () => bench,
     onReady: (msg) => renderCredits(node.querySelector('[data-slot="credits"]'), msg.media || []),
   });
   node.querySelector('[data-slot="preview"]').append(preview.el);
@@ -142,29 +148,33 @@ export default async function componentPage({ params, query }) {
         preview.setValues(values);
         prompt.update();
         syncUrl();
+        syncToggle();
       },
-      onAction(id) { preview.action(id); },
-      footer: `<button class="btn btn--accent btn--block" type="button" data-copy-panel>${icon('copy', { size: 15 })}<span data-label>Copy prompt</span></button><a class="btn btn--ghost btn--block" href="#prompt">${icon('arrowRight', { size: 15 })}<span>See the prompt</span></a>`,
+      footer: `<button class="btn btn--accent" type="button" data-copy-panel>${icon('copy', { size: 15 })}<span data-label>Copy prompt</span></button><a class="icon-btn tweaks__jump" href="#prompt" data-tip="Read the prompt" aria-label="Read the prompt">${icon('arrowDown', { size: 16 })}</a>`,
     });
     node.querySelector('[data-slot="controls"]').append(controls.el);
     bindCopy(controls.el.querySelector('[data-copy-panel]'), () => prompt.text, { message: 'Prompt copied — paste it into your agent' });
-    const bench = node.querySelector('.workbench');
-    const toggle = node.querySelector('[data-panel-toggle]');
-    // The panel closes from its own header (wide screens) and reopens from the floating Customize button.
-    controls.el.querySelector('.tweaks__head').insertAdjacentHTML('beforeend', `<button class="icon-btn icon-btn--sm tweaks__hide" type="button" data-panel-hide aria-label="Hide controls" title="Hide controls">${icon('x', { size: 15 })}</button>`);
-    const hideBtn = controls.el.querySelector('[data-panel-hide]');
+    const toggle = preview.el.querySelector('[data-panel-toggle]');
+    const toggleCount = toggle.querySelector('[data-toggle-count]');
+    function syncToggle() {
+      const n = changedControls(c, values).length;
+      toggleCount.hidden = n === 0;
+      toggleCount.textContent = String(n);
+      // A stable name; aria-expanded carries open or closed.
+      toggle.setAttribute('aria-label', `Customize${n ? `, ${n} changed` : ''}`);
+    }
     const setPanel = (open) => {
       panelOpen = open;
       bench.dataset.panel = open ? 'open' : 'closed';
       toggle.setAttribute('aria-expanded', String(open));
-      toggle.querySelector('span').textContent = 'Customize';
+      // Only the icon-only (open) state needs a tooltip; closed, the button reads "Customize".
+      if (open) toggle.dataset.tip = 'Hide controls';
+      else delete toggle.dataset.tip;
       prefs.set('panel', open);
-      if (open) controls.el.querySelector('.tweaks__head h2')?.focus({ preventScroll: true });
-      else toggle.focus({ preventScroll: true });
+      syncToggle();
     };
-    controls.el.querySelector('.tweaks__head h2')?.setAttribute('tabindex', '-1');
-    toggle.addEventListener('click', () => setPanel(true));
-    hideBtn.addEventListener('click', () => setPanel(false));
+    toggle.addEventListener('click', () => setPanel(!panelOpen));
+    syncToggle();
   }
 
   // Tabs (roving focus).

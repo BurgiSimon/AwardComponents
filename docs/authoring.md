@@ -62,11 +62,11 @@ Plain data with no imports: Node scripts, the shell and the play runtime all rea
 | `labels` | no | Extra label kinds from `src/registry/labels.js`. `'new'` here marks a component that joined after the launch set on the launch day itself; it still expires with the date rule. |
 | `requires` | no | Browser features from `src/registry/features.js` (`webgl`, `webgl2`, `view-transitions`, `scroll-timeline`, `offscreen-canvas`, `web-audio`, `field-sizing`, `webcodecs`). The page warns visitors whose browser lacks one. |
 | `theme` | no | `'dark'` or `'light'` locks the demo to one theme (one frame pair, theme toggles ignored). Default follows the site. |
-| `preview` | no | `{ height, scroll, hint, capture, remountOnTheme }`. `height` 320–1200 (default 600). `scroll: true` shows "Scroll inside the preview". `hint` is a short instruction ("Drag the divider"). `capture: { wait, scroll, pointer: [x, y], hover, action, tier }` sets the frame's moment. `remountOnTheme: true` re-mounts on a theme change instead of calling `ctx.onTheme` listeners. |
+| `preview` | no | `{ height, scroll, hint, capture, remountOnTheme }`. `height` 320–1200 (default 600). `scroll: true` marks a demo that scrolls inside the preview (the hint gets a scroll icon, and reads "Scroll inside the preview" when there is no `hint`). `hint` is a short instruction ("Drag the divider"); it sits in the toolbar and drops to a strip under it when the row is too narrow. `capture: { wait, scroll, pointer: [x, y], hover, action, tier }` sets the frame's moment. `remountOnTheme: true` re-mounts on a theme change instead of calling `ctx.onTheme` listeners. |
 | `useCases` | yes (2+) | Where it fits, one line each. |
 | `notes` | yes (2+) | Accessibility and motion paths, one line each. |
 | `controls` | no | The tweak panel; see below. |
-| `actions` | no | `[{ id, label, icon? }]` buttons in the toolbar and panel (Replay, Open the menu, Add to bag). `demo.js` handles them in `action(id)`. |
+| `actions` | no | `[{ id, label, icon? }]` buttons in the preview toolbar (Replay, Open the menu, Add to bag). `demo.js` handles them in `action(id)`. |
 | `prompt` | yes | See [The prompt](#the-prompt). |
 
 ## Controls
@@ -74,7 +74,7 @@ Plain data with no imports: Node scripts, the shell and the play runtime all rea
 ```js
 controls: [
   { id: 'speed', label: 'Speed', type: 'range', min: 10, max: 220, step: 5, default: 70, unit: 'px/s', group: 'Motion',
-    help: 'Shown under the control.', prompt: 'Base speed: {value} (default {default})' },
+    help: 'Opens under the control from the info button beside its label.', prompt: 'Base speed: {value} (default {default})' },
   { id: 'direction', label: 'Direction', type: 'select', options: [{ value: 'left', label: '← Left' }, { value: 'right', label: 'Right →' }], default: 'left' },
   { id: 'pause', label: 'Pause on hover', type: 'toggle', default: true, prompt: { on: 'Pause on hover and focus', off: 'Keep moving on hover' } },
   { id: 'accent', label: 'Colour', type: 'color', default: 'accent' },            // token swatches; options: [...] to narrow
@@ -86,6 +86,7 @@ controls: [
 - **Pick the three to seven values that change the feel**: speed, distance, stiffness, a variant, a colour. Not every recipe constant deserves a slider. A component with nothing worth tuning has no controls; the panel says so.
 - **Units**: `%`, `×` and `°` attach to the number; anything else gets a space (`70 px/s`, `0.6 s`).
 - `group` adds a section heading in the panel. `when` shows a control only while another matches.
+- `help` is one or two sentences on what the value does. The panel keeps it behind an info button beside the label (so a long list stays scannable) and screen readers always get it as the input's description, so it must read on its own.
 - **Prompt lines**: only changed values reach the prompt. `prompt` is a template (`{label}`, `{value}`, `{default}`; without `{default}` the default is appended), a toggle's `{ on, off }`, a function `(value, control) => string`, or `false` for demo-only aids (a field overlay, a debug readout).
 - Ids are camelCase and must not be `c`, `theme`, `motion`, `embed`, `capture`, `tier`, `viewport` or `frame` (URL parameters of the preview).
 - Values live in the URL (`?speed=120&pause=0`), so a link shares a setup.
