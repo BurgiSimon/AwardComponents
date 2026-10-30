@@ -135,7 +135,13 @@ code { font-size: 0.88em; }
 .shell[data-layout='wide'] .sidebar { display: none; }
 .main-col { min-width: 0; display: flex; flex-direction: column; }
 .main { flex: 1; outline: none; }
-.shell[data-layout='library'] .main { padding: 28px clamp(20px, 3.4vw, 56px) 72px; max-width: 1240px; width: 100%; }
+/* Every library page shares one main box, so a route change never resizes it (and the view transition never
+   zooms); each page caps its own content and keeps the left edge next to the sidebar. The browse page stays at
+   its reading width; a component page grows with the window, up to a cap that keeps an ultrawide screen from
+   stretching it into a strip. */
+.shell[data-layout='library'] .main { --main-pad: clamp(20px, 3.4vw, 56px); padding: 28px var(--main-pad) 72px; width: 100%; }
+.shell[data-layout='library'] .browse { max-width: calc(1240px - 2 * var(--main-pad)); }
+.shell[data-layout='library'] .cpage { max-width: calc(1920px - 2 * var(--main-pad)); }
 
 /* ===================== Sidebar ===================== */
 
@@ -406,19 +412,21 @@ code { font-size: 0.88em; }
 
 /* ===================== Component page ===================== */
 
-.cpage__head { display: grid; gap: 12px; padding: 16px 0 22px; }
+.cpage__head { display: grid; gap: 10px; padding: 12px 0 20px; }
 .cpage__title { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
 .cpage__title h1 { font-size: clamp(30px, 1.5rem + 1.8vw, 46px); font-weight: 760; font-stretch: 114%; letter-spacing: -0.035em; line-height: 1.02; outline: none; }
 .cpage__summary { color: var(--ink-2); font-size: 17px; line-height: 1.5; max-width: 68ch; text-wrap: pretty; }
-.cpage__meta { display: flex; flex-wrap: wrap; gap: 6px; }
+.cpage__meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
 .notice { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: 12px; background: color-mix(in oklab, var(--warn) 12%, transparent); color: var(--ink-2); font-size: 13.5px; }
 .notice .icon { color: var(--warn); margin-top: 2px; }
 
 .workbench {
-  --stage-max: clamp(320px, 100svh - var(--top) - 81px, 760px);
+  --stage-max: clamp(320px, 100svh - var(--top) - 81px, 960px);
+  --panel-w: clamp(300px, 14vw + 120px, 380px);
+  container: bench / inline-size;
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 316px;
+  grid-template-columns: minmax(0, 1fr) var(--panel-w);
   border: 1px solid var(--line-2); border-radius: 18px;
   background: var(--surface);
   box-shadow: var(--shadow-1);
@@ -430,30 +438,87 @@ code { font-size: 0.88em; }
 .workbench__stage { min-width: 0; }
 .workbench__panel { position: relative; border-left: 1px solid var(--line); min-width: 0; }
 .workbench__panel > .tweaks { position: absolute; inset: 0; }
-.workbench__toggle {
-  position: absolute; right: 12px; bottom: 12px; z-index: 3;
-  display: none; align-items: center; gap: 7px;
-  height: 34px; padding: 0 13px;
-  border: 1px solid var(--line-2); border-radius: 999px;
-  background: color-mix(in oklab, var(--surface) 90%, transparent); backdrop-filter: blur(10px);
-  color: var(--ink); font-size: 12.5px; font-weight: 620; box-shadow: var(--shadow-2);
+/* Fullscreen takes the whole bench, so the controls stay beside the demo. */
+.workbench:fullscreen { border: 0; border-radius: 0; grid-template-rows: minmax(0, 1fr); }
+.workbench:fullscreen .workbench__stage { min-height: 0; }
+.workbench::backdrop { background: var(--bg); }
+.workbench:fullscreen .tweaks__jump { display: none; }
+
+/* The panel toggle at the end of the toolbar: an icon while the panel is open, "Customize" while it is closed. */
+.pv-toggle {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  height: 32px; min-width: 32px; padding: 0 7px;
+  border: 1px solid transparent; border-radius: 8px;
+  background: transparent; color: var(--ink-2);
+  font-size: 12.5px; font-weight: 620; white-space: nowrap;
+  transition: background-color var(--dur-s), color var(--dur-s), border-color var(--dur-s);
 }
-.workbench[data-panel='closed'] .workbench__toggle { display: inline-flex; }
+.pv-toggle:hover { background: var(--bg-2); color: var(--ink); }
+.pv-toggle[aria-expanded='true'] { background: var(--bg-2); color: var(--ink); }
+.pv-toggle[aria-expanded='false'] { padding: 0 11px 0 9px; border-color: var(--line-2); background: var(--surface); color: var(--ink); box-shadow: var(--shadow-1); }
+.pv-toggle[aria-expanded='false']:hover { border-color: var(--faint); }
+.pv-toggle[aria-expanded='true'] .pv-toggle__t, .pv-toggle[aria-expanded='true'] .pv-toggle__n { display: none; }
+.pv-toggle__n { min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: var(--accent); color: var(--on-accent); font: 650 10.5px/18px var(--font-mono); text-align: center; }
 
 /* Preview */
 .preview { display: flex; flex-direction: column; height: 100%; }
+/* One row: viewport · hint (takes what is left and truncates) · actions · tools · end slot. */
 .preview__bar {
-  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  position: relative; z-index: 3;
+  display: flex; align-items: center; gap: 6px;
   min-height: 49px; padding: 8px 10px;
   border-bottom: 1px solid var(--line);
   background: var(--surface);
 }
-.preview__spacer { flex: 1; }
-.preview__hint { display: inline-flex; align-items: center; gap: 6px; margin-left: 6px; color: var(--muted); font-size: 12px; }
+.preview__hint { flex: 1 1 0; min-width: 0; display: inline-flex; align-items: center; gap: 6px; margin: 0 6px; color: var(--muted); font-size: 12px; }
+.preview__hint > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.preview__actions { display: flex; gap: 6px; flex: none; }
+.preview__tools, .preview__end { display: flex; align-items: center; gap: 2px; flex: none; }
+.preview__actions + .preview__tools, .preview__end { padding-left: 6px; margin-left: 2px; border-left: 1px solid var(--line); }
+/* Not enough room on the row: the hint takes a strip of its own under the tools (set by preview.js). */
+.preview.has-hint-row .preview__bar { flex-wrap: wrap; row-gap: 8px; }
+.preview.has-hint-row .preview__hint { order: 9; flex: 1 1 100%; margin: 0 -10px -8px; padding: 7px 14px 8px; border-top: 1px solid var(--line); background: var(--surface-2); }
+.preview.has-hint-row .preview__hint > span { white-space: normal; }
+/* Phone widths: actions, tools and the toggle wrap as whole groups, without the dividers. */
+@container bench (max-width: 520px) {
+  .preview__bar { flex-wrap: wrap; }
+  .preview__actions { flex-wrap: wrap; }
+  .preview__actions + .preview__tools { padding-left: 0; margin-left: 0; border-left: 0; }
+}
+
+/* Tooltips for icon buttons (fine pointers, and keyboard focus). The aria-label stays the accessible name. */
+[data-tip] { position: relative; }
+[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute; top: calc(100% + 7px); left: 50%; z-index: 10;
+  padding: 5px 8px; border-radius: 7px;
+  background: var(--ink); color: var(--bg);
+  font: 560 11.5px/1.2 var(--font-sans); letter-spacing: 0; white-space: nowrap;
+  box-shadow: var(--shadow-2);
+  opacity: 0; translate: -50% -3px; pointer-events: none;
+  transition: opacity var(--dur-xs) var(--ease-out), translate var(--dur-xs) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  [data-tip]:hover::after { opacity: 1; translate: -50% 0; transition-delay: 300ms; }
+}
+[data-tip]:focus-visible::after { opacity: 1; translate: -50% 0; }
+.preview__tools > :last-child::after, .preview__end [data-tip]::after, .tweaks__foot [data-tip]::after { left: auto; right: 0; translate: 0 -3px; }
+@media (hover: hover) and (pointer: fine) {
+  .preview__tools > :last-child:hover::after, .preview__end [data-tip]:hover::after, .tweaks__foot [data-tip]:hover::after { translate: 0 0; }
+}
+.preview__tools > :last-child:focus-visible::after, .preview__end [data-tip]:focus-visible::after, .tweaks__foot [data-tip]:focus-visible::after { translate: 0 0; }
+.tweaks__foot [data-tip]::after { top: auto; bottom: calc(100% + 7px); }
+.seg--icons button[data-tip]:first-child::after { left: 0; translate: 0 -3px; }
+@media (hover: hover) and (pointer: fine) { .seg--icons button[data-tip]:first-child:hover::after { translate: 0 0; } }
+.seg--icons button[data-tip]:first-child:focus-visible::after { translate: 0 0; }
 .preview__stage {
   --device-w: 100%;
   position: relative;
-  height: min(var(--stage-h), var(--stage-max, 760px));
+  /* The author's height, taller on a wide bench (45 % of its width, so a big screen gets a big stage rather
+     than a letterbox). The growth stops where the bench would run past the fold on load (380 px is the page
+     header and the toolbar), and the whole stage never outgrows the window. cqi reads the bench, so opening or
+     closing the panel does not change the height. */
+  height: min(max(var(--stage-h), min(45cqi, 100svh - 380px)), var(--stage-max, 760px));
   display: flex; justify-content: center; align-items: flex-start;
   background:
     radial-gradient(circle at 1px 1px, var(--line) 1px, transparent 0) 0 0 / 18px 18px,
@@ -465,43 +530,50 @@ code { font-size: 0.88em; }
 .preview__stage:not([data-viewport='desktop']) .preview__device { border-radius: 14px; overflow: hidden; box-shadow: var(--shadow-2); outline: 1px solid var(--line-2); }
 .preview iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: transparent; opacity: 0; transition: opacity 260ms var(--ease-out); }
 .preview.is-ready iframe { opacity: 1; }
-.preview__poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; filter: saturate(0.8); opacity: 0.55; transition: opacity 260ms var(--ease-out); }
+/* The captured frame is 1280 px wide and the stage rarely is, so it stands in blurred: a soft impression of the
+   demo rather than a crop that looks broken. */
+.preview__poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; filter: blur(18px) saturate(0.85); transform: scale(1.08); opacity: 0.7; transition: opacity 260ms var(--ease-out); }
 .preview.is-ready .preview__poster { opacity: 0; }
 .preview__loading { position: absolute; left: 50%; top: 50%; translate: -50% -50%; width: 120px; height: 3px; border-radius: 3px; background: var(--line-2); overflow: hidden; transition: opacity 200ms; }
 .preview__loading span { position: absolute; inset: 0; width: 40%; border-radius: inherit; background: var(--accent); animation: load-bar 1.1s var(--ease-in-out) infinite; }
 .preview.is-ready .preview__loading { opacity: 0; }
 @keyframes load-bar { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
-.preview.is-full { background: var(--bg); }
+.preview.is-full { background: var(--bg); height: 100%; }
 .preview.is-full .preview__stage { flex: 1 1 auto; height: auto; min-height: 0; }
 .preview--compact .preview__stage { height: var(--stage-h); }
 
 /* Tweak panel */
 .tweaks { display: flex; flex-direction: column; width: 100%; min-height: 0; background: var(--surface); }
-.tweaks__head { display: flex; align-items: center; gap: 8px; min-height: 49px; padding: 0 14px; border-bottom: 1px solid var(--line); }
-.tweaks__head h2 { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 700; }
+.tweaks__head { display: flex; align-items: center; gap: 8px; min-height: 49px; padding: 0 10px 0 16px; border-bottom: 1px solid var(--line); }
+.tweaks__head h2 { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 700; outline: none; }
 .tweaks__head h2 .icon { color: var(--accent); }
 .tweaks__count { padding: 2px 7px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-ink); font: 600 11px var(--font-mono); }
-.tweaks__hide { margin-right: -6px; }
-.tweaks__reset { margin-left: auto; padding: 4px 8px; border: 0; border-radius: 6px; background: transparent; color: var(--ink-2); font-size: 12.5px; font-weight: 600; }
+.tweaks__reset { display: inline-flex; align-items: center; height: 28px; margin-left: auto; padding: 0 9px; border: 0; border-radius: 7px; background: transparent; color: var(--ink-2); font-size: 12.5px; font-weight: 600; }
 .tweaks__reset:hover:not([aria-disabled='true']) { background: var(--bg-2); color: var(--ink); }
 .tweaks__reset[aria-disabled='true'] { opacity: 0.4; cursor: default; }
-.tweaks__body { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 6px 14px 14px; scrollbar-width: thin; scrollbar-color: var(--line-2) transparent; }
-.tweaks__foot { display: grid; gap: 8px; padding: 12px 14px 14px; border-top: 1px solid var(--line); }
-.tw-group { margin: 16px 0 2px; font: 500 10.5px/1 var(--font-mono); letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); }
-.tw-actions { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 0 4px; }
+.tweaks__body { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 4px 16px 16px; scrollbar-width: thin; scrollbar-color: var(--line-2) transparent; }
+.tweaks__foot { display: flex; gap: 8px; padding: 12px 16px 14px; border-top: 1px solid var(--line); background: var(--surface); }
+.tweaks__foot .btn { flex: 1; }
+.tweaks__jump { flex: none; width: 40px; height: 40px; border-color: var(--line-2); }
+.tweaks__jump:hover { border-color: var(--faint); }
+
+/* Sections: a quiet label and a hairline between groups; rows breathe instead of being ruled off one by one. */
+.tw-group { margin: 14px 0 0; padding-top: 16px; border-top: 1px solid var(--line); font: 500 10.5px/1 var(--font-mono); letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); }
+.tw-group:first-child { margin-top: 6px; padding-top: 10px; border-top: 0; }
 .tw-empty { padding: 14px 0; color: var(--muted); font-size: 13px; }
-.tw-row { padding: 12px 0; border-bottom: 1px solid var(--line); }
-.tw-row:last-child { border-bottom: 0; }
-.tw-row__head { display: flex; align-items: center; gap: 6px; min-height: 26px; margin-bottom: 8px; }
+.tw-row { padding: 11px 0 5px; }
+.tw-row__head { display: flex; align-items: center; gap: 4px; min-height: 26px; margin-bottom: 4px; }
 .tw-row--toggle .tw-row__head { margin-bottom: 0; }
 .tw-row__head label, .tw-label { font-size: 13px; font-weight: 600; color: var(--ink); cursor: default; user-select: none; }
 .tw-row[data-changed] .tw-row__head label::after, .tw-row[data-changed] .tw-label::after {
   content: ''; display: inline-block; width: 6px; height: 6px; margin-left: 7px; border-radius: 50%; background: var(--accent); vertical-align: 2px;
 }
-.tw-reset { display: inline-grid; place-items: center; width: 20px; height: 20px; padding: 0; border: 0; border-radius: 5px; background: transparent; color: var(--muted); opacity: 0; transition: opacity var(--dur-s); }
+.tw-info, .tw-reset { display: inline-grid; place-items: center; flex: none; width: 22px; height: 22px; padding: 0; border: 0; border-radius: 6px; background: transparent; color: var(--muted); }
+.tw-info:hover, .tw-reset:hover { background: var(--bg-2); color: var(--ink); }
+.tw-info.is-on { color: var(--accent-ink); background: var(--accent-soft); }
+.tw-reset { opacity: 0; transition: opacity var(--dur-s); }
 .tw-row[data-changed] .tw-reset { opacity: 1; }
 .tw-row:not([data-changed]) .tw-reset { visibility: hidden; }
-.tw-reset:hover { background: var(--bg-2); color: var(--ink); }
 .tw-val { margin-left: auto; display: inline-flex; align-items: baseline; gap: 1px; color: var(--ink-2); font: 500 12px var(--font-mono); }
 .tw-val--text { font-family: var(--font-sans); font-size: 12.5px; }
 .tw-num {
@@ -513,7 +585,28 @@ code { font-size: 0.88em; }
 .tw-num:hover { border-color: var(--line-2); }
 .tw-num:focus { outline: 0; border-color: var(--focus); background: var(--surface-2); }
 .tw-unit { color: var(--muted); }
-.tw-help { margin-top: 7px; color: var(--muted); font-size: 12px; line-height: 1.45; }
+/* The help popover: placed by controls.js against the row (fixed, so the panel's scroll box does not clip it),
+   with an arrow under the info button. z-index keeps it below the sticky top bar. */
+.tw-help {
+  --arrow-x: 24px;
+  position: fixed; z-index: 35; margin: 0;
+  padding: 9px 12px 10px;
+  border: 1px solid var(--line-2); border-radius: 10px;
+  background: var(--raised); color: var(--ink-2);
+  box-shadow: var(--shadow-3);
+  font-size: 12.5px; line-height: 1.45; text-wrap: pretty;
+  animation: tip-in var(--dur-xs) var(--ease-out);
+}
+.tw-help::before {
+  content: ''; position: absolute; left: calc(var(--arrow-x) - 5px); top: -6px;
+  width: 10px; height: 10px; background: inherit;
+  border: 1px solid var(--line-2); border-right: 0; border-bottom: 0;
+  transform: rotate(45deg);
+}
+.tw-help[data-side='above']::before { top: auto; bottom: -6px; transform: rotate(225deg); }
+.tw-help[data-side='left']::before { left: auto; right: -6px; top: calc(var(--arrow-y, 20px) - 5px); transform: rotate(135deg); }
+.tw-info svg { pointer-events: none; }
+@keyframes tip-in { from { opacity: 0; translate: 0 3px; } }
 
 .tw-range {
   --fill: 50%;
@@ -568,10 +661,10 @@ code { font-size: 0.88em; }
 .switch[aria-checked='true'] span { transform: translateX(15px); background: var(--bg); }
 
 .swatches { display: flex; flex-wrap: wrap; gap: 8px; }
-.sw { position: relative; width: 26px; height: 26px; border-radius: 50%; background: var(--sw); box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.12); cursor: pointer; transition: transform var(--dur-s) var(--ease-spring); }
+.sw { position: relative; width: 26px; height: 26px; border-radius: 50%; background: var(--sw); box-shadow: inset 0 0 0 1px var(--line-2); cursor: pointer; transition: transform var(--dur-s) var(--ease-spring); }
 .sw:hover { transform: scale(1.1); }
 .sw input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
-.sw:has(input:checked), .sw.is-on { box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.12), 0 0 0 2px var(--surface), 0 0 0 4px var(--ink); }
+.sw:has(input:checked), .sw.is-on { box-shadow: inset 0 0 0 1px var(--line-2), 0 0 0 2px var(--surface), 0 0 0 4px var(--ink); }
 .sw:has(input:focus-visible) { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--focus); }
 .sw--custom { background: conic-gradient(from 0deg, #ff5420, #e3d2b1, #6e7b4c, #8db1d6, #6b4968, #ff5420); }
 .sw--custom::after { content: ''; position: absolute; inset: 5px; border-radius: 50%; background: var(--sw); }
@@ -580,9 +673,19 @@ code { font-size: 0.88em; }
 .tw-text:focus { border-color: var(--focus); box-shadow: 0 0 0 3px color-mix(in oklab, var(--focus) 18%, transparent); }
 
 /* Prompt */
-.prompt-panel { margin-top: 40px; }
-.prompt-panel__head { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; flex-wrap: wrap; margin-bottom: 16px; }
-.prompt-panel__lede { margin-top: 6px; color: var(--ink-2); font-size: 14px; max-width: 64ch; }
+.prompt-panel { margin-top: 48px; }
+.prompt-panel__head { margin-bottom: 18px; }
+.cpage > [data-slot='prompt'] { container: prompt / inline-size; }
+/* Wide: heading, lede and the target field on the left, the prompt on the right. The prompt column stops at
+   1000 px (about 140 monospace characters a line, no longer than the one-column layout), and the left column
+   takes the rest. */
+@container prompt (min-width: 1100px) {
+  .prompt-panel { display: grid; grid-template-columns: minmax(260px, 1fr) minmax(0, 1000px); grid-template-rows: auto 1fr; column-gap: 48px; align-items: start; }
+  .prompt-panel__head, .prompt-panel__target { grid-column: 1; }
+  .prompt-panel__target { margin-bottom: 0; }
+  .prompt-box { grid-column: 2; grid-row: 1 / span 2; }
+}
+.prompt-panel__lede { margin-top: 6px; color: var(--ink-2); font-size: 14px; max-width: 64ch; text-wrap: pretty; }
 .prompt-panel__lede a { color: var(--ink); }
 .prompt-panel__target { display: grid; gap: 7px; margin-bottom: 12px; }
 .prompt-panel__target label { font-size: 13px; font-weight: 620; }
@@ -602,6 +705,8 @@ code { font-size: 0.88em; }
 .pt--muted { color: var(--muted); }
 .pt--link { color: var(--focus); }
 .prompt-box__bar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 12px 14px 12px 18px; border-top: 1px solid var(--line); }
+.prompt-box__bar--top { gap: 10px 16px; padding: 10px 10px 10px 12px; border-top: 0; border-bottom: 1px solid var(--line); background: var(--surface); }
+.prompt-box__bar--top .check { margin-left: auto; }
 .prompt-box__meta { display: inline-flex; align-items: center; gap: 7px; margin-right: auto; color: var(--muted); font-size: 12.5px; }
 .prompt-box__meta .icon { color: var(--accent); }
 .prompt-box__meta code { color: var(--ink-2); }
@@ -610,7 +715,7 @@ code { font-size: 0.88em; }
 .prompt-panel--compact .prompt-box__text { max-height: 260px; font-size: 12px; }
 
 /* Details */
-.details { margin-top: 48px; }
+.details { margin-top: 48px; container: details / inline-size; }
 .tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); margin-bottom: 24px; }
 .tabs [role='tab'] {
   position: relative; height: 40px; padding: 0 14px;
@@ -624,6 +729,18 @@ code { font-size: 0.88em; }
 .overview h3 { margin: 26px 0 10px; font-size: 13px; font-weight: 700; letter-spacing: 0.01em; }
 .overview h3:first-child { margin-top: 0; }
 .overview__side h3:first-child { margin-top: 0; }
+.overview__main > .prose + .overview__lists { margin-top: 26px; }
+.ov-group:empty { display: none; }
+.ov-group + .ov-group { margin-top: 26px; }
+/* Wide: with a description, the text and the lists side by side; without one, the lists themselves form
+   columns, so the Overview never leaves a band of empty space before "Built from". */
+@container details (min-width: 1240px) {
+  .overview { grid-template-columns: minmax(0, 1fr) 320px; gap: 56px; }
+  .overview__main:has(> .prose) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 48px; align-items: start; }
+  .overview__main > .prose + .overview__lists { margin-top: 0; }
+  .overview__main:not(:has(> .prose)) > .overview__lists { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 26px 48px; align-items: start; }
+  .overview__main:not(:has(> .prose)) .ov-group + .ov-group { margin-top: 0; }
+}
 .ticks { list-style: none; padding: 0; display: grid; gap: 8px; }
 .ticks li { position: relative; padding-left: 22px; color: var(--ink-2); font-size: 14.5px; line-height: 1.5; max-width: 70ch; }
 .ticks li::before { content: ''; position: absolute; left: 3px; top: 0.62em; width: 8px; height: 8px; border-radius: 2px; background: var(--accent); transform: rotate(45deg) scale(0.75); }
@@ -770,6 +887,7 @@ code { font-size: 0.88em; }
 .steps h3 { font-size: 15px; font-weight: 700; }
 .steps p { margin-top: 3px; color: var(--ink-2); font-size: 13.5px; line-height: 1.5; }
 .how__bench {
+  container: bench / inline-size;
   display: grid; grid-template-columns: minmax(0, 1.25fr) 300px; grid-template-rows: auto auto;
   border: 1px solid var(--line-2); border-radius: 20px; overflow: hidden;
   background: var(--surface); box-shadow: var(--shadow-2);
@@ -877,6 +995,8 @@ code { font-size: 0.88em; }
   width: min(100% - 2 * var(--gutter), 1320px); margin-inline: auto; padding: 44px 0 36px;
 }
 .shell[data-layout='library'] .site-footer__in { width: auto; margin: 0; padding-inline: clamp(20px, 3.4vw, 56px); }
+/* Under a component page the footer stops where the page does, so both edges line up on very wide screens. */
+.shell[data-layout='library'] .main-col:has(> .main > .cpage) .site-footer__in { max-width: 1920px; }
 .site-footer__brand p { margin-top: 12px; max-width: 52ch; color: var(--muted); font-size: 13.5px; }
 .site-footer__brand a:not(.brand) { color: var(--ink-2); }
 .site-footer__nav { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
@@ -948,7 +1068,11 @@ code { font-size: 0.88em; }
   .workbench__panel { border-left: 0; border-top: 1px solid var(--line); height: auto; }
   .workbench__panel > .tweaks { position: static; }
   .workbench[data-panel='closed'] .workbench__panel { display: none; }
-  .tweaks__body { overflow: visible; }
+  /* Below the preview the panel has the full width: controls flow into columns instead of one long list. */
+  .tweaks__body { overflow: visible; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 248px), 1fr)); column-gap: 32px; align-items: start; }
+  .tw-group, .tw-empty { grid-column: 1 / -1; }
+  .workbench:fullscreen { grid-template-rows: minmax(0, 1fr) auto; }
+  .workbench:fullscreen .workbench__panel { max-height: 42vh; overflow-y: auto; }
   .overview { grid-template-columns: 1fr; gap: 24px; }
   .how__bench { grid-template-columns: 1fr; }
   .how__panel { grid-row: auto; grid-column: auto; border-left: 0; border-top: 1px solid var(--line); }
@@ -1000,7 +1124,7 @@ code { font-size: 0.88em; }
 @media (max-width: 640px) {
   .shell[data-layout='library'] .main { padding: 18px 16px 56px; }
   .preview__stage { height: min(var(--stage-h), 72svh); }
-  .preview__hint { display: none; }
+  .preview__hint > * { display: none; }
   .seg--icons { display: none; }
   .pager { grid-template-columns: 1fr; }
   .pager__link img { display: none; }

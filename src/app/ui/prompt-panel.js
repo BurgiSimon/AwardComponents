@@ -21,28 +21,36 @@ export function createPromptPanel(c, getValues, { compact = false } = {}) {
   const el = document.createElement('section');
   el.className = `prompt-panel${compact ? ' prompt-panel--compact' : ''}`;
   el.id = compact ? '' : 'prompt';
-  el.innerHTML = html`
-    ${compact ? '' : raw(html`
-    <div class="prompt-panel__head">
-      <div>
-        <h2 class="section-title">Prompt</h2>
-        <p class="prompt-panel__lede">Paste it into Claude Code or Codex inside your project, with the <a href="${href('/docs/')}">awards plugin</a> installed. Only the settings you changed are written in.</p>
-      </div>
-      <div class="seg" role="radiogroup" aria-label="Agent">
-        ${Object.entries(CLIENTS).map(([k, v]) => raw(html`<label><input type="radio" name="client-${c.id}" value="${k}" ${k === client ? raw('checked') : ''} data-client><span>${v.label}</span></label>`))}
-      </div>
-    </div>
-    <div class="prompt-panel__target">
-      <label for="target-${c.id}">Where does it go? <span>Optional — names your element in the prompt</span></label>
-      <input class="field" id="target-${c.id}" type="text" value="${target}" placeholder="${c.prompt?.target ? `e.g. ${c.prompt.target}` : 'e.g. the hero on the home page'}" maxlength="120" data-target spellcheck="false">
-    </div>`)}
+  // Full: the agent switch, the link option and Copy sit on the box itself, above the text they change. Compact
+  // (the welcome page): the text, then a bar with what changed and Copy.
+  const copyBtn = html`<button class="btn btn--accent" type="button" data-copy>${raw(icon('copy', { size: 15 }))}<span data-label>Copy prompt</span></button>`;
+  el.innerHTML = compact
+    ? html`
     <div class="prompt-box">
       <pre class="prompt-box__text" tabindex="0" aria-label="Prompt text"><code data-text></code></pre>
       <div class="prompt-box__bar">
         <span class="prompt-box__meta" data-meta></span>
-        ${compact ? '' : raw(html`<label class="check"><input type="checkbox" ${link ? raw('checked') : ''} data-link><span>Link to this setup</span></label>`)}
-        <button class="btn btn--accent" type="button" data-copy>${raw(icon('copy', { size: 15 }))}<span data-label>Copy prompt</span></button>
+        ${raw(copyBtn)}
       </div>
+    </div>`
+    : html`
+    <div class="prompt-panel__head">
+      <h2 class="section-title">Prompt</h2>
+      <p class="prompt-panel__lede">Paste it into Claude Code or Codex inside your project, with the <a href="${href('/docs/')}">awards plugin</a> installed. Only the settings you changed are written in.</p>
+    </div>
+    <div class="prompt-panel__target">
+      <label for="target-${c.id}">Where does it go? <span>Optional — names your element in the prompt</span></label>
+      <input class="field" id="target-${c.id}" type="text" value="${target}" placeholder="${c.prompt?.target ? `e.g. ${c.prompt.target}` : 'e.g. the hero on the home page'}" maxlength="120" data-target spellcheck="false">
+    </div>
+    <div class="prompt-box">
+      <div class="prompt-box__bar prompt-box__bar--top">
+        <div class="seg" role="radiogroup" aria-label="Agent">
+          ${Object.entries(CLIENTS).map(([k, v]) => raw(html`<label><input type="radio" name="client-${c.id}" value="${k}" ${k === client ? raw('checked') : ''} data-client><span>${v.label}</span></label>`))}
+        </div>
+        <label class="check"><input type="checkbox" ${link ? raw('checked') : ''} data-link><span>Link to this setup</span></label>
+        ${raw(copyBtn)}
+      </div>
+      <pre class="prompt-box__text" tabindex="0" aria-label="Prompt text"><code data-text></code></pre>
     </div>`;
 
   const code = el.querySelector('[data-text]');
@@ -53,6 +61,7 @@ export function createPromptPanel(c, getValues, { compact = false } = {}) {
     const values = getValues();
     last = buildPrompt(c, values, { client, target, url: link ? setupUrl(c, values) : '', link });
     code.innerHTML = last.lines.map((segs) => segs.map((s) => `<span class="pt pt--${s.k}">${escapeHTML(s.t)}</span>`).join('')).join('\n');
+    if (!meta) return;
     const n = last.changed.length;
     meta.innerHTML = `${icon('sparkle', { size: 13 })}<span>${n ? `${n} setting${n > 1 ? 's' : ''} changed` : 'Default settings'} · <code>${escapeHTML(last.command)}</code></span>`;
   };

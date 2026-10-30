@@ -1,6 +1,8 @@
 // The live preview: a toolbar and one iframe running play.html?c=<id>. The captured frame sits under the iframe
 // until the demo says ready, so the stage is never blank. Controls talk to the frame by postMessage; nothing is
 // reloaded on a tweak. Leaving the page removes the iframe, which ends the demo and frees its WebGL context.
+// The toolbar is one row: viewport, the demo's hint, its actions, the preview tools and an optional `end` slot
+// (the component page puts its panel toggle there). `fullscreen` names the element that goes fullscreen.
 import { html, raw, href, reducedMotion } from '../dom.js';
 import { icon } from '../icons.js';
 import { frameSrc } from '../frames.js';
@@ -26,7 +28,7 @@ export function playUrl(c, values, { embed = true, theme = currentTheme(), motio
   return `${href('play.html')}?${q.toString()}`;
 }
 
-export function createPreview(c, getValues, { height, compact = false, onReady, onMessage } = {}) {
+export function createPreview(c, getValues, { height, compact = false, onReady, onMessage, end = '', fullscreen } = {}) {
   let motion = '';
   let loadedMotion = '';
   // The motion button flips away from what the visitor's system asks for: reduced by default, full for those
@@ -38,6 +40,10 @@ export function createPreview(c, getValues, { height, compact = false, onReady, 
   if (compact) viewport = 'desktop';
   const h = height || c.preview.height || 600;
   const actions = c.actions || [];
+  // One hint: the demo's own line says how to use it (and usually says "scroll" already); the generic scroll
+  // line stands in only when there is none.
+  const hint = c.preview.hint || (c.preview.scroll ? 'Scroll inside the preview' : '');
+  const tool = (attrs, name, label) => html`<button class="icon-btn icon-btn--sm" type="button" ${raw(attrs)} data-tip="${label}" aria-label="${label}">${raw(icon(name, { size: 16 }))}</button>`;
 
   const root = document.createElement('div');
   root.className = `preview${compact ? ' preview--compact' : ''}`;
@@ -46,17 +52,17 @@ export function createPreview(c, getValues, { height, compact = false, onReady, 
     <div class="preview__bar">
       ${compact ? '' : raw(html`
       <div class="seg seg--icons" role="radiogroup" aria-label="Viewport">
-        ${VIEWPORTS.map((v) => raw(html`<button type="button" role="radio" aria-checked="${v.id === viewport}" tabindex="${v.id === viewport ? 0 : -1}" data-viewport="${v.id}" title="${v.label}" aria-label="${v.label}">${raw(icon(v.icon, { size: 16 }))}</button>`))}
+        ${VIEWPORTS.map((v) => raw(html`<button type="button" role="radio" aria-checked="${v.id === viewport}" tabindex="${v.id === viewport ? 0 : -1}" data-viewport="${v.id}" data-tip="${v.label}" aria-label="${v.label}">${raw(icon(v.icon, { size: 16 }))}</button>`))}
       </div>`)}
-      ${c.preview.scroll ? raw(`<span class="preview__hint">${icon('scrollHint', { size: 14 })}Scroll inside the preview</span>`) : ''}
-      ${c.preview.hint ? raw(html`<span class="preview__hint">${raw(icon('hand', { size: 14 }))}${c.preview.hint}</span>`) : ''}
-      <span class="preview__spacer"></span>
-      ${actions.map((a) => raw(html`<button class="chip-btn" type="button" data-action="${a.id}">${raw(icon(a.icon || 'play', { size: 13 }))}<span>${a.label}</span></button>`))}
-      <button class="icon-btn icon-btn--sm" type="button" data-motion aria-pressed="false" title="${motionLabel}" aria-label="${motionLabel}">${raw(icon('motion', { size: 16 }))}</button>
-      <button class="icon-btn icon-btn--sm" type="button" data-replay title="Restart the demo" aria-label="Restart the demo">${raw(icon('refresh', { size: 16 }))}</button>
-      ${compact ? '' : raw(html`
-      <a class="icon-btn icon-btn--sm" href="${playUrl(c, getValues(), { embed: false })}" data-open target="_blank" rel="noopener" title="Open in a new tab" aria-label="Open the demo in a new tab" data-external>${raw(icon('arrowUpRight', { size: 16 }))}</a>
-      ${fullscreenOk ? raw(html`<button class="icon-btn icon-btn--sm" type="button" data-full title="Fullscreen" aria-label="Show the preview fullscreen">${raw(icon('maximize', { size: 16 }))}</button>`) : ''}`)}
+      ${hint ? raw(html`<span class="preview__hint">${raw(icon(c.preview.scroll ? 'scrollHint' : 'hand', { size: 14 }))}<span data-hint>${hint}</span></span>`) : raw('<span class="preview__hint" aria-hidden="true"></span>')}
+      ${actions.length ? raw(html`<div class="preview__actions" role="group" aria-label="Demo actions">${actions.map((a) => raw(html`<button class="chip-btn" type="button" data-action="${a.id}">${raw(icon(a.icon || 'play', { size: 13 }))}<span>${a.label}</span></button>`))}</div>`) : ''}
+      <div class="preview__tools" role="group" aria-label="Preview">
+        ${raw(tool('data-motion aria-pressed="false"', 'motion', motionLabel))}
+        ${raw(tool('data-replay', 'refresh', 'Restart the demo'))}
+        ${compact ? '' : raw(html`<a class="icon-btn icon-btn--sm" href="${playUrl(c, getValues(), { embed: false })}" data-open target="_blank" rel="noopener" data-tip="Open in a new tab" aria-label="Open the demo in a new tab" data-external>${raw(icon('arrowUpRight', { size: 16 }))}</a>`)}
+        ${fullscreenOk ? raw(tool('data-full', 'maximize', 'Fullscreen')) : ''}
+      </div>
+      ${end ? raw(`<div class="preview__end">${end}</div>`) : ''}
     </div>
     <div class="preview__stage" data-viewport="${viewport}">
       <div class="preview__device">
@@ -70,6 +76,7 @@ export function createPreview(c, getValues, { height, compact = false, onReady, 
   const stage = root.querySelector('.preview__stage');
   const device = root.querySelector('.preview__device');
   const openLink = root.querySelector('[data-open]');
+  const hintText = root.querySelector('[data-hint]');
   let ready = false;
   let readyTimer = 0;
   let readyCallback = onReady;
@@ -119,7 +126,16 @@ export function createPreview(c, getValues, { height, compact = false, onReady, 
     device.style.transform = s < 1 ? `scale(${s.toFixed(4)})` : '';
     device.style.height = s < 1 ? `${100 / s}%` : '';
     const b = root.querySelector(`button[data-viewport="${viewport}"]`);
-    if (b && v) b.title = s < 1 ? `${v.label} · ${Math.round(s * 100)} %` : v.label;
+    if (b && v) b.dataset.tip = s < 1 ? `${v.label} · ${Math.round(s * 100)} %` : v.label;
+  };
+  // The hint shares the toolbar row while it fits; when it would be cut off it drops to a strip of its own under
+  // the tools, so the instruction is always readable and the tools never wrap. Measured with the strip off, in
+  // the same frame, so nothing flickers.
+  const fitHint = () => {
+    if (!hintText) return;
+    root.classList.remove('has-hint-row');
+    const clipped = hintText.scrollWidth > hintText.clientWidth + 1;
+    root.classList.toggle('has-hint-row', clipped);
   };
   const setViewport = (id) => {
     viewport = id;
@@ -132,8 +148,9 @@ export function createPreview(c, getValues, { height, compact = false, onReady, 
     fit();
   };
   setViewport(viewport);
-  const ro = new ResizeObserver(fit);
+  const ro = new ResizeObserver(() => { fit(); fitHint(); });
   ro.observe(stage);
+  document.fonts?.ready.then(fitHint);
   // Radio-group keys: arrows move and select, as the role promises.
   root.querySelector('.seg--icons')?.addEventListener('keydown', (e) => {
     const d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
@@ -161,17 +178,24 @@ export function createPreview(c, getValues, { height, compact = false, onReady, 
     }
     if (e.target.closest('[data-full]')) {
       if (document.fullscreenElement) document.exitFullscreen();
-      else root.requestFullscreen?.().catch(() => {});
+      else fullTarget().requestFullscreen?.().catch(() => {});
     }
   });
   root.addEventListener('pointerenter', () => { if (openLink) openLink.href = playUrl(c, getValues(), { embed: false, motion }); });
   openLink?.addEventListener('focus', () => { openLink.href = playUrl(c, getValues(), { embed: false, motion }); });
   document.addEventListener('fullscreenchange', onFull);
+  function fullTarget() {
+    return (typeof fullscreen === 'function' ? fullscreen() : fullscreen) || root;
+  }
   function onFull() {
-    const full = document.fullscreenElement === root;
+    const full = !!document.fullscreenElement && document.fullscreenElement === fullTarget();
     root.classList.toggle('is-full', full);
     const b = root.querySelector('[data-full]');
-    if (b) b.innerHTML = icon(full ? 'minimize' : 'maximize', { size: 16 });
+    if (!b) return;
+    const label = full ? 'Exit fullscreen' : 'Fullscreen';
+    b.innerHTML = icon(full ? 'minimize' : 'maximize', { size: 16 });
+    b.dataset.tip = label;
+    b.setAttribute('aria-label', label);
   }
 
   const offTheme = onThemeChange((theme) => post('ac:theme', { theme }));

@@ -135,6 +135,7 @@ export default function welcomePage() {
   // the example's full meta (controls, prompt) arrives a moment later and fills the bench.
   let preview = null;
   let prompt = null;
+  let controls = null;
   let gone = false;
   loadComponent(exampleId).then((example) => {
     if (gone || !example) return;
@@ -142,7 +143,7 @@ export default function welcomePage() {
     const link = node.querySelector('[data-example-link]');
     preview = createPreview(example, () => values, { compact: true, height: 380 });
     prompt = createPromptPanel(example, () => values, { compact: true });
-    const controls = createControls(example, values, {
+    controls = createControls(example, values, {
       onChange(next) {
         values = next;
         preview.setValues(values);
@@ -177,6 +178,6 @@ export default function welcomePage() {
     node,
     title: `${site.name} — award-league components you can prompt`,
     layout: 'wide',
-    destroy() { gone = true; io.disconnect(); preview?.destroy(); prompt?.destroy(); },
+    destroy() { gone = true; io.disconnect(); controls?.destroy(); preview?.destroy(); prompt?.destroy(); },
   };
 }
