@@ -3,6 +3,7 @@
 // active component's frame shown beside the list on wide screens.
 import { components, categories, byId, featured } from '../../registry/index.js';
 import { prefs } from '../prefs.js';
+import { savedIds } from '../saved.js';
 import { html, raw, href, escapeHTML } from '../dom.js';
 import { icon } from '../icons.js';
 import { frameSrc } from '../frames.js';
@@ -51,13 +52,16 @@ const ACTIONS = [
 
 function results(q) {
   if (!q) {
-    // With no query: what the visitor looked at last, then the featured set.
-    const seen = prefs.get('seen', []).filter((id) => byId.has(id));
-    const pick = [...new Set([...seen, ...featured.map((c) => c.id)])].slice(0, 10);
+    // With no query: the visitor's saved list, what they looked at last, then the featured set.
+    const saved = savedIds().slice(0, 6);
+    const seen = prefs.get('seen', []).filter((id) => byId.has(id) && !saved.includes(id));
+    const pick = [...new Set([...saved, ...seen, ...featured.map((c) => c.id)])].slice(0, 12);
     const item = (id) => { const c = byId.get(id); return { kind: 'component', id, title: c.title, hint: c.categoryTitle, to: `/components/${id}/`, c }; };
+    const kept = pick.filter((id) => saved.includes(id)).map(item);
     const recent = pick.filter((id) => seen.includes(id)).map(item);
-    const feat = pick.filter((id) => !seen.includes(id)).map(item);
+    const feat = pick.filter((id) => !saved.includes(id) && !seen.includes(id)).map(item);
     return [
+      ...kept.length ? [{ group: 'Saved' }, ...kept] : [],
       ...recent.length ? [{ group: 'Recently viewed' }, ...recent] : [],
       ...feat.length ? [{ group: 'Featured' }, ...feat] : [],
       { group: 'Pages' }, ...PAGES,

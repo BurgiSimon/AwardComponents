@@ -1,4 +1,4 @@
-// Hover preview list — Halden's archive as a ruled list. Hovering a row brings up its picture in a preview that
+// Hover preview list — Halden's archive as a ruled list, on its own. Hovering a row brings up its picture in a preview that
 // chases the pointer (lerp .25 per 60 fps frame through damp(), so the same at 60 and 144 Hz) and leans with the
 // lag; moving between rows cross-fades the picture instead of hiding it. Keyboard focus shows the same preview,
 // anchored beside the row. The loop runs only while the preview is out. Coarse pointers: a plain list with thumbs.
@@ -16,17 +16,9 @@ export default function mount(root, options, ctx) {
 
   root.className = 'hp';
   root.innerHTML = html`
-    <header class="ac-bar hp__bar">
-      <a class="ac-brand" href="#top">${studio.name}</a>
-      <nav aria-label="Studio">${studio.nav.map((n, i) => html`<a href="#top"${i === 0 ? raw(' aria-current="page"') : ''}>${n}</a>`)}</nav>
-    </header>
-    <main class="ac-wrap hp__main">
-      <div class="hp__intro">
-        <h1 class="ac-display">Archive</h1>
-        <p class="ac-lede">Every project since the studio opened on Strandkaien: houses, public rooms, interiors and one chair.</p>
-      </div>
-      <section class="hp__archive" aria-labelledby="hp-list">
-        <h2 class="sr-only" id="hp-list">All projects</h2>
+    <section class="ac-stage hp__stage" aria-labelledby="hp-list">
+      <div class="hp__archive">
+        <h2 class="sr-only" id="hp-list">${studio.name} archive</h2>
         <div class="hp__cols ac-label" aria-hidden="true"><span>Project</span><span>Place</span><span>Year</span><span>Discipline</span></div>
         <ul class="hp__rows" role="list" data-rows>
           ${projects.map((p, i) => html`
@@ -38,8 +30,9 @@ export default function mount(root, options, ctx) {
               <span class="hp__disc">${p.discipline}</span>
             </a></li>`)}
         </ul>
-      </section>
-    </main>
+      </div>
+      <p class="ac-stage__note"><span>${studio.name} · project archive</span></p>
+    </section>
     <div class="hp__preview" aria-hidden="true" data-preview><div class="hp__frame">${pics.map((p) => raw(imageHTML(p, { sizes: '32vw', alt: '' })))}</div></div>`;
   root.querySelectorAll('a[href^="#"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 

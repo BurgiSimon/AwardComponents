@@ -37,6 +37,7 @@ export default async function docsPage() {
           <li>Tune it in <strong>Customize</strong>. Changed controls are marked; double-click a label to reset one. The URL keeps your settings.</li>
           <li>Optionally say where it goes (“the hero on /about”). That names your element in the prompt instead of a placeholder.</li>
           <li>Pick your agent, copy the prompt and paste it into a session started in your project's folder.</li>
+          <li>Shortlisting for one project? <strong>Save</strong> beside a component's title keeps it in this browser; <strong>Saved</strong> on the components page and the search palette list them again.</li>
         </ol>
 
         <h2 id="prompt">What a prompt says</h2>
