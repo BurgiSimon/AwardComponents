@@ -1,11 +1,12 @@
-// Point-cloud morph — a speaker's features section. A tall section holds a sticky stage; five thousand points sampled
-// from four SVG icons (rasterised once) are projected in JavaScript and drawn as squares on a 2D canvas, far to near
-// in sixteen depth buckets. Scroll progress picks the pair of shapes and the blend: each holds for 18 % at both ends
-// of its segment, a quadratic in-out between, a swirl weighted by sin²(πe) only mid-morph, a burst on each segment
-// change, and the pointer parts the cloud. A settled cloud skips its paint; the loop stops off-screen.
-// Reduced motion and static: the points never travel; the two settled shapes cross-fade by opacity on scroll.
+// Point-cloud morph — a speaker's four feature names and the cloud they drive. A tall section holds a sticky stage;
+// five thousand points sampled from four SVG icons (rasterised once) are projected in JavaScript and drawn as squares
+// on a 2D canvas, far to near in sixteen depth buckets. Scroll progress picks the pair of shapes and the blend: each
+// holds for 18 % at both ends of its segment, a quadratic in-out between, a swirl weighted by sin²(πe) only
+// mid-morph, a burst on each segment change, and the pointer parts the cloud. A settled cloud skips its paint; the
+// loop stops off-screen. Reduced motion and static: the points never travel; the two settled shapes cross-fade by
+// opacity on scroll.
 import './demo.css';
-import { on, onFrame, whileVisible, observeResize, html, readToken, clamp, lerp, content, formatPrice } from '../../src/demo-kit/index.js';
+import { on, onFrame, whileVisible, observeResize, html, readToken, clamp, lerp, content } from '../../src/demo-kit/index.js';
 
 // One icon per feature, on 24 × 24 artboards, white where points may land.
 const SHAPES = [
@@ -36,39 +37,23 @@ export default async function mount(root, options, ctx) {
 
   root.className = 'pcm';
   root.innerHTML = html`
-    <header class="ac-bar pcm__bar">
-      <a class="ac-brand" href="#top">${product.maker}</a>
-      <nav aria-label="Kova">${['Kova One', 'Stereo', 'Support'].map((n) => html`<a href="#top">${n}</a>`)}</nav>
-      <a class="ac-btn ac-btn--sm" href="#top">Buy — ${formatPrice(product.price)}</a>
-    </header>
     <section class="pcm__morph" style="--shapes:${SHAPES.length}" aria-labelledby="pcm-title" data-morph>
       <div class="pcm__stage" data-stage>
         <canvas class="pcm__canvas" aria-hidden="true" data-canvas></canvas>
-        <div class="pcm__copy ac-wrap">
-          <div class="pcm__head">
-            <p class="ac-label">${product.name} · On its own</p>
-            <h1 class="pcm__title" id="pcm-title">Four things it handles, so you don’t have to.</h1>
-          </div>
+        <div class="pcm__ui ac-wrap">
+          <h2 class="sr-only" id="pcm-title">${product.name} features</h2>
           <ol class="pcm__list" role="list">
-            ${features.map((f, i) => html`<li class="pcm__li" data-li="${i}"><button type="button" class="pcm__item" data-item="${i}"><span class="ac-label">0${i + 1}</span><span class="pcm__t">${f.title}</span></button><p class="pcm__b">${f.body}</p></li>`)}
+            ${features.map((f, i) => html`<li><button type="button" class="pcm__item" data-item="${i}"><span class="ac-label">0${i + 1}</span><span class="pcm__t">${f.title}</span></button></li>`)}
           </ol>
-          <p class="ac-label pcm__count" aria-hidden="true"><span data-count>01</span> / 0${SHAPES.length}</p>
         </div>
       </div>
-    </section>
-    <section class="pcm__outro ac-wrap">
-      <p class="ac-h2">Set it up once. Then it gets out of the way.</p>
-      <a class="ac-btn ac-btn--accent ac-btn--lg" href="#top">Pre-order — ${formatPrice(product.price)}</a>
     </section>`;
-  root.querySelectorAll('a[href="#top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const section = root.querySelector('[data-morph]');
   const stage = root.querySelector('[data-stage]');
   const canvas = root.querySelector('[data-canvas]');
   const g = canvas.getContext('2d');
   const items = [...root.querySelectorAll('[data-item]')];
-  const lis = [...root.querySelectorAll('[data-li]')];
-  const count = root.querySelector('[data-count]');
 
   // Sample each icon: opaque white pixels on a 2 px grid of a 512 px raster.
   const rasterise = (svg, size) => new Promise((resolve) => {
@@ -108,15 +93,16 @@ export default async function mount(root, options, ctx) {
   });
   for (let i = 0; i < N; i++) seed[i] = random() * 1000;
 
-  // Layout: the cloud sits right of the copy on wide stages, centred between head and list on narrow ones.
+  // Layout: the cloud sits centred above the feature list.
   let w = 1; let h = 1; let dpr = 1; let box = 1; let cx = 0; let cy = 0;
   const resize = () => {
     const r = canvas.getBoundingClientRect();
     w = Math.max(1, r.width); h = Math.max(1, r.height);
     dpr = Math.min(2, devicePixelRatio || 1);
     canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
-    if (w >= 700) { cx = w * 0.7; cy = h * 0.52; box = Math.min(w * 0.44, h * 0.9) * 0.66; }
-    else { cx = w * 0.5; cy = h * 0.5; box = Math.min(w * 0.78, h * 0.3); }
+    cx = w * 0.5;
+    if (w >= 700) { cy = h * 0.44; box = Math.min(w * 0.44, h * 0.9) * 0.7; }
+    else { cy = h * 0.42; box = Math.min(w * 0.78, h * 0.3); }
   };
 
   const progress = () => {
@@ -226,8 +212,6 @@ export default async function mount(root, options, ctx) {
     if (segment === state.segment) return;
     state.segment = segment;
     items.forEach((b, i) => (i === segment ? b.setAttribute('aria-current', 'true') : b.removeAttribute('aria-current')));
-    lis.forEach((li, i) => li.classList.toggle('is-active', i === segment));
-    count.textContent = `0${segment + 1}`;
   };
 
   // A feature button scrolls to the middle of its shape's hold.

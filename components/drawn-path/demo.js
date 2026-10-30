@@ -1,24 +1,25 @@
-// Drawn path — an architecture studio's fifty-year timeline. One SVG path is generated through the milestones'
-// markers (measured from the DOM on load and resize, so it passes through each at any width). Its dash array equals
-// its length and the dash offset is scrubbed from that length to 0, linear, from the section's top at 70 % to its
-// bottom at the bottom; each milestone lights up when the drawn length passes its point. Dashed and dotted lines
-// keep their own pattern and are revealed through a solid masked copy instead. Reduced motion: drawn and lit.
+// Drawn path — an architecture studio's fifty-year timeline: a year, a name and a picture per stop. One SVG path is
+// generated through the milestones' markers (measured from the DOM on load and resize, so it passes through each at
+// any width). Its dash array equals its length and the dash offset is scrubbed from that length to 0, linear, from
+// the section's top at 70 % to its bottom at the bottom; each milestone lights up when the drawn length passes its
+// point. Dashed and dotted lines keep their own pattern and are revealed through a solid masked copy instead.
+// Reduced motion: drawn and lit.
 import './demo.css';
-import { on, html, raw, clamp, colour, photos, imageHTML, content, observeResize } from '../../src/demo-kit/index.js';
+import { on, html, raw, colour, photos, imageHTML, content, observeResize } from '../../src/demo-kit/index.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
 import { useLenis } from '../../src/demo-kit/lenis.js';
 
 const SVGNS = 'http://www.w3.org/2000/svg';
 
 export default function mount(root, options, ctx) {
-  const { studio, people } = content;
+  const { studio } = content;
   const tern = studio.projects.find((p) => p.slug === 'tern-library');
   const MILESTONES = [
-    { year: 1976, title: 'The boathouse', place: 'Strandkaien, Bergen', body: `${people[0].name} and two classmates rent the loft of a boathouse and draw their first house on a borrowed ferry table.`, tags: ['interior'] },
-    { year: 1989, title: 'Ask School', place: 'Askøy', body: 'The first public building: a primary school for 240 children, built in timber when everyone else poured concrete.', tags: ['architecture'] },
-    { year: 2003, title: 'Nordnes Sea Bath', place: 'Bergen', body: 'A heated pool on the harbour edge with a sauna facing the fjord. It is busiest in January.', tags: ['water'] },
-    { year: 2014, title: 'Utne Ferry Terminal', place: 'Hardanger', body: 'A waiting room with one long bench and a roof that drains to the fjord. Eleven ferries a day.', tags: ['landscape'] },
-    { year: tern.year, title: tern.title, place: tern.place.replace(', NO', ''), body: `${tern.summary} ${tern.size} for a city that reads through the winter dark.`, tags: tern.tags },
+    { year: 1976, title: 'The boathouse', tags: ['interior'] },
+    { year: 1989, title: 'Ask School', tags: ['architecture'] },
+    { year: 2003, title: 'Nordnes Sea Bath', tags: ['water'] },
+    { year: 2014, title: 'Utne Ferry Terminal', tags: ['landscape'] },
+    { year: tern.year, title: tern.title, tags: tern.tags },
   ];
   const shots = MILESTONES.map((m, i) => photos({ tags: m.tags, count: 1, seed: `dp-${i}` })[0]);
   const maskId = `dp-mask-${Math.random().toString(36).slice(2, 8)}`;
@@ -26,17 +27,8 @@ export default function mount(root, options, ctx) {
 
   root.className = 'dp';
   root.innerHTML = html`
-    <header class="ac-bar dp__bar">
-      <a class="ac-brand" href="#top">${studio.name}</a>
-      <nav aria-label="Studio">${studio.nav.map((n, i) => html`<a href="#top" ${i === 1 ? raw('aria-current="page"') : ''}>${n}</a>`)}</nav>
-    </header>
-    <section class="dp__intro ac-wrap" aria-labelledby="dp-title">
-      <p class="ac-label">${studio.name} at fifty · 1976–2026</p>
-      <h1 class="ac-display" id="dp-title">Fifty years in five buildings.</h1>
-      <p class="ac-lede">From a boathouse loft to a library above the Arctic Circle: the projects that changed how the studio works.</p>
-    </section>
-
-    <section class="dp__route ac-wrap" data-route aria-label="Timeline, 1976 to ${tern.year}">
+    <section class="dp__route ac-wrap" data-route aria-labelledby="dp-title">
+      <h1 class="sr-only" id="dp-title">${studio.name}, 1976 to ${tern.year}</h1>
       <svg class="dp__svg" data-svg aria-hidden="true" focusable="false">
         <defs><mask id="${maskId}" maskUnits="userSpaceOnUse"><path class="dp__mask-path" data-mask-path fill="none" stroke="#fff" stroke-linecap="round"/></mask></defs>
         <path class="dp__ghost" data-ghost/>
@@ -51,19 +43,11 @@ export default function mount(root, options, ctx) {
             <p class="dp__year" aria-hidden="true">${m.year}</p>
             <article class="dp__card">
               <span class="ac-media dp__media">${raw(imageHTML(shots[i], { sizes: '(max-width: 760px) 86vw, 40vw', alt: '' }))}</span>
-              <p class="ac-label dp__when"><span class="sr-only">${m.year}, </span>${m.place}</p>
-              <h3 class="ac-h3">${m.title}</h3>
-              <p class="dp__body">${m.body}</p>
+              <h2 class="ac-h3"><span class="sr-only">${m.year}: </span>${m.title}</h2>
             </article>
           </li>`)}
       </ol>
-      <div class="dp__end" data-end>
-        <span class="dp__marker dp__marker--end" data-marker aria-hidden="true"><span>2026</span></span>
-        <p class="ac-h2">The next fifty start with a smaller studio, not a bigger one.</p>
-        <a class="ac-btn" href="#top">Read the anniversary book</a>
-      </div>
     </section>`;
-  root.querySelectorAll('a[href="#top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const route = root.querySelector('[data-route]');
   const svg = root.querySelector('[data-svg]');
@@ -73,7 +57,7 @@ export default function mount(root, options, ctx) {
   const measure = root.querySelector('[data-measure]');
   const tip = root.querySelector('[data-tip]');
   const markers = [...root.querySelectorAll('[data-marker]')];
-  const items = [...root.querySelectorAll('[data-item]'), root.querySelector('[data-end]')];
+  const items = [...root.querySelectorAll('[data-item]')];
 
   // Geometry: a point per marker (centre, in the route's own px), joined by cubics with vertical tangents, so the
   // line leaves and enters each marker straight down and swings across the gap between milestones.

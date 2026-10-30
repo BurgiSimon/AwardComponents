@@ -8,7 +8,7 @@ export default {
   tags: ['canvas', 'particles', 'scroll', 'sticky', 'pointer', 'morph', 'svg'],
   added: '2026-10-28',
   order: 40,
-  preview: { height: 680, scroll: true, hint: 'Scroll, and move the pointer through the cloud', capture: { scroll: 0.12, wait: 1600 } },
+  preview: { height: 620, scroll: true, hint: 'Scroll, and move the pointer through the cloud', capture: { scroll: 0.12, wait: 1600 } },
   useCases: [
     'A product’s three to five features, each with an icon the cloud becomes',
     'A studio’s practices or a service list given one living mark',

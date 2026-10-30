@@ -1,12 +1,13 @@
-// Camera path — a walk through Halden's exhibition. The room does not scroll: wheel and touch add velocity to a
-// float that coasts with friction (0.97 per 60 Hz frame), a double lerp (.075 → .15) smooths it, and the float sets
-// the camera's place on a Catmull-Rom spline threaded past five framed photographs. DOM tags are projected onto the
-// frames, and after 900 ms idle the float snaps to the nearest work over 1.4 s (in-out cubic). Keys and buttons move
-// by work; the works are also a real list below the room. The loop renders only while something moves.
-// Reduced and static: each input is one step with no easing. No WebGL: one framed photograph at a time in the DOM.
+// Camera path — Halden's exhibition room alone, with the current work's caption. The room does not scroll: wheel
+// and touch add velocity to a float that coasts with friction (0.97 per 60 Hz frame), a double lerp (.075 → .15)
+// smooths it, and the float sets the camera's place on a Catmull-Rom spline threaded past five framed photographs.
+// DOM tags are projected onto the frames, and after 900 ms idle the float snaps to the nearest work over 1.4 s
+// (in-out cubic). Keys and buttons move by work, and the caption names each work as it arrives. The loop renders
+// only while something moves. Reduced and static: each input is one step with no easing. No WebGL: one framed
+// photograph at a time in the DOM.
 import './demo.css';
 import * as THREE from 'three';
-import { on, html, raw, clamp, damp, ticker, photo, allPhotos, loadImage, readToken, content } from '../../src/demo-kit/index.js';
+import { on, html, clamp, damp, ticker, photo, allPhotos, loadImage, readToken, content } from '../../src/demo-kit/index.js';
 import { useRenderer, webglAvailable, disposeScene } from '../../src/demo-kit/three.js';
 
 const WHEEL = 0.00035;       // progress per wheel pixel (× the speed control)
@@ -38,39 +39,22 @@ export default function mount(root, options, ctx) {
 
   root.className = `cp${canGL ? '' : ' cp--dom'}`;
   root.innerHTML = html`
-    <section class="cp__world" aria-labelledby="cp-title" data-world>
+    <section class="cp__world" aria-label="${studio.name} exhibition" data-world>
       <div class="cp__gl" data-gl></div>
       <div class="cp__still" data-still aria-hidden="true" hidden><div class="cp__frame"><img alt="" data-still-img></div></div>
       <div class="cp__tags" aria-hidden="true" data-tags></div>
-      <header class="ac-bar cp__bar">
-        <a class="ac-brand" href="#top">${studio.name}</a>
-        <a class="cp__skip ac-label" href="#cp-rooms">Room list ↓</a>
-      </header>
-      <div class="cp__hud ac-wrap">
-        <p class="ac-label">Exhibition · Bergen Kunsthall · 12 Nov – 8 Feb</p>
-        <h1 class="cp__title" id="cp-title">Buildings for long winters</h1>
-      </div>
       <aside class="cp__wall" aria-live="polite" data-wall></aside>
       <div class="cp__nav">
-        <p class="cp__count ac-label ac-num" aria-hidden="true" data-count></p>
         <button type="button" class="cp__key" data-prev aria-label="Previous work"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg></button>
         <button type="button" class="cp__key" data-next aria-label="Next work"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
       </div>
+      <p class="ac-stage__note"><span>${studio.name} · exhibition</span></p>
       <div class="cp__progress" aria-hidden="true"><span data-bar></span></div>
-    </section>
-    <section class="cp__rooms ac-wrap" id="cp-rooms" aria-labelledby="cp-rooms-title" tabindex="-1">
-      <h2 class="ac-label" id="cp-rooms-title">In the room</h2>
-      <ol class="cp__list" role="list">
-        ${works.map((w, i) => html`<li><span class="ac-label">${pad(i + 1)}</span><div><h3 class="ac-h3">${w.title}</h3><p class="ac-small">${w.place} · ${w.year} · ${w.discipline}</p><p class="ac-body">${w.summary}</p></div></li>`)}
-      </ol>
     </section>`;
-  on(ctx, root.querySelector('.ac-brand'), 'click', (e) => e.preventDefault());
-  on(ctx, root.querySelector('.cp__skip'), 'click', (e) => { e.preventDefault(); const t = root.querySelector('#cp-rooms'); t.scrollIntoView(); t.focus({ preventScroll: true }); });
 
   const world = root.querySelector('[data-world]');
   const host = root.querySelector('[data-gl]');
   const wall = root.querySelector('[data-wall]');
-  const count = root.querySelector('[data-count]');
   const bar = root.querySelector('[data-bar]');
   const tagsEl = root.querySelector('[data-tags]');
 
@@ -84,9 +68,7 @@ export default function mount(root, options, ctx) {
     if (i === S.chapter) return;
     S.chapter = i;
     const w = works[i];
-    wall.innerHTML = html`<p class="ac-label">${pad(i + 1)} / ${pad(N)} · ${w.discipline}</p><h2 class="cp__work">${w.title}</h2><p class="cp__meta ac-small">${w.place} · ${w.year} · ${w.size}</p><p class="cp__text">${w.summary}</p>${i === N - 1 ? raw('<a class="cp__more ac-link" href="#cp-rooms">Continue to the room list</a>') : ''}`;
-    wall.querySelector('.cp__more')?.addEventListener('click', (e) => { e.preventDefault(); root.querySelector('#cp-rooms').scrollIntoView(); root.querySelector('#cp-rooms').focus({ preventScroll: true }); }, { signal: ctx.signal });
-    count.textContent = `${pad(i + 1)} / ${pad(N)}`;
+    wall.innerHTML = html`<p class="ac-label">${pad(i + 1)} / ${pad(N)} · ${w.discipline}</p><h2 class="cp__work">${w.title}</h2><p class="cp__meta ac-small">${w.place} · ${w.year}</p>`;
     root.querySelector('[data-prev]').setAttribute('aria-disabled', String(i === 0));
     root.querySelector('[data-next]').setAttribute('aria-disabled', String(i === N - 1));
   }
@@ -103,7 +85,7 @@ export default function mount(root, options, ctx) {
   const heading = () => Math.round((S.snapRequest ?? S.snapTarget ?? S.target) * (N - 1));
 
   // Input is captured only while the room fills the frame, and never past either end: a wheel down at the last
-  // work (or up at the first) goes to the page, so the room list below is always one gesture away.
+  // work (or up at the first) goes to the page, so the room never traps the page around it.
   const roomInView = () => { const r = world.getBoundingClientRect(); return r.top > -2 && r.bottom > innerHeight * 0.5; };
   on(ctx, world, 'wheel', (e) => {
     if (e.ctrlKey || !roomInView()) return;
@@ -134,7 +116,7 @@ export default function mount(root, options, ctx) {
     const step = { ArrowDown: 1, ArrowRight: 1, PageDown: 1, ArrowUp: -1, ArrowLeft: -1, PageUp: -1, ' ': e.shiftKey ? -1 : 1 }[e.key];
     if (e.key === 'Home' || e.key === 'End') { e.preventDefault(); goTo(e.key === 'Home' ? 0 : N - 1); return; }
     if (step === undefined || (e.key === ' ' && onControl)) return;
-    if (step > 0 && heading() === N - 1) return;   // past the last work the keys scroll the page on to the list
+    if (step > 0 && heading() === N - 1) return;   // past the last work the keys scroll the page on
     e.preventDefault();
     goTo(heading() + step);
   });
@@ -324,8 +306,6 @@ export default function mount(root, options, ctx) {
     W = width; H = height;
     camera.aspect = W / H;
     camera.fov = camera.aspect < 1 ? 60 : camera.aspect < 1.3 ? 52 : 46;   // portrait frames widen the lens
-    // On landscape frames the room shifts right of centre, clear of the title and the wall text on the left.
-    if (camera.aspect > 1.1) camera.setViewOffset(W, H, -W * 0.14, 0, W, H); else camera.clearViewOffset();
     camera.updateProjectionMatrix();
     render();
   });

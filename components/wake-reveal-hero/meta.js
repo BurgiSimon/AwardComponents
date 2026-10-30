@@ -9,7 +9,7 @@ export default {
   requires: ['webgl'],
   added: '2026-10-28',
   order: 30,
-  preview: { height: 640, hint: 'Move the pointer across the picture', capture: { wait: 1200 } },
+  preview: { height: 560, hint: 'Move the pointer across the picture', capture: { wait: 1200 } },
   useCases: [
     'A house, hotel or landscape project shown in two seasons or two times of day',
     'A product photograph with its X-ray, wireframe or “inside” view under the pointer',

@@ -9,14 +9,14 @@ export default {
   requires: ['webgl'],
   added: '2026-10-28',
   order: 60,
-  preview: { height: 660, scroll: true, hint: 'Move the pointer, then scroll', capture: { pointer: [0.85, 0.25], wait: 1400 } },
+  preview: { height: 600, scroll: true, hint: 'Move the pointer, then scroll', capture: { pointer: [0.85, 0.25], wait: 1400 } },
   useCases: [
     'A cover or campaign photograph that should feel like a place, not a print',
     'A painting or illustration in an exhibition or shop page, with its layers drawn as a depth pass',
     'A product still on a plinth where the object should sit in front of its backdrop',
   ],
   notes: [
-    'The photograph stays in the DOM with its alt text; the canvas over it is aria-hidden and the cover lines are real text on a scrim.',
+    'The photograph stays in the DOM with its alt text; the canvas over it is aria-hidden and the masthead is real text on a scrim.',
     'The depth map is made in the page from the picture itself (a vertical gradient, a bump at the subject and a blurred luminance term), so any photograph works without a depth file.',
     'Fine pointers drive the relief; touch gets the scroll drift only. Reduced motion, the static tier and no WebGL show the flat photograph. Frames render only while the offset is still settling.',
   ],

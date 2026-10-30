@@ -1,5 +1,5 @@
-// Arc-length reveal — Signal's "Getting there": four routes to the festival island drawn by one WebGL2 pass as the
-// scroll passes a sticky chapter. At mount the four cubic Bézier routes are rasterised into an RGBA8 mask: R the
+// Arc-length reveal — Signal's route map and its list of four routes, drawn by one WebGL2 pass as the scroll passes
+// a sticky chapter. At mount the four cubic Bézier routes are rasterised into an RGBA8 mask: R the
 // route id, G and B a 16-bit arc length (0 at the origin, 1 at the island), A the distance from the centreline.
 // One uniform array of per-route progress then draws every route up to its own head, staggered (route i runs over
 // [0.2·i, 0.2·i + 0.4] of the chapter), with a feathered front bowed by edge² so the head rounds like a cap.
@@ -11,10 +11,10 @@ import { on, html, raw, clamp, damp, ticker, observeResize, readToken, content }
 // Routes in a 0..1 map box (y down), each from its origin to the island.
 const ISLAND = [0.75, 0.36];
 const ROUTES = [
-  { name: 'Harbour bus 991', from: 'Nyhavn', time: '12 min', note: 'Every 10 minutes until 02:00, from the quay by the old ferry office.', pts: [[0.07, 0.62], [0.3, 0.68], [0.52, 0.5], ISLAND], tint: '--accent', label: [0.07, 0.62] },
-  { name: 'Metro M4 and shuttle', from: 'Kongens Nytorv', time: '18 min', note: 'To Refshaleøen station, then a free shuttle that leaves when it is full.', pts: [[0.1, 0.93], [0.42, 0.92], [0.72, 0.74], ISLAND], tint: '--sky', label: [0.1, 0.93] },
-  { name: 'Festival ferry', from: 'Nordhavn', time: '20 min', note: 'Every 30 minutes; the last boat back leaves at 01:30.', pts: [[0.3, 0.06], [0.46, 0.08], [0.66, 0.14], ISLAND], tint: '--moss', label: [0.3, 0.06] },
-  { name: 'Bike route', from: 'Christianshavn', time: '15 min', note: 'Flat all the way, with guarded parking for 4,000 bikes at the gate.', pts: [[0.52, 0.95], [0.66, 0.86], [0.92, 0.66], ISLAND], tint: '--plum', label: [0.52, 0.95] },
+  { name: 'Harbour bus 991', from: 'Nyhavn', time: '12 min', pts: [[0.07, 0.62], [0.3, 0.68], [0.52, 0.5], ISLAND], tint: '--accent', label: [0.07, 0.62] },
+  { name: 'Metro M4 and shuttle', from: 'Kongens Nytorv', time: '18 min', pts: [[0.1, 0.93], [0.42, 0.92], [0.72, 0.74], ISLAND], tint: '--sky', label: [0.1, 0.93] },
+  { name: 'Festival ferry', from: 'Nordhavn', time: '20 min', pts: [[0.3, 0.06], [0.46, 0.08], [0.66, 0.14], ISLAND], tint: '--moss', label: [0.3, 0.06] },
+  { name: 'Bike route', from: 'Christianshavn', time: '15 min', pts: [[0.52, 0.95], [0.66, 0.86], [0.92, 0.66], ISLAND], tint: '--plum', label: [0.52, 0.95] },
 ];
 const N = ROUTES.length;
 const SEGMENTS = 96;      // polyline steps per route
@@ -120,24 +120,12 @@ export default function mount(root, options, ctx) {
 
   root.className = 'ar';
   root.innerHTML = html`
-    <header class="ac-bar ar__bar">
-      <a class="ac-brand" href="#top">${festival.name}</a>
-      <nav aria-label="Festival"><a href="#lineup">Line-up</a><a href="#travel" aria-current="page">Getting there</a><a href="#tickets">Tickets</a></nav>
-    </header>
-    <section class="ar__intro ac-wrap" aria-labelledby="ar-title">
-      <p class="ac-label">${festival.dates} · ${festival.place}</p>
-      <h1 class="ac-display" id="ar-title">Four ways to the harbour</h1>
-      <p class="ac-lede">Refshaleøen is an old shipyard island twenty minutes from the centre. There is no parking on site, so these are the ways in.</p>
-      <p class="ar__cue ac-label">${live ? 'Scroll to draw the routes' : 'All four routes, drawn'}</p>
-    </section>
     <section class="ar__chapter" aria-labelledby="ar-routes" data-chapter>
       <div class="ar__stage ac-wrap">
-        <div class="ar__copy">
-          <h2 class="ac-h2" id="ar-routes">Routes to the gate</h2>
-          <ol class="ar__list" role="list">
-            ${ROUTES.map((r, i) => html`<li class="ar__route" data-route="${i}" style="--tint: var(${r.tint})"><span class="ar__swatch" aria-hidden="true"><i></i></span><div><p class="ar__name">${r.name}<span class="ar__time ac-label">${r.time}</span></p><p class="ar__from ac-small">From ${r.from}. ${r.note}</p></div></li>`)}
-          </ol>
-        </div>
+        <h2 class="sr-only" id="ar-routes">Routes to ${festival.name}</h2>
+        <ol class="ar__list" role="list">
+          ${ROUTES.map((r, i) => html`<li class="ar__route" data-route="${i}" style="--tint: var(${r.tint})"><span class="ar__swatch" aria-hidden="true"><i></i></span><p class="ar__name">${r.name}<span class="sr-only">, from ${r.from},</span><span class="ar__time ac-label">${r.time}</span></p></li>`)}
+        </ol>
         <figure class="ar__map" aria-hidden="true" data-map>
           <svg class="ar__ground" viewBox="0 0 100 100" preserveAspectRatio="none">
             <path class="ar__water" d="M100 0H58C56 14 50 22 40 30C30 38 16 44 0 48V60C20 58 38 52 52 44C60 40 64 46 62 54C60 62 66 70 76 72C86 74 94 70 100 64Z"/>
@@ -149,9 +137,7 @@ export default function mount(root, options, ctx) {
           <span class="ar__dest" data-dest style="left:${ISLAND[0] * 100}%; top:${ISLAND[1] * 100}%"><i></i><b>${festival.name} · Refshaleøen</b></span>
         </figure>
       </div>
-    </section>
-    <section class="ar__outro ac-wrap"><p class="ac-h2">Night buses run every 20 minutes until 05:00.</p><a class="ac-btn ac-btn--accent" href="#tickets">Tickets from €${festival.tickets[0].price}</a></section>`;
-  root.querySelectorAll('a[href^="#"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
+    </section>`;
 
   const chapter = root.querySelector('[data-chapter]');
   const map = root.querySelector('[data-map]');

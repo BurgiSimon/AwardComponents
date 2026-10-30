@@ -1,11 +1,12 @@
-// Hero object — a speaker's launch hero. three.js draws one procedural speaker (a lathed body, a knit grille and
-// an aluminium cap) lit by RoomEnvironment through PMREM, so no HDR file ships. The pointer sets a target tilt
-// and a damped spring (stiffness k, damping c) chases it; the scroll across the hero adds a turn. Frames render
-// only while the spring or the scroll is moving. No WebGL → a drawn still; reduced motion → a held 3/4 view.
+// Hero object — a speaker alone on the stage with its finish swatches, pinned while the page scrolls. three.js draws
+// one procedural speaker (a lathed body, a knit grille and an aluminium cap) lit by RoomEnvironment through PMREM, so
+// no HDR file ships. The pointer sets a target tilt and a damped spring (stiffness k, damping c) chases it; the scroll
+// across the pinned stage adds a turn. Frames render only while the spring or the scroll is moving. No WebGL → a
+// drawn still; reduced motion → a held 3/4 view.
 import './demo.css';
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
-import { on, onFrame, finePointer, html, raw, clamp, content, formatPrice } from '../../src/demo-kit/index.js';
+import { on, onFrame, finePointer, html, content } from '../../src/demo-kit/index.js';
 import { useRenderer, webglAvailable, disposeScene } from '../../src/demo-kit/three.js';
 import { useLenis } from '../../src/demo-kit/lenis.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
@@ -37,24 +38,17 @@ export default function mount(root, options, ctx) {
   const colourOf = (id) => product.colours.find((c) => c.id === id)?.hex || '#e8e4dc';
   root.className = 'ho';
   root.innerHTML = html`
-    <section class="ho__hero ac-wrap" aria-labelledby="ho-title">
-      <div class="ho__copy">
-        <p class="ac-label">${product.maker} · ${product.kind}</p>
-        <h1 class="ac-display" id="ho-title">${product.name}</h1>
-        <p class="ac-lede">${product.tagline} Room tuning, a wool-blend grille and eight screws you can undo.</p>
+    <section class="ho__track" aria-labelledby="ho-title">
+      <div class="ac-stage ho__pin">
+        <h1 class="sr-only" id="ho-title">${product.name}</h1>
+        <div class="ho__stage" data-stage><div class="ho__still" data-still hidden></div></div>
         <fieldset class="ho__swatches">
           <legend class="ac-label">Finish — <span data-finish-name></span></legend>
           ${product.colours.map((c) => html`<label class="ho__sw" style="--sw:${c.hex}"><input type="radio" name="ho-finish" value="${c.id}"><span class="sr-only">${c.name}</span></label>`)}
         </fieldset>
-        <div class="ho__buy"><a class="ac-btn ac-btn--lg" href="#buy">Pre-order — ${formatPrice(product.price)}</a><span class="ac-small">Ships in March</span></div>
+        <p class="ac-stage__note"><span>${product.maker} · product hero</span></p>
       </div>
-      <div class="ho__stage" data-stage><div class="ho__still" data-still hidden></div></div>
-    </section>
-    <section class="ho__specs ac-wrap" aria-label="Specifications">
-      ${product.specs.slice(0, 4).map(([k, v]) => html`<div><dt class="ac-label">${k}</dt><dd>${v}</dd></div>`)}
-    </section>
-    <div class="ho__spacer" aria-hidden="true"></div>`;
-  on(ctx, root.querySelector('a[href="#buy"]'), 'click', (e) => e.preventDefault());
+    </section>`;
 
   const stage = root.querySelector('[data-stage]');
   const still = root.querySelector('[data-still]');
@@ -148,7 +142,7 @@ export default function mount(root, options, ctx) {
   if (moving) {
     useLenis(ctx);
     const { ScrollTrigger } = useGsap(ctx, root);
-    const st = ScrollTrigger.create({ trigger: root.querySelector('.ho__hero'), start: 'top top', end: 'bottom top', onUpdate: (self) => { s.turn = self.progress; dirty = true; } });
+    const st = ScrollTrigger.create({ trigger: root.querySelector('.ho__track'), start: 'top top', end: 'bottom bottom', onUpdate: (self) => { s.turn = self.progress; dirty = true; } });
     ctx.onCleanup(() => st.kill());
   }
 

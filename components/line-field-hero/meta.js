@@ -8,14 +8,14 @@ export default {
   tags: ['hero', 'svg', 'noise', 'pointer', 'spring', 'lines', 'generative'],
   added: '2026-10-28',
   order: 50,
-  preview: { height: 640, hint: 'Move the pointer through the lines', capture: { wait: 300, pointer: [0.7, 0.36] } },
+  preview: { height: 540, hint: 'Move the pointer through the lines', capture: { wait: 300, pointer: [0.7, 0.36] } },
   useCases: [
     'A hero for a sound, data or weather product, where the field reads as signal',
     'A quiet, living ground behind a studio’s statement',
     'A section background that answers the pointer without becoming a toy',
   ],
   notes: [
-    'The field is one aria-hidden SVG path that ignores the pointer; the heading and lede are real text, and the small copy sits on page-coloured blocks so its contrast never depends on the lines.',
+    'The field is one aria-hidden SVG path that ignores the pointer; the heading is real text, and small copy sits on page-coloured blocks so its contrast never depends on the lines.',
     'Touch and coarse pointers get a sparser grid and no push. The loop skips its spring when nothing moves and stops when the hero leaves the screen.',
     'Under reduced motion and in the static tier the field is drawn complete once and holds still.',
   ],

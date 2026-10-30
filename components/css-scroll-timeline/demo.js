@@ -1,18 +1,23 @@
-// CSS scroll-driven — a magazine long read whose motion is all in demo.css: a reading-progress bar on
-// scroll(root), paragraphs rising on view(), the hero copy leaving on its section's named view timeline, and a
-// sticky figure that grows on a rail's view timeline while a cover slides off its chart. This module only builds the
-// page and, where animation-timeline is unknown (or the Engine control forces it), runs the fallback: one passive
-// scroll listener for the bar and an IntersectionObserver that clears marks on blocks still below the fold.
+// CSS scroll-driven — a magazine long read, cut to a title, five short paragraphs and one figure, whose motion is
+// all in demo.css: a reading-progress bar on scroll(root), paragraphs rising on view(), the title leaving on its
+// section's named view timeline, and a sticky figure that grows on a rail's view timeline while a cover slides off
+// its chart. This module only builds the page and, where animation-timeline is unknown (or the Engine control forces
+// it), runs the fallback: one passive scroll listener for the bar and an IntersectionObserver that clears marks on
+// blocks still below the fold.
 import './demo.css';
 import '../../src/demo-kit/serif.css';
 import { on, html, raw, clamp, photo, photos, imageHTML, content, observeIntersection } from '../../src/demo-kit/index.js';
 
-const MORE = {
-  kilns: 'Each boiling house has one pan, three metres across, set over a brick firebox. Brine from the shallow wells is ladled in at dawn and boiled down by dusk.',
-  price: 'A family with two pans makes perhaps four tonnes in a good summer. The wet ones make half that, and the ledger records which were which.',
-  birthe: 'When the crust forms she rakes it to the edge, lets it drain on a board and starts again. The pan is never left alone while the fire is in.',
-  building: 'Inside, the shelves run the length of the slot. The ledgers sit at eye height, the oldest at the end where the light is softest.',
-};
+// The long read, cut to five short paragraphs: two before the figure, three after it.
+const BEFORE = [
+  'The kilns on Læsø are lit in May and kept going until the first storms of September.',
+  'Nobody does it for the money any more. A kilo of island salt sells for less than a coffee in Copenhagen.',
+];
+const AFTER = [
+  'Birthe has boiled brine for thirty-one summers. She reads the pan by sound, never by thermometer.',
+  'Above the boiling house the island keeps every ledger since 1788, in a room the size of a garage.',
+  'The new building gives that record a proper home: half buried, lit from one slot along the horizon.',
+];
 
 // One value per summer, 1788–1860: the ledger's yield, drawn as a line (illustrative, not archival).
 function ledgerPath() {
@@ -29,10 +34,8 @@ function ledgerPath() {
 const pick = (id, tags, seed) => { const p = photo(id); return p.drawn ? photos({ tags, count: 1, seed })[0] : p; };
 
 export default function mount(root, options, ctx) {
-  const { magazine, people } = content;
+  const { magazine } = content;
   const article = magazine.articles.find((a) => a.slug === 'salt-and-time');
-  const p = magazine.longRead;
-  const heroShot = pick('land-dunes', ['landscape'], 'cst-hero');
   const ledgerShot = pick('land-overcast-sea', ['water'], 'cst-ledger');
   let cfg = { ...options };
 
@@ -43,39 +46,18 @@ export default function mount(root, options, ctx) {
   root.dataset.engine = engine;
   root.innerHTML = html`
     <div class="cst__progress" aria-hidden="true"><span data-progress></span></div>
-    <header class="cst__bar ac-bar">
-      <a class="ac-brand cst__brand" href="#top">${magazine.name}</a>
-      <span class="ac-label cst__issue">${magazine.issue}</span>
-      <a class="ac-btn ac-btn--sm ac-btn--ghost" href="#top">Subscribe</a>
-    </header>
 
     <main>
       <section class="cst__hero ac-wrap" aria-labelledby="cst-title">
         <div class="cst__hero-copy">
-          <p class="ac-label">${article.section} · ${article.read} read</p>
           <h1 class="cst__title" id="cst-title">${article.title}</h1>
-          <p class="cst__dek">${article.dek}</p>
-          <p class="cst__byline">Words by <strong>${article.author}</strong> · Photographs by <strong>${people[3].name}</strong></p>
         </div>
-        <figure class="cst__hero-fig">
-          <span class="ac-media">${raw(imageHTML(heroShot, { sizes: '(max-width: 760px) 92vw, 44vw', eager: true, alt: 'Pale dunes above the boiling houses, late in the afternoon' }))}</span>
-          <figcaption class="ac-small">Læsø in August. The boiling houses sit on the dune line, upwind of the village.</figcaption>
-        </figure>
       </section>
 
-      <section class="cst__chapter ac-wrap" aria-labelledby="cst-c1">
-        <h2 class="cst__h2 reveal" id="cst-c1">The kilns</h2>
-        <div class="cst__text"><p class="reveal cst__first">${p[0]}</p><p class="reveal">${MORE.kilns}</p></div>
-      </section>
+      <div class="cst__text ac-wrap--narrow">${BEFORE.map((t, i) => html`<p class="reveal${i === 0 ? ' cst__first' : ''}">${t}</p>`)}</div>
 
-      <section class="cst__chapter ac-wrap" aria-labelledby="cst-c2">
-        <h2 class="cst__h2 reveal" id="cst-c2">The price</h2>
-        <div class="cst__text"><p class="reveal">${p[1]}</p><p class="reveal">${MORE.price}</p></div>
-      </section>
-
-      <section class="cst__rail" data-rail aria-labelledby="cst-c3">
+      <section class="cst__rail" data-rail aria-label="The ledger">
         <div class="cst__stage ac-wrap">
-          <h2 class="cst__h2" id="cst-c3">The ledger</h2>
           <figure class="cst__fig">
             <div class="cst__frame" data-frame>
               <span class="cst__photo ac-media">${raw(imageHTML(ledgerShot, { sizes: '(max-width: 760px) 92vw, 72rem', alt: 'Surf around a low rocky islet off the salt coast' }))}</span>
@@ -96,22 +78,8 @@ export default function mount(root, options, ctx) {
         </div>
       </section>
 
-      <section class="cst__chapter ac-wrap" aria-labelledby="cst-c4">
-        <h2 class="cst__h2 reveal" id="cst-c4">Birthe</h2>
-        <div class="cst__text"><p class="reveal">${p[2]}</p><p class="reveal">${MORE.birthe}</p></div>
-      </section>
-
-      <section class="cst__chapter ac-wrap" aria-labelledby="cst-c5">
-        <h2 class="cst__h2 reveal" id="cst-c5">The new building</h2>
-        <div class="cst__text"><p class="reveal">${p[3]}</p><p class="reveal">${p[4]}</p><p class="reveal">${MORE.building}</p></div>
-      </section>
-    </main>
-
-    <footer class="cst__foot ac-wrap">
-      <p class="ac-small">${magazine.name} · ${magazine.issue}</p>
-      <p class="ac-label cst__engine">Drawn by <strong data-engine-name>${engine === 'css' ? 'CSS scroll timelines' : 'the script fallback'}</strong></p>
-    </footer>`;
-  root.querySelectorAll('a[href="#top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
+      <div class="cst__text cst__text--end ac-wrap--narrow">${AFTER.map((t) => html`<p class="reveal">${t}</p>`)}</div>
+    </main>`;
 
   const apply = () => {
     root.style.setProperty('--rise', `${cfg.rise}rem`);

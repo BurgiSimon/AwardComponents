@@ -1,21 +1,22 @@
-// Frame scrub — a speaker's turntable. The recipe's frames come from an offline renderer; here three.js renders the
-// stand-in sequence once at load (one offscreen renderer, one ImageBitmap per frame, then the renderer is thrown
-// away), and the count drives a progress readout. Only when every frame is decoded does the scrub arm: a 300 svh
-// section holds a sticky stage, one tween scrubbed across it picks the frame, and a 2D canvas draws it. The poster
-// <img> stays for no-WebGL; reduced motion draws one chosen frame and lists every callout.
+// Frame scrub — a speaker's turntable on its sticky stage, with four short feature labels. The recipe's frames come
+// from an offline renderer; here three.js renders the stand-in sequence once at load (one offscreen renderer, one
+// ImageBitmap per frame, then the renderer is thrown away), and the count drives a progress readout. Only when every
+// frame is decoded does the scrub arm: a 300 svh section holds a sticky stage, one tween scrubbed across it picks the
+// frame, and a 2D canvas draws it. The poster <img> stays for no-WebGL; reduced motion draws one chosen frame and
+// lists every callout.
 import './demo.css';
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
-import { on, html, clamp, content, formatPrice } from '../../src/demo-kit/index.js';
+import { html, clamp, content } from '../../src/demo-kit/index.js';
 import { webglAvailable } from '../../src/demo-kit/three.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
 import { useLenis } from '../../src/demo-kit/lenis.js';
 
 const CALLOUTS = [
-  { at: [0, 0.22], k: 'Front', t: 'One status light', b: 'A single light under the grille. After ten it dims with the volume.' },
-  { at: [0.22, 0.46], k: 'Side', t: 'Wool-blend grille', b: 'Knitted in one piece and held by two clips, so it comes off for washing.' },
-  { at: [0.46, 0.72], k: 'Back', t: 'Eight screws, no glue', b: 'USB-C audio, one pairing button and a back plate that opens with a T10 driver.' },
-  { at: [0.72, 1.01], k: 'Top', t: 'The dial is the remote', b: 'Turn the aluminium ring for volume, press it to pause. It is the only control.' },
+  { at: [0, 0.22], k: 'Front', t: 'One status light' },
+  { at: [0.22, 0.46], k: 'Side', t: 'Wool-blend grille' },
+  { at: [0.46, 0.72], k: 'Back', t: 'Eight screws, no glue' },
+  { at: [0.72, 1.01], k: 'Top', t: 'The dial is the remote' },
 ];
 
 const POSTER = (hex) => `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600"><defs><radialGradient id="s" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".22"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient><linearGradient id="b" x1="0" x2="1"><stop offset="0" stop-color="${hex}" stop-opacity=".78"/><stop offset=".45" stop-color="${hex}"/><stop offset="1" stop-color="${hex}" stop-opacity=".62"/></linearGradient></defs><ellipse cx="300" cy="512" rx="170" ry="26" fill="url(#s)"/><rect x="190" y="110" width="220" height="392" rx="96" fill="url(#b)"/><ellipse cx="300" cy="126" rx="100" ry="20" fill="#d9d9d6"/><ellipse cx="300" cy="124" rx="52" ry="9" fill="none" stroke="#f2f2ee" stroke-width="5"/><circle cx="300" cy="236" r="4.5" fill="#ff5420"/></svg>`)}`;
@@ -138,21 +139,9 @@ export default function mount(root, options, ctx) {
 
   root.className = 'fs';
   root.innerHTML = html`
-    <header class="ac-bar fs__bar">
-      <a class="ac-brand" href="#top">${product.maker}</a>
-      <nav aria-label="Product"><a href="#top">Overview</a><a href="#top" aria-current="page">Design</a><a href="#top">Specs</a></nav>
-      <a class="ac-btn ac-btn--sm" href="#top">Pre-order</a>
-    </header>
-
     <section class="fs__seq" data-seq aria-labelledby="fs-title">
       <div class="fs__stage">
-        <div class="fs__copy">
-          <p class="ac-label">${product.name} · ${finish.name}</p>
-          <h1 class="ac-h1" id="fs-title">Every side has a job.</h1>
-          <ol class="fs__callouts" role="list">
-            ${CALLOUTS.map((c, i) => html`<li class="fs__callout" data-callout="${i}"><span class="ac-label fs__k">${String(i + 1).padStart(2, '0')} · ${c.k}</span><strong>${c.t}</strong><p>${c.b}</p></li>`)}
-          </ol>
-        </div>
+        <h1 class="sr-only" id="fs-title">${product.name} in ${finish.name.toLowerCase()}, from every side</h1>
         <figure class="fs__fig">
           <div class="fs__turntable">
             <img class="fs__poster" data-poster src="${POSTER(finish.hex)}" width="600" height="600" alt="${product.name} in ${finish.name.toLowerCase()}, seen from the front">
@@ -165,17 +154,11 @@ export default function mount(root, options, ctx) {
             <span><b data-angle>0</b>°</span>
           </figcaption>
         </figure>
-      </div>
-    </section>
-
-    <section class="fs__close ac-wrap" aria-labelledby="fs-close">
-      <dl class="fs__specs">${product.specs.slice(0, 4).map(([k, v]) => html`<div><dt class="ac-label">${k}</dt><dd>${v}</dd></div>`)}</dl>
-      <div class="fs__buy">
-        <h2 class="ac-h2" id="fs-close">${product.name}, ${formatPrice(product.price)}.</h2>
-        <a class="ac-btn ac-btn--lg ac-btn--accent" href="#top">Pre-order — ships in March</a>
+        <ol class="fs__callouts" role="list">
+          ${CALLOUTS.map((c, i) => html`<li class="fs__callout" data-callout="${i}"><span class="ac-label fs__k">${String(i + 1).padStart(2, '0')} · ${c.k}</span><strong>${c.t}</strong></li>`)}
+        </ol>
       </div>
     </section>`;
-  root.querySelectorAll('a[href="#top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
   root.classList.toggle('fs--no-callouts', !cfg.callouts);
 
   const seq = root.querySelector('[data-seq]');

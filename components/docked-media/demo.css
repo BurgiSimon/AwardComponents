@@ -26,24 +26,12 @@
 .dm__cue-play::after { content: ''; position: absolute; left: 10px; top: 8px; border-style: solid; border-width: 5px 0 5px 8px; border-color: transparent transparent transparent var(--on-accent); }
 .dm__cue-time { font-family: var(--font-mono); font-size: 12px; font-weight: 500; color: var(--muted); }
 
-.dm__hero { min-height: calc(100svh - 64px); display: grid; align-content: center; gap: clamp(16px, 2.6svh, 24px); padding-block: 24px 72px; }
+.dm__hero { min-height: 100svh; display: grid; align-content: center; gap: clamp(16px, 2.6svh, 24px); padding-block: 48px 72px; }
 .dm__hero .ac-display { max-width: 13ch; }
-.dm__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
 /* Where the dock is not live (phones, reduced motion) the hero links to the film inline instead. */
 .dm__inline-cue { display: inline-flex; align-items: center; gap: 10px; justify-self: start; margin-top: 8px; font-size: var(--text-sm); font-weight: 620; }
 .dm__inline-cue:hover { text-decoration: underline; text-underline-offset: 0.25em; }
 .dm--live .dm__inline-cue { display: none; }
-
-.dm__work { padding-block: clamp(56px, 10svh, 112px); border-top: 1px solid var(--line); }
-.dm__work-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: clamp(20px, 3svh, 32px); }
-.dm__cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 2vw, 24px); margin: 0; }
-.dm__card { display: grid; gap: 12px; }
-.dm__card .ac-media { --ratio: 4 / 3; border-radius: var(--radius-md); }
-.dm__card img { transition: transform var(--dur-l) var(--ease-out); }
-.dm__card:is(:hover, :focus-visible) img { transform: scale(1.04); }
-.dm__card-cap { display: flex; justify-content: space-between; gap: 12px; font-size: var(--text-sm); }
-.dm__card-cap strong { font-weight: 640; }
-.dm__card-cap span { color: var(--muted); }
 
 /* The section owns the reel's final box: one viewport, the gutter all round. Its height is explicit, so taking the
    reel out of the flow while it is docked never moves anything below. */
@@ -71,11 +59,8 @@
 @keyframes dm-drift { from { transform: scale(1.04); } to { transform: scale(1.14) translate(-2%, -1.5%); } }
 .dm__reel::after { content: ''; position: absolute; inset: -2px; background: linear-gradient(to top, color-mix(in oklab, var(--night) 88%, transparent), color-mix(in oklab, var(--night) 55%, transparent) 32%, color-mix(in oklab, var(--night) 12%, transparent) 58%, transparent 76%); pointer-events: none; }
 
-.dm__over { position: absolute; inset: auto 0 0; z-index: 1; display: grid; gap: clamp(10px, 2svh, 18px); padding: clamp(20px, 4vw, 56px); }
-.dm__over .ac-label { color: color-mix(in oklab, var(--dm-on) 72%, transparent); }
+.dm__over { position: absolute; inset: auto 0 0; z-index: 1; display: flex; align-items: end; justify-content: space-between; flex-wrap: wrap; gap: 16px 32px; padding: clamp(20px, 4vw, 56px); }
 .dm__film-title { max-width: 12ch; font-size: clamp(2.6rem, 1rem + 6vw, 7rem); font-weight: 760; font-stretch: var(--wide); line-height: 0.9; letter-spacing: -0.04em; text-wrap: balance; }
-.dm__film-foot { display: flex; align-items: end; justify-content: space-between; gap: 16px 32px; flex-wrap: wrap; }
-.dm__film-foot p { max-width: 44ch; color: color-mix(in oklab, var(--dm-on) 86%, transparent); text-wrap: pretty; }
 .dm__pause {
   display: inline-flex;
   align-items: center;
@@ -97,14 +82,12 @@
 .dm__pause[aria-pressed='true'] .dm__pause-icon::before { left: 2px; width: 0; border-radius: 0; background: none; border-style: solid; border-width: 6px 0 6px 10px; border-color: transparent transparent transparent currentColor; }
 .dm__pause[aria-pressed='true'] .dm__pause-icon::after { display: none; }
 
-.dm__outro { display: grid; justify-items: start; gap: 28px; padding-block: clamp(80px, 16svh, 160px); }
+.dm__outro { padding-block: clamp(80px, 16svh, 160px); }
 .dm__outro .ac-h1 { max-width: 18ch; }
 
 @media (min-width: 700px) {
   .dm__hero > * { max-width: 62%; }
 }
 @media (max-width: 699px) {
-  .dm__bar nav { display: none; }
-  .dm__cards { grid-template-columns: 1fr; }
   .dm__film { height: 92svh; }
 }

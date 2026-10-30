@@ -1,8 +1,9 @@
-// Depth parallax — a magazine issue's cover photograph with a shallow relief. One shader quad samples the picture and
-// a greyscale depth map (bright near, dark far) and offsets each texel by (depth − focus) × the offset × strength, so
-// near ground moves more than far sky. The offset follows a fine pointer, damped (k = 6), plus a vertical drift of
-// 0.3 per viewport scrolled, which is all touch gets. No depth file ships: the map is made in the page from the
-// picture itself. Frames render only while the offset settles. Reduced motion, static, no WebGL: the flat photograph.
+// Depth parallax — a magazine's cover photograph and masthead, alone, pinned while the page scrolls under it, with a
+// shallow relief. One shader quad samples the picture and a greyscale depth map (bright near, dark far) and offsets
+// each texel by (depth − focus) × the offset × strength, so near ground moves more than far sky. The offset follows a
+// fine pointer, damped (k = 6), plus a vertical drift of 0.3 per viewport scrolled, which is all touch gets. No depth
+// file ships: the map is made in the page from the picture itself. Frames render only while the offset settles.
+// Reduced motion, static, no WebGL: the flat photograph.
 import './demo.css';
 import '../../src/demo-kit/serif.css';
 import * as THREE from 'three';
@@ -70,37 +71,17 @@ function makeDepth(img, aspect, [fx, fy]) {
 export default async function mount(root, options, ctx) {
   const { magazine } = content;
   const [cover] = photos({ tags: ['landscape'], orientation: 'landscape', count: 1, seed: 'dp-cover' });
-  const lead = magazine.articles[0];
   let cfg = { ...options };
   root.className = 'dp';
   root.innerHTML = html`
-    <section class="dp__hero" aria-labelledby="dp-title" data-hero>
-      <div class="dp__frame" data-frame>${raw(imageHTML(cover, { eager: true, sizes: '100vw', alt: cover.alt || 'A northern coastline under a pale autumn sky', className: 'dp__still' }))}</div>
-      <div class="dp__scrim" aria-hidden="true"></div>
-      <header class="dp__top ac-wrap">
-        <p class="ac-label">${magazine.issue} · Autumn 2026</p>
-        <nav aria-label="Magazine">${['Places', 'Craft', 'Cities', 'Subscribe'].map((n) => html`<a href="#top">${n}</a>`)}</nav>
-      </header>
-      <p class="dp__mast ac-wrap" aria-hidden="true">${magazine.name}</p>
-      <div class="dp__cover ac-wrap">
-        <div class="dp__lead">
-          <p class="ac-label">Cover story · ${lead.section}</p>
-          <h1 class="dp__title" id="dp-title">${lead.title}</h1>
-          <p class="dp__dek">${lead.dek} By ${lead.author}, ${lead.read}.</p>
-          <a class="ac-btn ac-btn--accent ac-btn--lg" href="#top">Read the cover story</a>
-        </div>
-        <ol class="dp__also" role="list" aria-label="Also in this issue">
-          ${magazine.articles.slice(1, 4).map((a) => html`<li><a href="#top"><span class="ac-label">${a.section}</span><strong>${a.title}</strong></a></li>`)}
-        </ol>
+    <section class="dp__track" aria-labelledby="dp-title">
+      <div class="dp__hero" data-hero>
+        <div class="dp__frame" data-frame>${raw(imageHTML(cover, { eager: true, sizes: '100vw', alt: cover.alt || 'A northern coastline under a pale autumn sky', className: 'dp__still' }))}</div>
+        <div class="dp__scrim" aria-hidden="true"></div>
+        <h1 class="dp__mast" id="dp-title">${magazine.name}</h1>
+        <p class="ac-stage__note ac-stage__note--media"><span>${magazine.name} · cover</span></p>
       </div>
-    </section>
-    <section class="dp__issue ac-wrap" aria-labelledby="dp-issue">
-      <h2 class="ac-h2" id="dp-issue">In Issue 14</h2>
-      <ul class="dp__grid" role="list">
-        ${magazine.articles.map((a) => html`<li><a href="#top"><span class="ac-label">${a.section} · ${a.read}</span><strong>${a.title}</strong><span>${a.dek}</span></a></li>`)}
-      </ul>
     </section>`;
-  root.querySelectorAll('a[href="#top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const frame = root.querySelector('[data-frame]');
   const focus = String(cover.focus || '50% 50%').split(' ').map((v) => parseFloat(v) / 100);

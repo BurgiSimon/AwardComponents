@@ -2,14 +2,14 @@ export default {
   id: 'pinned-scrub',
   title: 'Pinned scrub chapter',
   category: 'scroll',
-  summary: 'A “how it works” chapter that holds still while the scroll plays it: four quantised beats, a drawn diagram that changes with each, and a progress rail.',
+  summary: 'A “how it works” chapter that holds still while the scroll plays it: four quantised beats with a short label each, a drawn diagram that changes with each, and a progress rail.',
   recipe: 'scroll-pin-scrub',
   deps: ['gsap', 'lenis'],
   tags: ['scroll', 'scrub', 'sticky', 'pin', 'scrolltrigger', 'svg', 'lenis'],
   added: '2026-10-28',
   featured: true,
   order: 10,
-  preview: { height: 680, scroll: true, capture: { scroll: 0.42, wait: 1200 } },
+  preview: { height: 620, scroll: true, capture: { scroll: 0.46, wait: 1200 } },
   useCases: [
     'A product’s “how it works” in three to five steps',
     'A process chapter on a studio site: survey, sketch, build, hand over',
@@ -17,7 +17,7 @@ export default {
   ],
   notes: [
     'The chapter is a tall section with a CSS-sticky stage: no pin spacer is injected, so the scrollbar stays honest.',
-    'Every step is real text in reading order; the diagram is decorative and hidden from assistive tech.',
+    'Every step label is a real heading in reading order; the diagram is decorative and hidden from assistive tech.',
     'Under reduced motion the steps stack as a plain list beside one diagram drawn at its settled end state.',
   ],
   controls: [

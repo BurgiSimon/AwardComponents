@@ -1,8 +1,9 @@
-// Wake reveal — a house project's hero, by day. Where a fine pointer passes it leaves up to 140 short-lived points,
-// stamped as radial gradients (lighter compositing) into a small 2D canvas; the shader reads that canvas as a mask
-// and shows the same photograph graded to night (or dusk, or winter) only where the mask is open. The graded world
-// renders into its own target at 0.62 of the pixel ratio, every second frame, and nothing renders at rest.
-// Touch, reduced motion and no WebGL: the day picture, plus a Night button (GL where it runs, a CSS grade otherwise).
+// Wake reveal — a house project's photograph by day, with one headline and the Night button. Where a fine pointer
+// passes it leaves up to 140 short-lived points, stamped as radial gradients (lighter compositing) into a small 2D
+// canvas; the shader reads that canvas as a mask and shows the same photograph graded to night (or dusk, or winter)
+// only where the mask is open. The graded world renders into its own target at 0.62 of the pixel ratio, every second
+// frame, and nothing renders at rest. Touch, reduced motion and no WebGL: the day picture, plus the Night button (GL
+// where it runs, a CSS grade otherwise).
 import './demo.css';
 import * as THREE from 'three';
 import { on, onFrame, html, raw, finePointer, readToken, photos, imageHTML, loadImage, content } from '../../src/demo-kit/index.js';
@@ -77,10 +78,6 @@ export default async function mount(root, options, ctx) {
   let cfg = { ...options };
   root.className = 'wr';
   root.innerHTML = html`
-    <header class="ac-bar wr__bar">
-      <a class="ac-brand" href="#top">${studio.name}</a>
-      <nav aria-label="Studio">${studio.nav.map((n) => html`<a href="#top">${n}</a>`)}</nav>
-    </header>
     <section class="wr__hero" aria-labelledby="wr-title" data-hero>
       <div class="wr__paper">
         ${raw(imageHTML(photo, { eager: true, sizes: '100vw', alt: photo.alt || `${project.title} by day, above the fjord` }))}
@@ -89,27 +86,11 @@ export default async function mount(root, options, ctx) {
       <div class="wr__gl" data-gl></div>
       <div class="wr__scrim" aria-hidden="true"></div>
       <div class="wr__copy ac-wrap">
-        <p class="ac-label wr__kicker">${project.title} · Hardanger, Norway · ${project.year}</p>
         <h1 class="wr__title" id="wr-title">A house for the dark half of the year.</h1>
-        <div class="wr__row">
-          <p class="wr__lede">Timber, granite and one long window to the fjord, drawn around six hours of December light.</p>
-          <div class="wr__actions">
-            <button class="wr__toggle" type="button" aria-pressed="false" data-toggle><span class="wr__sun">${svg('sun')}</span><span class="wr__moon">${svg('moon')}</span><span data-toggle-label>Night</span></button>
-            <a class="ac-btn ac-btn--accent ac-btn--lg" href="#top">View the project</a>
-          </div>
-        </div>
+        <button class="wr__toggle" type="button" aria-pressed="false" data-toggle><span class="wr__sun">${svg('sun')}</span><span class="wr__moon">${svg('moon')}</span><span data-toggle-label>Night</span></button>
       </div>
-      <p class="wr__hint ac-label" data-hint hidden>Move across the picture</p>
-    </section>
-    <section class="wr__facts ac-wrap" aria-label="Project facts">
-      <dl>
-        <div><dt class="ac-label">Area</dt><dd>${project.size}</dd></div>
-        <div><dt class="ac-label">Glazing</dt><dd>38 m, one pane line</dd></div>
-        <div><dt class="ac-label">Heating</dt><dd>Ground source, 4 kW</dd></div>
-        <div><dt class="ac-label">Completed</dt><dd>${project.year}</dd></div>
-      </dl>
+      <p class="ac-stage__note ac-stage__note--media"><span>${studio.name} · project hero</span></p>
     </section>`;
-  root.querySelectorAll('a[href="#top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const hero = root.querySelector('[data-hero]');
   const host = root.querySelector('[data-gl]');
@@ -283,8 +264,6 @@ export default async function mount(root, options, ctx) {
       add(w * (0.36 + 0.42 * t), h * (0.62 - 0.36 * t + 0.1 * Math.sin(t * Math.PI * 2)), CAPTURE_T - (1 - t) * cfg.life * 0.8, r);
     }
     wake();
-  } else {
-    root.querySelector('[data-hint]').hidden = false;
   }
 
   return {

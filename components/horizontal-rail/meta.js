@@ -8,7 +8,7 @@ export default {
   tags: ['scroll', 'horizontal', 'sticky', 'scrub', 'gallery', 'scroll-snap', 'scrolltrigger', 'gsap', 'lenis'],
   added: '2026-10-28',
   order: 60,
-  preview: { height: 660, scroll: true, hint: 'Scroll, or focus the rail and use ← →', capture: { scroll: 0.2, wait: 1200 } },
+  preview: { height: 600, scroll: true, hint: 'Scroll, or focus the rail and use ← →', capture: { scroll: 0.2, wait: 1200 } },
   useCases: [
     'Selected work or case studies on a portfolio home page',
     'A product range or a set of plans that reads better side by side than stacked',

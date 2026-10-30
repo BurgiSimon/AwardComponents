@@ -1,8 +1,9 @@
-// Docked media — an architecture studio's film. The reel is laid out at its final box: a 100 svh section with the
-// gutter as padding. While docked, the same box is position: fixed at inset: gutter and scaled down around its
-// bottom corner, so that corner stays at the gutter corner at every scale. A linear scrub from the section's top at
-// 85 % to top top grows it to scale 1; at that end the fixed box and the section box coincide and onLeave hands the
-// reel back to the flow. Transform only; the radius is counter-scaled. Phones and reduced motion: no dock.
+// Docked media — an architecture studio's film, docked in the corner under a one-headline hero. The reel is laid out
+// at its final box: a 100 svh section with the gutter as padding. While docked, the same box is position: fixed at
+// inset: gutter and scaled down around its bottom corner, so that corner stays at the gutter corner at every scale.
+// A linear scrub from the section's top at 85 % to top top grows it to scale 1; at that end the fixed box and the
+// section box coincide and onLeave hands the reel back to the flow. Transform only; the radius is counter-scaled.
+// Phones and reduced motion: no dock.
 import './demo.css';
 import { on, html, raw, photo, photos, videos, credit, imageHTML, whileVisible, content } from '../../src/demo-kit/index.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
@@ -13,8 +14,6 @@ const DOCK_MEDIA = '(min-width: 700px)'; // below it a fixed card would cover a 
 
 export default function mount(root, options, ctx) {
   const { studio } = content;
-  const work = studio.projects.filter((p) => ['fjordhus', 'kiln-house', 'saltworks'].includes(p.slug));
-  const shots = photos({ tags: ['architecture'], count: 3, seed: 'dm-work' });
   // The film: a clip from the shared set when one shows a building or water, else a still that drifts slowly.
   const named = photo('land-lake-reflection');
   const still = named.drawn ? photos({ tags: ['landscape'], count: 1, seed: 'dm-film' })[0] : named;
@@ -24,25 +23,11 @@ export default function mount(root, options, ctx) {
 
   root.className = 'dm';
   root.innerHTML = html`
-    <header class="ac-bar dm__bar">
-      <a class="ac-brand" href="#top">${studio.name}</a>
-      <nav aria-label="Studio">${studio.nav.map((n) => html`<a href="#top">${n}</a>`)}</nav>
-    </header>
     <a class="dm__cue" href="#dm-film" data-cue hidden><span class="dm__cue-play" aria-hidden="true"></span>Watch the film <span class="dm__cue-time ac-num">2:40</span></a>
 
     <section class="dm__hero ac-wrap" aria-labelledby="dm-title">
-      <p class="ac-label">${studio.full} · ${studio.city}</p>
       <h1 class="ac-display" id="dm-title">${studio.tagline}</h1>
-      <p class="ac-lede">Houses, libraries and bathing places on the west coast of Norway, drawn by eleven people above a boatyard in ${studio.city}.</p>
-      <div class="dm__actions"><a class="ac-btn ac-btn--lg" href="#dm-work">See the work</a><a class="ac-btn ac-btn--lg ac-btn--ghost" href="#top">${studio.email}</a></div>
       <a class="dm__inline-cue" href="#dm-film" data-inline-cue><span class="dm__cue-play" aria-hidden="true"></span>Watch the film <span class="dm__cue-time ac-num">2:40</span></a>
-    </section>
-
-    <section class="dm__work ac-wrap" id="dm-work" aria-labelledby="dm-work-title">
-      <div class="dm__work-head"><h2 class="ac-h2" id="dm-work-title">Recent work</h2><a class="ac-link ac-small" href="#top">All ${studio.projects.length} projects</a></div>
-      <ul class="dm__cards" role="list">
-        ${work.map((p, i) => html`<li><a class="dm__card" href="#top"><span class="ac-media">${raw(imageHTML(shots[i], { sizes: '(max-width: 700px) 92vw, 30vw', alt: '' }))}</span><span class="dm__card-cap"><strong>${p.title}</strong><span>${p.place} · ${p.year}</span></span></a></li>`)}
-      </ul>
     </section>
 
     <section class="dm__film" id="dm-film" data-section aria-labelledby="dm-film-title">
@@ -53,21 +38,15 @@ export default function mount(root, options, ctx) {
             : raw(imageHTML(still, { sizes: '100vw', alt: '' }))}
         </div>
         <div class="dm__over" data-over>
-          <p class="ac-label">Film · 2 min 40 · with sound</p>
           <h2 class="dm__film-title" id="dm-film-title">Fjordhus, one winter</h2>
-          <div class="dm__film-foot">
-            <p>Twelve months on a granite shelf above the Hardanger fjord, from the first snow to the last ferry.</p>
-            <button class="dm__pause" type="button" data-pause aria-pressed="false"><span class="dm__pause-icon" aria-hidden="true"></span><span data-pause-label>Pause</span></button>
-          </div>
+          <button class="dm__pause" type="button" data-pause aria-pressed="false"><span class="dm__pause-icon" aria-hidden="true"></span><span data-pause-label>Pause</span></button>
         </div>
       </div>
     </section>
 
-    <section class="dm__outro ac-wrap" aria-labelledby="dm-outro-title">
-      <h2 class="ac-h1" id="dm-outro-title">Have a site in mind? Start with a walk around it.</h2>
-      <a class="ac-btn ac-btn--lg ac-btn--accent" href="#top">Book a site visit</a>
+    <section class="dm__outro ac-wrap" aria-label="After the film">
+      <p class="ac-h1">Have a site in mind? Start with a walk around it.</p>
     </section>`;
-  root.querySelectorAll('a[href="#top"], a[href="#dm-work"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const section = root.querySelector('[data-section]');
   const reel = root.querySelector('[data-reel]');
