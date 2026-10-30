@@ -18,7 +18,7 @@ export default {
   notes: [
     'The swap still happens under reduced motion, instantly, because it carries wayfinding; only the tween is dropped.',
     'Every palette is a contrast-checked pair: the ink is chosen per chapter, and the secondary shades are mixed from it, never fixed greys.',
-    'The chapter links in the header are real anchors with aria-current; the canvas is aria-hidden and only paints when a colour changes.',
+    'Each chapter is a real section labelled by its name; the canvas is aria-hidden and only paints when a colour changes.',
   ],
   controls: [
     { id: 'palette', label: 'Palette set', type: 'select', options: [{ value: 'festival', label: 'Sand · clay · night' }, { value: 'harbour', label: 'Sky · plum · night' }, { value: 'mono', label: 'Paper · ink' }], default: 'festival', group: 'Colour', prompt: (v) => `Chapter palettes, in scroll order: ${{ festival: 'pale sand with ink, clay with night-blue ink, then night blue with sand ink', harbour: 'pale sky with ink, a dark plum with sand ink and a clay accent, then night blue with sky ink and accent', mono: 'paper, paper with 10 % ink mixed in, then inverted (ink ground, paper text)' }[v]} (default: pale sand, clay, then night blue)` },

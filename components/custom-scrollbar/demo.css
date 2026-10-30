@@ -1,50 +1,12 @@
 .csb { --csb-w: 4px; --csb-hover: 2; --csb-colour: var(--accent); --thumb-h: 48px; overflow-x: clip; }
-.csb-skip { position: absolute; z-index: 30; top: 8px; left: var(--gutter); padding: 10px 14px; background: var(--ink); color: var(--bg); font-weight: 600; text-decoration: none; transform: translateY(-160%); }
-.csb-skip:focus-visible { transform: none; }
 
-/* ---------- The help centre around it ---------- */
-.csb-bar { display: flex; align-items: center; gap: clamp(16px, 3vw, 32px); height: 68px; padding-inline: max(var(--gutter), calc((100% - 1320px) / 2)); border-bottom: 1px solid var(--line); }
-.csb-brand { min-height: 44px; font-size: 1.0625rem; }
-.csb-brand__mark { width: 14px; height: 14px; border-radius: 4px; background: var(--ink); box-shadow: 5px 5px 0 -1px var(--accent); }
-.csb-brand__sub { margin-left: 2px; font-family: var(--font-mono); font-weight: 500; font-stretch: normal; font-size: 0.6875rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
-.csb-search { flex: 1; max-width: 420px; margin-left: auto; }
-.csb-search .ac-input { min-height: 38px; border-radius: var(--radius-pill); padding-inline: 16px; font-size: var(--text-sm); }
-
-.csb-layout {
-  display: grid;
-  grid-template-columns: minmax(180px, 250px) minmax(0, 1fr);
-  gap: clamp(28px, 5vw, 88px);
-  width: min(100% - 2 * max(var(--gutter), 44px), 1240px);
-  margin-inline: auto;
-}
-.csb-toc { position: sticky; top: 24px; align-self: start; padding-top: clamp(40px, 6vw, 72px); }
-.csb-toc summary { padding-bottom: 14px; list-style: none; cursor: default; }
-.csb-toc summary::-webkit-details-marker { display: none; }
-.csb-toc ol { display: grid; gap: 2px; border-left: 1px solid var(--line); }
-.csb-toc a { display: grid; grid-template-columns: 2.2em minmax(0, 1fr); align-items: baseline; gap: 4px; margin-left: -1px; padding: 7px 10px 7px 14px; border-left: 2px solid transparent; color: var(--ink-2); font-size: var(--text-sm); line-height: 1.35; text-decoration: none; transition: color var(--dur-s), border-color var(--dur-s); }
-.csb-toc a:hover { color: var(--ink); }
-.csb-toc a[aria-current] { color: var(--ink); border-left-color: var(--csb-colour); font-weight: 600; }
-.csb-toc__n { font-family: var(--font-mono); font-size: 0.6875rem; color: var(--muted); }
-
-.csb-article { max-width: 70ch; padding-block: clamp(40px, 6vw, 72px) 120px; }
-.csb-head { display: grid; gap: 18px; padding-bottom: clamp(28px, 4vw, 48px); }
-.csb-crumbs span { margin-inline: 6px; color: var(--faint); }
-.csb-sec { display: grid; gap: 16px; padding-block: clamp(36px, 5vw, 56px); border-top: 1px solid var(--line); scroll-margin-top: 16px; }
+/* ---------- The guide: one reading column ---------- */
+.csb-article { width: min(100% - 2 * var(--gutter), 70ch); margin-inline: auto; padding-block: clamp(48px, 8vw, 96px) 120px; }
+.csb-title { padding-bottom: clamp(28px, 4vw, 48px); }
+.csb-sec { display: grid; gap: 16px; padding-block: clamp(36px, 5vw, 56px); border-top: 1px solid var(--line); }
 .csb-sec .ac-h2 { display: flex; align-items: baseline; gap: 14px; font-size: clamp(1.4rem, 1.1rem + 1vw, 1.9rem); }
 .csb-sec__n { flex: none; font-family: var(--font-mono); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.04em; color: var(--muted); }
 .csb-sec .ac-body { line-height: 1.65; }
-.csb-list { display: grid; gap: 8px; margin: 4px 0 0; padding-left: 1.2em; color: var(--ink-2); }
-.csb-list li::marker { color: var(--muted); }
-.csb-table-wrap { overflow-x: auto; margin-top: 6px; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); }
-.csb-table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); font-variant-numeric: tabular-nums; }
-.csb-table :is(th, td) { padding: 11px 14px; text-align: left; vertical-align: top; border-top: 1px solid var(--line); }
-.csb-table thead th { border-top: 0; font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); background: var(--surface-2); }
-.csb-table tbody th { font-weight: 600; color: var(--ink); }
-.csb-table td { color: var(--ink-2); }
-.csb-note { margin-top: 4px; padding: 14px 16px; border-radius: var(--radius-md); background: var(--bg-2); color: var(--ink-2); font-size: var(--text-sm); line-height: 1.55; }
-.csb-note strong { margin-right: 6px; color: var(--ink); }
-.csb-end { display: grid; justify-items: start; gap: 14px; padding-top: 40px; border-top: 1px solid var(--line); }
-.csb-end__actions { display: flex; gap: 10px; }
 
 /* ---------- The drawn scrollbar: a 28 px hit area holding a hairline rail, section ticks and the thumb ---------- */
 .csb-track {
@@ -108,23 +70,4 @@
 /* Touch and hover-less devices keep only the platform scrollbar. */
 @media (hover: none), (pointer: coarse) {
   .csb-track { display: none; }
-}
-
-@media (max-width: 900px) {
-  .csb-layout { grid-template-columns: minmax(150px, 190px) minmax(0, 1fr); gap: 28px; }
-  .csb-toc a { grid-template-columns: minmax(0, 1fr); padding-left: 12px; }
-  .csb-toc__n { display: none; }
-}
-@media (max-width: 759px) {
-  .csb-bar { gap: 12px; }
-  .csb-contact { display: none; }
-  .csb-search { max-width: none; }
-  .csb-layout { grid-template-columns: minmax(0, 1fr); gap: 0; width: min(100% - 2 * var(--gutter), 1240px); }
-  .csb-toc { position: static; padding-top: 20px; }
-  .csb-toc__box { border: 1px solid var(--line-2); border-radius: var(--radius-md); background: var(--surface); }
-  .csb-toc summary { display: flex; align-items: center; justify-content: space-between; min-height: 48px; padding: 0 14px; cursor: pointer; }
-  .csb-toc summary::after { content: '+'; font-size: 1rem; }
-  .csb-toc__box[open] summary::after { content: '−'; }
-  .csb-toc ol { margin: 0 14px 12px; }
-  .csb-article { padding-top: 28px; }
 }

@@ -1,7 +1,8 @@
-// Interruptible mega menu — Ostra's shop header. Open and close are one paused GSAP timeline: the open half, then
-// addPause() at its end (the hinge I), then the close half. Close = tl.time() < I ? tl.reverse() : tl.play(), so a
-// close mid-open rewinds from where it is and a close after the hinge plays the authored exit. Reopening inside the
-// close half reverses back to the hinge. Reduced: the same hinge, opacity only. Static: pause(I) / pause(0).
+// Interruptible mega menu — Ostra's shop header, alone with its mega menu. Open and close are one paused GSAP
+// timeline: the open half, then addPause() at its end (the hinge I), then the close half. Close = tl.time() < I ?
+// tl.reverse() : tl.play(), so a close mid-open rewinds from where it is and a close after the hinge plays the
+// authored exit. Reopening inside the close half reverses back to the hinge. Reduced: the same hinge, opacity only.
+// Static: pause(I) / pause(0).
 import './demo.css';
 import { on, html, raw, photos, imageHTML, content, formatPrice } from '../../src/demo-kit/index.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
@@ -16,51 +17,38 @@ const CHEVRON = '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stro
 export default function mount(root, options, ctx) {
   const { shop } = content;
   const vase = shop.products[0];
-  const [featured, heroPic] = photos({ tags: ['ceramic'], count: 2, seed: 'im-feat' });
-  const row = photos({ tags: ['object'], count: 4, seed: 'im-row' });
+  const [featured] = photos({ tags: ['ceramic'], count: 1, seed: 'im-feat' });
   let cfg = { ...options };
 
   root.className = 'im';
   root.innerHTML = html`
-    <header class="im__bar">
-      <div class="im__barin ac-wrap">
-        <a class="ac-brand im__brand" href="#top">${shop.name}</a>
-        <nav class="im__nav" aria-label="Main">
-          <button type="button" class="im__shop" aria-expanded="false" aria-controls="im-panel">Shop<span class="im__chev">${raw(CHEVRON)}</span></button>
-          <a href="#top">Journal</a><a href="#top">Stockists</a><a href="#top">About</a>
-        </nav>
-        <div class="im__tools"><a href="#top" class="im__search">Search</a><a href="#top" class="im__bag">Bag <span class="ac-num">(2)</span></a></div>
-      </div>
-      <div class="im__panel" id="im-panel" data-panel>
-        <div class="im__panelin ac-wrap">
-          ${COLUMNS.map((col, c) => html`
-            <div class="im__col" data-col="${c}">
-              <p class="im__mask"><span class="ac-label" data-item>${col.title}</span></p>
-              <ul role="list">${col.links.map(([name, n]) => html`<li class="im__mask"><a href="#top" data-item><span>${name}</span>${n ? html`<span class="im__n ac-num">${n}</span>` : ''}</a></li>`)}</ul>
-            </div>`)}
-          <a class="im__feature" href="#top" data-col="3">
-            <span class="ac-media im__fimg">${raw(imageHTML(featured, { sizes: '320px', alt: '' }))}</span>
-            <span class="im__fcopy" data-item><span class="ac-label">New in the spring run</span><strong>${vase.name} — ${vase.colour}</strong><span class="ac-num">${formatPrice(vase.price)}</span></span>
-          </a>
+    <section class="ac-stage im__stage" aria-label="${shop.name} shop header">
+      <header class="im__bar">
+        <div class="im__barin ac-wrap">
+          <a class="ac-brand im__brand" href="#top">${shop.name}</a>
+          <nav class="im__nav" aria-label="Main">
+            <button type="button" class="im__shop" aria-expanded="false" aria-controls="im-panel">Shop<span class="im__chev">${raw(CHEVRON)}</span></button>
+          </nav>
+          <a href="#top" class="im__bag">Bag <span class="ac-num">(2)</span></a>
         </div>
-        <p class="im__strip ac-wrap ac-small" data-item>Free shipping from ${formatPrice(shop.freeShippingFrom)} · Thrown and fired on Os, Norway</p>
-      </div>
-    </header>
+        <div class="im__panel" id="im-panel" data-panel>
+          <div class="im__panelin ac-wrap">
+            ${COLUMNS.map((col, c) => html`
+              <div class="im__col" data-col="${c}">
+                <p class="im__mask"><span class="ac-label" data-item>${col.title}</span></p>
+                <ul role="list">${col.links.map(([name, n]) => html`<li class="im__mask"><a href="#top" data-item><span>${name}</span>${n ? html`<span class="im__n ac-num">${n}</span>` : ''}</a></li>`)}</ul>
+              </div>`)}
+            <a class="im__feature" href="#top" data-col="3">
+              <span class="ac-media im__fimg">${raw(imageHTML(featured, { sizes: '320px', alt: '' }))}</span>
+              <span class="im__fcopy" data-item><span class="ac-label">New in the spring run</span><strong>${vase.name} — ${vase.colour}</strong><span class="ac-num">${formatPrice(vase.price)}</span></span>
+            </a>
+          </div>
+          <p class="im__strip ac-wrap ac-small" data-item>Free shipping from ${formatPrice(shop.freeShippingFrom)} · Thrown and fired on Os, Norway</p>
+        </div>
+      </header>
+      <p class="ac-stage__note"><span>${shop.name} · shop header</span></p>
+    </section>
     <div class="im__scrim" data-scrim aria-hidden="true"></div>
-    <main class="im__page ac-wrap">
-      <section class="im__hero" aria-labelledby="im-title">
-        <div class="im__say">
-          <p class="ac-label">Spring 2027 · 24 pieces</p>
-          <h1 class="ac-h1" id="im-title">The spring run is out of the kiln.</h1>
-          <p class="ac-lede">${shop.tagline} This run: oat, iron and celadon glazes on stoneware thrown in February.</p>
-          <a class="ac-btn" href="#top">Shop the run</a>
-        </div>
-        <figure class="ac-media im__heroimg">${raw(imageHTML(heroPic, { sizes: '50vw', alt: 'Stoneware from the spring run', eager: true }))}</figure>
-      </section>
-      <ul class="im__row" role="list">
-        ${shop.products.slice(1, 5).map((p, i) => html`<li><a href="#top" class="im__card"><span class="ac-media">${raw(imageHTML(row[i], { sizes: '25vw', alt: '' }))}</span><span class="im__cardname"><strong>${p.name}</strong><span class="ac-num">${formatPrice(p.price)}</span></span></a></li>`)}
-      </ul>
-    </main>
     <div class="im__readout" aria-hidden="true" data-readout><span class="ac-label">Timeline</span><span class="im__track"><span class="im__hinge"></span><span class="im__head"></span></span><span class="ac-label ac-num" data-time>0.00 s</span></div>`;
   root.querySelectorAll('a[href^="#"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 

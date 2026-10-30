@@ -1,7 +1,8 @@
-// Fullscreen menu — Halden's site header. The Menu button wipes a full-screen overlay in with clip-path (top edge,
-// a circle from the button, or a corner sweep), then the display-size links rise out of masks on a stagger and a
-// picture follows the hovered or focused link. The page behind is inert and Lenis stops; focus is trapped in the
-// overlay (its Close button sits where the toggle is), Escape and links close, focus returns. Reduced: no wipe.
+// Fullscreen menu — Halden's site header on an empty stage. The Menu button wipes a full-screen overlay in with
+// clip-path (top edge, a circle from the button, or a corner sweep), then the display-size links rise out of masks
+// on a stagger and a picture follows the hovered or focused link. The page behind is inert and Lenis stops; focus is
+// trapped in the overlay (its Close button sits where the toggle is), Escape and links close, focus returns.
+// Reduced: no wipe.
 import './demo.css';
 import { on, html, raw, photos, imageHTML, content } from '../../src/demo-kit/index.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
@@ -18,31 +19,19 @@ const SOCIALS = ['Instagram', 'LinkedIn', 'Are.na'];
 export default function mount(root, options, ctx) {
   const { studio } = content;
   const pics = LINKS.map((l, i) => photos({ tags: [l.tag], count: 1, seed: `fm-${i}` })[0]);
-  const hero = photos({ tags: ['architecture'], count: 4, seed: 'fm-page' });
   let cfg = { ...options };
 
   root.className = 'fm';
   root.innerHTML = html`
-    <header class="fm__bar" data-page>
-      <a class="ac-brand" href="#top">${studio.name}</a>
-      <button type="button" class="fm__toggle" aria-expanded="false" aria-controls="fm-menu" aria-haspopup="dialog">
-        <span>Menu</span><span class="fm__bars" aria-hidden="true"><i></i><i></i></span>
-      </button>
-    </header>
-    <main class="fm__page" data-page>
-      <section class="ac-wrap fm__hero" aria-labelledby="fm-title">
-        <p class="ac-label">${studio.full} · ${studio.city}</p>
-        <h1 class="ac-display" id="fm-title">${studio.tagline}</h1>
-      </section>
-      <figure class="ac-wrap fm__figure">
-        <span class="ac-media fm__wide">${raw(imageHTML(hero[0], { sizes: '100vw', alt: 'Fjordhus, a timber house above the water', eager: true }))}</span>
-        <figcaption class="ac-small">${studio.projects[0].title} — ${studio.projects[0].summary}</figcaption>
-      </figure>
-      <section class="ac-wrap fm__more" aria-label="Recent projects">
-        ${studio.projects.slice(1, 4).map((p, i) => html`<a class="fm__tile" href="#work"><span class="ac-media">${raw(imageHTML(hero[i + 1], { sizes: '33vw', alt: '' }))}</span><strong>${p.title}</strong><span class="ac-small">${p.place} · ${p.year}</span></a>`)}
-      </section>
-    </main>
-    <footer class="ac-wrap fm__foot" data-page><span class="ac-small">${studio.full} · ${studio.address.join(', ')}</span></footer>
+    <div class="ac-stage fm__stage">
+      <header class="fm__bar" data-page>
+        <a class="ac-brand" href="#top">${studio.name}</a>
+        <button type="button" class="fm__toggle" aria-expanded="false" aria-controls="fm-menu" aria-haspopup="dialog">
+          <span>Menu</span><span class="fm__bars" aria-hidden="true"><i></i><i></i></span>
+        </button>
+      </header>
+      <p class="ac-stage__note" data-page><span>${studio.name} · site header</span></p>
+    </div>
 
     <div class="fm__menu" id="fm-menu" role="dialog" aria-modal="true" aria-label="Site menu" hidden data-lenis-prevent>
       <div class="fm__inner ac-wrap">

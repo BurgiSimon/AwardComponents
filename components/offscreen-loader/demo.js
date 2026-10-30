@@ -1,9 +1,10 @@
-// Off-thread loader — a banking app's "preparing your export" panel. The loader's canvas goes to a Worker through
-// transferControlToOffscreen(), but only after a hello handshake: a transferred canvas can never give a context on
-// the main thread again, so the transfer waits for proof the Worker is alive (1000 ms). One draw function and one
-// message handler run in the Worker on its own requestAnimationFrame, or on the main thread's ticker as the fallback
-// (timeout, error, no support, or chosen). The step counter and the spinner are main-thread JavaScript on purpose:
-// "Block the main thread" freezes them and not the loader. Reduced and static: one settled frame, no loop.
+// Off-thread loader — a banking app's "preparing your export" panel, alone on the stage. The loader's canvas goes to a
+// Worker through transferControlToOffscreen(), but only after a hello handshake: a transferred canvas can never give
+// a context on the main thread again, so the transfer waits for proof the Worker is alive (1000 ms). One draw
+// function and one message handler run in the Worker on its own requestAnimationFrame, or on the main thread's ticker
+// as the fallback (timeout, error, no support, or chosen). The step counter and the spinner are main-thread
+// JavaScript on purpose: "Block the main thread" freezes them and not the loader. Reduced and static: one settled
+// frame, no loop.
 import './demo.css';
 import { on, ticker, observeIntersection, observeResize, readToken, html, content } from '../../src/demo-kit/index.js';
 
@@ -110,36 +111,30 @@ export default function mount(root, options, ctx) {
   const animate = ctx.motion === 'full';
   root.className = 'ol';
   root.innerHTML = html`
-    <div class="ol__app" inert aria-hidden="true">
-      <aside class="ol__side"><span class="ac-brand">${app.name}</span>${['Overview', 'Invoices', 'Cards', 'Tax pot', 'Exports'].map((n) => html`<span class="ol__nav${n === 'Exports' ? ' is-on' : ''}">${n}</span>`)}</aside>
-      <div class="ol__main">
-        <p class="ac-label">Exports</p>
-        <p class="ol__h">Exports for your accountant</p>
-        ${['2025 · full year', '2024 · full year', 'Q4 2025', 'Q3 2025'].map((n, i) => html`<div class="ol__row"><span>${n}</span><span>CSV + PDF</span><span>${['3.8', '3.1', '1.2', '1.0'][i]} MB</span></div>`)}
-      </div>
-    </div>
-    <div class="ol__scrim" aria-hidden="true"></div>
-    <section class="ol__panel" role="dialog" aria-modal="true" aria-labelledby="ol-title" aria-describedby="ol-desc">
-      <div class="ol__head"><p class="ac-label">Export · Year 2026</p><button class="ol__x" type="button" aria-label="Cancel the export"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
-      <h1 class="ol__title" id="ol-title" data-title>Preparing your export</h1>
-      <p class="ac-small" id="ol-desc">Everything your accountant asked for, in one file. Keep this window open; it takes about a minute.</p>
-      <figure class="ol__loader" data-stage>
-        <canvas aria-hidden="true" data-canvas></canvas>
-        <figcaption class="ol__thread"><i data-thread-dot></i><output aria-live="polite" data-thread>Starting the loader…</output></figcaption>
-      </figure>
-      <ol class="ol__steps" role="list">
-        <li class="is-done"><i aria-hidden="true"></i><span>Transactions</span><span class="ac-num">${nf(1284)}</span></li>
-        <li class="is-active" data-step="receipts"><i aria-hidden="true"></i><span>Matching receipts</span><span class="ac-num" data-receipts>${START} of ${RECEIPTS}</span></li>
-        <li data-step="pdf"><i aria-hidden="true"></i><span>Summary PDF</span><span class="ac-num" data-pdf>Waiting</span></li>
-      </ol>
-      <div class="ol__bar" aria-hidden="true"><span data-bar></span></div>
-      <div class="ol__check">
-        <p class="ol__lane"><svg class="ol__spin" viewBox="0 0 24 24" aria-hidden="true" data-spin><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 9 9"/></svg><span><strong>Main thread</strong><span data-main-state>Responsive</span></span></p>
-        <button class="ac-btn ac-btn--sm ac-btn--ghost" type="button" data-block>Block the main thread</button>
-      </div>
-      <p class="ol__report ac-small" aria-live="polite" data-report>The counter and the spinner run on the main thread; the loader does not.</p>
-      <div class="ol__foot"><span class="ac-small">CSV + PDF · about 4 MB</span><button class="ac-btn ac-btn--sm" type="button" disabled data-download>Download</button></div>
-    </section>`;
+    <div class="ac-stage ol__stage">
+      <section class="ol__panel" role="dialog" aria-modal="true" aria-labelledby="ol-title" aria-describedby="ol-desc">
+        <div class="ol__head"><p class="ac-label">Export · Year 2026</p><button class="ol__x" type="button" aria-label="Cancel the export"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+        <h1 class="ol__title" id="ol-title" data-title>Preparing your export</h1>
+        <p class="ac-small" id="ol-desc">Everything your accountant asked for, in one file. It takes about a minute.</p>
+        <figure class="ol__loader" data-stage>
+          <canvas aria-hidden="true" data-canvas></canvas>
+          <figcaption class="ol__thread"><i data-thread-dot></i><output aria-live="polite" data-thread>Starting the loader…</output></figcaption>
+        </figure>
+        <ol class="ol__steps" role="list">
+          <li class="is-done"><i aria-hidden="true"></i><span>Transactions</span><span class="ac-num">${nf(1284)}</span></li>
+          <li class="is-active" data-step="receipts"><i aria-hidden="true"></i><span>Matching receipts</span><span class="ac-num" data-receipts>${START} of ${RECEIPTS}</span></li>
+          <li data-step="pdf"><i aria-hidden="true"></i><span>Summary PDF</span><span class="ac-num" data-pdf>Waiting</span></li>
+        </ol>
+        <div class="ol__bar" aria-hidden="true"><span data-bar></span></div>
+        <div class="ol__check">
+          <p class="ol__lane"><svg class="ol__spin" viewBox="0 0 24 24" aria-hidden="true" data-spin><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 9 9"/></svg><span><strong>Main thread</strong><span data-main-state>Responsive</span></span></p>
+          <button class="ac-btn ac-btn--sm ac-btn--ghost" type="button" data-block>Block the main thread</button>
+        </div>
+        <p class="ol__report ac-small" aria-live="polite" data-report>The counter and the spinner run on the main thread; the loader does not.</p>
+        <div class="ol__foot"><span class="ac-small">CSV + PDF · about 4 MB</span><button class="ac-btn ac-btn--sm" type="button" disabled data-download>Download</button></div>
+      </section>
+      <p class="ac-stage__note"><span>${app.name} · export dialog</span></p>
+    </div>`;
 
   const $ = (s) => root.querySelector(s);
   let canvas = $('[data-canvas]');

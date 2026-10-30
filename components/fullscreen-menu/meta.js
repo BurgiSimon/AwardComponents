@@ -9,7 +9,7 @@ export default {
   added: '2026-10-28',
   featured: true,
   order: 10,
-  preview: { height: 640, scroll: true, hint: 'Press Menu', capture: { action: 'open', wait: 1900 } },
+  preview: { height: 600, hint: 'Press Menu', capture: { action: 'open', wait: 1900 } },
   actions: [{ id: 'open', label: 'Open menu' }],
   useCases: [
     'The main navigation of a portfolio or studio site with four to six sections',

@@ -10,7 +10,7 @@ export default {
   requires: ['offscreen-canvas'],
   added: '2026-10-28',
   order: 70,
-  preview: { height: 640, hint: 'Block the main thread', capture: { wait: 1600 } },
+  preview: { height: 620, hint: 'Block the main thread', capture: { wait: 1600 } },
   useCases: [
     'A loader that must keep moving while shaders compile, a bundle parses or a page hydrates',
     'Export, upload and “preparing” states in apps, where the main thread is busy doing the work',

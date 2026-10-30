@@ -2,7 +2,7 @@ export default {
   id: 'sound-toggle',
   title: 'Sound toggle',
   category: 'cursors-buttons',
-  summary: 'A studio site’s header sound switch, off until asked: a live equaliser icon, a quiet synthesised room tone, soft clicks on the navigation, and a remembered yes that waits for a gesture.',
+  summary: 'A studio site’s header sound switch, off until asked: a live equaliser icon, a quiet synthesised room tone, soft clicks on the header links, and a remembered yes that waits for a gesture.',
   description: 'Three states: off, armed and on, and only the last one has ever touched an AudioContext, because the context is built inside the click. The bed is two detuned sines and a band of filtered noise swept by a slow LFO; the cues are one-shot blips; the icon is an AnalyserNode drawn into the button. No audio file ships.\n\nA stored yes brings the switch back pressed but armed: the first press anywhere on the page starts the sound.',
   recipe: 'sound-toggle-opt-in',
   deps: [],
@@ -10,7 +10,7 @@ export default {
   requires: ['web-audio'],
   added: '2026-10-28',
   order: 40,
-  preview: { height: 600, hint: 'Turn the sound on, then hover the menu', capture: { action: 'toggle', wait: 1400 } },
+  preview: { height: 480, hint: 'Turn the sound on, then hover the links', capture: { action: 'toggle', wait: 1400 } },
   useCases: [
     'An ambient sound switch for a portfolio, a festival or a product launch',
     'Interface sounds on navigation and buttons, available only to those who asked for them',

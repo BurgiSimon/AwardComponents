@@ -8,7 +8,7 @@ export default {
   tags: ['menu', 'mega-menu', 'timeline', 'gsap', 'interruptible', 'disclosure', 'shop'],
   added: '2026-10-28',
   order: 30,
-  preview: { height: 620, hint: 'Press Shop twice quickly', capture: { action: 'toggle', wait: 1400 } },
+  preview: { height: 560, hint: 'Press Shop twice quickly', capture: { action: 'toggle', wait: 1400 } },
   actions: [{ id: 'toggle', label: 'Toggle menu' }],
   useCases: [
     'A shop header whose Shop item opens categories and a featured product',

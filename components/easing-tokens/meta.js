@@ -2,14 +2,14 @@ export default {
   id: 'easing-tokens',
   title: 'Easing tokens',
   category: 'foundations',
-  summary: 'A banking app’s list, invoice sheet and toasts all moving on one named curve family, with a live plot of the default curve and its duration ladder beside them.',
-  description: 'Five curves and a duration ladder are written once as CSS custom properties. At boot the script reads them, registers each with CustomEase under its token name and makes the house pair GSAP’s default, so a tween that names nothing and a CSS transition share one feel.\n\nNothing in the app names an ease. Change the default curve and every move changes with it.',
+  summary: 'A banking app’s invoice card opening into its sheet on one named curve family, with a live plot of the default curve and its duration ladder beside it.',
+  description: 'Five curves and a duration ladder are written once as CSS custom properties. At boot the script reads them, registers each with CustomEase under its token name and makes the house pair GSAP’s default, so a tween that names nothing and a CSS transition share one feel.\n\nNothing in the sample names an ease. Change the default curve and the sheet’s clip, its staggered rows and the button transitions all change with it.',
   recipe: 'custom-ease-house-defaults',
   deps: ['gsap'],
   tags: ['easing', 'gsap', 'customease', 'tokens', 'motion-system', 'duration', 'stagger', 'reduced-motion'],
   added: '2026-10-28',
   order: 20,
-  preview: { height: 640, hint: 'Press Play, or one moment', capture: { wait: 900 } },
+  preview: { height: 580, hint: 'Open the invoice, or press Play', capture: { wait: 900 } },
   useCases: [
     'The motion section of a design system, where curves and durations are tokens like colours',
     'A product UI whose toasts, sheets and lists should feel like one hand made them',
@@ -18,7 +18,7 @@ export default {
   notes: [
     'The curves live in CSS, so transitions have them before any script runs; JavaScript reads the same strings and cannot drift.',
     'Under reduced motion every movement duration and the stagger become 0 s; the fade token survives, so state changes still read. Static zeroes the fade too.',
-    'The moments are real buttons, the sheet takes focus and closes on Escape, and the toasts sit in a polite live region; the curve plot is decoration beside text names.',
+    'The invoice opens from a real button with aria-expanded, the sheet takes focus and closes on Escape, and focus returns to the opener; the curve plot is decoration beside text names.',
   ],
   controls: [
     { id: 'curve', label: 'Default curve', type: 'select', options: [{ value: 'house', label: 'house · .6 .04 .1 1' }, { value: 'out', label: 'out · .2 .9 .3 1' }, { value: 'in-out', label: 'in-out · .72 0 .22 1' }, { value: 'write', label: 'write · .4 0 .6 1' }], default: 'house', group: 'Curve', help: 'The ease every unannotated tween and transition inherits.', prompt: (v) => `Make the “${v}” curve the default for every unannotated tween and transition (default house)` },

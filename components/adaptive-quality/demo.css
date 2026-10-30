@@ -1,38 +1,21 @@
 .aq { overflow-x: clip; }
-.aq a { text-decoration: none; }
 .aq [hidden] { display: none !important; }
-.aq__bar { position: relative; z-index: 3; }
 
-/* Hero: the field fills it and fades out under the copy; the readout card docks bottom right. */
-.aq__hero {
-  position: relative;
-  isolation: isolate;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 24px;
-  min-height: calc(100svh - 64px);
-  padding-inline: var(--gutter);
-}
+/* The stage: the field fills it edge to edge and fades at the rim; the readout card sits in the middle. */
+.aq__stage { isolation: isolate; overflow: clip; }
 .aq__field {
   position: absolute;
   inset: 0;
   z-index: -1;
-  -webkit-mask-image: linear-gradient(90deg, transparent 14%, #000 58%);
-  mask-image: linear-gradient(90deg, transparent 14%, #000 58%);
+  -webkit-mask-image: radial-gradient(120% 110% at 50% 50%, #000 55%, transparent 100%);
+  mask-image: radial-gradient(120% 110% at 50% 50%, #000 55%, transparent 100%);
 }
 .aq__field canvas, .aq__still { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.aq__copy { display: grid; gap: clamp(16px, 2.6vh, 22px); width: auto; margin: 0; padding-block: 40px; }
-.aq__copy > * { max-width: 34rem; }
-.aq__copy .ac-display { font-size: clamp(2.6rem, 1.2rem + 4.4vw, 6rem); max-width: 10ch; }
-.aq__buy { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 4px; }
 
 .aq__card {
-  align-self: end;
   display: grid;
   gap: 12px;
-  width: 340px;
-  margin-bottom: 28px;
+  width: min(100%, 360px);
   padding: 16px;
   border: 1px solid var(--line-2);
   border-radius: var(--radius-lg);
@@ -57,19 +40,7 @@
 .aq__force button:hover { color: var(--ink); }
 .aq__force [aria-pressed='true'] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-1); }
 
-.aq__specs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; margin: 0 auto; padding-block: 32px 72px; border-top: 1px solid var(--line); }
-.aq__specs div { display: grid; gap: 6px; }
-.aq__specs dd { margin: 0; font-size: var(--text-sm); color: var(--ink-2); }
-
-@media (max-width: 1000px) {
-  .aq__card { width: 290px; padding: 14px; }
-  .aq__rows div { padding: 6px 0; }
-}
 @media (max-width: 720px) {
-  .aq__bar nav { display: none; }
-  .aq__hero { grid-template-columns: 1fr; align-items: start; min-height: 0; padding-top: 36svh; }
-  .aq__field { inset: 0 0 auto; height: 52svh; -webkit-mask-image: linear-gradient(180deg, #000 40%, transparent); mask-image: linear-gradient(180deg, #000 40%, transparent); }
-  .aq__copy { padding-block: 0 8px; }
-  .aq__card { width: auto; margin-bottom: 32px; }
-  .aq__specs { grid-template-columns: 1fr 1fr; }
+  .aq__card { padding: 14px; }
+  .aq__rows div { padding: 6px 0; }
 }

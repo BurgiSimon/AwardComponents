@@ -28,7 +28,7 @@ export default {
     { id: 'touch', label: 'Smooth touch', type: 'toggle', default: false, group: 'Lenis', help: 'Off leaves native momentum on phones, which is usually right.', prompt: { on: 'Smooth touch too (syncTouch), with Lenis’ own inertia', off: 'Leave touch scrolling native' } },
     { id: 'readout', label: 'Show the readout', type: 'toggle', default: true, group: 'Demo', help: 'Velocity and progress, for tuning. Left out of the prompt.', prompt: false },
   ],
-  actions: [{ id: 'glide', label: 'Glide to the quote' }, { id: 'top', label: 'Back to top' }],
+  actions: [{ id: 'glide', label: 'Glide to the end' }, { id: 'top', label: 'Back to top' }],
   prompt: {
     skill: 'stack',
     ask: 'Boot {target} on Lenis and GSAP’s ticker.',

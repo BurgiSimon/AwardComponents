@@ -1,10 +1,11 @@
-// Adaptive quality tiers — a speaker launch hero with a generative "sound field" on a 2D canvas. The device is
-// probed once (pixel ratio, memory, cores, GPU string, WebGL 2, 500 ms of frame timing) and scored into high, mid
-// or low; every part of the field reads that profile: the DPR cap, an absolute pixel budget, the particle share and
-// the effects. Nothing re-measures, so the tier cannot flicker. Low tier, reduced motion and static get a still
-// drawn from the same field (a real <img> with alt text). The loop runs only while the hero is on screen.
+// Adaptive quality tiers — a speaker launch hero's generative "sound field" on a 2D canvas, full-bleed behind the
+// device readout card that shows the budget it was given. The device is probed once (pixel ratio, memory, cores,
+// GPU string, WebGL 2, 500 ms of frame timing) and scored into high, mid or low; every part of the field reads that
+// profile: the DPR cap, an absolute pixel budget, the particle share and the effects. Nothing re-measures, so the
+// tier cannot flicker. Low tier, reduced motion and static get a still drawn from the same field (a real <img> with
+// alt text). The loop runs only while the stage is on screen.
 import './demo.css';
-import { on, ticker, whileVisible, observeResize, readToken, clamp, html, content, formatPrice } from '../../src/demo-kit/index.js';
+import { on, ticker, whileVisible, observeResize, readToken, clamp, html, content } from '../../src/demo-kit/index.js';
 
 const TRAIL = 18;   // points kept per particle (the high tier's trail)
 const STEP = 0.07;  // seconds of field time between trail points, so a streak is as long at 30 fps as at 120
@@ -65,21 +66,10 @@ export default async function mount(root, options, ctx) {
   let cfg = { ...options };
   root.className = 'aq';
   root.innerHTML = html`
-    <header class="ac-bar aq__bar">
-      <a class="ac-brand" href="#top">${product.maker}</a>
-      <nav aria-label="Kova">${['Speakers', 'Room tuning', 'Support'].map((n) => html`<a href="#top">${n}</a>`)}</nav>
-      <a class="ac-btn ac-btn--sm" href="#top">Pre-order</a>
-    </header>
-    <section class="aq__hero" aria-labelledby="aq-title" data-hero>
+    <section class="ac-stage aq__stage" aria-label="${product.name} launch hero" data-hero>
       <div class="aq__field" data-field>
         <canvas aria-hidden="true" data-canvas></canvas>
         <img class="aq__still" alt="A field of fine flowing lines, like sound waves crossing a room." data-still hidden>
-      </div>
-      <div class="aq__copy ac-wrap">
-        <p class="ac-label">${product.name} · ${product.kind}</p>
-        <h1 class="ac-display" id="aq-title">Sound you can stop noticing.</h1>
-        <p class="ac-lede">Four microphones listen to the room for eight seconds, then the bass is shaped to it. You hear the music, not the corner it sits in.</p>
-        <div class="aq__buy"><a class="ac-btn ac-btn--lg" href="#top">Pre-order — ${formatPrice(product.price)}</a><span class="ac-small">Ships in March</span></div>
       </div>
       <aside class="aq__card" aria-labelledby="aq-card-title" data-card>
         <div class="aq__card-head">
@@ -99,11 +89,8 @@ export default async function mount(root, options, ctx) {
         </div>
       </aside>
       <p class="sr-only" aria-live="polite" data-announce></p>
-    </section>
-    <section class="aq__specs ac-wrap" aria-label="Specifications">
-      ${product.specs.slice(0, 4).map(([k, v]) => html`<div><dt class="ac-label">${k}</dt><dd>${v}</dd></div>`)}
+      <p class="ac-stage__note"><span>${product.maker} · launch hero</span></p>
     </section>`;
-  root.querySelectorAll('a[href="#top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const $ = (s) => root.querySelector(s);
   const hero = $('[data-hero]');

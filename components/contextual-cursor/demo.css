@@ -5,38 +5,27 @@
   --cc-ink: var(--ink);
   --cc-light: var(--surface);
   --cc-on-night: var(--bg);
-  min-height: 100svh;
   overflow-x: clip;
 }
 :root[data-theme='dark'] .cc { --cc-light: var(--ink); --cc-on-night: var(--ink); }
 .cc a { text-decoration: none; }
 .cc.has-cursor, .cc.has-cursor * { cursor: none; }
 
-.cc__bar nav a[aria-current] { color: var(--ink); }
-.cc__main { padding-bottom: 40px; }
-.cc__intro {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 26rem);
-  align-items: end;
-  gap: 16px 48px;
-  padding-block: clamp(20px, 4vh, 44px) clamp(22px, 3.4vh, 36px);
-}
-.cc__intro .ac-lede { font-size: var(--text-md); justify-self: end; }
+/* The board: a project tile beside the reel, the workshop strip under both. */
+.cc__board { display: grid; gap: clamp(20px, 3.4vh, 32px); width: min(100%, 1040px); }
 
-/* The work grid: a lead project beside the reel, then rows of three and of two. */
+/* The work grid: the lead project beside the reel. */
 .cc__grid {
-  --h: clamp(220px, 27vw, 360px);
+  --h: clamp(200px, min(24vw, 34vh), 300px);
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: clamp(28px, 3.4vw, 44px) clamp(14px, 1.6vw, 22px);
+  gap: clamp(14px, 1.6vw, 22px);
   margin: 0;
 }
-.cc__item { grid-column: span 4; min-width: 0; }
+.cc__item { min-width: 0; }
 .cc__item--reel { display: grid; gap: 12px; align-content: start; }
-.cc__item--lead, .cc__item--reel { --h: clamp(240px, 37vw, 500px); }
-.cc__item--lead, .cc__item--wide { grid-column: span 7; }
-.cc__item--reel, .cc__item--narrow { grid-column: span 5; }
-.cc__item--wide, .cc__item--narrow { --h: clamp(220px, 30vw, 420px); }
+.cc__item--lead { grid-column: span 7; }
+.cc__item--reel { grid-column: span 5; }
 
 .cc__card { display: grid; gap: 12px; color: inherit; border-radius: var(--radius-md); }
 .cc__media { display: block; height: var(--h); aspect-ratio: auto; border-radius: var(--radius-md); }
@@ -54,7 +43,6 @@
 .cc__reel-veil { position: absolute; inset: 0; background: linear-gradient(to top, color-mix(in oklab, var(--night) 86%, transparent) 0%, color-mix(in oklab, var(--night) 30%, transparent) 46%, transparent 72%); }
 .cc__reel-copy { position: absolute; inset: auto 0 0; display: grid; gap: 10px; padding: clamp(16px, 2vw, 26px); color: var(--cc-on-night); }
 .cc__reel-copy .ac-label { color: color-mix(in oklab, var(--cc-on-night) 72%, transparent); }
-.cc__reel-title { font-size: clamp(1.15rem, 0.8rem + 1vw, 1.6rem); font-weight: 680; font-stretch: 108%; line-height: 1.12; letter-spacing: -0.015em; max-width: 18ch; text-wrap: balance; }
 .cc__reel-bar { display: flex; align-items: center; gap: 14px; margin-top: 6px; }
 .cc__reel-play { display: grid; place-items: center; flex: none; width: 42px; height: 42px; border-radius: 50%; background: var(--cc-on-night); color: var(--night); transition: transform var(--dur-s) var(--ease-out); }
 .cc__reel-play svg { grid-area: 1 / 1; width: 16px; height: 16px; }
@@ -69,8 +57,6 @@
 @keyframes cc-drift { from { transform: scale(1.02); } to { transform: scale(1.12) translate(-2%, 1%); } }
 
 /* The workshop strip: native sideways overflow, mouse drag on top. */
-.cc__workshop { display: grid; gap: 18px; margin-top: clamp(56px, 8vw, 96px); padding-top: 28px; border-top: 1px solid var(--line); }
-.cc__ws-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px 24px; flex-wrap: wrap; }
 .cc__strip {
   display: flex;
   gap: clamp(12px, 1.4vw, 18px);
@@ -84,11 +70,8 @@
   -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 64px), transparent);
   mask-image: linear-gradient(90deg, #000 calc(100% - 64px), transparent);
 }
-.cc__shot { flex: 0 0 clamp(180px, 21vw, 270px); display: grid; gap: 8px; }
-.cc__shot .cc__media { height: auto; aspect-ratio: 4 / 5; border-radius: var(--radius-sm); }
+.cc__shot { flex: 0 0 clamp(130px, min(14vw, 20vh), 172px); height: auto; aspect-ratio: 4 / 5; border-radius: var(--radius-sm); }
 .cc__shot img { pointer-events: none; }
-.cc__foot { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--line); }
-@media (hover: hover) and (pointer: fine) { .cc__touch-hint { display: none; } }
 
 /* The cursor layer: aria-hidden, never hit-tested, faded in on the first move. */
 .cc__cursor { display: contents; }
@@ -163,12 +146,6 @@
 :root:is([data-motion='reduced'], [data-motion='static']) .cc__media--reel :is(img, video) { animation: none; }
 
 @media (max-width: 720px) {
-  .cc__intro { grid-template-columns: 1fr; }
-  .cc__intro .ac-lede { justify-self: start; }
   .cc__grid { grid-template-columns: 1fr; }
-  .cc__item, .cc__item--lead, .cc__item--reel, .cc__item--wide, .cc__item--narrow { grid-column: auto; --h: clamp(220px, 64vw, 380px); }
-  .cc__item--reel { --h: clamp(300px, 92vw, 420px); }
-}
-@media (max-width: 560px) {
-  .cc__bar nav a:not([aria-current]) { display: none; }
+  .cc__item--lead, .cc__item--reel { grid-column: auto; --h: clamp(200px, 56vw, 320px); }
 }

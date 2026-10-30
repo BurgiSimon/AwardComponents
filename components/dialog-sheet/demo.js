@@ -1,5 +1,5 @@
-// Long-read dialog — a Fieldnote issue page. "Read the full story" opens a native <dialog> (showModal) that holds the
-// whole article, server-rendered with the page. A second Lenis bound to the dialog's scroller rides the same GSAP
+// Long-read dialog — a Fieldnote story teaser alone on the stage. "Read the full story" opens a native <dialog>
+// (showModal) that holds the whole article, server-rendered with the page. A second Lenis bound to the dialog's scroller rides the same GSAP
 // ticker as the page Lenis, which stops while the dialog is open; data-lenis-prevent keeps them apart, and an inner
 // ledger pane keeps native scrolling. Below the breakpoint the same markup is a bottom sheet dragged away from its
 // header (past `dismiss` of its height, or a flick > 0.6 px/ms). Reduced/static: instant, native scrolling.
@@ -37,33 +37,20 @@ const LEDGER = [
 export default function mount(root, options, ctx) {
   const { magazine } = content;
   const story = magazine.articles[0];
-  const [lead, fig, ...rest] = photos({ tags: ['landscape'], count: 2, seed: 'ds-story' }).concat(photos({ tags: ['editorial'], count: 3, seed: 'ds-more' }));
+  const [lead, fig] = photos({ tags: ['landscape'], count: 2, seed: 'ds-story' });
   let cfg = { ...options };
   const full = ctx.motion === 'full';
 
   root.className = 'ds';
   root.innerHTML = html`
-    <header class="ds__bar ac-wrap">
-      <a class="ds__brand" href="#top">${magazine.name}</a>
-      <nav aria-label="Sections">${['Places', 'Architecture', 'Craft', 'Culture'].map((s) => html`<a href="#top">${s}</a>`)}</nav>
-      <a class="ac-btn ac-btn--sm" href="#top">Subscribe</a>
-    </header>
-    <main class="ds__page ac-wrap">
-      <article class="ds__feature" aria-labelledby="ds-card-title">
-        <figure class="ac-media ds__lead">${raw(imageHTML(lead, { sizes: '(max-width: 760px) 100vw, 55vw', alt: 'Salt pans on Læsø', eager: true }))}</figure>
-        <div class="ds__card">
-          <p class="ac-label">${magazine.issue} · ${story.section} · ${story.read}</p>
-          <h1 class="ds__title" id="ds-card-title">${story.title}</h1>
-          <p class="ac-lede">${story.dek}</p>
-          <p class="ac-small">Words by ${story.author}</p>
-          <button type="button" class="ac-btn ac-btn--lg" data-open aria-haspopup="dialog" aria-controls="ds-dialog">Read the full story</button>
-        </div>
+    <section class="ac-stage ds__stage" aria-label="${magazine.name} story teaser">
+      <article class="ds__teaser" aria-labelledby="ds-card-title">
+        <figure class="ac-media ds__lead">${raw(imageHTML(lead, { sizes: '(max-width: 760px) 100vw, 420px', alt: 'Salt pans on Læsø', eager: true }))}</figure>
+        <h1 class="ds__title ds__teaser-title" id="ds-card-title">${story.title}</h1>
+        <button type="button" class="ac-btn" data-open aria-haspopup="dialog" aria-controls="ds-dialog">Read the full story</button>
       </article>
-      <section class="ds__more" aria-label="Also in this issue">
-        <p class="ac-label">Also in ${magazine.issue.split(' — ')[0]}</p>
-        <ul role="list">${magazine.articles.slice(1, 4).map((a, i) => html`<li><a href="#top"><span class="ac-media">${raw(imageHTML(rest[i], { sizes: '240px', alt: '' }))}</span><span class="ac-label">${a.section} · ${a.read}</span><strong>${a.title}</strong><span class="ac-small">${a.dek}</span></a></li>`)}</ul>
-      </section>
-    </main>
+      <p class="ac-stage__note"><span>${magazine.name} · story teaser</span></p>
+    </section>
 
     <dialog class="ds__dialog" id="ds-dialog" data-lenis-prevent aria-labelledby="ds-title">
       <div class="ds__scrim" data-scrim></div>
@@ -100,7 +87,6 @@ export default function mount(root, options, ctx) {
         </div>
       </div>
     </dialog>`;
-  root.querySelectorAll('a[href^="#"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const html_ = document.documentElement;
   const dialog = root.querySelector('dialog');

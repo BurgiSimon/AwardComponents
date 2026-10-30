@@ -1,11 +1,7 @@
-.ms { --band: 76px; overflow-x: clip; }
-.ms a { text-decoration: none; }
+.ms { overflow-x: clip; }
 
-.ms__bar { position: relative; z-index: 5; border-bottom: 1px solid var(--line); }
-.ms__brand { display: inline-flex; align-items: baseline; gap: 6px; font-size: 22px; font-weight: 800; font-stretch: var(--wider); letter-spacing: -0.045em; }
-.ms__brand span { font-family: var(--font-mono); font-size: 11px; font-weight: 500; font-stretch: 100%; letter-spacing: 0.04em; color: var(--accent-ink); }
-.ms__bar nav { margin: 0 auto 0 28px; }
-.ms__tools { display: flex; align-items: center; gap: 10px; }
+/* The header corner the setting lives in: just the pill, top right, where the site's header would hold it. */
+.ms__corner { position: absolute; top: 16px; right: var(--gutter); z-index: 5; }
 
 /* The setting's trigger: a pill in the header, or a link in the footer bar. Both open the same popover. */
 .ms__trigger {
@@ -31,61 +27,33 @@
 .ms--footer .ms__trigger--header { display: none; }
 .ms--footer .ms__trigger--footer { display: inline-flex; }
 
-/* Hero: the headline, a parallax picture with a spinning badge, and the line-up ticker under both. */
-.ms__hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
-  gap: clamp(24px, 4vw, 72px);
-  align-items: center;
-  min-height: calc(100svh - 64px - var(--band));
-  padding-block: clamp(24px, 4vh, 48px);
-}
-.ms__copy { display: grid; gap: clamp(16px, 2.4vh, 24px); }
-.ms__title { font-size: clamp(2.9rem, 1rem + 6.6vw, 7.8rem); font-weight: 800; font-stretch: var(--wider); line-height: 0.88; letter-spacing: -0.05em; }
+/* The sample the setting acts on: a headline that reveals line by line and the line-up ticker under it. */
+.ms__sample { display: grid; gap: clamp(24px, 4vh, 40px); width: min(100%, 720px); }
+.ms__title { font-size: clamp(2.6rem, 1rem + 5vw, 5.6rem); font-weight: 800; font-stretch: var(--wider); line-height: 0.88; letter-spacing: -0.05em; }
 .ms__mask { display: block; overflow: hidden; padding-bottom: 0.07em; margin-bottom: -0.07em; }
 .ms__line { display: block; will-change: transform; }
-.ms__copy .ac-lede { max-width: 38ch; }
-.ms__cta { display: flex; flex-wrap: wrap; gap: 10px; }
 
-.ms__fig { position: relative; margin: 0; }
-.ms__frame { --ratio: 4 / 5; display: block; max-height: calc(100svh - 64px - var(--band) - 56px); width: 100%; border-radius: var(--radius-lg); }
-.ms__frame > .ms__img { top: -9%; bottom: auto; height: 118%; will-change: transform; }
-.ms__badge, .ms__stamp { position: absolute; left: clamp(-56px, -4vw, -28px); bottom: 32px; width: clamp(104px, 9vw, 132px); aspect-ratio: 1; border-radius: 50%; }
-.ms__badge { display: block; background: var(--accent); color: var(--on-accent); box-shadow: 0 18px 40px -16px color-mix(in oklab, var(--accent) 70%, transparent); }
-.ms__badge svg { width: 100%; height: 100%; }
-.ms__badge text { font-family: var(--font-mono); font-size: 9.4px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; fill: currentColor; }
-.ms__stamp { display: grid; place-content: center; margin: 0; text-align: center; font-family: var(--font-sans); font-size: clamp(15px, 1.4vw, 19px); font-weight: 800; font-stretch: var(--wide); line-height: 0.95; letter-spacing: -0.02em; color: var(--on-accent); }
-
-.ms__band { background: var(--ink); color: var(--bg); }
+.ms__band { border-radius: var(--radius-lg); background: var(--ink); color: var(--bg); overflow: hidden; }
 .ms__marquee {
   display: flex;
   align-items: center;
-  height: var(--band);
+  height: 64px;
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
 }
 .ms__track { display: flex; width: max-content; will-change: transform; }
-.ms__copyset { display: flex; align-items: center; gap: 28px; padding-right: 28px; font-size: clamp(1.35rem, 0.9rem + 1.3vw, 2.1rem); font-weight: 720; font-stretch: var(--wide); letter-spacing: -0.03em; white-space: nowrap; }
+.ms__copyset { display: flex; align-items: center; gap: 24px; padding-right: 24px; font-size: clamp(1.15rem, 0.9rem + 0.8vw, 1.6rem); font-weight: 720; font-stretch: var(--wide); letter-spacing: -0.03em; white-space: nowrap; }
 .ms__copyset i { font-style: normal; font-size: 0.6em; color: var(--accent); }
-
-.ms__days { display: grid; gap: 28px; padding-block: clamp(56px, 10vh, 112px); }
-.ms__days-head { display: grid; gap: 10px; }
-.ms__panels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 2vw, 24px); }
-.ms__panel { display: grid; gap: 10px; align-content: start; padding: 12px 12px 18px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); }
-.ms__panel-pic { --ratio: 4 / 3; margin-bottom: 6px; border-radius: var(--radius-md); }
-.ms__panel .ac-label, .ms__panel ul, .ms__panel .ac-small { padding-inline: 6px; }
-.ms__panel ul { display: grid; gap: 2px; margin: 0; font-size: var(--text-xl); font-weight: 650; letter-spacing: -0.015em; line-height: 1.25; }
-.ms__foot { display: flex; justify-content: space-between; gap: 16px; padding-block: 24px 40px; border-top: 1px solid var(--line); }
-.ms--footer .ms__foot { padding-bottom: 84px; }
 
 .ms__dock { display: none; position: fixed; inset: auto 0 0; z-index: 10; height: 54px; padding-inline: var(--gutter); align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid var(--line); background: color-mix(in oklab, var(--bg) 88%, transparent); backdrop-filter: blur(12px); }
 .ms--footer .ms__dock { display: flex; }
+.ms--footer .ac-stage__note { bottom: 70px; }
 
 /* The popover: a native radio group in the top layer. Its own fade obeys the tier too. */
 .ms__pop {
   position: fixed;
-  inset: 70px var(--gutter) auto auto;
+  inset: 60px var(--gutter) auto auto;
   width: min(352px, calc(100vw - 2 * var(--gutter)));
   margin: 0;
   padding: 18px 14px 14px;
@@ -125,17 +93,7 @@
 .ms__opt-copy span { font-size: var(--text-xs); line-height: 1.45; color: var(--muted); }
 .ms[data-tier='static'] .ms__radio::after { transition: none; }
 
-@media (max-width: 900px) {
-  .ms__bar nav { display: none; }
-  .ms__brand { margin-right: auto; }
-}
 @media (max-width: 760px) {
-  .ms { --band: 60px; }
-  .ms__hero { grid-template-columns: 1fr; min-height: 0; padding-top: 28px; }
-  .ms__frame { --ratio: 5 / 4; max-height: none; }
-  .ms__badge, .ms__stamp { left: auto; right: 16px; bottom: -36px; width: 96px; }
-  .ms__stamp { font-size: 14px; }
-  .ms__fig { margin-bottom: 40px; }
-  .ms__panels { grid-template-columns: 1fr; }
+  .ms__marquee { height: 56px; }
   .ms__trigger-k { display: none; }
 }

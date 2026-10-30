@@ -1,11 +1,12 @@
-// Frame-rate governor — an architecture studio's hero over a WebGL contour map (one fragment shader: summed sines read
-// as terrain, index contours every fifth line, a lens that follows the pointer, a survey ping). Two guards:
-// a governor averages fps over 500 ms windows and steps the pixel ratio by .25 (down under 45, up over 57, hold in
-// between) inside [floor, ceiling] from the one-time probe; an idle gate takes the loop off the ticker 1.5 s after the
-// last input unless busy work (the ping, the lens easing) is running. The first frame after a wake is not measured.
-// Reduced: still field, ping as a tint, same governor and gate. Static: one frame, no loop. No WebGL 2: a drawn still.
+// Frame-rate governor — an architecture studio's WebGL contour-map hero, full-bleed behind the governor card (one
+// fragment shader: summed sines read as terrain, index contours every fifth line, a lens that follows the pointer, a
+// survey ping). Two guards: a governor averages fps over 500 ms windows and steps the pixel ratio by .25 (down under
+// 45, up over 57, hold in between) inside [floor, ceiling] from the one-time probe; an idle gate takes the loop off
+// the ticker 1.5 s after the last input unless busy work (the ping, the lens easing) is running. The first frame after
+// a wake is not measured. Reduced: still field, ping as a tint, same governor and gate. Static: one frame, no loop.
+// No WebGL 2: a drawn still.
 import './demo.css';
-import { on, ticker, damp, clamp, readToken, qualityTier, html, content } from '../../src/demo-kit/index.js';
+import { on, ticker, damp, clamp, readToken, qualityTier, webgl2Available, html, content } from '../../src/demo-kit/index.js';
 import { THREE, useRenderer, disposeScene } from '../../src/demo-kit/three.js';
 
 const WINDOW_MS = 500;
@@ -45,28 +46,13 @@ const fragment = /* glsl */ `
     #include <colorspace_fragment>
   }`;
 
-const gl2 = () => { try { return !!document.createElement('canvas').getContext('webgl2'); } catch { return false; } };
-
 export default function mount(root, options, ctx) {
   const { studio } = content;
   let cfg = { ...options };
   root.className = 'fg';
   root.innerHTML = html`
-    <header class="ac-bar fg__bar">
-      <a class="ac-brand" href="#top">${studio.name}</a>
-      <nav aria-label="Studio">${studio.nav.slice(0, 3).map((n) => html`<a href="#top">${n}</a>`)}</nav>
-      <a class="ac-btn ac-btn--sm ac-btn--ghost" href="#top">Contact</a>
-    </header>
-    <section class="fg__hero" aria-labelledby="fg-title">
+    <section class="ac-stage fg__hero" aria-label="${studio.name} project hero">
       <div class="fg__stage" data-stage aria-hidden="true"><div class="fg__still" data-still hidden></div></div>
-      <p class="fg__coord fg__coord--a ac-label" aria-hidden="true">60.37° N · 6.15° E</p>
-      <p class="fg__coord fg__coord--b ac-label" aria-hidden="true">Contours every 2 m</p>
-      <div class="fg__copy ac-wrap">
-        <p class="ac-label">Site studies · Hardanger</p>
-        <h1 class="ac-display" id="fg-title">Every building starts with the ground.</h1>
-        <p class="ac-lede">We survey each site before we draw a line: slope, rock, water and the path the low sun takes in January.</p>
-        <div class="fg__cta"><a class="ac-btn ac-btn--lg" href="#top">See the Fjordhus survey</a></div>
-      </div>
       <aside class="fg__card" aria-labelledby="fg-card-title" data-card>
         <div class="fg__card-head">
           <h2 class="ac-label" id="fg-card-title">Frame-rate governor</h2>
@@ -91,11 +77,8 @@ export default function mount(root, options, ctx) {
           <button class="ac-btn ac-btn--sm" type="button" data-pulse>Survey pulse</button>
         </div>
       </aside>
-    </section>
-    <section class="fg__list ac-wrap" aria-label="Recent site studies">
-      ${studio.projects.slice(0, 4).map((p) => html`<a class="fg__item" href="#top"><span class="ac-label">${p.place}</span><strong>${p.title}</strong><span class="ac-small">${p.summary}</span></a>`)}
+      <p class="ac-stage__note"><span>${studio.name} · project hero</span></p>
     </section>`;
-  root.querySelectorAll('a[href="#top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const $ = (s) => root.querySelector(s);
   const stage = $('[data-stage]');
@@ -141,7 +124,7 @@ export default function mount(root, options, ctx) {
   const applyLook = () => { $('[data-graph]').hidden = !cfg.graph; drawGraph(); };
   applyLook();
 
-  if (!gl2()) {
+  if (!webgl2Available()) {
     $('[data-still]').hidden = false;
     slowBtn.disabled = true;
     pulseBtn.disabled = true;

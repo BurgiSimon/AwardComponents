@@ -1,11 +1,12 @@
-// Scroll theme swap — a festival programme in chapters (Day, Dusk, Night). Each section names a palette; crossing its
-// midpoint (top 50 % → bottom 50 %, enter and enter back) tweens --bg, --ink and --accent on <html> through one live
-// object: the running tween is killed and the next starts from wherever the colour is (retarget, never stack). The
-// same onUpdate repaints a canvas sky (ground, glow, a sun that sets) and, on complete, meta theme-color. Palettes are
-// mixed from the library's tokens and materials, so they hold in light and dark. Scrub mode blends across each
-// boundary instead. Reduced motion: the swap is instant but still happens, because it carries wayfinding.
+// Scroll theme swap — a festival programme in three chapters (Day, Dusk, Night), each its name and three sets. Each
+// section names a palette; crossing its midpoint (top 50 % → bottom 50 %, enter and enter back) tweens --bg, --ink
+// and --accent on <html> through one live object: the running tween is killed and the next starts from wherever the
+// colour is (retarget, never stack). The same onUpdate repaints a canvas sky (ground, glow, a sun that sets) and, on
+// complete, meta theme-color. Palettes are mixed from the library's tokens and materials, so they hold in light and
+// dark. Scrub mode blends across each boundary instead. Reduced motion: the swap is instant but still happens,
+// because it carries wayfinding.
 import './demo.css';
-import { on, observeResize, readToken, html, raw, photos, imageHTML, content } from '../../src/demo-kit/index.js';
+import { on, observeResize, readToken, html, content } from '../../src/demo-kit/index.js';
 import { useGsap } from '../../src/demo-kit/gsap.js';
 import { useLenis } from '../../src/demo-kit/lenis.js';
 
@@ -46,61 +47,31 @@ const hex = (c) => `#${c.map((v) => Math.round(v).toString(16).padStart(2, '0'))
 export default function mount(root, options, ctx) {
   const { festival } = content;
   let cfg = { ...options };
-  const pics = {
-    day: photos({ tags: ['light'], not: ['art', 'city'], count: 2, seed: 'st-day' }),
-    dusk: photos({ tags: ['warm'], not: ['art', 'object'], count: 2, seed: 'st-dusk' }),
-    night: photos({ tags: ['dark'], not: ['art'], count: 2, seed: 'st-night' }),
-  };
   const CHAPTERS = [
-    { id: 'day', n: '01', hours: '12:00 – 18:00', where: `${festival.stages[0]} stage`, lede: 'Noon on the harbour front. The first sets are acoustic, and the ferry queue is shortest before one.', acts: [['12:00', 'Moss Theory', 'Harbour'], ['13:30', 'Hana Ekström', 'Harbour'], ['15:00', 'Sundial', 'Harbour'], ['16:45', 'Kiri Tanaka', 'Harbour']] },
-    { id: 'dusk', n: '02', hours: '18:00 – 22:00', where: `${festival.stages[1]} and ${festival.stages[2]}`, lede: 'The water goes copper. Hall 4 opens its doors to the harbour and the crane lights up at nine.', acts: [['18:30', 'Odessa Rae', 'Hall 4'], ['19:45', 'The Low Tides', 'The Crane'], ['21:00', 'Nils & the Weather', 'Hall 4']] },
-    { id: 'night', n: '03', hours: '22:00 – 04:00', where: `${festival.stages[3]} and ${festival.stages[0]}`, lede: 'The greenhouse fills at midnight and stays warm until four. The last ferry back leaves at 04:20.', acts: [['22:15', 'Marlow Ash', 'Harbour'], ['23:45', 'Black Pine', 'Greenhouse'], ['01:30', 'Vesper Choir', 'Greenhouse'], ['03:00', 'Aurelio Cano', 'Greenhouse']] },
+    { id: 'day', acts: [['12:00', 'Moss Theory', 'Harbour'], ['13:30', 'Hana Ekström', 'Harbour'], ['16:45', 'Kiri Tanaka', 'Harbour']] },
+    { id: 'dusk', acts: [['18:30', 'Odessa Rae', 'Hall 4'], ['19:45', 'The Low Tides', 'The Crane'], ['21:00', 'Nils & the Weather', 'Hall 4']] },
+    { id: 'night', acts: [['22:15', 'Marlow Ash', 'Harbour'], ['23:45', 'Black Pine', 'Greenhouse'], ['01:30', 'Vesper Choir', 'Greenhouse']] },
   ];
 
   root.className = 'st';
   root.innerHTML = html`
     <canvas class="st__sky" aria-hidden="true" data-sky></canvas>
-    <header class="ac-bar st__bar">
-      <a class="st__brand" href="#top">${festival.name}<span>2027</span></a>
-      <nav class="st__chapters" aria-label="Chapters">${CHAPTERS.map((c) => html`<a href="#st-${c.id}" data-to="${c.id}"><i data-dot="${c.id}"></i>${NAMES[c.id]}</a>`)}</nav>
-      <p class="st__live" aria-hidden="true"><i data-swatch></i><span data-live-name>Day</span><span class="st__hex" data-live-hex></span></p>
-      <a class="ac-btn ac-btn--sm" href="#top">Tickets</a>
-    </header>
     <main>
-      <section class="st__hero ac-wrap" data-swap="day" aria-labelledby="st-title">
-        <p class="ac-label">${festival.dates} · ${festival.place}</p>
-        <h1 class="ac-display" id="st-title">From the first set at noon to the last one at four.</h1>
-        <p class="ac-lede">Three days on the harbour, each one in three parts. The page changes with the light, so you always know which part of the day you are reading.</p>
-        <p class="st__cue ac-label">Scroll for the programme</p>
-      </section>
+      <h1 class="sr-only">${festival.name} programme</h1>
       ${CHAPTERS.map((c) => html`
-        <section class="st__chapter ac-wrap" id="st-${c.id}" data-swap="${c.id}" aria-labelledby="st-${c.id}-t">
-          <div class="st__copy">
-            <p class="ac-label">${c.n} · ${c.hours} · ${c.where}</p>
-            <h2 class="st__word" id="st-${c.id}-t">${NAMES[c.id]}</h2>
-            <p class="st__lede">${c.lede}</p>
-            <ol class="st__acts" role="list">${c.acts.map(([t, who, where]) => html`<li><time>${t}</time><strong>${who}</strong><span>${where}</span></li>`)}</ol>
-          </div>
-          <div class="st__media">
-            <span class="ac-media st__pic st__pic--a">${raw(imageHTML(pics[c.id][0], { sizes: '(max-width: 760px) 100vw, 30vw', alt: '' }))}</span>
-            <span class="ac-media st__pic st__pic--b">${raw(imageHTML(pics[c.id][1], { sizes: '(max-width: 760px) 60vw, 20vw', alt: '' }))}</span>
-          </div>
+        <section class="st__chapter ac-wrap" data-swap="${c.id}" aria-labelledby="st-${c.id}-t">
+          <h2 class="st__word" id="st-${c.id}-t">${NAMES[c.id]}</h2>
+          <ol class="st__acts" role="list">${c.acts.map(([t, who, where]) => html`<li><time>${t}</time><strong>${who}</strong><span>${where}</span></li>`)}</ol>
         </section>`)}
-      <section class="st__close ac-wrap" data-swap="night" aria-labelledby="st-close">
-        <h2 class="ac-h1" id="st-close">Weekend passes from €${festival.tickets[1].price}.</h2>
-        <div class="st__tickets">${festival.tickets.map((t) => html`<a class="st__ticket" href="#top"><span>${t.name}</span><strong class="ac-num">€${t.price}</strong></a>`)}</div>
-      </section>
     </main>`;
-  root.querySelectorAll('a[href="#top"]').forEach((a) => on(ctx, a, 'click', (e) => e.preventDefault()));
 
   const $ = (s) => root.querySelector(s);
   const docEl = document.documentElement;
   const canvas = $('[data-sky]');
   const g = canvas.getContext('2d');
   const sections = [...root.querySelectorAll('[data-swap]')];
-  const links = [...root.querySelectorAll('[data-to]')];
   const full = ctx.motion === 'full';
-  const lenis = useLenis(ctx);
+  useLenis(ctx);
   const { gsap, ScrollTrigger } = useGsap(ctx, root);
 
   // theme-color follows the chapter; put the page's own back on unmount.
@@ -124,7 +95,6 @@ export default function mount(root, options, ctx) {
       bg: colourOf(p.bg), ink: colourOf(p.ink), accent: colourOf(p.accent), sun: colourOf(p.sun), sunY: p.sunY, sunR: p.sunR, glow: p.glow,
     }]));
     TOKENS.forEach((t, i) => { if (saved[i]) docEl.style.setProperty(t, saved[i]); });
-    root.querySelectorAll('[data-dot]').forEach((d) => { d.style.background = css(palettes[d.dataset.dot].bg); });
   };
 
   // 2. One live object; the DOM tokens and the canvas both read it.
@@ -138,7 +108,6 @@ export default function mount(root, options, ctx) {
     docEl.style.setProperty('--bg', css(live.bg));
     docEl.style.setProperty('--ink', css(live.ink));
     docEl.style.setProperty('--accent', css(live.accent));
-    $('[data-live-hex]').textContent = hex(live.bg);
     if (!cfg.sky) return;
     const { w, h } = size;
     g.setTransform(size.dpr, 0, 0, size.dpr, 0, 0);
@@ -175,8 +144,6 @@ export default function mount(root, options, ctx) {
   ctx.onCleanup(() => { tween?.kill(); triggers.forEach((t) => t.kill()); });
   const mark = (name) => {
     current = name;
-    $('[data-live-name]').textContent = NAMES[name];
-    links.forEach((a) => (a.dataset.to === name ? a.setAttribute('aria-current', 'true') : a.removeAttribute('aria-current')));
     root.dataset.chapter = name;
   };
   const setTheme = (name, { force = false } = {}) => {
@@ -242,14 +209,6 @@ export default function mount(root, options, ctx) {
   build();
   document.fonts?.ready.then(() => ScrollTrigger.refresh());
   on(ctx, window, 'load', () => ScrollTrigger.refresh(), { once: true });
-
-  // Chapter links: real anchors, scrolled on the same clock as everything else.
-  links.forEach((a) => on(ctx, a, 'click', (e) => {
-    e.preventDefault();
-    const target = root.querySelector(`#st-${a.dataset.to}`);
-    if (lenis) lenis.scrollTo(target, { offset: -64 });
-    else window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - 64 });
-  }));
 
   ctx.onTheme(() => { resolve(); snapTo(chapterAtMiddle()); });
 
