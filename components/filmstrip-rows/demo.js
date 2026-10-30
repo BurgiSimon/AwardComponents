@@ -6,7 +6,7 @@
 // on hover only when the shared set has videos, the pointer can hover and the motion tier is full.
 // Reduced and static: every reel at rest, nothing grows.
 import './demo.css';
-import { on, html, raw, photo, photos, videos, observeIntersection, observeResize, finePointer, content } from '../../src/demo-kit/index.js';
+import { on, html, raw, photo, photos, videos, credit, observeIntersection, observeResize, finePointer, content } from '../../src/demo-kit/index.js';
 
 // Each project's frames: tag lists tried in order, and how many frames its strip holds (rows differ on purpose).
 const FRAMES = {
@@ -92,6 +92,7 @@ export default function mount(root, options, ctx) {
   // A real clip on hover, mounted only where it can be used: shared videos exist, a hovering pointer, full motion,
   // an on-screen row. Without videos the stills stand in, as they do on touch screens.
   const clipFor = (i) => videos[i % Math.max(1, videos.length)];
+  if (videos.length) rows.forEach((_, i) => credit(clipFor(i)));
   function syncVideo(row, i) {
     const want = videos.length > 0 && row.visible && finePointer() && full;
     if (want && !row.video) {

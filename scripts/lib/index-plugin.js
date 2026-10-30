@@ -4,7 +4,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { componentIds, COMPONENTS_DIR } from './components.js';
+import { componentIds, COMPONENTS_DIR, SOURCE_FILE, sourceFiles } from './components.js';
 import { normalize } from '../../src/registry/normalize.js';
 
 const ID = 'virtual:ac-index';
@@ -46,6 +46,9 @@ export function componentIndex() {
           if (raw.labels) out.labels = raw.labels;
           out.controlCount = (c.controls || []).length;
           out.actionCount = (c.actions || []).length;
+          // The Code tab's file list, carried only when the folder has more than demo.js, demo.css and meta.js.
+          const files = sourceFiles(cid);
+          if (files.length > 3) out.files = files;
           light.push(out);
         } catch (e) {
           this.warn(`components/${cid}/meta.js skipped: ${e.message}`);
@@ -55,16 +58,20 @@ export function componentIndex() {
     },
     configureServer(s) {
       server = s;
-      const onChange = (file) => {
-        if (!file.startsWith(COMPONENTS_DIR + path.sep) || !file.endsWith(`${path.sep}meta.js`) && !file.endsWith(path.sep)) return;
+      const onChange = (file, event = 'change') => {
+        // A meta edit, a folder removed, or a source file added or removed (the Code tab's list) rebuilds the index.
+        if (!file.startsWith(COMPONENTS_DIR + path.sep)) return;
+        const meta = file.endsWith(`${path.sep}meta.js`) || file.endsWith(path.sep);
+        const listed = event !== 'change' && SOURCE_FILE.test(path.basename(file));
+        if (!meta && !listed) return;
         const mod = server.moduleGraph.getModuleById(RESOLVED);
         if (mod) server.moduleGraph.invalidateModule(mod);
         server.ws.send({ type: 'full-reload' });
       };
-      s.watcher.on('change', onChange);
-      s.watcher.on('add', onChange);
-      s.watcher.on('unlink', onChange);
-      s.watcher.on('unlinkDir', (dir) => onChange(dir + path.sep));
+      s.watcher.on('change', (f) => onChange(f, 'change'));
+      s.watcher.on('add', (f) => onChange(f, 'add'));
+      s.watcher.on('unlink', (f) => onChange(f, 'unlink'));
+      s.watcher.on('unlinkDir', (dir) => onChange(dir + path.sep, 'unlink'));
     },
   };
 }

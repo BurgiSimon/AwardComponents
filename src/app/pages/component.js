@@ -47,6 +47,8 @@ export default async function componentPage({ params, query }) {
   const index = components.findIndex((x) => x.id === c.id);
   const prev = components[index - 1];
   const next = components[index + 1];
+  // The Code tab's files: the index lists them when a folder has more than demo.js, demo.css and meta.js.
+  const files = components[index]?.files || ['demo.js', 'demo.css', 'meta.js'];
   const cat = categoryById.get(c.category);
   let values = resolve(c, fromParams(c, query));
   const missing = unsupported(c.requires);
@@ -105,7 +107,7 @@ export default async function componentPage({ params, query }) {
         <div class="code">
           <div class="code__bar">
             <div class="code__files" role="group" aria-label="File">
-              ${['demo.js', 'demo.css', 'meta.js'].map((f, i) => raw(`<button type="button" aria-pressed="${i === 0}" data-file="${f}">${f}</button>`))}
+              ${files.map((f, i) => raw(html`<button type="button" aria-pressed="${i === 0 ? 'true' : 'false'}" data-file="${f}">${f}</button>`))}
             </div>
             <button class="icon-btn icon-btn--sm" type="button" data-copy-code aria-label="Copy this file">${raw(icon('copy', { size: 15 }))}</button>
           </div>
@@ -228,7 +230,9 @@ export default async function componentPage({ params, query }) {
 async function renderCredits(slot, ids) {
   if (!slot || !ids.length) return;
   const { default: manifest } = await import('../../demo-kit/media.json');
-  const items = ids.map((id) => manifest.items.find((m) => m.id === id)).filter(Boolean);
+  const all = [...manifest.items, ...(manifest.videos || [])];
+  const items = ids.map((id) => all.find((m) => m.id === id)).filter(Boolean);
   if (!items.length) return;
-  slot.innerHTML = `<h3>Pictures in the demo</h3><ul class="credits">${items.map((m) => `<li><a href="${escapeHTML(m.page)}" target="_blank" rel="noopener" data-external>${escapeHTML(m.credit || m.id)}</a></li>`).join('')}</ul><p class="muted">Public domain or CC0, from open museum and agency collections. Your project brings its own pictures; the prompt does not copy these.</p>`;
+  const footage = items.some((m) => (manifest.videos || []).includes(m));
+  slot.innerHTML = `<h3>${footage ? 'Pictures and footage' : 'Pictures'} in the demo</h3><ul class="credits">${items.map((m) => `<li><a href="${escapeHTML(m.page)}" target="_blank" rel="noopener" data-external>${escapeHTML(m.credit || m.id)}</a></li>`).join('')}</ul><p class="muted">Public domain or CC0, from open museum and agency collections. Your project brings its own pictures; the prompt does not copy these.</p>`;
 }

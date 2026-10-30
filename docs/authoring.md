@@ -9,6 +9,8 @@ components/logo-marquee/
   demo.css   its styles, on top of the shared tokens and primitives
 ```
 
+A demo that needs more keeps it in the same folder: another module (`pool.js`, a shader, a worker), an authoring script (`pack.mjs`, run by hand to produce an asset) or a binary asset imported with `new URL('./film.bin', import.meta.url)` so the build hashes it. The Code tab lists every `.js`, `.mjs` and `.css` file in the folder after the three main ones; `check` reads the imports of every `.js` file. Keep binary assets small (a packed film under a megabyte, clips re-encoded for the size they show at), and derive them from the shared media so `credit(item)` can name the source.
+
 Each component is a new, production-shaped demo of one recipe from the [awards plugin](https://github.com/BurgiSimon/awards/tree/main/plugins/awards/recipes). The recipe is the principle (the verified mechanism, its numbers and its accessibility paths); the demo puts it in a real use case, in this library's theme, with controls.
 
 ## Quick start
@@ -25,13 +27,13 @@ Read the recipe first: `README.md` (why it is built that way, its parameters, it
 
 ## Design rules
 
-These keep 96 demos reading as one library.
+These keep every demo reading as one library.
 
 1. **One theme.** Every colour is a token from `src/styles/tokens.css` (`--bg`, `--surface`, `--ink`, `--ink-2`, `--muted`, `--line`, `--accent`, the content materials `--clay`, `--moss`, `--sky`, `--sand`, `--plum`, `--night`, and for copy on photographs `--on-media`, `--on-media-2`, `--media-scrim`, which stay light in both themes). `data-theme="dark"` or `"light"` on any element re-themes that subtree, for a dark band on a light page. No hex values in `demo.css` except inside a gradient built from tokens with `color-mix()`. Canvas and WebGL code read tokens with `readToken('--accent')`.
 2. **One type system.** Mona Sans for everything (its width axis gives the display voice: `font-stretch: var(--wide)`), JetBrains Mono for labels and numbers. Use the primitives `.ac-display`, `.ac-h1`, `.ac-h2`, `.ac-h3`, `.ac-lede`, `.ac-body`, `.ac-label`, `.ac-small`. An editorial demo may opt into Bodoni Moda with `import '../../src/demo-kit/serif.css'` and `var(--font-serif)`.
 3. **Shared primitives.** `.ac-wrap`, `.ac-section`, `.ac-btn` (`--accent`, `--ghost`, `--sm`, `--lg`), `.ac-chip`, `.ac-input`, `.ac-card`, `.ac-bar` + `.ac-brand`, `.ac-media`, `.ac-link`, `.ac-kbd` — all in `src/demo-kit/base.css`.
 4. **A real use case.** The demo is a section of a believable site, not a diagram of the technique. Use the cast in `src/demo-kit/content.js`: Halden (architecture studio), Ostra (ceramics shop), Fieldnote (magazine), Kova (speaker), Signal (festival), Parallel (banking app). Extend it there when you need more.
-5. **Real pictures.** `photo(id)`, `photos({ tags, count, seed, exclude })`, `image()` / `imageHTML()` from `src/demo-kit/media.js` give credited public-domain pictures (`src/demo-kit/media.json`, `CREDITS.md`). Unknown ids fall back to drawn colour fields, so a demo never breaks. The component page credits every picture a demo used.
+5. **Real pictures.** `photo(id)`, `photos({ tags, count, seed, exclude })`, `image()` / `imageHTML()` from `src/demo-kit/media.js` give credited public-domain pictures (`src/demo-kit/media.json`, `CREDITS.md`). Unknown ids fall back to drawn colour fields, so a demo never breaks. Clips come from `videos` or `video(id)`. The component page credits every picture a demo used: the helpers record it, and a clip picked from `videos` directly (or a derivative the component ships of a shared clip) is recorded with `credit(item)`.
 6. **One signature move.** The recipe's move is the point; everything around it is calm, well-set content.
 7. **The first screen is the thumbnail.** Frames are captured at 1280 × 800 after the demo is ready. Compose the first viewport so it tells the story on its own; use `meta.preview.capture` to scroll, point or trigger an action first.
 8. **Both themes and the phone.** Check light, dark and 390 px. Nothing may scroll sideways on a phone (`smoke` fails it).
@@ -57,8 +59,8 @@ Plain data with no imports: Node scripts, the shell and the play runtime all rea
 | `featured` | no | `true` puts it on the welcome page and at the front of the wall. |
 | `order` | no | Sort key inside its category (default 50; lower first). |
 | `status` | no | `'experimental'` adds a label. |
-| `labels` | no | Extra label kinds from `src/registry/labels.js`. |
-| `requires` | no | Browser features from `src/registry/features.js` (`webgl`, `webgl2`, `view-transitions`, `scroll-timeline`, `offscreen-canvas`, `web-audio`, `field-sizing`). The page warns visitors whose browser lacks one. |
+| `labels` | no | Extra label kinds from `src/registry/labels.js`. `'new'` here marks a component that joined after the launch set on the launch day itself; it still expires with the date rule. |
+| `requires` | no | Browser features from `src/registry/features.js` (`webgl`, `webgl2`, `view-transitions`, `scroll-timeline`, `offscreen-canvas`, `web-audio`, `field-sizing`, `webcodecs`). The page warns visitors whose browser lacks one. |
 | `theme` | no | `'dark'` or `'light'` locks the demo to one theme (one frame pair, theme toggles ignored). Default follows the site. |
 | `preview` | no | `{ height, scroll, hint, capture, remountOnTheme }`. `height` 320–1200 (default 600). `scroll: true` shows "Scroll inside the preview". `hint` is a short instruction ("Drag the divider"). `capture: { wait, scroll, pointer: [x, y], hover, action, tier }` sets the frame's moment. `remountOnTheme: true` re-mounts on a theme change instead of calling `ctx.onTheme` listeners. |
 | `useCases` | yes (2+) | Where it fits, one line each. |
@@ -172,7 +174,7 @@ The prompt names the skill command (`/awards:component` in Claude Code, `$awards
 
 ## Labels, dates and the changelog
 
-- `added` sets **New** automatically for components added after launch; nothing to remove later.
+- `added` sets **New** automatically for components added after launch; nothing to remove later. Only a component added on `site.launch` itself, after the launch set, needs `labels: ['new']`.
 - Bump `updated` and add a `changelog` entry when a demo changes meaningfully.
 - **WebGL** and **CSS only** come from `deps` and `tags`.
 - A new label kind is one entry in `src/registry/labels.js`; a new category one entry in `src/registry/categories.js` (with an icon from `src/app/icons.js`); a new browser feature one entry in `src/registry/features.js`.

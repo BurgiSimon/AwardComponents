@@ -31,7 +31,7 @@ Node 22.12+ or 24. `BASE_PATH=/AwardComponents/` builds for a GitHub project pag
 
 ## How it is checked
 
-- `npm run check` validates every component's meta, controls, declared libraries against the demo's real imports and its prompt, and reports which awards recipes no component covers yet (all 96 are covered).
+- `npm run check` validates every component's meta, controls, declared libraries against the demo's real imports and its prompt, and reports which awards recipes no component covers yet.
 - `npm run smoke` runs every demo in headless Chromium: mount, every control changed, every action, scroll, re-mount, reduced motion, a 390 px touch phone and, for WebGL demos, WebGL switched off.
 - The shell is axe-core clean (WCAG 2.2 A/AA) on every page in both themes.
 

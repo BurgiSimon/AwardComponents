@@ -43,6 +43,7 @@ export function normalize(meta) {
     controlCount: meta.controlCount ?? (meta.controls || []).length,
     actionCount: meta.actionCount ?? (meta.actions || []).length,
     tags: meta.tags || [],
+    ownLabels: meta.labels || [],
   };
   c.labels = labelsFor(c);
   c.search = [c.title, c.summary, c.categoryTitle, ...c.tags, ...recipes, ...(meta.keywords || [])].join(' ').toLowerCase();

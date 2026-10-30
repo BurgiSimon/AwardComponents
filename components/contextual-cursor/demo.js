@@ -3,7 +3,7 @@
 // grows 1.35× and the dot shrinks 0.7×; over [data-cursor] targets the ring grows into a badge that names the
 // gesture (View, Play/Pause, Drag). The loop sleeps once both parts settle. Coarse pointers: never created.
 import './demo.css';
-import { on, onFrame, damp, finePointer, colour, html, raw, photos, videos, imageHTML, content } from '../../src/demo-kit/index.js';
+import { on, onFrame, damp, finePointer, colour, html, raw, photos, videos, credit, imageHTML, content } from '../../src/demo-kit/index.js';
 
 const DOT_LERP = 0.75;
 const k = (lerp) => -Math.log(1 - lerp) * 60; // a per-frame lerp → a damping rate
@@ -24,6 +24,7 @@ export default function mount(root, options, ctx) {
   const strip = photos({ tags: ['object'], count: 4, seed: 'cc-strip' }).concat(photos({ tags: ['texture'], count: 3, seed: 'cc-tex' }));
   const reelPic = photos({ tags: ['landscape'], count: 1, seed: 'cc-reel' })[0];
   const film = videos[0];
+  credit(film);
   let cfg = { ...options };
 
   const card = (p, pic, cls) => html`

@@ -18,9 +18,9 @@ export default function mount(root, options, ctx) {
   let cfg = { ...options };
   const pics = photos({ tags: ['night'], count: 1, seed: 'cp-hero' }).concat(photos({ tags: ['people'], count: 3, seed: 'cp-days' }));
   const days = [
-    { day: 'Fri 12 Aug', acts: festival.lineup.slice(0, 3) },
-    { day: 'Sat 13 Aug', acts: festival.lineup.slice(3, 6) },
-    { day: 'Sun 14 Aug', acts: festival.lineup.slice(6, 9) },
+    { day: 'Thu 12 Aug', acts: festival.lineup.slice(0, 3) },
+    { day: 'Fri 13 Aug', acts: festival.lineup.slice(3, 6) },
+    { day: 'Sat 14 Aug', acts: festival.lineup.slice(6, 9) },
   ];
   root.className = 'cp';
   root.innerHTML = html`

@@ -26,15 +26,19 @@ export default function changelogPage() {
     </header>
     <ol class="log">
       ${sorted.map(([date, entries]) => {
-        const added = entries.filter((e) => e.kind === 'added');
-        const changed = entries.filter((e) => e.kind === 'changed');
         const launch = date === site.launch;
+        // On the launch day, components marked `labels: ['new']` joined after the launch set: listed on their own.
+        const late = (e) => launch && e.c.ownLabels.includes('new');
+        const opened = entries.filter((e) => e.kind === 'added' && !late(e));
+        const joined = entries.filter((e) => e.kind === 'added' && late(e));
+        const changed = entries.filter((e) => e.kind === 'changed');
+        const list = (items) => raw(html`<ul class="log__list">${items.map((e) => raw(html`<li><a href="${href(`/components/${e.c.id}/`)}">${e.c.title}</a><span>${e.c.categoryTitle}</span>${raw(labelChips(e.c, { max: 1, only: ['new'] }))}</li>`))}</ul>`);
         return raw(html`
         <li class="log__day">
           <div class="log__date"><time datetime="${date}">${fmt(date)}</time>${launch ? raw('<span class="label label--neutral">Launch</span>') : ''}</div>
           <div class="log__body">
-            ${added.length ? raw(html`<h2>${launch ? `The library opens with ${added.length} components` : `${added.length} new component${added.length > 1 ? 's' : ''}`}</h2>
-            <ul class="log__list">${added.map((e) => raw(html`<li><a href="${href(`/components/${e.c.id}/`)}">${e.c.title}</a><span>${e.c.categoryTitle}</span>${raw(labelChips(e.c, { max: 1, only: ['new'] }))}</li>`))}</ul>`) : ''}
+            ${joined.length ? raw(html`<h2>${joined.length} new component${joined.length > 1 ? 's' : ''}</h2>${list(joined)}`) : ''}
+            ${opened.length ? raw(html`<h2>${launch ? `The library opens with ${opened.length} components` : `${opened.length} new component${opened.length > 1 ? 's' : ''}`}</h2>${list(opened)}`) : ''}
             ${changed.length ? raw(html`<h2>Changed</h2><ul class="log__list">${changed.map((e) => raw(html`<li><a href="${href(`/components/${e.c.id}/`)}">${e.c.title}</a><span>${e.note || 'Updated'}</span></li>`))}</ul>`) : ''}
           </div>
         </li>`);

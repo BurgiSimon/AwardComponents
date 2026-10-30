@@ -17,7 +17,7 @@
     "webgl-surfaces": "WebGL surfaces and scenes",
     "compositions": "Pages and compositions"
   },
-  "count": 96,
+  "count": 103,
   "recipes": {
     "auto-drive-manual-takeover": {
       "title": "Optional auto-scroll that any user input hands back",
@@ -219,7 +219,7 @@
       "deps": [
         "gsap@3.15.0"
       ],
-      "seen": 6,
+      "seen": 7,
       "verified": "2026-10-07"
     },
     "designed-404": {
@@ -250,7 +250,7 @@
         "responsive"
       ],
       "deps": [],
-      "seen": 4,
+      "seen": 5,
       "verified": "2026-10-07"
     },
     "dialog-nested-lenis-sheet": {
@@ -271,6 +271,27 @@
       ],
       "seen": 1,
       "verified": "2026-10-07"
+    },
+    "dither-cell-transition": {
+      "title": "One woven curtain for the arrival and every route",
+      "group": "arrival-and-chrome",
+      "tier": "P1",
+      "tags": [
+        "transition",
+        "router",
+        "preloader",
+        "gsap",
+        "stagger",
+        "loading",
+        "storage",
+        "accessibility",
+        "reduced-motion"
+      ],
+      "deps": [
+        "gsap@3.15.0"
+      ],
+      "seen": 1,
+      "verified": null
     },
     "docked-media-grow": {
       "title": "Docked media card that grows into its section",
@@ -374,6 +395,28 @@
       "seen": 3,
       "verified": null
     },
+    "footer-credits-hinge": {
+      "title": "Closing sheet over a held footer, with credits under a lifting stage",
+      "group": "the-close-and-beyond",
+      "tier": "P1",
+      "tags": [
+        "footer",
+        "sticky",
+        "scrub",
+        "gsap",
+        "scrolltrigger",
+        "lenis",
+        "keyboard",
+        "accessibility",
+        "reduced-motion"
+      ],
+      "deps": [
+        "gsap@3.15.0",
+        "lenis@1.3.26"
+      ],
+      "seen": 1,
+      "verified": null
+    },
     "gl-arc-length-mask-reveal": {
       "title": "Arc-length mask reveal",
       "group": "scroll-set-pieces",
@@ -435,6 +478,29 @@
       "deps": [],
       "seen": 1,
       "verified": "2026-10-07"
+    },
+    "gl-dither-scene-pool": {
+      "title": "One dither compositor for every picture on the page",
+      "group": "webgl-surfaces",
+      "tier": "P1",
+      "tags": [
+        "webgl",
+        "shader",
+        "video",
+        "canvas",
+        "scrub",
+        "gsap",
+        "scrolltrigger",
+        "theme",
+        "toggle",
+        "performance",
+        "reduced-motion"
+      ],
+      "deps": [
+        "gsap@3.15.0"
+      ],
+      "seen": 1,
+      "verified": null
     },
     "gl-dom-refraction-lens": {
       "title": "A glass object that refracts the page itself and travels between section anchors",
@@ -908,6 +974,29 @@
       "seen": 2,
       "verified": "2026-10-07"
     },
+    "gl-video-dither-layers": {
+      "title": "Keyed footage woven into the close: bar dither or ASCII glyphs",
+      "group": "the-close-and-beyond",
+      "tier": "P1",
+      "tags": [
+        "webgl",
+        "shader",
+        "video",
+        "footer",
+        "mask",
+        "scrub",
+        "gsap",
+        "scrolltrigger",
+        "canvas",
+        "performance",
+        "reduced-motion"
+      ],
+      "deps": [
+        "gsap@3.15.0"
+      ],
+      "seen": 1,
+      "verified": null
+    },
     "gl-virtual-scroll-camera": {
       "title": "Virtual scroll driving a camera on a spline",
       "group": "scroll-set-pieces",
@@ -1072,8 +1161,29 @@
         "gsap@3.15.0",
         "lenis@1.3.26"
       ],
-      "seen": 5,
+      "seen": 6,
       "verified": "2026-10-07"
+    },
+    "next-case-handoff": {
+      "title": "Next-case close that becomes the next page's hero, its live media node reparented",
+      "group": "arrival-and-chrome",
+      "tier": "P1",
+      "tags": [
+        "transition",
+        "router",
+        "gsap",
+        "scrolltrigger",
+        "scrub",
+        "canvas",
+        "fallback",
+        "accessibility",
+        "reduced-motion"
+      ],
+      "deps": [
+        "gsap@3.15.0"
+      ],
+      "seen": 1,
+      "verified": null
     },
     "offscreen-canvas-worker": {
       "title": "OffscreenCanvas in a Worker with a timed main-thread fallback",
@@ -1091,6 +1201,27 @@
       "seen": 2,
       "verified": "2026-10-07"
     },
+    "overprint-marker-index": {
+      "title": "Overprint marker index: one multiply bar that cuts between rows",
+      "group": "galleries-and-lists",
+      "tier": "P1",
+      "tags": [
+        "list",
+        "hover",
+        "keyboard",
+        "touch",
+        "pointer",
+        "colour",
+        "gsap",
+        "accessibility",
+        "reduced-motion"
+      ],
+      "deps": [
+        "gsap@3.15.0"
+      ],
+      "seen": 1,
+      "verified": null
+    },
     "page-transitions": {
       "title": "Page transitions with taxi: wipe, swap, reset, clean up",
       "group": "arrival-and-chrome",
@@ -1107,7 +1238,7 @@
         "lenis@1.3.26",
         "@unseenco/taxi@1.9.1"
       ],
-      "seen": 10,
+      "seen": 11,
       "verified": "2026-10-22"
     },
     "persistent-mode-switch": {
@@ -1364,7 +1495,7 @@
       "deps": [
         "lenis@1.3.26"
       ],
-      "seen": 2,
+      "seen": 3,
       "verified": "2026-10-07"
     },
     "scrub-threshold-timelines": {
@@ -1614,7 +1745,7 @@
         "gsap@3.15.0",
         "@unseenco/taxi@1.9.1"
       ],
-      "seen": 3,
+      "seen": 4,
       "verified": "2026-10-22"
     },
     "two-phase-interruptible-timeline": {
@@ -1678,6 +1809,28 @@
       ],
       "deps": [],
       "seen": 4,
+      "verified": null
+    },
+    "webcodecs-frame-scrub": {
+      "title": "Frame-exact scroll scrub of one encoded clip with WebCodecs",
+      "group": "scroll-set-pieces",
+      "tier": "P1",
+      "tags": [
+        "scrub",
+        "video",
+        "sticky",
+        "canvas",
+        "gsap",
+        "scrolltrigger",
+        "sequence",
+        "performance",
+        "fallback",
+        "reduced-motion"
+      ],
+      "deps": [
+        "gsap@3.15.0"
+      ],
+      "seen": 1,
       "verified": null
     },
     "word-cycle-hero": {
