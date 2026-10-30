@@ -135,10 +135,13 @@ code { font-size: 0.88em; }
 .shell[data-layout='wide'] .sidebar { display: none; }
 .main-col { min-width: 0; display: flex; flex-direction: column; }
 .main { flex: 1; outline: none; }
-.shell[data-layout='library'] .main { padding: 28px clamp(20px, 3.4vw, 56px) 72px; max-width: 1240px; width: 100%; }
-/* A component page grows with the window: the bench, the prompt and the details use the room on wide screens,
-   up to a cap that keeps an ultrawide screen from stretching it into a strip. */
-.shell[data-layout='library'] .main:has(> .cpage) { max-width: 1920px; margin-inline: auto; }
+/* Every library page shares one main box, so a route change never resizes it (and the view transition never
+   zooms); each page caps its own content and keeps the left edge next to the sidebar. The browse page stays at
+   its reading width; a component page grows with the window, up to a cap that keeps an ultrawide screen from
+   stretching it into a strip. */
+.shell[data-layout='library'] .main { --main-pad: clamp(20px, 3.4vw, 56px); padding: 28px var(--main-pad) 72px; width: 100%; }
+.shell[data-layout='library'] .browse { max-width: calc(1240px - 2 * var(--main-pad)); }
+.shell[data-layout='library'] .cpage { max-width: calc(1920px - 2 * var(--main-pad)); }
 
 /* ===================== Sidebar ===================== */
 
@@ -512,9 +515,10 @@ code { font-size: 0.88em; }
   --device-w: 100%;
   position: relative;
   /* The author's height, taller on a wide bench (45 % of its width, so a big screen gets a big stage rather
-     than a letterbox), and never taller than the window. cqi reads the bench, so opening or closing the panel
-     does not change the height. */
-  height: min(max(var(--stage-h), 45cqi), var(--stage-max, 760px));
+     than a letterbox). The growth stops where the bench would run past the fold on load (380 px is the page
+     header and the toolbar), and the whole stage never outgrows the window. cqi reads the bench, so opening or
+     closing the panel does not change the height. */
+  height: min(max(var(--stage-h), min(45cqi, 100svh - 380px)), var(--stage-max, 760px));
   display: flex; justify-content: center; align-items: flex-start;
   background:
     radial-gradient(circle at 1px 1px, var(--line) 1px, transparent 0) 0 0 / 18px 18px,
@@ -600,6 +604,8 @@ code { font-size: 0.88em; }
   transform: rotate(45deg);
 }
 .tw-help[data-side='above']::before { top: auto; bottom: -6px; transform: rotate(225deg); }
+.tw-help[data-side='left']::before { left: auto; right: -6px; top: calc(var(--arrow-y, 20px) - 5px); transform: rotate(135deg); }
+.tw-info svg { pointer-events: none; }
 @keyframes tip-in { from { opacity: 0; translate: 0 3px; } }
 
 .tw-range {
@@ -670,14 +676,16 @@ code { font-size: 0.88em; }
 .prompt-panel { margin-top: 48px; }
 .prompt-panel__head { margin-bottom: 18px; }
 .cpage > [data-slot='prompt'] { container: prompt / inline-size; }
-/* Wide: heading, lede and the target field on the left, the prompt on the right, so its lines stay readable. */
-@container prompt (min-width: 1320px) {
-  .prompt-panel { display: grid; grid-template-columns: minmax(280px, 1fr) minmax(0, 2.4fr); grid-template-rows: auto 1fr; column-gap: 48px; align-items: start; }
+/* Wide: heading, lede and the target field on the left, the prompt on the right. The prompt column stops at
+   1000 px (about 140 monospace characters a line, no longer than the one-column layout), and the left column
+   takes the rest. */
+@container prompt (min-width: 1100px) {
+  .prompt-panel { display: grid; grid-template-columns: minmax(260px, 1fr) minmax(0, 1000px); grid-template-rows: auto 1fr; column-gap: 48px; align-items: start; }
   .prompt-panel__head, .prompt-panel__target { grid-column: 1; }
   .prompt-panel__target { margin-bottom: 0; }
   .prompt-box { grid-column: 2; grid-row: 1 / span 2; }
 }
-.prompt-panel__lede { margin-top: 6px; color: var(--ink-2); font-size: 14px; max-width: 64ch; }
+.prompt-panel__lede { margin-top: 6px; color: var(--ink-2); font-size: 14px; max-width: 64ch; text-wrap: pretty; }
 .prompt-panel__lede a { color: var(--ink); }
 .prompt-panel__target { display: grid; gap: 7px; margin-bottom: 12px; }
 .prompt-panel__target label { font-size: 13px; font-weight: 620; }
@@ -722,11 +730,16 @@ code { font-size: 0.88em; }
 .overview h3:first-child { margin-top: 0; }
 .overview__side h3:first-child { margin-top: 0; }
 .overview__main > .prose + .overview__lists { margin-top: 26px; }
-.overview__lists > [data-slot='credits']:not(:first-child) > h3:first-child { margin-top: 26px; }
+.ov-group:empty { display: none; }
+.ov-group + .ov-group { margin-top: 26px; }
+/* Wide: with a description, the text and the lists side by side; without one, the lists themselves form
+   columns, so the Overview never leaves a band of empty space before "Built from". */
 @container details (min-width: 1240px) {
   .overview { grid-template-columns: minmax(0, 1fr) 320px; gap: 56px; }
   .overview__main:has(> .prose) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 48px; align-items: start; }
   .overview__main > .prose + .overview__lists { margin-top: 0; }
+  .overview__main:not(:has(> .prose)) > .overview__lists { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 26px 48px; align-items: start; }
+  .overview__main:not(:has(> .prose)) .ov-group + .ov-group { margin-top: 0; }
 }
 .ticks { list-style: none; padding: 0; display: grid; gap: 8px; }
 .ticks li { position: relative; padding-left: 22px; color: var(--ink-2); font-size: 14.5px; line-height: 1.5; max-width: 70ch; }
@@ -982,6 +995,8 @@ code { font-size: 0.88em; }
   width: min(100% - 2 * var(--gutter), 1320px); margin-inline: auto; padding: 44px 0 36px;
 }
 .shell[data-layout='library'] .site-footer__in { width: auto; margin: 0; padding-inline: clamp(20px, 3.4vw, 56px); }
+/* Under a component page the footer stops where the page does, so both edges line up on very wide screens. */
+.shell[data-layout='library'] .main-col:has(> .main > .cpage) .site-footer__in { max-width: 1920px; }
 .site-footer__brand p { margin-top: 12px; max-width: 52ch; color: var(--muted); font-size: 13.5px; }
 .site-footer__brand a:not(.brand) { color: var(--ink-2); }
 .site-footer__nav { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }

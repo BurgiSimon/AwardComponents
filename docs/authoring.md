@@ -74,7 +74,7 @@ Plain data with no imports: Node scripts, the shell and the play runtime all rea
 ```js
 controls: [
   { id: 'speed', label: 'Speed', type: 'range', min: 10, max: 220, step: 5, default: 70, unit: 'px/s', group: 'Motion',
-    help: 'Opens under the control from the info button beside its label.', prompt: 'Base speed: {value} (default {default})' },
+    help: 'Shown while the visitor hovers the info button beside the label.', prompt: 'Base speed: {value} (default {default})' },
   { id: 'direction', label: 'Direction', type: 'select', options: [{ value: 'left', label: '← Left' }, { value: 'right', label: 'Right →' }], default: 'left' },
   { id: 'pause', label: 'Pause on hover', type: 'toggle', default: true, prompt: { on: 'Pause on hover and focus', off: 'Keep moving on hover' } },
   { id: 'accent', label: 'Colour', type: 'color', default: 'accent' },            // token swatches; options: [...] to narrow
@@ -86,7 +86,7 @@ controls: [
 - **Pick the three to seven values that change the feel**: speed, distance, stiffness, a variant, a colour. Not every recipe constant deserves a slider. A component with nothing worth tuning has no controls; the panel says so.
 - **Units**: `%`, `×` and `°` attach to the number; anything else gets a space (`70 px/s`, `0.6 s`).
 - `group` adds a section heading in the panel. `when` shows a control only while another matches.
-- `help` is one or two sentences on what the value does. The panel keeps it behind an info button beside the label (so a long list stays scannable) and screen readers always get it as the input's description, so it must read on its own.
+- `help` is one or two sentences on what the value does. The panel keeps it behind an info button beside the label (so a long list stays scannable): it shows while that button is hovered or keyboard-focused, and on a tap on touch screens. Screen readers always get it as the input's description, so it must read on its own.
 - **Prompt lines**: only changed values reach the prompt. `prompt` is a template (`{label}`, `{value}`, `{default}`; without `{default}` the default is appended), a toggle's `{ on, off }`, a function `(value, control) => string`, or `false` for demo-only aids (a field overlay, a debug readout).
 - Ids are camelCase and must not be `c`, `theme`, `motion`, `embed`, `capture`, `tier`, `viewport` or `frame` (URL parameters of the preview).
 - Values live in the URL (`?speed=120&pause=0`), so a link shares a setup.

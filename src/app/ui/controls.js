@@ -3,7 +3,7 @@
 // shows beside the info button next to its label while that button is hovered or keyboard-focused (a tap on touch
 // screens), and is always its input's accessible description.
 // Demo actions live in the preview toolbar, not here.
-// createControls(c, values, { onChange(values, id), footer }) → { el, set(values), values }
+// createControls(c, values, { onChange(values, id), footer }) → { el, set(values), values, destroy() }
 import { html, raw, escapeHTML } from '../dom.js';
 import { icon } from '../icons.js';
 import { normaliseOptions, formatValue, coerce, same, isVisible, changedControls } from '../../registry/options.js';
@@ -96,30 +96,69 @@ export function createControls(c, initial, { onChange, footer = '' } = {}) {
 
   const byId = new Map(controls.map((x) => [x.id, x]));
 
-  // Help popover. It opens while the pointer rests on an info button (or the button has keyboard focus), stays
-  // while the pointer moves onto it, and closes on leaving, Escape, a scroll or a tap elsewhere (WCAG 1.4.13).
-  // Touch has no hover, so a tap toggles it. It is fixed-positioned, clear of the panel's scroll box, but the text
-  // stays in its row, so it remains the input's description.
-  let tip = null; // { btn, box }
+  // Help popover. It opens while the pointer rests on an info button (or the button has keyboard focus) and stays
+  // while the pointer is on the button, its label row or the popover. It closes on leaving them, on Escape, on a
+  // scroll, a resize or a press elsewhere (WCAG 1.4.13). Touch has no hover, so a tap toggles it. Beside the stage
+  // it flies out to the left over the demo, so it covers no control; stacked under the preview it sits above the
+  // row (below when there is no room). It is fixed-positioned, clear of the panel's scroll box, but the text stays
+  // in its row, so it is still the input's description.
+  let tip = null; // { btn, box, head }
   let showTimer = 0;
   let hideTimer = 0;
   let lastPointer = 'mouse';
-  const place = ({ btn, box }) => {
+  const GAP = 8;
+  const minTop = () => (document.fullscreenElement ? GAP : 68); // clear of the sticky top bar
+  const place = ({ btn, box, head }) => {
+    const top0 = minTop();
+    const panel = el.getBoundingClientRect();
+    const stage = el.closest('.workbench, .how__bench')?.querySelector('.preview')?.getBoundingClientRect();
+    const hr = head.getBoundingClientRect();
+    if (stage && stage.right <= panel.left + 1 && panel.left - stage.left >= 240 + 2 * GAP) {
+      const w = Math.min(300, panel.left - stage.left - 2 * GAP);
+      box.style.width = `${w}px`;
+      box.style.left = `${panel.left - GAP - w}px`;
+      const h = box.offsetHeight;
+      const mid = hr.top + hr.height / 2;
+      const top = Math.max(top0, Math.min(mid - h / 2, innerHeight - GAP - h));
+      box.style.top = `${top}px`;
+      box.dataset.side = 'left';
+      box.style.setProperty('--arrow-y', `${Math.min(Math.max(mid - top, 14), h - 14)}px`);
+      return;
+    }
     const row = btn.closest('.tw-row').getBoundingClientRect();
-    const head = btn.closest('.tw-row__head').getBoundingClientRect();
     const b = btn.getBoundingClientRect();
     box.style.left = `${row.left}px`;
     box.style.width = `${row.width}px`;
     const h = box.offsetHeight;
-    const minTop = document.fullscreenElement ? 8 : 68; // under the sticky top bar
-    const below = head.bottom + 8;
-    const up = below + h > innerHeight - 8 && head.top - 8 - h >= minTop;
-    box.style.top = `${up ? head.top - 8 - h : below}px`;
+    const fitsAbove = hr.top - GAP - h >= top0;
+    const fitsBelow = hr.bottom + GAP + h <= innerHeight - GAP;
+    const up = fitsAbove || (!fitsBelow && hr.top - top0 > innerHeight - hr.bottom);
+    box.style.top = `${up ? hr.top - GAP - h : hr.bottom + GAP}px`;
     box.dataset.side = up ? 'above' : 'below';
     box.style.setProperty('--arrow-x', `${b.left + b.width / 2 - row.left}px`);
   };
-  const onKey = (e) => { if (e.key === 'Escape') { e.stopPropagation(); closeTip(); } };
-  const onAway = (e) => { if (tip && !tip.btn.contains(e.target) && !tip.box.contains(e.target)) closeTip(); };
+  const inSafe = (node) => !!tip && node instanceof Node && (tip.head.contains(node) || tip.box.contains(node));
+  const hovered = () => !!tip && (tip.head.matches(':hover') || tip.box.matches(':hover'));
+  const onKey = (e) => {
+    if (e.key !== 'Escape' || !tip) return;
+    // A page that went away with its popover open lets Escape through to whatever is open now.
+    if (tip.btn.isConnected) e.stopPropagation();
+    closeTip();
+  };
+  const onAway = (e) => { if (tip && (!tip.btn.isConnected || !inSafe(e.target))) closeTip(); };
+  // Keyboard focus scrolls its button into view before the scroll event arrives, so a popover opened by focus
+  // follows its button (and closes once the button leaves the visible part of the panel). One opened by the
+  // pointer closes, because the pointer is no longer where it was.
+  const onScroll = () => {
+    if (!tip) return;
+    if (!tip.btn.isConnected || !tip.btn.matches(':focus-visible')) { closeTip(); return; }
+    const r = tip.btn.getBoundingClientRect();
+    const view = (tip.btn.closest('.tweaks__body') || el).getBoundingClientRect();
+    // The button's centre, not its box: scrolling into view can leave it a fraction of a pixel past the edge.
+    const y = r.top + r.height / 2;
+    if (y >= Math.max(view.top, minTop()) && y <= Math.min(view.bottom, innerHeight)) place(tip);
+    else closeTip();
+  };
   function closeTip() {
     clearTimeout(showTimer);
     clearTimeout(hideTimer);
@@ -129,7 +168,7 @@ export function createControls(c, initial, { onChange, footer = '' } = {}) {
     tip = null;
     document.removeEventListener('keydown', onKey, true);
     document.removeEventListener('pointerdown', onAway, true);
-    window.removeEventListener('scroll', closeTip, true);
+    window.removeEventListener('scroll', onScroll, true);
     window.removeEventListener('resize', closeTip);
   }
   function openTip(btn) {
@@ -139,43 +178,47 @@ export function createControls(c, initial, { onChange, footer = '' } = {}) {
     closeTip();
     const box = el.querySelector(`#${btn.dataset.help}`);
     if (!box) return;
-    tip = { btn, box };
+    tip = { btn, box, head: btn.closest('.tw-row__head') };
     box.hidden = false;
     btn.classList.add('is-on');
     place(tip);
     document.addEventListener('keydown', onKey, true);
     document.addEventListener('pointerdown', onAway, true);
-    // Capture, so a scroll of the panel's own body closes it as well as the page's.
-    window.addEventListener('scroll', closeTip, true);
+    // Capture, so a scroll of the panel's own body counts as well as the page's.
+    window.addEventListener('scroll', onScroll, true);
     window.addEventListener('resize', closeTip);
   }
-  const inTip = (node) => !!tip && !!node && (tip.btn.contains(node) || tip.box.contains(node));
   el.addEventListener('pointerdown', (e) => { lastPointer = e.pointerType; });
   el.addEventListener('pointerover', (e) => {
     if (e.pointerType === 'touch') return;
     const btn = e.target.closest('[data-help]');
     if (btn) {
+      // A move within the same button is not a new hover: after Escape it stays shut until the pointer leaves.
+      if (btn.contains(e.relatedTarget)) return;
       clearTimeout(hideTimer);
       if (tip?.btn !== btn) {
         clearTimeout(showTimer);
         // A short rest before the first one opens, so sweeping across the panel does not flash popovers.
         showTimer = setTimeout(() => openTip(btn), tip ? 0 : 90);
       }
-    } else if (inTip(e.target)) clearTimeout(hideTimer);
+    } else if (inSafe(e.target)) clearTimeout(hideTimer);
   });
   el.addEventListener('pointerout', (e) => {
     if (e.pointerType === 'touch') return;
-    const from = e.target.closest('[data-help]') || (inTip(e.target) ? e.target : null);
-    if (!from || inTip(e.relatedTarget) || from.contains(e.relatedTarget)) return;
-    clearTimeout(showTimer);
-    if (tip && !tip.btn.matches(':focus-visible')) hideTimer = setTimeout(closeTip, 160);
+    const btn = e.target.closest('[data-help]');
+    if (btn && !btn.contains(e.relatedTarget)) clearTimeout(showTimer);
+    if (tip && inSafe(e.target) && !inSafe(e.relatedTarget) && !tip.btn.matches(':focus-visible')) {
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(closeTip, 200);
+    }
   });
   el.addEventListener('focusin', (e) => {
     const btn = e.target.closest?.('[data-help]');
     if (btn?.matches(':focus-visible')) openTip(btn);
   });
   el.addEventListener('focusout', (e) => {
-    if (tip && e.target === tip.btn && !tip.btn.matches(':hover')) closeTip();
+    // A press inside the popover takes focus off the button; that is not leaving it.
+    if (tip && e.target === tip.btn && !hovered()) closeTip();
   });
 
   const sync = () => {
@@ -291,6 +334,7 @@ export function createControls(c, initial, { onChange, footer = '' } = {}) {
 
   return {
     el,
+    destroy: closeTip,
     get values() { return { ...values }; },
     set(next) {
       values = { ...values, ...next };
