@@ -9,14 +9,17 @@
 import './demo.css';
 import { on, html, raw, ticker, photo, allPhotos, observeResize, content } from '../../src/demo-kit/index.js';
 
+// The sheet past the studio's own eight: each of these sixteen names the picture that suits it.
 const MORE = [
-  ['Moss Hut', 'Valdres, NO', 2021, 'Architecture'], ['Birch Room', 'Helsinki, FI', 2022, 'Interiors'], ['Quarry Steps', 'Larvik, NO', 2019, 'Landscape'],
-  ['Lantern Stool', 'Edition of 120', 2021, 'Furniture'], ['Harbour Baths', 'Ålesund, NO', 2022, 'Architecture'], ['Rye Bakery', 'Aarhus, DK', 2023, 'Interiors'],
-  ['Shore Path', 'Lofoten, NO', 2020, 'Landscape'], ['Nordnes School', 'Bergen, NO', 2019, 'Architecture'], ['Table Nine', 'Edition of 60', 2020, 'Furniture'],
-  ['Fog House', 'Shetland, UK', 2018, 'Architecture'], ['Cellar Room', 'Bordeaux, FR', 2021, 'Interiors'], ['Orchard Wall', 'Hardanger, NO', 2017, 'Landscape'],
-  ['Rink Pavilion', 'Lillehammer, NO', 2018, 'Architecture'], ['Ash Bench', 'Edition of 40', 2019, 'Furniture'], ['Wool Mill Lofts', 'Os, NO', 2017, 'Architecture'],
-  ['Ferry Shed', 'Stord, NO', 2016, 'Interiors'],
-].map(([title, place, year, discipline]) => ({ title, place, year, discipline, slug: title.toLowerCase().replace(/\s+/g, '-') }));
+  ['Moss Hut', 'Valdres, NO', 2021, 'Architecture', 'land-fog-forest'], ['Birch Room', 'Helsinki, FI', 2022, 'Interiors', 'interior-lamp-corner'],
+  ['Quarry Steps', 'Larvik, NO', 2019, 'Landscape', 'paint-cox-landscape'], ['Lantern Stool', 'Edition of 120', 2021, 'Furniture', 'obj-shaker-revolving-chair'],
+  ['Harbour Baths', 'Ålesund, NO', 2022, 'Architecture', 'land-overcast-sea'], ['Rye Bakery', 'Aarhus, DK', 2023, 'Interiors', 'paint-hammershoi-sunlight'],
+  ['Shore Path', 'Lofoten, NO', 2020, 'Landscape', 'paint-homer-cannon-rock'], ['Nordnes School', 'Bergen, NO', 2019, 'Architecture', 'tex-concrete-shadow'],
+  ['Table Nine', 'Edition of 60', 2020, 'Furniture', 'obj-gragg-side-chair'], ['Fog House', 'Shetland, UK', 2018, 'Architecture', 'land-above-clouds'],
+  ['Cellar Room', 'Bordeaux, FR', 2021, 'Interiors', 'tex-curtain-shadow'], ['Orchard Wall', 'Hardanger, NO', 2017, 'Landscape', 'land-fog-slope'],
+  ['Rink Pavilion', 'Lillehammer, NO', 2018, 'Architecture', 'land-lake-reflection'], ['Ash Bench', 'Edition of 40', 2019, 'Furniture', 'tex-wood-geometric'],
+  ['Wool Mill Lofts', 'Os, NO', 2017, 'Architecture', 'obj-wari-tunic'], ['Ferry Shed', 'Stord, NO', 2016, 'Interiors', 'tex-paper-sheets'],
+].map(([title, place, year, discipline, pic]) => ({ title, place, year, discipline, pic, slug: title.toLowerCase().replace(/\s+/g, '-') }));
 const TAGS = { Architecture: ['architecture'], Interiors: ['interior'], Landscape: ['landscape'], Furniture: ['furniture'] };
 
 const COLS = 6, ROWS = 4;      // the logical sheet; COLS stays even so the column stagger meets itself across the wrap
@@ -28,17 +31,20 @@ const V_STOP = 8;              // px/s: the coast ends below this
 const WHEEL_K = 16;            // 1/s: a wheel notch eases in over ≈ 150 ms (trackpad streams read as direct)
 const GLIDE = 0.42;            // s: arrow, Home, End, click and focus glides, expo-out
 const EDGE = 32;               // px a focused tile keeps from the stage edge
+const FADE = 96;               // px of the fade over the plane's foot (demo.css), kept clear as well
 const mod = (a, n) => ((a % n) + n) % n;
 const residue = (v, span) => mod(v + span / 2, span) - span / 2;   // the shortest way back round the wrap
 
-// One picture per project, by discipline, never twice; when a discipline runs out, an unused material or site
-// picture stands in (a blurred drawn field reads as an image that failed to load); drawn fields only after that.
+// One picture per project, never twice: a named one, else by discipline, never from the city set (towers and rooftops
+// abroad, not Halden's buildings); when a discipline runs out, an unused material or site picture stands in (a
+// blurred drawn field reads as an image that failed to load); drawn fields only after that.
 const NEAR = ['texture', 'landscape'];
 function pictures(projects) {
-  const pool = allPhotos();
-  const taken = new Set();
+  const pool = allPhotos().filter((m) => !m.tags?.includes('city'));
+  const taken = new Set(projects.map((p) => p.pic).filter(Boolean));
   const free = (tags) => pool.find((m) => tags.every((t) => m.tags?.includes(t)) && !taken.has(m.id));
   return projects.map((p) => {
+    if (p.pic) return photo(p.pic);
     let hit = free(TAGS[p.discipline] || []);
     for (const t of NEAR) hit ||= free([t]);
     if (hit) { taken.add(hit.id); return photo(hit.id); }
@@ -143,10 +149,10 @@ export default function mount(root, options, ctx) {
     park();
     return [dx, dy];
   }
-  // The offset that puts tile i inside the stage, EDGE px clear of every side, moving least.
+  // The offset that puts tile i inside the stage, EDGE px clear of every side (and clear of the fade), moving least.
   function keepInside(i, ox, oy) {
     const [x, y] = place(i, ox, oy);
-    const top = EDGE, bottom = G.h - EDGE;
+    const top = EDGE, bottom = G.h - EDGE - FADE;
     const dx = x < EDGE ? EDGE - x : x + G.tw > G.w - EDGE ? G.w - EDGE - (x + G.tw) : 0;
     const dy = y < top ? top - y : y + G.th > bottom ? bottom - (y + G.th) : 0;
     return [ox + dx, oy + dy];

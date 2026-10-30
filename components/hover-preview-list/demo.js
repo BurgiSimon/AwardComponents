@@ -11,7 +11,7 @@ const TAGS = { Architecture: 'architecture', Interiors: 'interior', Landscape: '
 export default function mount(root, options, ctx) {
   const { studio } = content;
   const projects = studio.projects;
-  const pics = projects.map((p) => photos({ tags: [TAGS[p.discipline] || 'architecture'], count: 1, seed: `hp-${p.slug}` })[0]);
+  const pics = projects.map((p) => photos({ tags: [TAGS[p.discipline] || 'architecture'], not: ['city'], count: 1, seed: `hp-${p.slug}` })[0]);   // no city towers for Nordic projects
   let cfg = { ...options };
 
   root.className = 'hp';

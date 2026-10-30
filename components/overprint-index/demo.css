@@ -1,6 +1,8 @@
 /* Overprint index. One marker for the whole line-up, laid between the plates and the words and blended like ink. */
 .oi {
-  --oi-size: clamp(1.25rem, 0.55rem + 2.3vw, 2.25rem);   /* the rows' type size; plates and columns follow it */
+  /* The rows' type size; plates and columns follow it. Capped by the height too, so the header, the twelve rows and
+     the plate line fit one 800 px screen. */
+  --oi-size: clamp(1.25rem, min(0.55rem + 2.3vw, 4svh), 2.25rem);
   --oi-paper: var(--bg);                                   /* the index's ground, and the marked row's words */
   --oi-ink: var(--accent-ink);                             /* light ground: the accent's deep shade keeps 4.5:1 */
   --oi-blend: multiply;

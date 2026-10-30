@@ -157,6 +157,7 @@ export default function mount(root, options, ctx) {
         <ol class="fs__callouts" role="list">
           ${CALLOUTS.map((c, i) => html`<li class="fs__callout" data-callout="${i}"><span class="ac-label fs__k">${String(i + 1).padStart(2, '0')} · ${c.k}</span><strong>${c.t}</strong></li>`)}
         </ol>
+        <p class="ac-stage__note"><span>${product.maker} · product page</span></p>
       </div>
     </section>`;
   root.classList.toggle('fs--no-callouts', !cfg.callouts);

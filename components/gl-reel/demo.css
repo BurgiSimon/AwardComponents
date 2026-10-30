@@ -36,7 +36,8 @@
 .rl--reel[data-axis='y'] .rl__index { background: linear-gradient(transparent, var(--bg) 44px); padding-top: 76px; }
 
 /* Static or no WebGL: the same editions as an ordinary page of cards. */
-.rl--list .rl__reel { position: relative; padding-block: clamp(24px, 6vh, 64px) 56px; }
+/* At least a frame tall, so the plate line sits at its foot and not under the last row of cards. */
+.rl--list .rl__reel { position: relative; min-height: 100svh; padding-block: clamp(24px, 6vh, 64px) 56px; }
 .rl--list .rl__stage { display: none; }
 .rl--list .rl__works { grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap: 32px 18px; }
 .rl--list .rl__work { border: 0; padding: 0; gap: 8px; color: var(--ink); }

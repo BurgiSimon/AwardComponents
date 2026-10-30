@@ -11,7 +11,7 @@
   justify-items: center;
   align-items: center;
   gap: clamp(14px, 3svh, 28px);
-  padding: clamp(20px, 4svh, 40px) var(--pad-x) clamp(24px, 5svh, 48px);
+  padding: clamp(20px, 4svh, 40px) var(--pad-x) clamp(52px, 9svh, 72px);
 }
 
 /* The labels: one row, the active one marked by its rule. */

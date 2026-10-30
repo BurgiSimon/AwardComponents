@@ -3,7 +3,7 @@ export default {
   title: 'Media panel wipe',
   category: 'scroll',
   summary: 'A festival’s four stages as full-bleed media panels: each change wipes the next picture in over the last behind a thin glowing seam, stepped by wheel, swipe, keys or the stage list.',
-  description: 'Two media buffers are double-buffered. The hidden one already holds the next panel’s footage, so a change never waits on the network; it opens over the visible one from a directional clip-path inset while a 1 px light rides the edge on the same tween. After each change the buffers swap roles and the newly hidden one loads the likely next panel.\n\nThe demo uses clips from the shared media set when it has them; until then each photo plays a slow push-in standing in for footage. The document never scrolls while the deck owns the viewport: one wheel flick is one panel.',
+  description: 'Two media buffers are double-buffered. The hidden one already holds the next panel’s footage, so a change never waits on the network; it opens over the visible one from a directional clip-path inset while a 1 px light rides the edge on the same tween. After each change the buffers swap roles and the newly hidden one loads the likely next panel.\n\nThe demo uses a clip from the shared media set where one matches the stage; elsewhere a photo plays a slow push-in standing in for footage. The document never scrolls while the deck owns the viewport: one wheel flick is one panel.',
   recipe: 'video-clip-wipe-panels',
   deps: ['gsap'],
   tags: ['video', 'clip-path', 'transition', 'sections', 'wheel', 'swipe', 'gsap', 'observer'],

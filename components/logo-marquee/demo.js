@@ -28,7 +28,11 @@ function logo(name, i) {
 
 export default function mount(root, options, ctx) {
   const { app, studio } = content;
-  const work = photos({ tags: ['architecture'], count: 4, seed: 'lm-arch' }).concat(photos({ tags: ['interior'], count: 3, seed: 'lm-int' }));
+  // Each card shows a picture from its own project's tags, never one twice: city pictures only for a city project,
+  // and none at night.
+  const projects = studio.projects.slice(0, 7);
+  const work = [];
+  for (const p of projects) work.push(...photos({ tags: [p.tags[0]], not: p.tags.includes('city') ? ['night'] : ['city'], count: 1, seed: `lm-${p.slug}`, exclude: work }));
   root.className = 'lm';
   root.innerHTML = html`
     <section class="ac-stage lm__stage" aria-label="${app.name} customers">
@@ -37,7 +41,7 @@ export default function mount(root, options, ctx) {
       </div>
       <div class="lm__row lm__row--work" data-row="work" aria-label="Recent work by customers">
         <ul class="lm__track" role="list">
-          ${work.map((p, i) => html`<li class="lm__card"><a href="#work" class="lm__card-link"><span class="lm__media">${raw(imageHTML(p, { sizes: '320px', alt: '' }))}</span><span class="lm__cap"><strong>${studio.projects[i % studio.projects.length].title}</strong><span>${app.clients[(i * 3) % app.clients.length]}</span></span></a></li>`)}
+          ${work.map((p, i) => html`<li class="lm__card"><a href="#work" class="lm__card-link"><span class="lm__media">${raw(imageHTML(p, { sizes: '320px', alt: '' }))}</span><span class="lm__cap"><strong>${projects[i].title}</strong><span>${app.clients[(i * 3) % app.clients.length]}</span></span></a></li>`)}
         </ul>
       </div>
       <p class="ac-stage__note"><span>${app.name} · customers</span></p>

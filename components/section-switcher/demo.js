@@ -6,7 +6,7 @@
 // Reduced/static: every input still steps, panels swap in place and the ring jumps.
 import './demo.css';
 import { Observer } from 'gsap/Observer';
-import { on, html, raw, photos, imageHTML, content } from '../../src/demo-kit/index.js';
+import { on, html, raw, photo, imageHTML, content } from '../../src/demo-kit/index.js';
 import { gsap, useGsap } from '../../src/demo-kit/gsap.js';
 
 gsap.registerPlugin(Observer);
@@ -14,13 +14,14 @@ gsap.registerPlugin(Observer);
 const IDLE = 1;
 const SWIPE = 55;
 const DUR = 0.9;
-const TAGS = ['architecture', 'architecture', 'water', 'interior', 'city'];
+// One picture per project, matched to what it is: a fjord shore, concrete, a bay, a converted hall, a block of flats.
+const PICS = { fjordhus: 'land-overcast-sea', 'tern-library': 'tex-concrete-shadow', stillwater: 'land-above-clouds', 'kiln-house': 'interior-butterfly-chair', 'granite-court': 'city-helsinki-rooftops' };
 const pad = (n) => String(n).padStart(2, '0');
 
 export default function mount(root, options, ctx) {
   const { studio } = content;
   const projects = studio.projects.slice(0, 5);
-  const pics = projects.map((p, i) => photos({ tags: [TAGS[i]], count: 1, seed: `sw-${p.slug}` })[0]);
+  const pics = projects.map((p) => photo(PICS[p.slug], { fallbackTags: p.tags }));
   const N = projects.length;
   let cfg = { ...options };
 

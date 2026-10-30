@@ -119,7 +119,8 @@
 :root[data-motion='static'] .vw__seam { display: none; }
 
 @media (max-width: 720px) {
-  .vw__tab-name { display: none; }
+  /* Hidden from sight only: the name stays each button's accessible name. */
+  .vw__tab-name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   .vw__tab { justify-content: center; }
   .vw__count { display: none; }
 }

@@ -6,12 +6,18 @@
 // Reduced motion, static or no WebGL: the images are simply images, coloured in on hover by a CSS filter.
 import './demo.css';
 import * as THREE from 'three';
-import { on, onFrame, damp, clamp, html, raw, photos, imageHTML, finePointer, qualityTier, content } from '../../src/demo-kit/index.js';
+import { on, onFrame, damp, clamp, html, raw, photo, imageHTML, finePointer, qualityTier, content } from '../../src/demo-kit/index.js';
 import { useRenderer, webglAvailable } from '../../src/demo-kit/three.js';
 import { useLenis } from '../../src/demo-kit/lenis.js';
 
 const DIST = 1000; // camera distance: one world unit is one CSS pixel at z = 0
 const MODES = { reveal: 0, fade: 1, lift: 2 };
+// A picture per project, chosen for what it is (the site, the room, the chair): no city towers or rooftops abroad
+// under a Nordic place name.
+const PICS = {
+  fjordhus: 'land-fog-forest', 'tern-library': 'arch-concrete-slab', stillwater: 'land-lake-reflection', 'kiln-house': 'interior-butterfly-chair',
+  'granite-court': 'arch-bauhaus-facade', 'low-light': 'interior-concrete-hall', saltworks: 'arch-light-shaft', 'arc-chair': 'obj-gragg-side-chair',
+};
 
 const VERT = /* glsl */ `
   uniform float uSpeed;
@@ -78,7 +84,7 @@ export default function mount(root, options, ctx) {
   const { studio } = content;
   let cfg = { ...options };
   const projects = studio.projects;
-  const pics = photos({ tags: ['architecture'], count: projects.length, seed: 'gp-work' });
+  const pics = projects.map((p) => photo(PICS[p.slug] || `halden-${p.slug}`));   // unknown id → a drawn field
 
   root.className = 'gp';
   root.innerHTML = html`

@@ -10,7 +10,7 @@
   grid-template-columns: var(--cols);
   align-items: baseline;
   gap: 24px;
-  padding-block: clamp(14px, 2.2vh, 22px);
+  padding-block: clamp(10px, 1.6vh, 16px);
   border-bottom: 1px solid var(--line);
   font-size: var(--text-sm);
   color: var(--ink-2);

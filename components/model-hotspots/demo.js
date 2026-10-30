@@ -71,6 +71,7 @@ export default function mount(root, options, ctx) {
   const toast = root.querySelector('[data-toast]');
   const detail = { name: root.querySelector('[data-d-name]'), figure: root.querySelector('[data-d-figure]'), text: root.querySelector('[data-d-text]') };
   const state = { zone: null, mode: 'gl' };
+  let site = SITE;
   let onSelect = () => {};
 
   const select = (id) => {
@@ -78,7 +79,7 @@ export default function mount(root, options, ctx) {
     const z = ZONES.find((x) => x.id === id);
     buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.zone === id)));
     root.querySelectorAll('[data-p]').forEach((el) => el.classList.toggle('is-on', el.dataset.p === id));
-    const d = z || SITE;
+    const d = z || site;
     detail.name.textContent = d.name;
     detail.figure.textContent = d.figure;
     detail.text.textContent = d.text;
@@ -106,6 +107,13 @@ export default function mount(root, options, ctx) {
     state.mode = 'plan';
     root.dataset.mode = 'plan';
     host.innerHTML = PLAN;
+    // Nothing turns here: only the buttons work, so the stage stops offering drag, keys and zoom.
+    site = { ...SITE, text: 'Choose a building.' };
+    detail.text.textContent = site.text;
+    stage.removeAttribute('tabindex');
+    stage.removeAttribute('aria-describedby');
+    stage.setAttribute('aria-label', `${project.title} site plan`);
+    root.querySelector('#mh-hint').remove();
     return instance;
   }
   root.dataset.mode = 'gl';

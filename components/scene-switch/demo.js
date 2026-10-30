@@ -129,7 +129,14 @@ export default function mount(root, options, ctx) {
     still.hidden = false;
     still.innerHTML = STILL;
     go(index);
-    return { update(next) { cfg = { ...next }; applyTiming(); } };
+    return {
+      update(next, changed) {
+        cfg = { ...next };
+        applyTiming();
+        if (changed.includes('start')) go(Math.max(0, finishes.findIndex((f) => f.id === cfg.start)));
+      },
+      action(id) { if (id === 'next') step(1); },
+    };
   }
 
   const tier = qualityTier();

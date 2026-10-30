@@ -7,7 +7,7 @@ import './demo.css';
 import { Flip } from 'gsap/Flip';
 import { CustomEase } from 'gsap/CustomEase';
 import { gsap, useGsap } from '../../src/demo-kit/gsap.js';
-import { on, html, raw, photo, allPhotos, content, formatPrice } from '../../src/demo-kit/index.js';
+import { on, html, raw, photo, content, formatPrice } from '../../src/demo-kit/index.js';
 
 gsap.registerPlugin(Flip, CustomEase);
 
@@ -27,19 +27,12 @@ const NOTES = {
   'pebble-dish': 'A small porcelain dish for rings, salt or a bar of soap. Each one is pressed by hand, so no two match.',
   'wick-candle': 'Forged from one bar of iron and waxed. Holds a standard dinner candle or a tea light.',
 };
-const TAGS = { 'tide-vase': ['ceramic'], 'dune-bowl': ['ceramic'], 'ember-cup': ['ceramic'], 'pebble-dish': ['ceramic'], 'luma-lamp': ['lamp'], 'wick-candle': ['object'], 'arc-chair': ['furniture'], 'strand-throw': ['textile'] };
+// The picture from the shared set that shows each product. The cup, the dish and the holder have none, so they get a
+// drawn stand-in rather than another object under their name.
+const PICS = { 'tide-vase': 'obj-celadon-vase', 'dune-bowl': 'obj-jian-tea-bowl', 'luma-lamp': 'interior-lamp-corner', 'arc-chair': 'interior-butterfly-chair', 'strand-throw': 'obj-wari-tunic' };
 const EASES = { inOut: 'ac-flip', out: 'expo.out', spring: 'back.out(1.3)' };
 
-function pictures(products) {
-  const pool = allPhotos();
-  const taken = new Set();
-  return products.map((p) => {
-    const tags = TAGS[p.id] || ['object'];
-    const hit = pool.find((m) => tags.every((t) => m.tags?.includes(t)) && !taken.has(m.id)) || pool.find((m) => m.tags?.includes('product') && !taken.has(m.id));
-    if (hit) { taken.add(hit.id); return photo(hit.id); }
-    return photo(`ostra-${p.id}`);
-  });
-}
+const pictures = (products) => products.map((p) => photo(PICS[p.id] || `ostra-${p.id}`));
 
 const VIEW_ICONS = {
   grid: '<rect x="4" y="4" width="6.5" height="6.5" rx="1"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1"/>',
@@ -56,8 +49,9 @@ export default function mount(root, options, ctx) {
 
   root.className = 'fg';
   root.innerHTML = html`
-    <section class="ac-stage fg__stage" aria-label="${shop.name} shop">
+    <section class="ac-stage fg__stage" aria-labelledby="fg-title">
       <div class="fg__index">
+        <h2 class="sr-only" id="fg-title">${shop.name} shop</h2>
         <div class="fg__tools">
           <div class="fg__group" role="group" aria-label="Filter by category">
             <button type="button" class="fg__switch" data-filter="all" aria-pressed="true">All<span class="fg__n">${products.length}</span></button>
@@ -103,6 +97,7 @@ export default function mount(root, options, ctx) {
   const ground = dialog.querySelector('[data-ground]');
   const slot = dialog.querySelector('[data-slot]');
   const copy = dialog.querySelector('[data-copy]');
+  const back = dialog.querySelector('[data-close]');
   const { context } = useGsap(ctx, root);
 
   const ui = { view: 'grid', filter: 'all', open: null };
@@ -164,15 +159,20 @@ export default function mount(root, options, ctx) {
     dialog.querySelector('[data-dtext]').textContent = NOTES[p.id] || '';
   }
 
-  function openDetail(li, opener) {
+  // `keyboard`: whether Back, focused by showModal, should show its ring (not after a mouse press or the toolbar).
+  function openDetail(li, opener, { keyboard = false } = {}) {
     if (ui.open) return;
     const plate = li.querySelector('[data-plate]');
-    ui.open = { li, opener, plate, home: plate.parentElement, closing: false };
+    ui.open = { li, opener, plate, home: plate.parentElement, closing: false, keyboard: false };
     fill(li);
     const state = animate() ? Flip.getState(plate) : null;
     slot.append(plate);
     li.classList.add('is-open');
+    // The card shows the small file; the detail frame is several times its size, so the full one loads as it opens.
+    const img = plate.querySelector('img');
+    if (img.dataset.full) { img.src = img.dataset.full; delete img.dataset.full; }
     dialog.showModal();   // focus moves to the dialog's first control
+    if (!keyboard) { back.blur(); back.focus({ preventScroll: true, focusVisible: false }); }
     if (!state) return;
     dialog.classList.add('is-flying');
     context.add(() => {
@@ -192,14 +192,17 @@ export default function mount(root, options, ctx) {
     dialog.classList.remove('is-flying');
     o.li.classList.remove('is-open');
     ui.open = null;
-    o.opener.focus({ preventScroll: true });   // back on the button that opened it
+    // Back on the button that opened it. close() has already put focus there, ring or not; blur so the call decides.
+    o.opener.blur();
+    o.opener.focus({ preventScroll: true, focusVisible: o.keyboard });
     if (state) context.add(() => Flip.from(state, { duration: cfg.duration, ease: ease(), scale: true, zIndex: 3 }));
   }
 
-  function closeDetail() {
+  function closeDetail({ keyboard = false } = {}) {
     const o = ui.open;
     if (!o || o.closing) return;
     o.closing = true;
+    o.keyboard = keyboard;
     if (!animate()) { land(); return; }
     dialog.classList.add('is-flying');
     context.add(() => {
@@ -211,10 +214,11 @@ export default function mount(root, options, ctx) {
 
   viewButtons.forEach((b) => on(ctx, b, 'click', () => setView(b.dataset.view)));
   filterButtons.forEach((b) => on(ctx, b, 'click', () => setFilter(b.dataset.filter)));
-  items.forEach((li) => { const opener = li.querySelector('[data-open]'); on(ctx, opener, 'click', () => openDetail(li, opener)); });
-  on(ctx, dialog.querySelector('[data-close]'), 'click', closeDetail);
+  // detail 0: Enter or Space, so the ring shows only when the keyboard opened or closed the detail.
+  items.forEach((li) => { const opener = li.querySelector('[data-open]'); on(ctx, opener, 'click', (e) => openDetail(li, opener, { keyboard: e.detail === 0 })); });
+  on(ctx, back, 'click', (e) => closeDetail({ keyboard: e.detail === 0 }));
   // Escape runs the authored close instead of the dialog's instant one.
-  on(ctx, dialog, 'cancel', (e) => { e.preventDefault(); closeDetail(); });
+  on(ctx, dialog, 'cancel', (e) => { e.preventDefault(); closeDetail({ keyboard: true }); });
   // Closed some other way: settle at once so the picture is never left in the dialog.
   on(ctx, dialog, 'close', () => { if (ui.open && !ui.open.closing) { ui.open.closing = true; land(); } });
   ctx.onCleanup(() => { if (dialog.open) dialog.close(); });
@@ -233,5 +237,6 @@ export default function mount(root, options, ctx) {
 }
 
 function imgTag(item) {
-  return `<img src="${item.srcSm || item.src}" alt="" decoding="async" style="object-position:${item.focus || '50% 50%'}">`;
+  const full = item.srcSm && item.srcSm !== item.src ? ` data-full="${item.src}"` : '';
+  return `<img src="${item.srcSm || item.src}"${full} alt="" decoding="async" style="object-position:${item.focus || '50% 50%'}">`;
 }

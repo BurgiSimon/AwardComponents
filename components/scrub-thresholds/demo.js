@@ -35,8 +35,9 @@ export default function mount(root, options, ctx) {
 
   root.className = 'st';
   root.innerHTML = html`
-    <section class="st__scene" data-scene aria-label="${lamp.name}">
+    <section class="st__scene" data-scene aria-labelledby="st-title">
       <div class="st__stage">
+        <h1 class="sr-only" id="st-title">${lamp.name} in ${lamp.colour.toLowerCase()} glass</h1>
         <div class="st__room" data-room>
           <div class="st__figure"><div class="st__lampbox"><span class="st__glow" aria-hidden="true"></span>${raw(LAMP)}</div></div>
           <div class="st__copy">

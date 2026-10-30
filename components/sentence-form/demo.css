@@ -62,7 +62,8 @@ label.sf__frag { cursor: text; }
 .sf__error { color: var(--danger); font-size: var(--text-sm); font-weight: 600; }
 .sf__error::before { content: '— ' / ''; }
 .sf__error[hidden] { display: none; }
-.sf__send { margin-top: clamp(22px, 3vw, 36px); }
+.sf__send { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; margin-top: clamp(22px, 3vw, 36px); }
+.sf__send .ac-small { max-width: 32ch; }
 .is-sent .sf__send, .is-sent .sf__errors { display: none; }
 .sf__sent { max-width: 34ch; margin-top: clamp(22px, 3vw, 36px); font-family: var(--font-serif); font-size: clamp(1.3rem, 0.95rem + 1vw, 1.85rem); line-height: 1.35; }
 .sf--sans .sf__sent { font-family: var(--font-sans); font-weight: 560; letter-spacing: -0.015em; }

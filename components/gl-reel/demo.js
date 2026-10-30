@@ -14,7 +14,7 @@ import { useRenderer, webglAvailable, disposeScene } from '../../src/demo-kit/th
 const EDITIONS = [
   { year: 2026, title: 'Four stages for the first time', head: 'Marlow Ash', tags: ['night'] },
   { year: 2025, title: 'The Greenhouse opens', head: 'Kiri Tanaka', tags: ['people'] },
-  { year: 2024, title: 'Hall 4, all night', head: 'The Low Tides', tags: ['city'] },
+  { year: 2024, title: 'Hall 4, all night', head: 'The Low Tides', tags: ['city', 'night'] },
   { year: 2023, title: 'The heat-wave edition', head: 'Odessa Rae', tags: ['water'] },
   { year: 2022, title: 'Back on the quay', head: 'Nils & the Weather', tags: ['architecture'] },
   { year: 2021, title: 'Streamed from the crane', head: 'Juno Park', tags: ['sky'] },

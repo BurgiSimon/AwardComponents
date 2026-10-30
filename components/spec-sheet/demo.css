@@ -4,6 +4,9 @@
 /* The drawing and its size switch beside the sheet. */
 .ss__spec { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr); align-items: center; gap: clamp(28px, 4.4vw, 64px); width: min(100%, 920px); }
 .ss__side { display: grid; justify-items: center; gap: 16px; }
+/* Drawing off: no empty column; the sheet alone, with its size switch above it. */
+.ss__spec:has(.ss__draw[hidden]) { grid-template-columns: minmax(0, 1fr); gap: 24px; width: min(100%, 560px); }
+.ss__spec:has(.ss__draw[hidden]) .ss__side { justify-items: start; }
 
 /* The drawing sits on its own card. */
 .ss__draw {

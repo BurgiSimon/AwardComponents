@@ -23,6 +23,7 @@
   transition: opacity var(--dur-m) var(--ease-out);
 }
 .cp__tag.is-visible { opacity: 1; }
+:root[data-capture] .cp__tag { transition: none; }
 
 /* The caption: the work nearest the camera, set like the label beside a print, above the plate line. */
 .cp__wall {

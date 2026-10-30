@@ -3,7 +3,7 @@ export default {
   title: 'Filmstrip rows',
   category: 'galleries',
   summary: 'A studio’s project index where every project is a strip of its own photographs running at one shared speed; a row pauses and grows when you hover or focus it.',
-  description: 'Each strip is a CSS keyframe loop, but its duration is computed from its measured width, so a strip of four frames and a strip of eight travel at the same pixels per second and the list reads as one system. Rows stop for a pointer, for keyboard focus and when they leave the screen.\n\nEach project is one link; the frames are decoration hidden from assistive tech, so six projects are six Tab stops, not sixty.',
+  description: 'Each strip is a CSS keyframe loop, but its duration is computed from its measured width, so a strip of four frames and a strip of eight travel at the same pixels per second and the list reads as one system. Rows stop for a pointer, for keyboard focus and when they leave the screen.\n\nEach project is one link; the frames are decoration hidden from assistive tech, so four projects are four Tab stops, not one per frame.',
   recipe: 'filmstrip-index-rows',
   deps: [],
   tags: ['marquee', 'filmstrip', 'index', 'hover', 'css-animation', 'gallery'],
@@ -16,7 +16,7 @@ export default {
     'A shop’s collections page, one strip of products per collection',
   ],
   notes: [
-    'One link per project in a list; each reel is aria-hidden with no links, so Tab meets six stops.',
+    'One link per project in a list; each reel is aria-hidden with no links, so Tab meets four stops.',
     'Hover, focus inside a row and leaving the screen each pause it; focus also grows it, so a keyboard reader sees it at rest.',
     'Under reduced motion and static every reel stands still and nothing grows; touch screens never mount a hover clip.',
   ],

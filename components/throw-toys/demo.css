@@ -28,7 +28,7 @@
   transition: background-color var(--dur-s) var(--ease-out), color var(--dur-s) var(--ease-out), border-color var(--dur-s) var(--ease-out);
 }
 .tt__chip:hover { border-color: var(--ink); }
-.tt__dot { width: 12px; height: 12px; border-radius: 3px; background: var(--m); box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.12); }
+.tt__dot { flex: none; width: 12px; height: 12px; border-radius: 3px; background: var(--m); box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.12); }
 .tt__chip[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
 .tt__chip[aria-pressed='true'] .tt__dot { box-shadow: 0 0 0 2px var(--ink), 0 0 0 3px var(--m); }
 .tt__count { display: inline-grid; place-items: center; min-width: 24px; height: 24px; padding: 0 6px; border-radius: 999px; background: color-mix(in oklab, var(--bg) 22%, transparent); font-size: var(--text-xs); }
@@ -167,6 +167,11 @@
 .tt__reset { position: absolute; right: 14px; top: 12px; background: var(--surface); }
 @media (pointer: coarse) { .tt__reset { min-height: 44px; } }
 :root[data-capture] .tt__hint { display: none; }
+
+/* Beside a narrow stage the picks column is too slim for two chips a row: stack them. */
+@media (min-width: 761px) and (max-width: 960px) {
+  .tt__chips { grid-template-columns: minmax(0, max-content); }
+}
 
 @media (max-width: 760px) {
   .tt__play { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'stage' 'picks'; row-gap: 24px; }

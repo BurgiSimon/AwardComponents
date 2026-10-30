@@ -21,7 +21,9 @@
 .sl__still[hidden] { display: none; }
 .sl__still svg { width: 100%; height: 100%; }
 .sl--still .sl__stage { cursor: default; }
-.sl--still .sl__angle { display: none; }
+/* No WebGL: the still shows the finish; the lighting switch and the light slider have nothing to drive. */
+.sl--still .sl__bar { justify-content: center; }
+.sl--still .sl__lights, .sl--still .sl__angle { display: none; }
 
 /* The controls under the stage: the lighting switch, the holder's finish, the light's angle. */
 .sl__bar { display: flex; align-items: center; justify-content: space-between; gap: 14px 24px; flex-wrap: wrap; width: min(100%, 960px); }

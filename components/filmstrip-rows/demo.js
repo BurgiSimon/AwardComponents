@@ -3,7 +3,7 @@
 // (duration = one copy's width / 70 px/s), so a row of four frames and a row of eight travel at the same speed and
 // the list reads as one system. A row pauses on hover, on focus inside it and off-screen, and its reel grows 1.2×
 // on a late, overshooting curve. One link per project; the frames are aria-hidden decoration. A short clip mounts
-// on hover only when the shared set has videos, the pointer can hover and the motion tier is full.
+// on hover only when the shared set has one showing the project's subject, the pointer can hover and the tier is full.
 // Reduced and static: every reel at rest, nothing grows.
 import './demo.css';
 import { on, html, raw, photo, photos, videos, credit, observeIntersection, observeResize, finePointer, content } from '../../src/demo-kit/index.js';
@@ -34,11 +34,14 @@ function framesFor(slug, i) {
   return out.map((p, k) => ({ p, r: p.drawn ? RATIOS[(k + i) % RATIOS.length] : Math.min(1.8, Math.max(0.66, (p.width || 4) / (p.height || 3))) }));
 }
 
+// A project's hover clip: a shared one whose tags hold the project's subject (its first tag list), else none.
+const clipFor = (p) => videos.find((v) => (FRAMES[p.slug]?.tags[0] || ['-']).every((t) => v.tags?.includes(t))) || null;
+
 const still = ({ p, r }) => `<span class="fr__still" style="--r:${r.toFixed(3)}"><img src="${p.srcSm || p.src}" alt="" decoding="async" draggable="false" style="object-position:${p.focus || '50% 50%'}"></span>`;
 
 export default function mount(root, options, ctx) {
   const { studio } = content;
-  const projects = studio.projects.slice(0, 6);
+  const projects = studio.projects.slice(0, 4);
   let cfg = { ...options };
   const full = ctx.motion === 'full';
 
@@ -59,7 +62,7 @@ export default function mount(root, options, ctx) {
 
   // The reel holds two copies; every still carries its gap as margin, so two copies are exactly twice one and the
   // −50 % keyframe wraps without a seam.
-  const rows = [...root.querySelectorAll('[data-row]')].map((li) => ({ li, track: li.querySelector('[data-track]'), reel: li.querySelector('.fr__grow'), reasons: new Set(), visible: false, video: null }));
+  const rows = [...root.querySelectorAll('[data-row]')].map((li, i) => ({ li, track: li.querySelector('[data-track]'), reel: li.querySelector('.fr__grow'), reasons: new Set(), visible: false, video: null, clip: clipFor(projects[i]) }));
 
   const apply = () => {
     root.style.setProperty('--fr-h', `${cfg.height}px`);
@@ -77,15 +80,14 @@ export default function mount(root, options, ctx) {
     row.li.toggleAttribute('data-paused', row.reasons.size > 0);   // CSS: animation-play-state: paused
   }
 
-  // A real clip on hover, mounted only where it can be used: shared videos exist, a hovering pointer, full motion,
-  // an on-screen row. Without videos the stills stand in, as they do on touch screens.
-  const clipFor = (i) => videos[i % Math.max(1, videos.length)];
-  if (videos.length) rows.forEach((_, i) => credit(clipFor(i)));
-  function syncVideo(row, i) {
-    const want = videos.length > 0 && row.visible && finePointer() && full;
+  // A real clip on hover, mounted only where it can be used: a clip of this project's subject, a hovering pointer,
+  // full motion, an on-screen row. Without one the stills stand in, as they do on touch screens.
+  rows.forEach((row) => { if (row.clip) credit(row.clip); });
+  function syncVideo(row) {
+    const want = !!row.clip && row.visible && finePointer() && full;
     if (want && !row.video) {
       const v = document.createElement('video');
-      Object.assign(v, { muted: true, playsInline: true, loop: true, preload: 'none', src: clipFor(i).src, poster: clipFor(i).poster || '' });
+      Object.assign(v, { muted: true, playsInline: true, loop: true, preload: 'none', src: row.clip.src, poster: row.clip.poster || '' });
       v.className = 'fr__clip';
       row.reel.append(v);
       row.video = v;
@@ -109,7 +111,7 @@ export default function mount(root, options, ctx) {
       const i = rows.findIndex((r) => r.li === e.target);
       rows[i].visible = e.isIntersecting;
       pause(rows[i], 'offscreen', !e.isIntersecting);
-      syncVideo(rows[i], i);
+      syncVideo(rows[i]);
     }
   });
   ctx.onCleanup(() => rows.forEach((r) => { r.video?.pause(); r.video?.remove(); }));

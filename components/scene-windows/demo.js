@@ -73,9 +73,10 @@ export default function mount(root, options, ctx) {
           </div>
         </div>
         <div class="sw__rail ac-wrap" aria-hidden="true">
-          <p class="ac-label sw__rail-label"><span>Inside ${product.name}</span><span class="ac-num" data-progress>000</span></p>
+          <p class="ac-label sw__rail-label"><span class="ac-num" data-progress>000</span></p>
           <div class="sw__track" data-rail><span class="sw__fill" data-fill></span></div>
         </div>
+        <p class="ac-stage__note"><span>${product.maker} · product story</span></p>
       </div>
     </section>
     <section class="sw__beats ac-wrap" id="sw-beats" aria-labelledby="sw-beats-title">

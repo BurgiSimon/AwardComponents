@@ -6,7 +6,7 @@
 // The scroll sets a target; the shared ticker damps toward it (k = 9) and leaves once it arrives.
 // Reduced and static: every route drawn complete. No WebGL2: the same routes as SVG strokes.
 import './demo.css';
-import { on, html, raw, clamp, damp, ticker, observeResize, readToken, content } from '../../src/demo-kit/index.js';
+import { on, html, raw, clamp, damp, ticker, observeResize, readToken, webgl2Available, content } from '../../src/demo-kit/index.js';
 
 // Routes in a 0..1 map box (y down), each from its origin to the island.
 const ISLAND = [0.75, 0.36];
@@ -136,6 +136,7 @@ export default function mount(root, options, ctx) {
           ${ROUTES.map((r, i) => html`<span class="ar__stop" data-stop="${i}" style="left:${r.label[0] * 100}%; top:${r.label[1] * 100}%; --tint: var(${r.tint})"><i></i><b>${r.from}</b></span>`)}
           <span class="ar__dest" data-dest style="left:${ISLAND[0] * 100}%; top:${ISLAND[1] * 100}%"><i></i><b>${festival.name} · Refshaleøen</b></span>
         </figure>
+        <p class="ac-stage__note"><span>${festival.name} · getting there</span></p>
       </div>
     </section>`;
 
@@ -175,6 +176,7 @@ export default function mount(root, options, ctx) {
   }
 
   function startGL() {
+    if (!webgl2Available()) return null;
     const canvas = document.createElement('canvas');
     canvas.setAttribute('aria-hidden', 'true');
     const g = canvas.getContext('webgl2', { antialias: false, premultipliedAlpha: true });
@@ -214,6 +216,12 @@ export default function mount(root, options, ctx) {
         ? ROUTES.map((_, i) => accent.map((a, c) => a + (ink[c] - a) * (i / (N - 1)) * 0.6))
         : ROUTES.map((r) => rgbOf(r.tint));
       g.uniform3fv(uTint, list.flat());
+      // The list swatches and origin dots are the map's key, so they take the same colours.
+      list.forEach((c, i) => {
+        const tint = cfg.palette === 'accent' ? `rgb(${c.map((v) => Math.round(v * 255)).join(' ')})` : `var(${ROUTES[i].tint})`;
+        items[i].style.setProperty('--tint', tint);
+        stops[i].style.setProperty('--tint', tint);
+      });
     };
     const build = () => {
       const cw = host.clientWidth, ch = host.clientHeight;

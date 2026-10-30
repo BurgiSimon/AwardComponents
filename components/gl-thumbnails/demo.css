@@ -34,6 +34,9 @@
 .gt__still { position: absolute; inset: 10% 12%; display: grid; place-items: center; }
 .gt__still[hidden] { display: none; }
 .gt__still svg { width: 100%; height: 100%; opacity: 0.9; }
+/* Iron is near-black in both themes: on a dark card its silhouette is lifted toward the ink so it does not vanish
+   into its own ground. */
+:root[data-theme='dark'] .gt__card[data-item='wick-candle'] .gt__still svg { fill: color-mix(in oklab, currentColor, var(--ink-2) 45%); }
 
 .gt__row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
 .gt__name { font-weight: 640; letter-spacing: -0.01em; }

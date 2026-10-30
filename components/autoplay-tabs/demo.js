@@ -62,7 +62,8 @@ export default function mount(root, options, ctx) {
 
   root.className = 'at';
   root.innerHTML = html`
-    <section class="ac-stage at__stage" aria-label="${app.name} features">
+    <section class="ac-stage at__stage" aria-labelledby="at-title">
+      <h2 class="sr-only" id="at-title">${app.name} features</h2>
       <div class="at__set" data-set>
         <div class="at__side">
           <div class="at__tabs" role="tablist" aria-label="${app.name} features" data-list>

@@ -3,7 +3,7 @@
 .tc a { color: inherit; text-decoration: none; }
 .tc__mark { display: inline-block; width: 13px; height: 14px; background: linear-gradient(90deg, currentColor 0 34%, transparent 34% 66%, currentColor 66%); transform: skewX(-14deg); }
 
-.tc__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; gap: clamp(18px, 2.6vw, 36px); width: min(100%, 1040px); margin: 0; }
+.tc__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; gap: clamp(18px, 3vw, 44px); width: min(100%, 1184px); margin: 0; }
 .tc__plan { display: grid; gap: 16px; }
 
 /* The link is the hit box and never transforms; its perspective gives the rotating face depth. */

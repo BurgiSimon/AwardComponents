@@ -122,6 +122,8 @@ export default function mount(root, options, ctx) {
   const demoNote = $('[data-demo]');
   const sheet = matchMedia('(max-width: 767.98px)');
   const say = (region, message) => { region.textContent = message; };
+  // The row's answer to an add; a refusal is marked so its dot is not the success colour.
+  const answer = (message, tone) => { announce.dataset.tone = tone; say(announce, message); };
 
   // The cart, keyed "product:option". A real shop keeps it on its commerce backend behind a cart id.
   const cart = new Map();
@@ -153,12 +155,12 @@ export default function mount(root, options, ctx) {
     on(ctx, button, 'click', () => add());
     const add = (quiet = false) => {
       const r = chosen();
-      if (r.hasAttribute('data-out')) { say(announce, `Not added. ${p.name}: ${soldOutText(r)}`); return; }
+      if (r.hasAttribute('data-out')) { answer(`Not added. ${p.name}: ${soldOutText(r)}`, 'refused'); return; }
       const key = `${p.id}:${r.value}`;
       const line = cart.get(key) ?? { key, id: p.id, index: i, name: p.name, option: r.value, eur: optionOf(r).eur, qty: 0 };
       if (line.qty >= MAX_QTY) {
         note.textContent = `${MAX_QTY} is the most per order for ${r.value}.`;
-        say(announce, `Not added. ${named(line)}: ${note.textContent}`);
+        answer(`Not added. ${named(line)}: ${note.textContent}`, 'refused');
         return;
       }
       line.qty += 1;
@@ -166,7 +168,7 @@ export default function mount(root, options, ctx) {
       render();
       if (quiet) return;
       // The answer is words and a number, never only an animation.
-      say(announce, `Added ${named(line)} to the bag. ${pieces(count())} in the bag.`);
+      answer(`Added ${named(line)} to the bag. ${pieces(count())} in the bag.`, 'added');
       button.dataset.added = '';
       opener.classList.add('is-bumped');
       clearTimeout(timer);
@@ -346,6 +348,8 @@ export default function mount(root, options, ctx) {
           bowl.checked = true;
           cards[0].sync();
           cards[0].add(true);
+          cards[1].card.querySelector('input[value="Short"]').checked = true;
+          cards[1].sync();
           cards[1].add(true);
         }
         later(ctx, open, 60);

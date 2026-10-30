@@ -19,7 +19,7 @@ export default {
   notes: [
     'The finish swatches are radio buttons, the lighting switch is two aria-pressed buttons and the light angle is a native range input; the canvas is aria-hidden.',
     'Lighting is not motion: under reduced motion the scene still renders lit, just held without the slow orbit.',
-    'Without WebGL a drawn still of the two objects takes the stage and the light slider is hidden.',
+    'Without WebGL a drawn still of the two objects takes the stage in the chosen finish; the lighting switch and the light slider are hidden.',
   ],
   controls: [
     { id: 'environment', label: 'Environment', type: 'select', options: [{ value: 'panels', label: 'Panel room' }, { value: 'painted', label: 'Painted window' }], default: 'panels', group: 'Light', prompt: (v) => (v === 'panels' ? 'Start in the panel room (PMREM fromScene)' : 'Start in the painted window gradient (PMREM fromEquirectangular, environmentIntensity 2.2)') },

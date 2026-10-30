@@ -10,7 +10,7 @@ export default {
   requires: ['webgl'],
   added: '2026-10-28',
   order: 44,
-  preview: { height: 580, hint: 'Drag across the cover', capture: { action: 'smear', wait: 950 } },
+  preview: { height: 540, hint: 'Drag across the cover', capture: { action: 'smear', wait: 950 } },
   useCases: [
     'A magazine, album or poster hero where the artwork should answer the pointer',
     'A post pass over a WebGL scene: the same field can smear, reveal or light it',

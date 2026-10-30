@@ -22,7 +22,8 @@ export default function mount(root, options, ctx) {
 
   root.className = 'tc';
   root.innerHTML = html`
-    <section class="ac-stage tc__plans" aria-label="${app.name} plans">
+    <section class="ac-stage tc__plans" aria-labelledby="tc-title">
+      <h2 class="sr-only" id="tc-title">${app.name} plans</h2>
       <ul class="tc__grid" role="list">
         ${app.plans.map((plan, i) => {
           const c = CARDS[i];
@@ -37,7 +38,7 @@ export default function mount(root, options, ctx) {
                 <span class="tc__shine" data-shine aria-hidden="true"></span>
               </span>
             </a>
-            <p class="tc__info"><strong class="tc__name">${plan.name}</strong><span class="tc__price"><span class="ac-num">${formatPrice(plan.price)}</span> a month</span></p>
+            <p class="tc__info"><strong class="tc__name">${plan.name}</strong><span class="tc__price"><span class="ac-num">${formatPrice(plan.price)}</span> ${plan.price ? 'a month' : 'for good'}</span></p>
           </li>`;
         })}
       </ul>

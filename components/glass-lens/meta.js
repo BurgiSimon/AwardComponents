@@ -17,7 +17,7 @@ export default {
     'A hero where the type itself is the material the effect shows off',
   ],
   notes: [
-    'The canvas is aria-hidden and ignores the pointer, so every link under the glass still works; the words it covers stay in the DOM, unchanged.',
+    'The canvas is aria-hidden and ignores the pointer, so anything under the glass stays clickable and selectable; the words it covers stay in the DOM, unchanged.',
     'Anchors keep the glass on headings and empty columns, never on body copy or form fields that must be read at rest.',
     'Under reduced motion the glass is placed at the current anchor with no travel and no spin, and still refracts. The static tier and browsers without WebGL show the words and hairlines without it.',
   ],

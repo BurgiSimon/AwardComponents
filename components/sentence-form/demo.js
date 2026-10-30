@@ -55,6 +55,7 @@ export default function mount(root, options, ctx) {
           </ul>
           <div class="sf__send" data-send>
             <button class="ac-btn ac-btn--lg sf__btn" type="submit">Send the enquiry <span aria-hidden="true">→</span></button>
+            <p class="ac-small">Every blank but the studio is needed.</p>
           </div>
         </form>
         <p class="sf__sent" tabindex="-1" hidden data-sent></p>
@@ -67,6 +68,7 @@ export default function mount(root, options, ctx) {
   const sent = root.querySelector('[data-sent]');
   const text = root.querySelector('[data-text]');
   let submits = 0;
+  let fromToolbar = false; // a send pressed in the shell's toolbar checks and shows, but leaves focus where it is
 
   // Entrance pieces: each phrase, blank, choice and punctuation mark, in reading order.
   const pieces = [...text.children].flatMap((el) => (el === group ? [...group.children] : [el]));
@@ -92,13 +94,13 @@ export default function mount(root, options, ctx) {
     e.preventDefault(); // this form sends nothing
     submits++;
     const invalid = FIELDS.filter((name) => !check(name));
-    if (invalid.length) { focusField(invalid[0]); return; }
+    if (invalid.length) { if (!fromToolbar) focusField(invalid[0]); return; }
     const data = new FormData(form);
     const first = String(data.get('name')).trim().split(/\s+/)[0];
     sent.textContent = `Thank you, ${first}. ${reader.split(' ')[0]} will write to ${data.get('email')} by ${replyBy()}.`;
     sent.hidden = false;
     root.classList.add('is-sent');
-    sent.focus();
+    if (!fromToolbar) sent.focus();
   });
   // After the first attempt, a field clears or updates its message as soon as it is fixed.
   const recheck = (e) => { if (submits && MESSAGES[e.target.name]) check(e.target.name); };
@@ -136,7 +138,11 @@ export default function mount(root, options, ctx) {
         root.classList.remove('is-sent');
         play();
       }
-      if (id === 'errors') form.requestSubmit();
+      if (id === 'errors') {
+        fromToolbar = true; // requestSubmit() runs the submit handler synchronously
+        form.requestSubmit();
+        fromToolbar = false;
+      }
     },
   };
 }

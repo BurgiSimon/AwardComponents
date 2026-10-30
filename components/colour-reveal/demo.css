@@ -53,7 +53,6 @@
 }
 .cr--dom[data-colourway='madder'] .cr__stage { --a: var(--clay); --b: var(--plum); }
 .cr--dom[data-colourway='moss'] .cr__stage { --a: var(--moss); --b: var(--night); }
-.cr--dom .cr__dial { filter: none; }
 
 @media (max-width: 760px) {
   .cr__dial { width: 80px; }

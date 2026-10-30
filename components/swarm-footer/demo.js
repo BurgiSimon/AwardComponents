@@ -6,7 +6,7 @@
 // three.js is a dynamic import fetched only when the footer is within a screen; the loop runs only while the
 // footer is visible. Reduced motion: one settled frame, the light parked. Static or no WebGL 2: a drawn still.
 import './demo.css';
-import { on, onFrame, whileVisible, observeIntersection, observeResize, html, readToken, qualityTier, finePointer, content } from '../../src/demo-kit/index.js';
+import { on, onFrame, whileVisible, observeIntersection, observeResize, html, readToken, qualityTier, finePointer, webgl2Available, content } from '../../src/demo-kit/index.js';
 
 // The world, in scene units (the footer is about 3.2 × 2 units at 16:10). The recipe's own values.
 const SEED = 0.022; // pebble half-length
@@ -59,7 +59,7 @@ export default function mount(root, options, ctx) {
     <footer class="sf__foot" data-footer>
       <div class="sf__gl" data-gl aria-hidden="true"><canvas class="sf__still" data-still hidden></canvas></div>
       <div class="sf__grid ac-wrap">
-        <p class="sf__head">The next kiln opens on 6&nbsp;November.</p>
+        <h2 class="sf__head">The next kiln opens on 6&nbsp;November.</h2>
         <div class="sf__band" data-band aria-hidden="true"></div>
         <form class="sf__form" data-form novalidate>
           <label class="ac-label" for="sf-email">Kiln letters · one a month</label>
@@ -102,7 +102,7 @@ export default function mount(root, options, ctx) {
     const b = bandEl.getBoundingClientRect();
     return { W: Math.max(1, f.width), H: Math.max(1, f.height), band: { top: b.top - f.top, bottom: b.bottom - f.top } };
   };
-  const gl2 = (() => { try { return !!document.createElement('canvas').getContext('webgl2'); } catch { return false; } })();
+  const gl2 = webgl2Available();
 
   // The drawn still for the static tier and browsers without WebGL 2: the same path, pebbles as shaded ellipses.
   const drawStill = () => {

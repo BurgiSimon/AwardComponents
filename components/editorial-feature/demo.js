@@ -6,7 +6,7 @@
 // controls only change the side, the measure and the type voice.
 import './demo.css';
 import '../../src/demo-kit/serif.css';
-import { on, html, raw, photo, photos, imageHTML, content } from '../../src/demo-kit/index.js';
+import { on, html, raw, photo, imageHTML, content } from '../../src/demo-kit/index.js';
 
 export default function mount(root, options, ctx) {
   const { magazine } = content;
@@ -15,7 +15,8 @@ export default function mount(root, options, ctx) {
   const [p1, p2, p3, p4, p5] = magazine.longRead;
   // The caption names sand flats, so the lead is the sand picture, not a seeded landscape (that drew alpine snow).
   const lead = photo('land-dunes', { fallbackTags: ['landscape', 'warm'] });
-  const [inset] = photos({ tags: ['texture'], count: 1, seed: 'ef-salt' });
+  // The set has no salt crystals, so the inset is the paper picture, captioned as the archive the fourth paragraph opens.
+  const inset = photo('tex-paper-sheets', { fallbackTags: ['texture'] });
   root.className = 'ef';
   root.innerHTML = html`
     <main id="ef-top">
@@ -42,8 +43,8 @@ export default function mount(root, options, ctx) {
             </blockquote>
             <p class="ef-p">${p3}</p>
             <figure class="ef-inset">
-              <div class="ef-inset__media" style="--focus-point:${inset.focus || '50% 50%'}">${raw(imageHTML(inset, { sizes: '(min-width: 760px) 22vw, 100vw', alt: inset.alt || 'Grey crystals of island salt' }))}</div>
-              <figcaption class="ef-cap">Salt from the third pan, a little grey from the peat smoke.</figcaption>
+              <div class="ef-inset__media" style="--focus-point:${inset.focus || '50% 50%'}">${raw(imageHTML(inset, { sizes: '(min-width: 760px) 22vw, 100vw', alt: inset.alt || 'Loose pages from the salt archive' }))}</div>
+              <figcaption class="ef-cap">Loose pages from the archive above the boiling house.</figcaption>
             </figure>
             <p class="ef-p">${p4}</p>
             <p class="ef-p ef-p--last">${p5}</p>

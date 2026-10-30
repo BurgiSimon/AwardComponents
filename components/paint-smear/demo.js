@@ -8,7 +8,7 @@
 import './demo.css';
 import '../../src/demo-kit/serif.css';
 import * as THREE from 'three';
-import { on, ticker, whileVisible, later, html, readToken, photos, loadImage, content } from '../../src/demo-kit/index.js';
+import { on, ticker, whileVisible, later, html, readToken, photo, loadImage, content } from '../../src/demo-kit/index.js';
 import { useRenderer, webglAvailable } from '../../src/demo-kit/three.js';
 
 // The recipe's field constants; brush, trail, curl and fringe come from the controls.
@@ -196,13 +196,13 @@ export default function mount(root, options, ctx) {
   let cfg = { ...options };
   const stories = magazine.articles.filter((a) => ['salt-and-time', 'night-swimming', 'map-of-light'].includes(a.slug));
   const issue = { name: magazine.name, line: `${magazine.issue.replace(' — ', ' · ')} · Autumn 2026`, lines: [`${stories[0].title} — ${stories[0].author}`, `${stories[1].title}, after dark`, 'Charting December light'] };
-  const pic = photos({ tags: ['sky'], count: 1, seed: 'ps-cover' })[0];
+  const pic = photo('land-overcast-sea', { fallbackTags: ['sky'] });   // a weather issue: sea under an overcast sky
   root.className = 'pz';
   root.innerHTML = html`
     <section class="ac-stage" aria-label="${magazine.name} cover">
       <figure class="pz__cover" data-cover>
         <div class="pz__stage" data-stage></div>
-        <figcaption class="sr-only">Cover of ${magazine.name}, ${magazine.issue}: a weather map with isobars around a low, over a rainy sky. Cover lines: ${issue.lines.join('; ')}.</figcaption>
+        <figcaption class="sr-only">Cover of ${magazine.name}, ${magazine.issue}: a weather map with isobars around a low, over a dark sea under an overcast sky. Cover lines: ${issue.lines.join('; ')}.</figcaption>
       </figure>
       <p class="ac-stage__note"><span>${magazine.name} · cover</span></p>
     </section>`;
@@ -210,7 +210,7 @@ export default function mount(root, options, ctx) {
   const cover = root.querySelector('[data-cover]');
   const stage = root.querySelector('[data-stage]');
   const coverCanvas = document.createElement('canvas');
-  let photo = null;
+  let picture = null;
   const coverSize = () => {
     const r = stage.getBoundingClientRect();
     return { w: Math.max(1, Math.round(r.width)), h: Math.max(1, Math.round(r.height)) };
@@ -227,9 +227,9 @@ export default function mount(root, options, ctx) {
     coverCanvas.setAttribute('aria-hidden', 'true');
     coverCanvas.className = 'pz__still';
     stage.append(coverCanvas);
-    const redraw = () => { const { w, h } = coverSize(); drawCover(coverCanvas, w, h, scale, photo, issue); };
+    const redraw = () => { const { w, h } = coverSize(); drawCover(coverCanvas, w, h, scale, picture, issue); };
     redraw();
-    loadImage(pic).then((img) => { photo = img; if (!ctx.signal.aborted) redraw(); });
+    loadImage(pic).then((img) => { picture = img; if (!ctx.signal.aborted) redraw(); });
     fontsReady.then(() => { if (!ctx.signal.aborted) redraw(); });
     ctx.onTheme(redraw);
     let t = 0;
@@ -270,7 +270,7 @@ export default function mount(root, options, ctx) {
   let running = false;
   let visible = false;
   const paintCover = () => {
-    drawCover(coverCanvas, w, h, scale, photo, issue);
+    drawCover(coverCanvas, w, h, scale, picture, issue);
     if (!coverTex) {
       coverTex = new THREE.CanvasTexture(coverCanvas);
       coverTex.colorSpace = THREE.SRGBColorSpace;
@@ -297,7 +297,7 @@ export default function mount(root, options, ctx) {
     smearMat.uniforms.uSize.value.set(w, h);
     paintCover();
   });
-  loadImage(pic).then((img) => { photo = img; if (!ctx.signal.aborted) paintCover(); });
+  loadImage(pic).then((img) => { picture = img; if (!ctx.signal.aborted) paintCover(); });
   fontsReady.then(() => { if (!ctx.signal.aborted) paintCover(); });
   ctx.onTheme(paintCover);
 

@@ -1,6 +1,6 @@
 // Media panel wipe — Signal's four stages as a deck of full-bleed media panels (one name each) over a compact stage
 // list. Two media buffers are double-buffered: the hidden one already holds the next stage's footage (a clip from
-// media.videos when the set has them, else a photo with a slow push-in standing in for footage). On a change the
+// media.videos whose tags match the stage, else a photo with a slow push-in standing in for footage). On a change the
 // hidden buffer opens over the visible one from a directional clip-path inset while a 1 px glowing seam rides the
 // edge on the same plain-object tween. Copy leaves first (.34 s power2.in), the gate opens at .12 s (1 s expo.inOut), copy rises over the last
 // third. The document never scrolls: stepped wheel (|deltaY| ≥ 18, locked 1 s + a 300 ms tail), swipe > 55 px,
@@ -29,12 +29,12 @@ const SWIPE = 55;       // px of finger travel for one step
 const CEILING = 1200;   // ms a missed preload may hold a change before it wipes to whatever has painted
 const pad = (n) => String(n).padStart(2, '0');
 
-// One picture per stage, never the same one twice; a clip from the shared set when it has any.
+// One picture per stage, never the same one twice; a clip from the shared set only when its tags match the stage.
 function mediaFor() {
   const pool = allPhotos();
   const taken = new Set();
   return STAGES.map((s, i) => {
-    const clip = videos.length ? (videos.find((v) => s.tags.some((t) => v.tags?.includes(t)) && !taken.has(v.src)) || videos[i % videos.length]) : null;
+    const clip = videos.find((v) => s.tags.some((t) => v.tags?.includes(t)) && !taken.has(v.src)) || null;
     if (clip) { taken.add(clip.src); credit(clip); return { type: 'video', src: clip.src, poster: clip.poster }; }
     for (const tags of [[...s.tags, 'landscape-orientation'], s.tags]) {
       const hit = pool.find((p) => tags.every((t) => p.tags?.includes(t)) && !taken.has(p.id));

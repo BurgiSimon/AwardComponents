@@ -103,7 +103,8 @@ export default function mount(root, options, ctx) {
 
   root.className = 'sg';
   root.innerHTML = html`
-    <section class="sg__gallery" aria-roledescription="carousel" aria-label="${magazine.name} back issues">
+    <section class="sg__gallery" aria-roledescription="carousel" aria-labelledby="sg-title">
+      <h2 class="sr-only" id="sg-title">${magazine.name} back issues</h2>
       <div class="sg__stage" data-stage tabindex="0" role="group" aria-label="Back issues. Arrow keys move one issue; Home and End jump to the ends.">
         <figure class="sg__still" data-still aria-hidden="true" hidden></figure>
       </div>
@@ -261,7 +262,12 @@ export default function mount(root, options, ctx) {
   ctx.onTheme(() => { for (let i = 0; i < N; i++) redrawers.forEach((fn) => fn(i)); });
   const instance = {
     update(next) { cfg = { ...next }; render(); },
-    action(id) { if (id === 'next') go(S.target === N - 1 ? 0 : S.target + 1); },
+    action(id) {
+      if (id !== 'next') return;
+      go(S.target === N - 1 ? 0 : S.target + 1);
+      // The frame: settle on the cover at once, since a headless clock may not finish the spring in the wait.
+      if (ctx.capture) { S.pos = S.target; S.v = 0; S.mode = 'rest'; render(); }
+    },
   };
 
   if (!webglAvailable()) {
