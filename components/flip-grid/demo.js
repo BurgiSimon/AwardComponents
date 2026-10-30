@@ -27,12 +27,12 @@ const NOTES = {
   'pebble-dish': 'A small porcelain dish for rings, salt or a bar of soap. Each one is pressed by hand, so no two match.',
   'wick-candle': 'Forged from one bar of iron and waxed. Holds a standard dinner candle or a tea light.',
 };
-// The picture from the shared set that shows each product. The cup, the dish and the holder have none, so they get a
-// drawn stand-in rather than another object under their name.
-const PICS = { 'tide-vase': 'obj-celadon-vase', 'dune-bowl': 'obj-jian-tea-bowl', 'luma-lamp': 'interior-lamp-corner', 'arc-chair': 'interior-butterfly-chair', 'strand-throw': 'obj-wari-tunic' };
+// The picture from the shared set that shows each product. Only products with a picture of their own are on the
+// shelf: a cup, a dish and a candle holder have none in the set, and a drawn field in their place reads as unfinished.
+const PICS = { 'tide-vase': 'obj-celadon-vase', 'dune-bowl': 'obj-jian-tea-bowl', 'luma-lamp': 'interior-lamp-corner', 'arc-chair': 'obj-gragg-side-chair', 'strand-throw': 'obj-wari-tunic' };
 const EASES = { inOut: 'ac-flip', out: 'expo.out', spring: 'back.out(1.3)' };
 
-const pictures = (products) => products.map((p) => photo(PICS[p.id] || `ostra-${p.id}`));
+const pictures = (products) => products.map((p) => photo(PICS[p.id]));
 
 const VIEW_ICONS = {
   grid: '<rect x="4" y="4" width="6.5" height="6.5" rx="1"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1"/>',
@@ -41,7 +41,8 @@ const VIEW_ICONS = {
 
 export default function mount(root, options, ctx) {
   const { shop } = content;
-  const products = shop.products;
+  const products = shop.products.filter((p) => PICS[p.id]);
+  const count = (c) => c.items.filter((id) => PICS[id]).length;
   const art = pictures(products);
   let cfg = { ...options };
   const animate = () => ctx.motion === 'full';
@@ -55,7 +56,7 @@ export default function mount(root, options, ctx) {
         <div class="fg__tools">
           <div class="fg__group" role="group" aria-label="Filter by category">
             <button type="button" class="fg__switch" data-filter="all" aria-pressed="true">All<span class="fg__n">${products.length}</span></button>
-            ${CATS.map((c) => html`<button type="button" class="fg__switch" data-filter="${c.id}" aria-pressed="false">${c.label}<span class="fg__n">${c.items.length}</span></button>`)}
+            ${CATS.map((c) => html`<button type="button" class="fg__switch" data-filter="${c.id}" aria-pressed="false">${c.label}<span class="fg__n">${count(c)}</span></button>`)}
           </div>
           <div class="fg__group fg__views" role="group" aria-label="View">
             ${['grid', 'list'].map((v) => html`<button type="button" class="fg__switch fg__view" data-view="${v}" aria-pressed="${v === 'grid'}"><svg viewBox="0 0 24 24" aria-hidden="true">${raw(VIEW_ICONS[v])}</svg><span>${v === 'grid' ? 'Grid' : 'List'}</span></button>`)}
