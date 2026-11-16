@@ -89,8 +89,8 @@ code { font-size: 0.88em; }
   transition: color var(--dur-s), background-color var(--dur-s);
 }
 .topnav a:hover { color: var(--ink); background: var(--bg-2); }
-.topnav a[aria-current='page'] { color: var(--ink); }
-.topnav a[aria-current='page']::after {
+.topnav a[aria-current] { color: var(--ink); }
+.topnav a[aria-current]::after {
   content: ''; display: block; height: 2px; margin: 3px auto -5px; width: 16px; border-radius: 2px; background: var(--accent);
 }
 .topbar__end { margin-left: auto; display: flex; align-items: center; gap: 6px; }
@@ -1146,10 +1146,9 @@ code { font-size: 0.88em; }
   .palette__body { grid-template-columns: 1fr; }
   .palette__peek { display: none; }
 }
-/* The menu button shows only where there is a sidebar to open. */
+/* Narrow screens: the menu button opens the drawer on every page: the site's sections, then the component list. */
 @media (max-width: 960px) {
-  body:has(.shell[data-layout='library']) .icon-btn.topbar__menu { display: inline-grid; }
-  body:has(.shell[data-layout='wide']) .sidebar { display: none; }
+  .icon-btn.topbar__menu { display: inline-grid; }
 }
 
 @media (max-width: 640px) {

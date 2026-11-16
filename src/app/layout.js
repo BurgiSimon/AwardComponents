@@ -16,22 +16,30 @@ export function labelChips(c, { max = 3, only } = {}) {
 
 const isMac = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
 
+// The site's sections: the plugin's docs, the component library, the recipes it is built from, the builds the
+// plugin made and what changed. The top bar shows them on wide screens, the drawer on narrow ones.
+const SECTIONS = [
+  ['docs', '/docs/', 'Docs'],
+  ['components', '/components/', 'Components'],
+  ['recipes', '/recipes/', 'Recipes'],
+  ['showcase', '/showcase/', 'Showcase'],
+  ['changelog', '/changelog/', 'Changelog'],
+];
+const primaryLinks = () => SECTIONS.map(([id, to, label]) => html`<a href="${href(to)}" data-nav="${id}">${label}</a>`).join('');
+const sectionOf = (path) => (/^\/(components|library)(\/|$)/.test(path) ? 'components' : SECTIONS.find(([id]) => path.startsWith(`/${id}`))?.[0] || '');
+
 function topbar() {
   return html`
   <header class="topbar">
     <div class="topbar__in">
-      <button class="icon-btn topbar__menu" type="button" aria-label="Open the component list" aria-controls="sidebar" aria-expanded="false" data-menu>${raw(icon('menu', { size: 18 }))}</button>
+      <button class="icon-btn topbar__menu" type="button" aria-label="Open the menu" aria-controls="sidebar" aria-expanded="false" data-menu>${raw(icon('menu', { size: 18 }))}</button>
       <a class="brand" href="${href('/')}" aria-label="${site.name} home">${raw(mark(22))}<span class="brand__word">Award<b>Components</b></span></a>
-      <nav class="topnav" aria-label="Primary">
-        <a href="${href('/components/')}" data-nav="components">Components</a>
-        <a href="${href('/docs/')}" data-nav="docs">Docs</a>
-        <a href="${href('/changelog/')}" data-nav="changelog">Changelog</a>
-      </nav>
+      <nav class="topnav" aria-label="Primary">${raw(primaryLinks())}</nav>
       <div class="topbar__end">
         <button class="search-trigger" type="button" data-palette aria-haspopup="dialog">
-          ${raw(icon('search', { size: 15 }))}<span class="search-trigger__text">Search ${components.length} component${components.length === 1 ? '' : 's'}</span><kbd class="kbd">${isMac ? '⌘' : 'Ctrl'} K</kbd>
+          ${raw(icon('search', { size: 15 }))}<span class="search-trigger__text">Search components and docs</span><kbd class="kbd">${isMac ? '⌘' : 'Ctrl'} K</kbd>
         </button>
-        <button class="icon-btn" type="button" data-palette aria-label="Search components" data-mobile-only>${raw(icon('search', { size: 18 }))}</button>
+        <button class="icon-btn" type="button" data-palette aria-label="Search components and docs" data-mobile-only>${raw(icon('search', { size: 18 }))}</button>
         <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch to dark theme">${raw(icon('moon', { size: 18 }))}</button>
         <a class="icon-btn" href="${site.repo}" target="_blank" rel="noopener" aria-label="Source on GitHub" data-external>${raw(icon('github', { size: 18 }))}</a>
       </div>
@@ -51,8 +59,12 @@ function sidebar() {
       </ul>
     </section>`;
   return html`
-  <aside class="sidebar" id="sidebar" aria-label="Components">
+  <aside class="sidebar" id="sidebar" aria-label="Menu">
     <div class="sidebar__in">
+      <nav class="sb-site" aria-label="Sections">
+        <a href="${href('/')}" data-nav="home">${raw(mark(16))}<span>Home</span></a>
+        ${raw(primaryLinks())}
+      </nav>
       <div class="sb-filter">
         ${raw(icon('filter', { size: 15 }))}
         <input type="search" placeholder="Filter components" aria-label="Filter components" autocomplete="off" spellcheck="false" data-sb-filter>
@@ -69,18 +81,20 @@ function sidebar() {
 }
 
 function footer() {
+  const ext = (url, label) => html`<a href="${url}" target="_blank" rel="noopener" data-external>${label}</a>`;
   return html`
   <footer class="site-footer">
     <div class="site-footer__in">
       <div class="site-footer__brand">
         <a class="brand" href="${href('/')}" aria-label="${site.name} home">${raw(mark(20))}<span class="brand__word">Award<b>Components</b></span></a>
-        <p>Every component is rebuilt from a verified recipe in the <a href="${site.awards.repo}" target="_blank" rel="noopener" data-external>awards plugin</a> and ships with a prompt that adapts it to your project.</p>
+        <p>The home of the <a href="${site.awards.repo}" target="_blank" rel="noopener" data-external>awards plugin</a> for Claude Code and Codex: its docs, the sites it built and judged, and a library of components rebuilt from its verified recipes, each with a prompt that adapts it to your project.</p>
       </div>
       <nav class="site-footer__nav" aria-label="Footer">
-        <div><h2>Library</h2><a href="${href('/components/')}">All components</a><a href="${href('/changelog/')}">Changelog</a><a href="${href('/docs/')}">Getting started</a></div>
-        <div><h2>Source</h2><a href="${site.repo}" target="_blank" rel="noopener" data-external>GitHub</a><a href="${site.awards.repo}" target="_blank" rel="noopener" data-external>awards plugin</a><a href="${site.repo}/blob/main/CREDITS.md" target="_blank" rel="noopener" data-external>Picture credits</a></div>
+        <div><h2>Plugin</h2><a href="${href('/docs/install/')}">Install</a><a href="${href('/docs/first-build/')}">Your first build</a><a href="${href('/docs/skills/')}">Skills</a><a href="${href('/docs/jury/')}">The jury</a><a href="${href('/showcase/')}">Showcase</a></div>
+        <div><h2>Library</h2><a href="${href('/library/')}">The library</a><a href="${href('/components/')}">All components</a><a href="${href('/recipes/')}">Recipes</a><a href="${href('/docs/components/')}">Use a component</a><a href="${href('/changelog/')}">Changelog</a></div>
+        <div><h2>Source</h2>${raw(ext(site.awards.repo, 'awards on GitHub'))}${raw(ext(site.repo, 'This site on GitHub'))}${raw(ext(`${site.awards.repo}/blob/main/CHANGELOG.md`, 'Release notes'))}${raw(ext(`${site.repo}/blob/main/CREDITS.md`, 'Picture credits'))}</div>
       </nav>
-      <p class="site-footer__fine">MIT licence. Pictures are public domain or CC0 and credited on each component page. Not affiliated with any award programme.</p>
+      <p class="site-footer__fine">MIT licence. Component pictures are public domain or CC0 and credited on each component page. The showcase clients are invented unless a build says otherwise. Not affiliated with any award programme.</p>
     </div>
   </footer>`;
 }
@@ -142,13 +156,13 @@ export function mountShell(root) {
     scrim.hidden = !open;
     side.inert = narrow.matches && !open;
     mainCol.inert = narrow.matches && open;
-    if (open) (focusFilter ? filter : $('.sb-item[aria-current], .sb-top', side))?.focus({ preventScroll: true });
+    if (open) (focusFilter ? filter : $('.sb-item[aria-current], .sb-site a', side))?.focus({ preventScroll: true });
   };
   setDrawer(false);
   narrow.addEventListener('change', () => setDrawer(false));
   menuBtn.addEventListener('click', (e) => setDrawer(!shell.hasAttribute('data-drawer'), { focusFilter: e.detail === 0 }));
   scrim.addEventListener('click', () => { setDrawer(false); menuBtn.focus(); });
-  side.addEventListener('click', (e) => { if (e.target.closest('a.sb-item, a.sb-top')) setDrawer(false); });
+  side.addEventListener('click', (e) => { if (e.target.closest('a.sb-item, a.sb-top, .sb-site a')) setDrawer(false); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && shell.hasAttribute('data-drawer')) { setDrawer(false); menuBtn.focus(); } });
 
   // Global keys: ⌘K / Ctrl+K opens the palette; "/" focuses the sidebar filter (or the palette on wide pages).
@@ -175,8 +189,9 @@ export function mountShell(root) {
       main.replaceChildren(result.node);
       // Active states.
       $$('[data-nav]', root).forEach((a) => a.removeAttribute('aria-current'));
-      const section = path.startsWith('/components') ? 'components' : path.startsWith('/docs') ? 'docs' : path.startsWith('/changelog') ? 'changelog' : '';
-      if (section) $(`.topnav [data-nav="${section}"]`, root)?.setAttribute('aria-current', 'page');
+      const section = path === '/' ? 'home' : sectionOf(path);
+      // The section's own page is the current page; any page inside the section marks it as the current section.
+      if (section) $$(`.topnav [data-nav="${section}"], .sb-site [data-nav="${section}"]`, root).forEach((a) => a.setAttribute('aria-current', a.getAttribute('href') === href(path) ? 'page' : 'true'));
       $$('.sb-item[aria-current]', side).forEach((a) => a.removeAttribute('aria-current'));
       if (/^\/components\/?$/.test(path)) $('[data-nav="components-index"]', side)?.setAttribute('aria-current', 'page');
       if (result.componentId) {
