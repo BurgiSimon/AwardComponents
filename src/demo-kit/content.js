@@ -14,6 +14,7 @@ export const studio = {
   address: ['Strandkaien 14', '5013 Bergen', 'Norway'],
   disciplines: ['Architecture', 'Interiors', 'Landscape', 'Furniture'],
   nav: ['Work', 'Studio', 'Journal', 'Contact'],
+  signoff: 'Come by at four, when the koi are fed.',
   projects: [
     { slug: 'fjordhus', title: 'Fjordhus', place: 'Hardanger, NO', year: 2026, discipline: 'Architecture', size: '310 m²', tags: ['architecture'], summary: 'A timber house set on a granite shelf above the water.' },
     { slug: 'tern-library', title: 'Tern Library', place: 'Tromsø, NO', year: 2025, discipline: 'Architecture', size: '2,400 m²', tags: ['architecture'], summary: 'A public reading room with a single continuous window to the sound.' },
@@ -48,6 +49,9 @@ export const shop = {
 export const magazine = {
   name: 'Fieldnote',
   issue: 'Issue 14 — Weather',
+  nav: ['Issues', 'Subscribe', 'Stockists', 'Contributors', 'Contact'],
+  frequency: 'Four issues a year, printed in Bergen',
+  signoff: 'Issue 15 is about ground. It goes to press in March.',
   articles: [
     { slug: 'salt-and-time', title: 'Salt and time', dek: 'On an island where the summer is spent boiling the sea.', author: 'Ingrid Vold', read: '12 min', section: 'Places' },
     { slug: 'the-quiet-room', title: 'The quiet room', dek: 'Why the best libraries are designed around a single window.', author: 'Tomas Reyes', read: '8 min', section: 'Architecture' },
@@ -135,6 +139,11 @@ export const observatory = {
   tagline: 'A dark-sky observatory and planetarium at 69° north.',
   place: 'Skulsfjord, north of Tromsø',
   email: 'visit@meridian.no',
+  nav: ['Tonight’s shows', 'One orbit', 'Plan a visit', 'Tickets'],
+  claim: 'Every constellation began with someone pointing.',
+  signoff: 'Open until 23:00, Wednesday to Sunday. The sky stays up later.',
+  // Invented catalogue names for constellations a visitor draws, from the cast's world rather than the real sky.
+  constellations: ['The Tern', 'The Kiln', 'The Oar', 'The Ladder', 'The Salt Pan', 'The Crane', 'The Lantern', 'The Loom', 'The Anvil', 'The Net', 'The Kettle', 'The Sledge'],
   exhibition: { title: 'One orbit', dek: 'Ninety-two minutes around the planet, filmed from the station window.', dates: '14 November 2026 – 30 March 2027' },
   shows: [
     { title: 'The night side', time: '19:00', length: '35 min', room: 'Dome', note: 'The planet after dark, city by city.' },

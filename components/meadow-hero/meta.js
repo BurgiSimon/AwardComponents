@@ -1,0 +1,41 @@
+export default {
+  id: 'meadow-hero',
+  title: 'Meadow hero',
+  category: 'heroes',
+  summary: 'A magazine cover with one huge word standing in a deep field of grass: gusts cross the field, the pointer parts it, a click plants a flower and a drag sows a row.',
+  description: 'The cover of a magazine’s Weather issue. The word stands in the field, not on it: grass from a horizon behind the letters is drawn under the type, and the nearer grass is drawn over its feet. Fourteen rows of blades are placed, sized and faded by depth, so the field reads as ground running away from you.\n\nThe near grass is stroked white on a canvas blended with mix-blend-mode: difference. On the page it comes out in the page’s ink; where a blade crosses a letter it reverses to the page colour, so the feet of the type stay legible through the grass in both themes without a second set of strokes.\n\nWind is the subject. A ripple and slow gusts cross the field on a slant and lift seeds off it into the sky; the pointer parts the grass on a spring and its own speed counts as a gust. A click plants a flower where it lands (its height on screen is its depth in the field), and a drag sows one every 44 px.',
+  recipe: 'living-scene-canvas2d',
+  deps: [],
+  tags: ['hero', 'canvas', 'pointer', 'spring', 'generative', 'grass', 'wind', 'typography', 'blend-mode', 'cover'],
+  added: '2026-11-16',
+  order: 41,
+  preview: { height: 600, hint: 'Sweep through the grass, click or drag to sow', capture: { wait: 700 } },
+  actions: [{ id: 'sow', label: 'Sow a flower' }, { id: 'gust', label: 'Send a gust' }],
+  useCases: [
+    'A magazine issue cover, a festival or a season’s campaign page, where one word carries the first screen',
+    'A hero for anything outdoors: a landscape practice, a garden, a park, a weather or climate product',
+    'A title screen that rewards a visitor who plays with it, without hiding anything from one who does not',
+  ],
+  notes: [
+    'The three canvases are aria-hidden and ignore the pointer; the heading is real text. Sowing has a keyboard path: a real button plants a flower at a spot of its own, and a polite status line reports the count.',
+    'Parting the grass is for fine pointers only. Touch gets the wind, and a tap sows on the click event, so a scroll that starts on the field plants nothing (touch-action: pan-y); a drag sows only with a mouse or pen.',
+    'Under reduced motion and in the static tier there is no loop, no wind and no seeds: the field is drawn once, upright, and redrawn with each new flower already open. The loop stops off screen, the springs rest until a pointer is in the field, and coarse pointers and low-tier devices get a sparser field.',
+  ],
+  controls: [
+    { id: 'wind', label: 'Wind', type: 'range', min: 0, max: 3, step: 0.1, default: 1, unit: '×', group: 'Weather', help: '0 is calm: nothing moves until the pointer arrives. 1 is a breeze. Above 1 the whole field leans, the gusts come faster and more seeds fly, up to a gale at 3.', prompt: 'Wind at {value} the base breeze (0 calm, 3 a gale) (default {default})' },
+    { id: 'reach', label: 'Pointer reach', type: 'range', min: 60, max: 280, step: 10, default: 150, unit: 'px', group: 'Pointer', help: 'How far from the pointer the nearest grass still leans away; it shrinks to 55 % at the horizon.', prompt: 'The nearest grass leans away within {value} of the pointer, shrinking to 55 % of that at the horizon (default {default})' },
+    { id: 'density', label: 'Grass density', type: 'range', min: 0.5, max: 1.5, step: 0.1, default: 1, unit: '×', group: 'Field', help: '1 is a blade every 2.6 px at the horizon and every 11 px in the nearest row: about 3,200 at 1280 px wide.', prompt: 'Grass density at {value} of one blade per 2.6 px (horizon) to 11 px (nearest row) (default {default})' },
+    { id: 'cap', label: 'Most flowers', type: 'range', min: 12, max: 120, step: 4, default: 60, group: 'Field', help: 'Past this, the oldest flower fades over 0.6 s as a new one is sown.', prompt: 'At most {value} flowers; the oldest fades as a new one is sown (default {default})' },
+    { id: 'petals', label: 'Petals', type: 'select', options: [{ value: 'mixed', label: 'Clay, plum, sky and a few accent' }, { value: 'accent', label: 'Accent only' }], default: 'mixed', group: 'Field', prompt: (v) => (v === 'accent' ? 'Every flower in the accent colour' : 'Petals cycle through three muted content colours, with one in seven in the accent') },
+  ],
+  prompt: {
+    skill: 'component',
+    ask: 'Stand {target} in a field of grass the visitor can push around.',
+    target: 'the hero headline',
+    brief: 'A full-viewport hero: one very large word (a real h1, about 20 vw) standing in a field of hairline grass on 2D canvases. Blades are quadratic curves in 14 depth rows from a horizon a tenth of the type size above the baseline down to just below the frame: screen y = horizon + (foot − horizon) × depth^1.5, size 0.24 + 0.76 × depth^0.9 of the tallest blade (8 % of the height plus a quarter of the type size), spacing 2.6 px (far) to 11 px (near), opacity 0.3 to 0.72, resting within ±0.12 rad of upright, all hashed by index. Three layers: grass farther than the type on a canvas under the h1; nearer grass on a canvas above it, stroked white with mix-blend-mode: difference so it reads as ink on the page and reverses across the letters; flower heads on a third canvas on top. Wind per blade: a 0.06 rad ripple plus 0.2 rad × max(0, sin)³ gusts travelling left to right, offset by depth × 420 px so a front crosses on a slant; it lets go of a seed about every 2 s, which drifts across the sky behind the type. A fine pointer leans blades away within 150 px (0.6 rad × (1 − d/reach)², plus 0.4 × its speed in px/ms) on a spring of 0.012 with 0.1 damping per 60 Hz frame, scaled by dt × 60. A click plants a flower at that point (y maps back to depth), growing in 1.1 s; a mouse drag sows one every 44 px; 60 at most, the oldest fading.',
+    keep: [
+      'the h1 as real text between the far and near canvases; all canvases aria-hidden and pointer-transparent; a real button that sows a flower, with a polite status line',
+      'planting on click with touch-action: pan-y; parting for fine pointers only; no loop off screen and no spring work without a pointer; one still, upright field under reduced motion; a sparser field on coarse pointers and low-tier devices',
+    ],
+  },
+};

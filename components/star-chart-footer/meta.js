@@ -1,0 +1,45 @@
+// Field reference: docs/authoring.md. Plain data, no imports.
+export default {
+  id: 'star-chart-footer',
+  title: 'Star chart footer',
+  category: 'closers',
+  summary: 'An observatory’s footer with a band of sky above its links: point and the nearest stars join into a constellation, click to set it and send a shooting star.',
+  description: 'The close of an observatory’s site: one sentence, a band of sky, the links. The band is a small star chart on a faint graticule, drawn on one 2D canvas in the page’s own ink, so it reads as a printed chart on a light page and as a night sky on a dark one. It is seeded, so it is the same sky on every visit.\n\nThe stars twinkle, each on its own period. A pointer joins the few stars nearest to it as a minimum spanning tree, which branches the way a constellation does, and the lines ease in and out as the pointer moves on. A click sets that constellation for a few seconds and sends one shooting star across the band.',
+  recipe: 'living-scene-canvas2d',
+  deps: [],
+  tags: ['footer', 'canvas', 'pointer', 'stars', 'constellation', 'toy', 'generative', 'close'],
+  added: '2026-11-16',
+  order: 20,
+  preview: { height: 620, hint: 'Point at the stars, then click', capture: { wait: 400 } },
+  actions: [{ id: 'shoot', label: 'Send a shooting star' }],
+  useCases: [
+    'The last screen of an observatory, planetarium or science museum site',
+    'A footer for a product about maps, navigation, networks or night, where joined points mean something',
+    'A small reward at the end of a long report or documentation page',
+  ],
+  notes: [
+    'The canvas is aria-hidden decoration; the statement, the links and the legal line are DOM around it, and nothing in the footer depends on it.',
+    'The cue under the band is a real button that does what a click on the sky does, at a seeded spot, so the keyboard reaches it too.',
+    'Following the pointer is for fine pointers only; a tap still sets a constellation, and a touch scroll that starts on the band stays a scroll.',
+    'Under reduced motion and in the static tier there is no loop: one still chart, redrawn on input, constellations appear and leave without a fade and no shooting star flies.',
+    'The loop runs only while the band is on screen, on a canvas capped at a device pixel ratio of 2.',
+  ],
+  controls: [
+    { id: 'cell', label: 'Star spacing', type: 'range', min: 20, max: 48, step: 2, default: 30, unit: 'px', group: 'Sky', help: 'The cell of the jittered grid: one star per cell, a quarter of the cells left empty.', prompt: 'One star per {value} cell of a jittered grid, a quarter of the cells left empty (default {default})' },
+    { id: 'reach', label: 'Pointer reach', type: 'range', min: 60, max: 180, step: 10, default: 100, unit: 'px', group: 'Constellation', help: 'How far from the pointer a star may be and still be joined.', prompt: 'The pointer joins stars within {value} of it (default {default})' },
+    { id: 'join', label: 'Stars joined', type: 'range', min: 3, max: 7, step: 1, default: 5, group: 'Constellation', help: 'The most stars one constellation takes: the nearest ones, joined as a minimum spanning tree.', prompt: 'A constellation takes up to {value} of the nearest stars (default {default})' },
+    { id: 'linger', label: 'A click holds for', type: 'range', min: 2, max: 12, step: 0.5, default: 5, unit: 's', group: 'Constellation', help: 'How long a clicked constellation stays before its 2 s fade.', prompt: 'A clicked constellation holds for {value}, then fades over 2 s (default {default})' },
+    { id: 'tone', label: 'Line colour', type: 'color', default: 'ink', options: ['ink', 'accent', 'sky', 'clay', 'plum'], group: 'Look', prompt: 'Constellation lines in {value} (default {default}, the secondary ink at half strength)' },
+  ],
+  prompt: {
+    skill: 'component',
+    ask: 'Put a band of sky you can draw constellations in above {target}.',
+    target: 'the footer links',
+    brief: 'A designed close: one closing sentence, then a 150–340 px band of sky on one 2D canvas, then the link row. The band is a star chart in the page’s own ink: a faint graticule (three arcs and a fan of meridians around a pole 2.5 widths above the band), one star per 30 px cell of a jittered grid with a quarter of the cells empty, seeded so the sky never changes, each star twinkling ±22 % on its own 3–9 s period. A fine pointer joins the up-to-five stars within 100 px as a minimum spanning tree; lines ease in and out over 200 ms. A click (also a tap) sets that constellation for 5 s with a 2 s fade and sends one 900 ms shooting star, cubic-out, towards the wider side. The band’s top and bottom fade through a mask.',
+    keep: [
+      'the canvas aria-hidden, with a real button beside the links that fires the click action at a seeded spot',
+      'no loop under reduced motion (a still chart redrawn on input, no shooting star), no loop while the band is off screen, pointer-follow only for fine pointers, touch-action: pan-y on the band',
+      'every colour read from the page’s tokens and re-read on a theme change',
+    ],
+  },
+};

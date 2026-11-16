@@ -1,0 +1,52 @@
+.mdh { overflow-x: clip; }
+
+/* The cover. isolation keeps the near grass's blend inside the hero; pan-y lets a touch on the field scroll the page;
+   the word is not selectable, so a sowing drag across it selects nothing. */
+.mdh__hero { isolation: isolate; overflow: clip; background: var(--bg); touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+
+/* Three layers in DOM order: far grass, then the word, then near grass and the flower heads. */
+.mdh__canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+/* Near grass is stroked white and differenced with what is under it: ink on the page, page colour across a letter. */
+.mdh__canvas--near { mix-blend-mode: difference; }
+
+.mdh__title {
+  position: relative;
+  margin-bottom: 11svh;
+  font-family: var(--font-serif);
+  font-size: min(max(20.5vw, 5.4rem), 23vw, 46svh);
+  font-weight: 600;
+  font-stretch: normal;
+  font-optical-sizing: none;
+  font-variation-settings: 'opsz' 30; /* a sturdier cut than the display master: its hairlines hold at thumbnail size */
+  line-height: 0.8;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+}
+.mdh__base { display: inline-block; width: 0; height: 0; }
+
+/* The cue is the keyboard path: it sows one flower at a spot of its own. It sits in the sky, clear of the field. */
+.mdh__cue {
+  position: absolute;
+  top: clamp(8px, 2.2vh, 18px);
+  right: var(--gutter);
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: underline;
+  text-decoration-color: var(--line-2);
+  text-underline-offset: 0.35em;
+  transition: color var(--dur-s) var(--ease-out), text-decoration-color var(--dur-s) var(--ease-out);
+}
+.mdh__cue:hover { color: var(--ink); text-decoration-color: currentColor; }
+
+/* The plate line stands in the grass, so each part sits on page-coloured tape. */
+.mdh__tape { background: var(--bg); padding: 3px 6px; }
+.mdh__tape:first-child { margin-left: -6px; }
+.mdh__tape:last-child { margin-right: -6px; }

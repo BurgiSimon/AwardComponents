@@ -1,0 +1,41 @@
+export default {
+  id: 'lawn-footer',
+  title: 'Lawn footer',
+  category: 'closers',
+  summary: 'A magazine’s footer with a strip of lawn above its links: a breeze moves the grass, blades lean away from the pointer, and a click plants a flower.',
+  description: 'The close of a magazine’s page, with something small to find at the end of it. Between the closing sentence and the links runs a strip of lawn drawn on one canvas: a blade every 3 px in three depths, in taller and shorter patches, hashed by index so it is the same lawn on every visit.\n\nLeft alone, a ripple and slow gusts cross it from left to right. A pointer bends the blades away on a spring and its own speed counts as a gust, so a quick pass flattens more than a slow one. A click plants a flower that grows in 1.1 s, stem first, then six petals; past the cap the oldest one fades.',
+  recipe: 'living-scene-canvas2d',
+  deps: [],
+  tags: ['footer', 'canvas', 'pointer', 'spring', 'toy', 'grass', 'generative', 'close'],
+  added: '2026-11-16',
+  order: 21,
+  preview: { height: 600, hint: 'Brush the grass, click to plant a flower', capture: { wait: 500 } },
+  actions: [{ id: 'plant', label: 'Plant a flower' }],
+  useCases: [
+    'The close of a magazine, studio or personal site, where a small living thing rewards reaching the end',
+    'A footer for anything outdoors: a garden shop, a park, a festival field, a landscape practice',
+    'A band of ground under a 404 or a thank-you page',
+  ],
+  notes: [
+    'The canvas is aria-hidden; the statement, links and small print are DOM around it. Planting has a keyboard path: a real button in the link row plants a flower at a spot of its own, and a polite status line reports the count.',
+    'Leaning is for fine pointers only. Touch gets the breeze, and a tap plants on the click event, so a scroll that starts on the lawn plants nothing (touch-action: pan-y).',
+    'Under reduced motion and in the static tier there is no loop: the lawn is drawn once, upright, and redrawn with the new flower already open. The loop also stops while the footer is off screen, and skips its paint when the wind is 0 and nothing moves.',
+  ],
+  controls: [
+    { id: 'wind', label: 'Breeze', type: 'range', min: 0, max: 2.5, step: 0.1, default: 1, unit: '×', group: 'Wind', help: '1 is a ripple of 0.07 rad plus gusts of up to 0.16 rad that travel left to right; 0 leaves the lawn still until the pointer arrives.', prompt: 'Breeze at {value} the base lean (a 0.07 rad ripple plus 0.16 rad gusts) (default {default})' },
+    { id: 'reach', label: 'Pointer reach', type: 'range', min: 40, max: 180, step: 5, default: 90, unit: 'px', group: 'Pointer', help: 'How far from the pointer blades still lean away; the push falls off as (1 − d/reach)².', prompt: 'Blades lean away within {value} of the pointer (default {default})' },
+    { id: 'gap', label: 'Blade spacing', type: 'range', min: 2, max: 8, step: 0.5, default: 3, unit: 'px', group: 'Lawn', help: 'One blade per this many pixels, each nudged up to 5 px sideways.', prompt: 'One blade every {value} (default {default})' },
+    { id: 'cap', label: 'Most flowers', type: 'range', min: 6, max: 48, step: 1, default: 24, group: 'Lawn', help: 'Past this, the oldest flower fades over 0.6 s as a new one is planted.', prompt: 'At most {value} flowers; the oldest fades as a new one is planted (default {default})' },
+    { id: 'petals', label: 'Petals', type: 'select', options: [{ value: 'mixed', label: 'Clay, plum and sky' }, { value: 'accent', label: 'Accent only' }, { value: 'ink', label: 'Ink only' }], default: 'mixed', group: 'Lawn', prompt: (v) => ({ mixed: 'Petals cycle through three muted content colours', accent: 'Every flower in the accent colour', ink: 'Every flower in the ink colour: no colour in the footer at all' })[v] },
+  ],
+  prompt: {
+    skill: 'component',
+    ask: 'Put a strip of lawn in {target}.',
+    target: 'the site footer, between the closing statement and the link row',
+    brief: 'One aria-hidden 2D canvas, 112–250 px tall, across the footer’s width: a hairline ground and a blade every 3 px (a quadratic curve 10–34 px tall, taller in patches), in three depths stroked as three paths, all hashed by index so the lawn is the same on every load. Idle wind per blade: 0.07 rad × sin(x × 0.02 − t × 0.0012) plus 0.16 rad × max(0, sin(x × 0.005 − t × 0.0006))³, a gust that travels left to right. A fine pointer bends blades within 90 px away from it (±0.55 rad × (1 − d/90)², plus 0.4 × its horizontal speed in px/ms) on a spring of 0.012 with 0.1 damping per 60 Hz frame, scaled by dt × 60. A click plants a flower at that x: the stem rises over 0.77 s, six petals open in the last 0.44 s; three are there on load, 24 at most, the oldest fading over 0.6 s. The grass is drawn in the page’s ink colours and the petals in its content colours, re-read on a theme change.',
+    keep: [
+      'a real button beside the footer links that plants a flower at a spot of its own, with a polite status line; the canvas aria-hidden and every link in the DOM',
+      'planting on click (not pointerdown) with touch-action: pan-y; leaning for fine pointers only; no loop off screen; one still lawn under reduced motion, redrawn when a flower is planted',
+    ],
+  },
+};
