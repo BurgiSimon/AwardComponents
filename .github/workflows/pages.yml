@@ -1,8 +1,10 @@
-# Deploy the library to GitHub Pages, on demand. Enable Pages with "GitHub Actions" as the source in the
-# repository settings first. BASE_PATH makes every asset and route resolve under /<repository>/.
+# Deploy the library to GitHub Pages on every push to main, or on demand. Enable Pages with "GitHub Actions" as
+# the source in the repository settings first. BASE_PATH makes every asset and route resolve under /<repository>/.
 name: pages
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
