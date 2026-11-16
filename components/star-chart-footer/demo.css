@@ -1,0 +1,26 @@
+/* Star chart footer. The page's last screen: the statement sits right above the band of sky, the links under it. */
+.scf { min-height: 100svh; display: flex; flex-direction: column; background: var(--bg); overflow-x: clip; }
+.scf__foot { flex: 1; display: flex; flex-direction: column; padding-block: clamp(44px, 5vw, 68px) clamp(20px, 3vw, 32px); }
+
+.scf__say { margin-top: auto; }
+.scf__say .ac-label { margin-bottom: 14px; }
+.scf__title { font-size: clamp(1.9rem, 1.15rem + 2.2vw, 3.1rem); font-weight: 720; font-stretch: var(--wide); letter-spacing: -0.035em; line-height: 1.02; max-width: 22ch; text-wrap: balance; }
+
+/* The band of sky. pan-y keeps a touch scroll that starts on it a scroll. The chart's lines fade out at the top
+   and bottom instead of ending at a hard edge. */
+.scf__scene { margin-top: clamp(28px, 4vw, 44px); height: clamp(150px, 38svh, 340px); touch-action: pan-y; }
+.scf__scene canvas { display: block; width: 100%; height: 100%; mask-image: linear-gradient(transparent, black 14%, black 86%, transparent); }
+
+.scf__row { margin-top: 16px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 24px; font-size: var(--text-sm); }
+.scf__nav { display: flex; flex-wrap: wrap; gap: 0 24px; }
+.scf__nav a { display: inline-flex; align-items: center; min-height: 32px; color: var(--ink-2); text-decoration: none; transition: color var(--dur-s) var(--ease-out); }
+.scf__nav a:hover { color: var(--ink); }
+/* The invitation, and the keyboard's way to the same thing a click on the sky does. */
+.scf__cue { margin-left: auto; min-height: 32px; padding: 0; border: 0; background: none; color: var(--muted); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.25em; text-decoration-color: var(--line-2); transition: color var(--dur-s) var(--ease-out), text-decoration-color var(--dur-s) var(--ease-out); }
+.scf__cue:hover { color: var(--ink); text-decoration-color: currentColor; }
+
+.scf__legal { margin-top: clamp(14px, 2vw, 22px); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.02em; color: var(--muted); }
+
+@media (max-width: 640px) {
+  .scf__cue { margin-left: 0; flex-basis: 100%; text-align: left; }
+}

@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "repository": "https://github.com/BurgiSimon/awards"
   },
-  "synced": "2026-10-28",
+  "synced": "2026-11-16",
   "groups": {
     "foundations": "Foundations",
     "arrival-and-chrome": "Arrival and chrome",
@@ -17,7 +17,7 @@
     "webgl-surfaces": "WebGL surfaces and scenes",
     "compositions": "Pages and compositions"
   },
-  "count": 103,
+  "count": 104,
   "recipes": {
     "auto-drive-manual-takeover": {
       "title": "Optional auto-scroll that any user input hands back",
@@ -1112,6 +1112,29 @@
       "deps": [],
       "seen": 2,
       "verified": "2026-10-07"
+    },
+    "living-scene-canvas2d": {
+      "title": "A small drawn scene at the foot of the page that answers the pointer: star chart, lawn or koi pond",
+      "group": "the-close-and-beyond",
+      "tier": "P2",
+      "tags": [
+        "canvas",
+        "procedural",
+        "pointer",
+        "touch",
+        "keyboard",
+        "spring",
+        "ticker",
+        "footer",
+        "hero",
+        "toy",
+        "performance",
+        "accessibility",
+        "reduced-motion"
+      ],
+      "deps": [],
+      "seen": 0,
+      "verified": null
     },
     "magnetic-button": {
       "title": "Magnetic button with distance falloff",

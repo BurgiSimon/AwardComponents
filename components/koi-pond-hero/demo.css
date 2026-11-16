@@ -1,0 +1,29 @@
+/* The water is one flat colour mixed from the page ground and the sky material, so small copy can sit on tape of
+   the same colour. --kph-shadow is the strength of the floor shadows; demo.js reads it. */
+.kph { --kph-water: color-mix(in oklab, var(--sky) 15%, var(--bg)); --kph-shadow: 0.17; overflow-x: clip; }
+:root[data-theme='dark'] .kph { --kph-water: color-mix(in oklab, var(--sky) 12%, var(--bg)); --kph-shadow: 0.55; }
+
+.kph__hero { --stage-gap: clamp(20px, 3.4vh, 32px); background: var(--kph-water); overflow: clip; }
+.kph__canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* The headline lies on the surface: the canvas is under it, so the koi pass beneath the letters. */
+.kph__title {
+  position: relative;
+  max-width: 11ch;
+  font-size: clamp(2.8rem, 0.9rem + 6.4vw, 8rem);
+  font-weight: 760;
+  font-stretch: var(--wide);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  text-align: center;
+  text-wrap: balance;
+  pointer-events: none;
+}
+
+/* The invitation and the keyboard path: a small buoy of water-coloured ground, so no koi shows through its label. */
+.kph__cue { position: relative; display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 14px 0 12px; border: 1px solid var(--line-2); border-radius: var(--radius-pill); background: var(--kph-water); color: var(--ink-2); font-size: var(--text-sm); transition: color var(--dur-s) var(--ease-out), border-color var(--dur-s) var(--ease-out); }
+.kph__cue::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.kph__cue:hover { color: var(--ink); border-color: var(--ink-2); }
+
+/* Plate copy on tape of the water's colour, so its contrast never depends on what swims under it. */
+.kph__tape { background: var(--kph-water); padding: 3px 6px; margin-inline: -6px; }

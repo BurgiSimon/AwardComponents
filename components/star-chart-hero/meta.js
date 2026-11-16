@@ -1,0 +1,45 @@
+// Field reference: docs/authoring.md. Plain data, no imports.
+export default {
+  id: 'star-chart-hero',
+  title: 'Star chart hero',
+  category: 'heroes',
+  summary: 'An observatory’s hero on a turning star chart: point to pencil a constellation through the brightest stars nearby, click to ink and name it, drag to turn the sky.',
+  description: 'The whole first screen is a planisphere drawn on one 2D canvas in the page’s own ink: rings of declination, twenty-four hour lines, a denser band of faint stars, and a meridian that stays put while the sky crosses it. The chart turns about its pole on its own, slowly, and a drag turns it by hand and lets it coast.\n\nA pointer pencils a constellation through the brightest stars within reach, joined as a minimum spanning tree. A click inks it: the lines are drawn edge by edge in the accent from the star nearest the click, a catalogue label settles under it, and it turns with the sky from then on. Six are kept; the oldest fades when a seventh is pinned. The chart opens with two already drawn, so the first screen says what the pointer is for.',
+  recipe: 'living-scene-canvas2d',
+  deps: [],
+  tags: ['hero', 'canvas', 'pointer', 'drag', 'inertia', 'stars', 'constellation', 'generative', 'toy'],
+  added: '2026-11-16',
+  order: 40,
+  preview: { height: 620, hint: 'Point, click to pin, drag to turn the sky', capture: { wait: 500 } },
+  actions: [{ id: 'pin', label: 'Pin a constellation' }, { id: 'clear', label: 'Clear the chart' }],
+  useCases: [
+    'The home hero of an observatory, planetarium or science museum',
+    'A hero for a product about maps, routes, networks or graphs, where joining points is the subject',
+    'A launch or campaign page that wants visitors to leave a mark on the first screen',
+  ],
+  notes: [
+    'The canvas is aria-hidden; the headline is real text that lets the pointer through, and the stars behind it are drawn at a tenth of their strength so it keeps its contrast. Small copy sits on page-coloured tape.',
+    'The cue under the headline is a real button that pins a constellation at a seeded spot, and a polite status line names each pin, so the move is reachable and announced without a pointer.',
+    'Pencilling follows fine pointers only. A tap pins; a sideways touch drag turns the sky while a vertical one still scrolls the page (touch-action: pan-y).',
+    'Under reduced motion and in the static tier the sky does not drift and no loop runs: a still chart redrawn on input, pins appear complete, a drag turns the chart 1:1 without inertia and no shooting star flies.',
+    'The loop runs only while the hero is on screen, on a canvas capped at a device pixel ratio of 2.',
+  ],
+  controls: [
+    { id: 'drift', label: 'Sky drift', type: 'range', min: 0, max: 2, step: 0.1, default: 0.4, unit: '°/s', group: 'Sky', help: 'How fast the chart turns about its pole on its own. 0 holds it still until dragged.', prompt: 'The sky turns {value} about its pole on its own (default {default})' },
+    { id: 'cell', label: 'Star spacing', type: 'range', min: 28, max: 56, step: 2, default: 38, unit: 'px', group: 'Sky', help: 'The cell of the jittered grid: one star per cell, a quarter of the cells left empty.', prompt: 'One star per {value} cell of a jittered grid, a quarter of the cells left empty (default {default})' },
+    { id: 'reach', label: 'Pointer reach', type: 'range', min: 80, max: 240, step: 10, default: 150, unit: 'px', group: 'Constellation', help: 'How far from the pointer a star may be and still be joined.', prompt: 'The pointer joins stars within {value} of it (default {default})' },
+    { id: 'join', label: 'Stars joined', type: 'range', min: 3, max: 9, step: 1, default: 7, group: 'Constellation', help: 'The most stars one constellation takes: the brightest within reach.', prompt: 'A constellation takes up to {value} of the brightest stars within reach (default {default})' },
+    { id: 'tone', label: 'Pin colour', type: 'color', default: 'accent', options: ['accent', 'ink', 'sky', 'clay', 'plum'], group: 'Look', prompt: 'Pinned constellations inked in {value} (default {default})' },
+  ],
+  prompt: {
+    skill: 'component',
+    ask: 'Make {target} a star chart visitors draw constellations on.',
+    target: 'the home hero',
+    brief: 'A full-viewport planisphere on one 2D canvas, in the page’s own ink, with the headline as real text on top. Stars keep fixed places around a pole at 68 % / 44 % of the hero: one per 38 px cell of a jittered grid over the whole disc the hero can show (a quarter of the cells empty, magnitudes cubed), plus a denser band of faint stars along an off-centre circle; seeded, each twinkling ±22 % on its own 3–9 s period. Rings every 15° of declination, 24 hour lines and their labels turn with the sky at 0.4°/s; the meridian through the pole does not. A drag turns the chart by the pointer’s angle about the pole and releases with inertia (× e^(−2.2 t), at most 2.5 rad/s). A fine pointer pencils the up-to-seven brightest stars within 150 px as a minimum spanning tree, lines easing over 200 ms. A click inks it in the accent: edges grow one after another (90 ms apart, 260 ms each, cubic-out) from the star nearest the click, stopping 5 px short of each star, then a mono catalogue label fades in under it and one 1 s shooting star crosses. Six pins are kept and turn with the sky; the oldest fades over 1.2 s. Two are inked on load.',
+    keep: [
+      'the canvas aria-hidden under a real headline that lets the pointer through, a real button that pins at a seeded spot, and a polite status line naming each pin',
+      'no drift, no inertia and no loop under reduced motion (a still chart redrawn on input); no loop off screen; pencilling only for fine pointers; touch-action: pan-y so a vertical swipe still scrolls',
+      'every colour read from the page’s tokens and re-read on a theme change',
+    ],
+  },
+};
