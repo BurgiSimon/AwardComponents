@@ -2,7 +2,7 @@
 // `newForDays` days from its `added` date; one with an `updated` date is "Updated" for `updatedForDays`.
 export const site = {
   name: 'AwardComponents',
-  description: 'Award-league web components with live controls and a prompt that rebuilds each one in your project with the awards plugin for Claude Code and Codex.',
+  description: 'The home of the awards plugin for Claude Code and Codex: its docs, the sites it built and judged, and award-league components with live controls and a prompt that rebuilds each one in your project.',
   repo: 'https://github.com/BurgiSimon/AwardComponents',
   awards: {
     repo: 'https://github.com/BurgiSimon/awards',

@@ -1,5 +1,6 @@
-// The welcome page: what the library is, how a prompt is made (a live, tunable example), the categories, a few
-// featured components, anything new, and how to install the awards plugin.
+// The library's front page, /library/ (the site's home, pages/home.js, is the awards plugin's): what the library
+// is, how a prompt is made (a live, tunable example), the categories, a few featured components, anything new, and
+// how to install the awards plugin.
 import { components, groups, featured, loadComponent, byId } from '../../registry/index.js';
 import { site } from '../../registry/site.js';
 import { resolve, toParams } from '../../registry/options.js';
@@ -116,7 +117,7 @@ export default function welcomePage() {
         <p class="eyebrow">The awards plugin</p>
         <h2 id="install-title" class="section-title">The prompts need the plugin. It takes two lines.</h2>
         <p>The awards plugin teaches Claude Code and Codex how award-winning sites are built: a reference corpus, the recipes these components come from, a craft-floor audit and a jury that scores the result. Install it once; every prompt here then works in any project.</p>
-        <p><a class="arrow-link" href="${site.awards.repo}" target="_blank" rel="noopener" data-external>The plugin on GitHub ${raw(icon('arrowUpRight', { size: 15 }))}</a> <a class="arrow-link" href="${href('/docs/')}">Getting started ${raw(icon('arrowRight', { size: 15 }))}</a></p>
+        <p><a class="arrow-link" href="${site.awards.repo}" target="_blank" rel="noopener" data-external>The plugin on GitHub ${raw(icon('arrowUpRight', { size: 15 }))}</a> <a class="arrow-link" href="${href('/docs/install/')}">Install it ${raw(icon('arrowRight', { size: 15 }))}</a></p>
       </div>
       <div class="install__cmds">
         ${raw(['claude', 'codex'].map((k) => html`
@@ -176,7 +177,7 @@ export default function welcomePage() {
 
   return {
     node,
-    title: `${site.name} — award-league components you can prompt`,
+    title: `The library — ${site.name}`,
     layout: 'wide',
     destroy() { gone = true; io.disconnect(); controls?.destroy(); preview?.destroy(); prompt?.destroy(); },
   };
