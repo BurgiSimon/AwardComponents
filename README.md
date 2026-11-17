@@ -13,6 +13,12 @@ Every component has:
 
 The recipes are the principle (verified in a real browser, with keyboard, touch and reduced-motion paths); the demos here are new, production-shaped applications of them.
 
+## Watch it
+
+[![A loop from the video: a cell-curtain page transition, a pointer stirring a WebGL poster, tags shaken in a matter.js box, the Stripe count control changing a live demo, the prompt line it adds, and components from the montage](docs/readme/video-preview.webp)](https://burgisimon.github.io/AwardComponents/video/awardcomponents.mp4)
+
+A 30-second tour: a few live demos, one control changing a demo as you drag it, the prompt that rebuilds it with only that setting, and a component from seven of the twelve categories. **[Watch the video →](https://burgisimon.github.io/AwardComponents/video/awardcomponents.mp4)**
+
 ## The pages
 
 | Route | What it is |
@@ -81,6 +87,7 @@ npm run frames -- --only <id>
 - `scripts/` — `check`, `smoke`, `frames`, `shot`, `new-component`, `sync-recipes`, `sync-plugin`, `builds`, `media`, `og`, and the Vite plugins (light component index, demo sources, route files). `scripts/data/builds.js` names the showcase builds and says what each one is; everything else about them is read.
 - `public/builds/` — the showcase builds' first screens (copied from the awards site, or captured by `npm run builds`).
 - `public/frames/` — captured previews (both themes, two sizes) used by cards, the hover preview, the palette and as the demo's poster while it loads. Only the open component runs live, so the library stays light with a hundred components.
+- `public/video/` — the 30-second showcase video, which the site serves at `/video/awardcomponents.mp4` (GitHub would only offer the committed file as a download); its looping README preview is `docs/readme/video-preview.webp`.
 
 ## Credits and licence
 
